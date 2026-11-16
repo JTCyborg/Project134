@@ -1160,3 +1160,8 @@ A95Eh installs CS:A08Dh as INT 13h and copies the prior INT 13h offset:segment i
 
 
 D4EAh independently validates the per-drive rate field: it compares [0090h+drive] bits 7:6 with global [008Bh], updates the global rate cache when different, converts the selector to bits 1:0 and writes it to 03F7h. See AMI486_FDC_DMA_SUBSYSTEM_20261116.md.
+
+
+## FDC CMOS perpendicular-mode source — 2026-11-16
+
+EEAAh is the protected CMOS read wrapper around EE94h (port 70h selector, port 71h data). D5A1h checks CMOS 0Eh bits 7/6 (RTC power-loss / checksum-invalid); if clear, it reads CMOS 10h and sets PERPENDICULAR MODE 12h parameter bit 2 for drive A type 05h or bit 3 for drive B type 05h. CMOS type 05h is 2.88-MB 3.5-inch. The previous EEAAh parameter-source unknown is resolved; see AMI486_FDC_DMA_SUBSYSTEM_20261116.md.
