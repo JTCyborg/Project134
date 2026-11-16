@@ -57,7 +57,7 @@ function Resolve-NasmExecutable {
             continue
         }
 
-        if ((Split-Path -Leaf $root) -eq "nasm") {
+        if ($root -match '\\downloads\\tools\\nasm$') {
             Get-ChildItem -LiteralPath $root -Directory -ErrorAction SilentlyContinue | ForEach-Object {
                 $versionMatch = [regex]::Match($_.Name, '(\d+(?:\.\d+)+)')
                 $version = [version]"0.0"
