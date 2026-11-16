@@ -79,14 +79,14 @@ First-pass page ledger created at `analysis/disasm/AMI486_ADDRESS_LEDGER_2026111
 
 Raw-byte sampling shows that several pages with no phase-address tokens contain code candidates, especially 2100h, 6800h, A000h–ACFFh, AE60h–AFFFh, D100h–D5FFh and F900h. A000h–AFFFh is mixed: the Format/BootSector Write/Possible VIRUS message is embedded at A125h–A18Dh; the INT 13h handler at A08Dh dispatches AH through a 26-entry little-endian table at A0F1h–A124h; AD00h–AE5Fh contains keyboard translation data candidates. D100h–D5FFh contains I/O code candidates referencing ports 03F4h/03F7h.
 
-**No phase 97.** Continue by resolving the A000h mixed subsystem and its D100h controller callers, then trace 2100h and F900h. The address ledger remains a first-pass index; exact semantic coverage is still unknown.
+**No phase 97.** Continue by validating the runtime INT 40h target (C610h is the strong in-ROM floppy handler candidate), decoding FDC command bytes D40Ah–D462h, finding the INT 14h vector source for F900h, identifying chipset registers 10h/11h/16h, and tracing the RTC display callers. The address ledger is still a first-pass classification; whole-ROM semantic coverage is not complete.
 
 
 ## Seeded decode results — 2026-11-16
 
 Generated `analysis/disasm/ami486_candidate_windows_20261116.txt` using Capstone x86-16 from bounded, independent seeds. The script is `tools/disasm_ami486_candidate_windows.py`; near-relative branch/call targets are normalized to 16-bit IP wraparound.
 
-The decoded A000h region is now identified as IDE/ATA hard-disk service and boot-sector protection code (ports 01F0h–01F7h), including 512-byte PIO transfer at A406h and an INT 13h vector-hook candidate at A95Eh. The embedded A125h prompt is rendered at A847h. This is not the floppy controller: D100h–D5FFh independently accesses ports 03F4h/03F7h. AD00h–AE5Fh is keyboard translation data candidate; AE60h onward enters keyboard/INT 15h handler code.
+The decoded A000h region is identified as the hard-disk INT 13h handler and ATA service. A95Eh installs F000:A08Dh at INT 13h, saves the old INT 13h vector at INT 40h, installs F000:E845h at INT 76h/IRQ14, and sets INT 41h/INT 46h parameter-table pointers to E401h-based 16-byte records. The embedded A125h prompt is rendered at A847h. This is not the floppy controller: D100h–D5FFh is called by the legacy floppy INT 13h handler at C610h; C8BBh/C936h call D156h DMA setup and C913h reaches the FDC result path. AD00h–AE5Fh is keyboard translation data candidate; AE60h onward enters keyboard/INT 15h handler code.
 
 The A08Dh INT 13h entry forwards DL<80h to INT 40h; A0A0h dispatches selectors 00h–19h through the table at A0F1h–A124h. The prior byte-swapped-table hypothesis is withdrawn. The A000h initial seed itself is not yet proven as a true entry.
 
@@ -99,7 +99,7 @@ See `analysis/disasm/AMI486_STORAGE_AND_DISPATCH_REGIONS_20261116.md`.
 
 The A000h subsystem is now classified as IDE/ATA hard-disk and boot-sector protection code (01F0h–01F7h, 03F6h), including IDENTIFY DEVICE at AC00h, a 512-byte data-out routine at A406h, and a Y/N “Possible VIRUS” prompt at A847h/A8F4h. The A95Eh stream writes the INT 13h vector slot through ES; ES=0 is not yet proven from the caller.
 
-D100h–D5FFh is a separate FDC/DMA subsystem (03F2h/03F4h/03F5h/03F7h and DMA 0Ch/0Bh/05h/04h). F92Ah–F935h is a six-entry dispatch table; F977h is an overlapping entry in the F936h stream. The generated candidate decode now covers 111 unique bounded code windows plus separately emitted data ranges with 16-bit near-branch wraparound.
+D100h–D5FFh is a separate FDC/DMA subsystem (03F2h/03F4h/03F5h/03F7h and DMA 0Ch/0Bh/05h/04h). F92Ah–F935h is a six-entry dispatch table; F977h is an overlapping entry in the F936h stream. The generated candidate decode now covers 146 unique bounded code windows plus 6 separately emitted data ranges (152 headers total), with 16-bit near-branch wraparound.
 
 Next: validate the actual incoming vector/caller for F900h, confirm ES provenance at A95Eh, and map full helper boundaries/callers for ATA and FDC. No phase 97.
 
@@ -121,7 +121,7 @@ A08Dh/A0A0h is now mapped as the hard-disk INT 13h handler and AH dispatcher. Th
 
 ## FDC/DMA follow-up — 2026-11-16
 
-See AMI486_FDC_DMA_SUBSYSTEM_20261116.md. D156h programs DMA channel 2; D243h and D294h implement FDC FIFO command/result byte exchange; D270h collects result blocks; D2FDh issues Sense Interrupt Status 08h; D348h resets the controller; D3B5h reads CMOS floppy type register 10h; D499h performs a three-attempt FDC command/result transaction. D40Ah–D462h command sequences and the INT 40h vector target remain open.
+See AMI486_FDC_DMA_SUBSYSTEM_20261116.md. D156h programs DMA channel 2; D243h and D294h implement FDC FIFO command/result byte exchange; D270h collects result blocks; D2FDh issues Sense Interrupt Status 08h; D348h resets the controller; D3B5h reads CMOS floppy type register 10h; D499h performs a three-attempt FDC command/result transaction. D40Ah–D462h command sequences and the runtime INT 40h segment:offset remain open; C610h is the strong matching floppy handler candidate.
 
 
 ## Keyboard subsystem follow-up — 2026-11-16
