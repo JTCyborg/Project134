@@ -122,3 +122,29 @@ Practical priority for further study:
 - [ ] Map the useful reference concepts to the actual AMI486/ALi 1429 hardware.
 - [ ] Compare the reference POST architecture with the exact `ami486.bin` after the ROM is available.
 
+
+
+## Project133 ROM loading and address mapping — inspected 2026-11-16
+
+Read-only reference checkout: [JTCyborg/Project133](https://github.com/JTCyborg/Project133), remote `main` commit `a92cf257ec3150760b5c77cc53c830950ad9ffee`. This is the current GitHub branch head inspected for this note; the user's local Project133 checkout has not yet been confirmed to match it.
+
+### Confirmed from this revision
+
+- `src/models/model.c` registers `m_ami486` as display name `[486] AMI 486 clone`, ROM identifier `ROM_AMI486`, internal machine name `ami486`, CPU families Intel i486 / AMD Am486 / Cyrix Cx486, flags `MODEL_GFX_NONE | MODEL_AT | MODEL_HAS_IDE`, RAM range 1–256 MB, and machine callback `at_ali1429_init`.
+- `src/memory/mem_bios.c`, `loadbios()`, handles `ROM_AMI486` by opening `ami486/ami486.bin` and reading 65,536 bytes into `rom[0..0xffff]`. The default `biosmask` is set to `0xffff` before the ROM-set switch.
+- `src/memory/mem.c`, `mem_add_bios()`, maps eight 16 KiB windows at physical `E0000h` through `FFFFFh`; for a 64 KiB BIOS with mask `0xffff`, the final four windows `F0000h`–`FFFFFh` address ROM offsets `0000h`–`FFFFh`.
+- The same routine maps high BIOS aliases. On an AT with a 16-bit CPU bus, the alias windows are `FE0000h`–`FFFFFFh`; the final alias window `FFFC0000h` is only additionally mapped when `biosmask == 0x3ffff`, which is not the default 64 KiB AMI486 case.
+- `src/memory/mem.c` BIOS reads index the ROM as `rom[addr & biosmask]`.
+- `src/models/ali1429.c` exposes ALi 1429 configuration registers through I/O ports `22h`–`23h`: even port selects the register index, odd port reads/writes the selected register. The register write handler updates memory visibility for 32 KiB regions in the `C0000h`–`DFFFFh` range based on registers `13h` and `14h`, then flushes the MMU cache.
+
+### Important limits / unresolved items
+
+- The model callback name `at_ali1429_init` is confirmed, but the complete AT initialization implementation and its exact call sequence have not yet been traced to their defining source file.
+- The numeric value of `ROM_AMI486` has not yet been resolved from the enum definition; do not call it ROM-set 46 without evidence. The string `ROM_AMI486` is the confirmed symbolic ID in this revision.
+- GitHub repository metadata exposes only the remote branch head. It does not prove the user's local checkout commit, local modifications, or exact runtime configuration file.
+- No actual user configuration file for the reported launch was present in the Project133 repository tree. The exact selected RAM, CPU vendor/model, FPU, graphics card, and other runtime settings remain unverified.
+- The source uses a 64 KiB image in the low 64 KiB of the `rom` array and maps it into the top 64 KiB of the 1 MiB real-mode address space; this matches the observed ROM reset vector offset `FFF0h`, but execution must still be confirmed with a runtime trace.
+
+### Next evidence required
+
+Ask the user to run `git -C <Project133 path> rev-parse HEAD` and provide the exact AMI486 configuration file (or the relevant [Machine] settings) from the machine that produced the reported POST/ROM-set log. Then inspect the local diff against the remote commit, resolve the ROM enum, trace `at_ali1429_init` and the AT setup path, and verify the actual reset-vector fetch at physical `FFFF0h`.
