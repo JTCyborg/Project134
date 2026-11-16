@@ -80,3 +80,14 @@ First-pass page ledger created at `analysis/disasm/AMI486_ADDRESS_LEDGER_2026111
 Raw-byte sampling shows that several pages with no phase-address tokens contain code candidates, especially 2100h, 6800h, A000h–ACFFh, AE60h–AFFFh, D100h–D5FFh and F900h. A000h–AFFFh is mixed: the Format/BootSector Write/Possible VIRUS message is embedded at A125h–A18Dh; A100h–A123h contains 18 little-endian words requiring pointer-context validation; AD00h–AE5Fh contains keyboard translation data candidates. D100h–D5FFh contains I/O code candidates referencing ports 03F4h/03F7h.
 
 **No phase 97.** Continue by resolving the A000h mixed subsystem and its D100h controller callers, then trace 2100h and F900h. The address ledger remains a first-pass index; exact semantic coverage is still unknown.
+
+
+## Seeded decode results — 2026-11-16
+
+Generated `analysis/disasm/ami486_candidate_windows_20261116.txt` using Capstone x86-16 from bounded, independent seeds. The script is `tools/disasm_ami486_candidate_windows.py`; near-relative branch/call targets are normalized to 16-bit IP wraparound.
+
+The decoded A000h region is now identified as IDE/ATA hard-disk service and boot-sector protection code (ports 01F0h–01F7h), including 512-byte PIO transfer at A406h and an INT 13h vector-hook candidate at A95Eh. The embedded A125h prompt is rendered at A847h. This is not the floppy controller: D100h–D5FFh independently accesses ports 03F4h/03F7h. AD00h–AE5Fh is keyboard translation data candidate; AE60h onward enters keyboard/INT 15h handler code.
+
+A100h–A123h has 18 two-byte entries whose byte-reversed values match plausible code offsets; dispatch semantics remain unresolved. The A000h initial seed itself is not yet proven as a true entry.
+
+No phase 97. Continue with call/branch cross-reference and entry validation for the ATA region, then trace the separate FDC and keyboard paths.
