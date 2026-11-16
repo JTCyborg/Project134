@@ -12,14 +12,14 @@ The original Spectrum software accesses memory, ROM, I/O ports and timing direct
 
 - [ ] Confirm the upstream PCem source baseline and revision.
 - [ ] Inspect the AMI486 machine registration, initialization and device setup.
-- [x] Locate `ami486.bin` in the Project134 repository and record its provenance; full binary validation/disassembly remains open.
+- [x] Locate `ami486.bin` in Project134 and record its repository identity; semantic code/data classification and provenance/redistribution review remain open.
 - [x] Add the AMI BIOS 6.27.10 collection as an architectural reference; keep it separate from the target AMI486 ROM/source identification.
 - [x] Inspect the remote Project133 ROM loader and static BIOS mapping path at commit `a92cf257ec3150760b5c77cc53c830950ad9ffee`; local checkout/runtime confirmation remains open.
 - [x] Create the separate Project134 repository and record this plan without changing Project133.
 - [ ] Import/establish the PCem source baseline and create an isolated Project134 machine/profile.
 - [ ] Record a reproducible runtime baseline (requires local Project133 commit and exact AMI486 configuration).
-- [x] Create the Visual Studio/NASM BIOS build scaffold and confirm a successful Debug|x64 build in the user's Visual Studio environment (2026-11-16).
-- [x] Add a Visual Studio solution and NASM/MSBuild BIOS bootstrap target; local build verification is still pending.
+- [x] Create the Visual Studio/NASM BIOS build scaffold and record the successful Debug|x64 build reported from the user's Visual Studio environment (2026-11-16).
+- [x] Add the Visual Studio solution and NASM/MSBuild BIOS bootstrap target; a fresh independent rebuild/runtime boot test remains separate and pending.
 
 **Exit criteria:** Project134 builds and starts the selected AMI486 baseline reproducibly; the BIOS ROM and startup path are identified.
 
@@ -179,8 +179,11 @@ Before implementing or changing any BIOS subsystem:
 - [ ] Phase 5 — Hardware expansion
 - [ ] Phase 6 — Stabilization and release
 
-**Current evidence:** the upstream PCem AMI486 model registration has been inspected and recorded in [docs/AMI486_REFERENCE.md](AMI486_REFERENCE.md). It identifies the AT initialization path and ALi 1429 chipset callback, but the exact Project133 source revision and runtime configuration are still unverified. The `docs/627.10` collection has been inventoried (1,293 files) and key BIOS/CMOS/CPU/interface materials inspected; it remains an architectural reference, not the proven source of the target ROM. The target `ami486.bin` was fetched from this repository and had an initial static inspection: 64 KiB, AMI copyright/date strings (1993), and reset vector bytes `EA 5B E0 00 F0` (far jump to F000:E05B). A full disassembly, checksum record, POST trace and loader/mapping verification remain open.\n\nThe Visual Studio Debug|x64 BIOS scaffold build is verified, including automatic NASM discovery and ROM validation (2026-11-16). This only verifies the build pipeline: the generated 64 KiB F000:E000 bootstrap is provisional and is not yet an operational AMI486 BIOS.\n\n**Next actions (in order):** (1) record the exact Project133 `git rev-parse HEAD`, ROM-set 46 configuration and machine profile; (2) inspect the actual ROM loader, mapping and reset path; (3) record a reproducible checksum and disassemble `ami486.bin` from F000:E05B; (4) continue 6.27.10 source review for the subsystem being implemented, then correlate it with the target ROM and ALi 1429 emulator behavior before coding.
+**Current evidence:** the upstream PCem AMI486 model registration and the remote Project133 reference at commit `a92cf257ec3150760b5c77cc53c830950ad9ffee` are documented in [docs/AMI486_REFERENCE.md](AMI486_REFERENCE.md). The exact local Project133 checkout, runtime configuration and runtime reset trace remain unverified. The `docs/627.10` collection has 1,293 files; selected POST, CMOS, CPU, shared-interface and data-structure references have been inspected, but the collection is not proven to be the source of the target ROM. The target `ami486.bin` is 65,536 bytes; its SHA-256 is `91fd62ce3ccb0b79b42f5fd6c6a7262ed52824b8ade917181b8a12267fec003b`, and its reset vector bytes are `EA 5B E0 00 F0` (far jump to F000:E05B). The byte-complete Capstone 16-bit linear listing and manifest are committed: 29,731 records, coverage `0000-FFFF`, exactly 65,536/65,536 bytes. This is not semantic code coverage: code/data classification, CFG reconstruction, alternate entries, indirect transfers and runtime-patched vectors remain open.
 
+The Visual Studio Debug|x64 BIOS scaffold build was reported successful in the user's environment (2026-11-16). The generated 64 KiB F000:E000 bootstrap is a build-pipeline smoke test only; it halts and is not an operational AMI486 BIOS. A reproducible clean rebuild and actual emulator boot test remain unverified.
+
+**Next actions (in order):** (1) continue semantic reconstruction of the exact ROM, keeping alternate entry streams and stack-crafted returns; (2) record the exact Project133 local `HEAD`, working-tree diff and AMI486 runtime configuration; (3) capture a reproducible reset/POST execution trace and correlate BIOS accesses to ALi 1429 ports `22h/23h`; (4) continue reviewing relevant readable 6.27.10 references, classify them as generic/interface or platform-specific, and only then design independent Project134 code.
 
 ### Project133 reference checkpoint — 2026-11-16
 
