@@ -160,7 +160,7 @@ A08Dh is the hooked hard-disk INT 13h entry; A0A0h is its AH dispatcher; A0F1h�
 
 ## FDC/DMA subsystem map
 
-See [AMI486_FDC_DMA_SUBSYSTEM_20261116.md](AMI486_FDC_DMA_SUBSYSTEM_20261116.md). D156h programs DMA channel 2 (ports 0Ch/0Bh/05h/04h/81h, then unmasks channel 2 via 0Ah); D243h writes FDC FIFO command bytes, D294h reads result bytes, D270h collects result blocks, D2FDh sends Sense Interrupt Status (08h), D348h toggles DOR 03F2h, D3B5h reads CMOS floppy type register 10h, and D499h performs a three-attempt command/result transaction. D40Ah–D462h is now mapped as data-rate/state-token selection feeding a D499h READ ID transaction; D520h–D5D9h is an enhanced FDC VERSION/DUMPREG/UNLOCK/CONFIGURE/PERPENDICULAR/LOCK sequence. Remaining gaps are low-bit state-token semantics, EEAAh configuration-byte provenance and the runtime INT 40h vector.
+See [AMI486_FDC_DMA_SUBSYSTEM_20261116.md](AMI486_FDC_DMA_SUBSYSTEM_20261116.md). D156h programs DMA channel 2 (ports 0Ch/0Bh/05h/04h/81h, then unmasks channel 2 via 0Ah); D243h writes FDC FIFO command bytes, D294h reads result bytes, D270h collects result blocks, D2FDh sends Sense Interrupt Status (08h), D348h toggles DOR 03F2h, D3B5h reads CMOS floppy type register 10h, and D499h performs a three-attempt command/result transaction. D40Ah–D462h is now mapped as data-rate/state-token selection feeding a D499h READ ID transaction; D520h–D5D9h is an enhanced FDC VERSION/DUMPREG/UNLOCK/CONFIGURE/PERPENDICULAR/LOCK sequence. Remaining gaps are low-nibble state-token semantics, the precise board-specific policy for CMOS 0Eh status gating and the runtime INT 40h chain value.
 
 
 ## Keyboard subsystem map
@@ -242,7 +242,7 @@ The D40Ah–D462h bytes are not raw FDC command opcodes. D3EDh/D499h derive the 
 
 The D3B5h helper checks CMOS 0Eh bits C0h first. If clear, it reads CMOS 10h and selects the high nibble for drive index 0 or the low nibble for nonzero index; CMP SP,SP deliberately returns ZF=1. If CMOS 0Eh bits C0h are set, D3CFh takes the alternate rate-probe path at D46Dh.
 
-Normal CMOS type cases: type 1 stores 93h (rate code 2); type 2 probes rates 0 then 1 (success tokens 15h/74h, failure 02h); type 3 probes 0 then 2 (17h/97h, failure 07h); type 4/default probes 3,0,2 (D7h/17h/97h, failure C7h). The alternate CMOS-0Eh path probes 0,1,2,3 and stores 15h/74h/97h/D7h on success. D3FAh confirms token bit 4 is the success flag; bits 7:6 are the rate selector. C84Bh calls D3CFh when the per-drive token bit 4 is clear. After success, C855h selects FDC SPECIFY parameters: D7h -> 03 AF 02, 17h -> 03 BF 02, other observed tokens -> 03 DF 02. Remaining unknowns are the low-nibble meanings beyond these observed cases and the precise meaning of the CMOS 0Eh C0h flag.
+Normal CMOS type cases: type 1 stores 93h (rate code 2); type 2 probes rates 0 then 1 (success tokens 15h/74h, failure 02h); type 3 probes 0 then 2 (17h/97h, failure 07h); type 4/default probes 3,0,2 (D7h/17h/97h, failure C7h). The alternate CMOS-0Eh path probes 0,1,2,3 and stores 15h/74h/97h/D7h on success. D3FAh confirms token bit 4 is the success flag; bits 7:6 are the rate selector. C84Bh calls D3CFh when the per-drive token bit 4 is clear. After success, C855h selects FDC SPECIFY parameters: D7h -> 03 AF 02, 17h -> 03 BF 02, other observed tokens -> 03 DF 02. Remaining unknowns are the low-nibble meanings beyond these observed cases and the exact board-specific policy for the CMOS 0Eh C0h validity gate.
 
 
 ## INT 13h/INT 40h chain correction — 2026-11-16
@@ -253,3 +253,8 @@ A95Eh does not install a fixed C610h pointer into INT 40h. It swaps the current 
 ## D4EAh rate-field cross-check — 2026-11-16
 
 D4EAh independently confirms that the top two bits of the per-drive byte at 0090h+drive are the data-rate selector: it compares those bits with global [008Bh], updates [008Bh] when they differ, rotates the two rate bits down to bits 1:0 and writes the selector through D517h to port 03F7h. The per-drive bit-4 success flag and SPECIFY timing-token cases are recorded in the FDC subsystem report. The remaining low-nibble flags are still open.
+
+
+## CMOS source for FDC perpendicular-mode setup — 2026-11-16
+
+EE94h writes the CMOS register selector to port 70h and reads the byte from port 71h; EEAAh is the protected read wrapper used by the FDC code. D5A1h reads CMOS 0Eh and skips drive-specific perpendicular-mode bits if bit 7 (RTC power lost) or bit 6 (CMOS checksum invalid) is set. Otherwise it reads CMOS 10h: drive A is the high nibble, drive B the low nibble. Type 05h (2.88-MB 3.5-inch) sets CH bit 2 for drive A or bit 3 for drive B before FDC command 12h. The former EEAAh source uncertainty is resolved; low-nibble [BX+90h] meanings and board-specific 0Eh policy remain open.
