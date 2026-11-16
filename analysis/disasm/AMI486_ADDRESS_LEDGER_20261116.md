@@ -258,3 +258,8 @@ D4EAh independently confirms that the top two bits of the per-drive byte at 0090
 ## CMOS source for FDC perpendicular-mode setup — 2026-11-16
 
 EE94h writes the CMOS register selector to port 70h and reads the byte from port 71h; EEAAh is the protected read wrapper used by the FDC code. D5A1h reads CMOS 0Eh and skips drive-specific perpendicular-mode bits if bit 7 (RTC power lost) or bit 6 (CMOS checksum invalid) is set. Otherwise it reads CMOS 10h: drive A is the high nibble, drive B the low nibble. Type 05h (2.88-MB 3.5-inch) sets CH bit 2 for drive A or bit 3 for drive B before FDC command 12h. The former EEAAh source uncertainty is resolved; low-nibble [BX+90h] meanings and board-specific 0Eh policy remain open.
+
+
+## A95Eh caller/ES trace — 2026-11-16
+
+A95Eh is called at 134Eh within the function entered at 131Fh; 131Fh is directly called from 1BAAh. The 1BAAh caller saves/restores DS around a C000h option-ROM signature check but does not initialize ES. The 131Fh function temporarily sets ES=0000h at 1303h, writes ES:01D0h, and restores the prior ES at 130Fh before calling A95Eh at 134Eh. Therefore ES=0000h at A95Eh is not proven by this local chain; the caller's inherited ES remains an open precondition. The candidate-window generator now includes 131Fh–1364h.
