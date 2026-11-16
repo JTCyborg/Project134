@@ -30,11 +30,11 @@ Further records around 0AF1h feed the main Setup callback structure. The dispatc
 
 ## 3. Important unresolved target at 0B5Dh
 
-The first indirect target read from the 0AE1h table is 0B5Dh. The raw ROM bytes at 0B5Dh begin 55 0B 0E 06 and overlap a dense sequence of four-byte-looking records extending through 0BDDh; a linear 16-bit decode from 0B5Dh does not immediately produce a coherent standalone callback contract. The region then reaches aligned Setup-page code at 0BE0h and later.
+The first indirect target read from the 0AE1h table is 0B5Dh. The raw ROM bytes at 0B5Dh begin 55 0B 0E 06. They can be grouped into four-byte next-cursor/target-looking records, but a 16-bit decode from 0B5Dh also yields aligned instruction entries at 0B5Dh and 0B6Dh with conditional branches. The same region therefore has a confirmed dual-use/overlapping code-and-record interpretation; it must not be classified as plain data. See phase 93 for the initial control-flow map.
 
 The call instruction at 05C4h is a near CALL AX, so a normal real-mode interpretation would enter CS:0B5Dh. However, the table-like bytes at that address do not yet establish a normal code entry. Do not infer that 0B5Dh is executable merely because it is the value loaded into AX; the runtime CS base/content, any relocated/shadow copy, and alternate instruction boundaries must be checked. This is a confirmed indirect target with unresolved execution semantics.
 
-The next record at 0AE9h points to 0B6Dh, which is also within this dense region. The record at 0AEDh points to 026Fh, the already identified "Options:" callback. These relationships reinforce that the secondary table is threaded, but they do not prove that every target is a conventional code routine in the ROM byte stream.
+The next record at 0AE9h points to 0B6Dh, an aligned alternate instruction entry in the same region. The record at 0AEDh points to 026Fh, the already identified "Options:" callback. These relationships reinforce the threaded/overlapping structure, but do not yet prove whether the four-byte record view is consumed during the same execution.
 
 ## 4. Display helper preservation
 
@@ -61,3 +61,8 @@ Next: establish the live CS value/base and whether the BIOS executes from a shad
 ## Correction — 0A0Dh output value
 
 The earlier description that 0A0Dh displays the current nibble was incorrect. 0A0Dh loads AX from DX, then ORs AX with 0E30h before INT 10h/AH=0Eh. With DX=0A16h or 0B16h, the emitted character is '6'. The AL nibble masked at 05A3h is overwritten by MOV AX,DX and has no proven downstream use in this helper path.
+
+
+## Phase 93 correction — dual-use 0B5Dh region
+
+The 0B5Dh/0B6Dh region is not merely a table-like byte block. Both offsets are indirect callback targets and aligned 16-bit instruction entries; the same bytes also form four-byte record-like pairs. The classification is now dual-use/overlap candidate pending runtime proof.
