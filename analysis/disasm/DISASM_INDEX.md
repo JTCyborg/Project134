@@ -323,3 +323,12 @@ This phase is semantic classification of selected regions, not a complete CFG. S
 - Traced the 8042 command/response helper 8CEAh and fixed descriptor-driven I/O handlers 8B5Eh/8BA3h.
 - Documented ALi1429 mode helpers 8D09h/8D39h and related protected-mode memory paths 8D56h/8D83h.
 - Kept fixed descriptor blocks (8250h–826Eh) distinct from B51x Setup lookup keys; peripheral and chipset bit names remain unresolved.
+
+
+## Semantic map — phase 23 (2026-11-16)
+
+- [AMI486_SEMANTIC_MAP_PHASE23_20261116.md](AMI486_SEMANTIC_MAP_PHASE23_20261116.md)
+- Completed mapping of the four fixed descriptor groups at 8250h, 8258h, 8260h and 8268h, including each port read-modify-write mask and [0016h] state-bit polarity.
+- Traced the CS:[8281h].6 bypass and recorded its static cross-reference set; its initialization source is unresolved.
+- Traced the 9400h–949Fh 8042 controller transaction and the 8B2Dh selector dispatch.
+- Kept peripheral identities and board-specific command semantics explicitly unresolved.
