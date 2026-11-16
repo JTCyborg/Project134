@@ -1,0 +1,61 @@
+name: AMI486 full ROM disassembly
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "ami486.bin"
+      - ".github/workflows/ami486-full-disasm.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  disassemble:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install NASM
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y nasm
+      - name: Verify ROM and generate complete linear listing
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(wc -c < ami486.bin)" -eq 65536
+          sha256sum ami486.bin | tee /tmp/ami486.sha256
+          ndisasm -b 16 -o 0x0000 ami486.bin > analysis/disasm/ami486_full_linear_16bit.disasm.txt
+          python3 - <<'PY'
+          import re, pathlib
+          p = pathlib.Path("analysis/disasm/ami486_full_linear_16bit.disasm.txt")
+          lines = p.read_text().splitlines()
+          covered = 0
+          expected = 0
+          for line in lines:
+              m = re.match(r"^([0-9A-Fa-f]{8})\\s+([0-9A-Fa-f]+)\\s+", line)
+              if not m:
+                  raise SystemExit(f"Unparsed listing line: {line!r}")
+              off = int(m.group(1), 16)
+              n = len(m.group(2)) // 2
+              if off != expected:
+                  raise SystemExit(f"Coverage discontinuity: expected {expected:04X}, got {off:04X}")
+              expected += n
+              covered += n
+          if covered != 65536 or expected != 65536:
+              raise SystemExit(f"Bad coverage: {covered} bytes, end={expected:05X}")
+          print(f"Verified: {covered} bytes, {len(lines)} instructions/records")
+          PY
+      - name: Commit generated disassembly
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add analysis/disasm/ami486_full_linear_16bit.disasm.txt
+          if git diff --cached --quiet; then
+            echo "Disassembly is already current"
+            exit 0
+          fi
+          git commit -m "Generate complete linear 16-bit AMI486 ROM disassembly"
+          git push
