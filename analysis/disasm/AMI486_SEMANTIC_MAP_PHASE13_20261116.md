@@ -76,3 +76,8 @@ The load path therefore distinguishes stored CMOS settings from ROM defaults and
 - Decode the alternate callback entry `2B2B` independently and map the extra shared callbacks `2CCF` and `0584` to their other callers/records.
 - Trace the complete post-load/apply chain (`0A35`, `1A8F`, `E7E8`) and identify which staged fields ultimately cause ALi1429 indexed writes.
 - Compare the CMOS bytes written by `854F` with the initialization and runtime readers to assign exact meanings to each CMOS index, without assuming that a record's key byte is always a direct CMOS register number.
+
+
+## Erratum — E7E8 is a keyboard-controller test (phase 14)
+
+The phase-13 description of `E7E8` as validating the Setup/configuration image was incorrect. `E7E8` sends 8042 command `CAh` through port `64h`, waits for output-buffer data, accepts response `04h`, and on failure writes `EFh` to port `64h` and checks status bit 1. It does not checksum or inspect the `E000` configuration image. Accordingly, `E1AA.0` reflects this KBC test result. See phase 14 for the full instruction trace.
