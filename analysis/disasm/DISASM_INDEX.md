@@ -930,3 +930,13 @@ This phase is semantic classification of selected regions, not a complete CFG. S
 - Resolved 659Bh as a deliberate alternate entry into a display-cell helper at 65A7h; the helper uses INT 10h/AH=02h, AH=08h and AH=09h.
 - Identified 65BFh/65C3h as alternate entry modes of a decimal/character validation helper that ultimately calls INT 1Ah/AH=05h. Calendar field labels remain provisional pending string and caller analysis.
 - Callback target meanings are not yet individually named; year-like comparisons in 641Fh/6485h and character checks in 64E3h/6541h are recorded as evidence, not final labels.
+
+
+## Semantic map — phase 87 (2026-11-16)
+
+- [AMI486_SEMANTIC_MAP_PHASE87_20261116.md](AMI486_SEMANTIC_MAP_PHASE87_20261116.md)
+- Decoded prompt strings at 75D2h and 7625h: date fields Month/Date/Year and 24-hour Time fields Hour/Minute/Second.
+- Definitively identified callbacks 6373h, 63C9h, 641Fh, 6485h, 64E3h and 6541h as Month, Day, Year, Hour, Minute and Second.
+- Verified date and time paths use BIOS INT 1Ah RTC services (AH=04h/05h for date and AH=02h/03h for time), plus INT 16h keyboard and INT 10h display services.
+- Documented wrap/range evidence: month 1..12, day 1..31, year 1901..2099, hour 00..23, minute/second 00..59.
+- Remaining Setup callbacks and helper contracts are still open; no claims are made that the entire Setup editor is complete.
