@@ -132,3 +132,8 @@ See AMI486_KEYBOARD_SUBSYSTEM_20261116.md. The AD00h–AE5Fh keymap data is foll
 ## INT vector and parameter-table wiring — 2026-11-16
 
 A95Eh replaces INT 13h with F000:A08Dh and saves the old INT 13h vector at the INT 40h slot; A08Dh forwards DL<80h requests to INT 40h. It installs IRQ14/INT 76h at F000:E845h and configures INT 41h/INT 46h fixed-disk parameter table pointers into 16-byte records at E401h, selected via CMOS 92h/99h/9Ah. E845h sends EOIs to both PICs and calls INT 15h AX=9100h. See AMI486_STORAGE_AND_DISPATCH_REGIONS_20261116.md.
+
+
+## Legacy floppy INT13 path — 2026-11-16
+
+C610h is the matching in-ROM floppy INT 13h handler candidate. It accepts AH=00h–05h, 08h and 15h–18h through the 11-entry table at C5FAh. Its code directly reaches D156h DMA setup and the D100h–D5FFh FDC routines. A95Eh saves the old INT13 vector in INT40; A08Dh forwards DL<80h there. Runtime INT40 offset:segment still needs capture, but the code path strongly supports the floppy chain. See AMI486_FDC_DMA_SUBSYSTEM_20261116.md.
