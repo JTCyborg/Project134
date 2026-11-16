@@ -76,16 +76,16 @@ Target image: `ami486.bin` (65,536 bytes; Git blob SHA `480c7520c93e6c7ed437cf3a
 
 The reset and POST listings overlap heavily: both continue linearly to `FFFF`. They are not independent contiguous ROM partitions and must not be concatenated as if they cover the complete image.
 
-### Missing full-ROM range
+### Historical reset/POST listing gap
 
-The existing two linear listings do not cover offsets `0000-D603` (54,788 bytes). The branch listing and focused analysis files contain selected excerpts from that region, not a byte-complete disassembly.
+The two historical reset/POST listings do not cover offsets `0000-D603` (54,788 bytes). The branch listing and focused analysis files contain selected excerpts from that region. This historical gap is now covered mechanically by the separate Capstone master listing below.
 
 ### Status and required method
 
 - **Byte-complete 64-KiB linear disassembly: COMPLETE** (`analysis/disasm/ami486_full_linear_16bit.disasm.txt`; 65,536/65,536 bytes). Semantic code/data classification remains incomplete.
 - Existing listings are preserved as historical entry-point listings.
 - Do not label a listing as complete based only on reaching `FFFF`; its starting offset matters.
-- To finish, run NASM `ndisasm -b 16` against the exact `ami486.bin` for the missing range `0000-D603`, then reconcile code/data and alternate-entry regions against the existing listings.
+- No additional linear decode is required for byte coverage. Continue with semantic classification, CFG construction, alternate-entry analysis and data-boundary verification.
 - Source image SHA-256: `91fd62ce3ccb0b79b42f5fd6c6a7262ed52824b8ade917181b8a12267fec003b`. Generated listing contains 29,731 records and explicitly emits undecodable bytes as `db`.
 - Verify the input image SHA-256 and byte length before generating the final master listing. Preserve the existing reset/POST listings unchanged.
 
@@ -1041,7 +1041,7 @@ Audit report: [AMI486_PHASES_1_96_AUDIT_20261116.md](AMI486_PHASES_1_96_AUDIT_20
 - Corrected phase 60's image-size typo (65,534 -> 65,536) and reset-vector label (FFF0h).
 - Corrected this index's stale 5D54h/F5DBh statement; authoritative call is 5D52h -> F5D9h.
 - Phases 72, 77 and 79 now carry explicit supersession notes for the later byte-verified corrections.
-- Semantic byte-classification ledger is still missing. Do not publish a whole-ROM semantic percentage or start phase 97 until the address ledger is built and audited.
+- A first-pass address-reference ledger exists, but the complete per-byte semantic classification (code/data/overlap/unresolved) is still incomplete. Do not publish a whole-ROM semantic percentage.
 
 
 ## First address-ledger pass — 2026-11-16
@@ -1052,7 +1052,7 @@ See [AMI486_ADDRESS_LEDGER_20261116.md](AMI486_ADDRESS_LEDGER_20261116.md).
 - Narrow token scan: 153 pages have explicit address references; 103 pages have none. This is not a coverage percentage.
 - Raw-byte checks uncovered substantial executable-looking content in pages without explicit phase references, including 2100h, 6800h, A000h–ACFFh, AE60h–AFFFh, D100h–D5FFh and F900h.
 - Confirmed data candidates include the Format/BootSector Write/Possible VIRUS message at A125h–A18Dh and keyboard translation tables at AD00h–AE5Fh.
-- Next focus: resolve the A000h–AFFFh mixed subsystem and connect it to D100h–D5FFh controller routines; then verify 2100h and F900h entry/caller provenance.
+- A000h–AFFFh, D100h–D5FFh, 2100h and the F900h dispatch wrapper now have dedicated subsystem maps. Remaining high-priority questions include the runtime INT 40h target, F900h vector provenance, the 2100h memory-test caller/ES setup, keyboard table boundaries and the unresolved command semantics at D40Ah–D462h.
 
 
 ## ATA / floppy / keyboard region discoveries — 2026-11-16
@@ -1074,7 +1074,7 @@ Detailed report: [AMI486_STORAGE_AND_DISPATCH_REGIONS_20261116.md](AMI486_STORAG
 - D100h–D5FFh is the independent floppy controller/DMA subsystem using 03F2h/03F4h/03F5h/03F7h and DMA ports 0Ch/0Bh/05h/04h.
 - AD00h–AE5Fh is keyboard translation data candidate; AE60h onward includes INT 15h AH=4Fh keyboard intercept handling.
 - F92Ah–F935h is a six-entry handler-offset table; F977h is an overlapping alternate entry inside the F936h stream. F900h wrapper returns with IRET; vector provenance remains unresolved.
-- The Capstone candidate-window output is now 111 unique bounded code windows plus separately emitted data ranges, with 16-bit near-target wraparound.
+- The current Capstone candidate-window output has 146 unique bounded code windows plus 6 data windows (152 headers total); their union is 8,618 distinct bytes across 46 pages. This is a selected-window footprint, not semantic coverage.
 
 Do not merge ATA, FDC, keyboard and F9xx dispatch code into one subsystem.
 
