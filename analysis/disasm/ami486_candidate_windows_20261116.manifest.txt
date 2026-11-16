@@ -1,6 +1,7 @@
 Target: ami486.bin
 ROM size: 65536 bytes
-Candidate windows: 24
+Candidate windows: 50
 Window bytes: 0x80 each (clipped at ROM end)
 Decoder: Capstone x86 16-bit
+Relative near-branch targets normalized to 16-bit IP.
 Interpretation: independently seeded linear windows only; no CFG or entry-point proof.

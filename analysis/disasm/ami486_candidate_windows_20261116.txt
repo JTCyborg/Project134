@@ -2,6 +2,7 @@ AMI486 RAW-BYTE CANDIDATE WINDOWS
 Decoder: Capstone x86 16-bit
 Window length: 0x80 bytes per seed, clipped at ROM end
 WARNING: independently seeded linear decodes; not a CFG and not proof of entry points.
+Relative near-branch targets are normalized to 16-bit IP wraparound.
 
 ===== A000h-A07Fh =====
 Reason: code-dense raw window; entry not yet caller-verified
@@ -68,6 +69,201 @@ A07B  22 E6                   and ah, dh
 A07D  86 C4                   xchg ah, al
 A07F  22              db 0x22
 
+===== A080h-A0FFh =====
+Reason: continuation candidate after initial A000h helper group
+A080  D2 C3                   rol bl, cl
+A082  50                      push ax
+A083  A0 10 00                mov al, byte ptr [0x10]
+A086  24 30                   and al, 0x30
+A088  3C 30                   cmp al, 0x30
+A08A  58                      pop ax
+A08B  C3                      ret
+A08C  90                      nop
+A08D  80 FA 80                cmp dl, 0x80
+A090  FB                      sti
+A091  FC                      cld
+A092  72 58                   jb 0xa0ec
+A094  0A E4                   or ah, ah
+A096  75 04                   jne 0xa09c
+A098  CD 40                   int 0x40
+A09A  32 E4                   xor ah, ah
+A09C  E8 13 F0                call 0x90b2
+A09F  50                      push ax
+A0A0  51                      push cx
+A0A1  52                      push dx
+A0A2  53                      push bx
+A0A3  56                      push si
+A0A4  57                      push di
+A0A5  1E                      push ds
+A0A6  06                      push es
+A0A7  83 EC 08                sub sp, 8
+A0AA  55                      push bp
+A0AB  8B EC                   mov bp, sp
+A0AD  6A 40                   push 0x40
+A0AF  1F                      pop ds
+A0B0  50                      push ax
+A0B1  8A C4                   mov al, ah
+A0B3  98                      cwde
+A0B4  8B F8                   mov di, ax
+A0B6  3C 19                   cmp al, 0x19
+A0B8  58                      pop ax
+A0B9  77 27                   ja 0xa0e2
+A0BB  D1 E7                   shl di, 1
+A0BD  2E FF 95 F1 A0          call word ptr cs:[di - 0x5f0f]
+A0C2  89 46 18                mov word ptr [bp + 0x18], ax
+A0C5  B8 01 02                mov ax, 0x201
+A0C8  72 05                   jb 0xa0cf
+A0CA  80 66 1E FE             and byte ptr [bp + 0x1e], 0xfe
+A0CE  48                      dec ax
+A0CF  09 46 1E                or word ptr [bp + 0x1e], ax
+A0D2  5D                      pop bp
+A0D3  83 C4 08                add sp, 8
+A0D6  07                      pop es
+A0D7  1F                      pop ds
+A0D8  5F                      pop di
+A0D9  5E                      pop si
+A0DA  5B                      pop bx
+A0DB  5A                      pop dx
+A0DC  59                      pop cx
+A0DD  58                      pop ax
+A0DE  E8 D1 EF                call 0x90b2
+A0E1  CF                      iret
+A0E2  B8 00 01                mov ax, 0x100
+A0E5  88 26 74 00             mov byte ptr [0x74], ah
+A0E9  F9                      stc
+A0EA  EB D6                   jmp 0xa0c2
+A0EC  CD 40                   int 0x40
+A0EE  CA 02 00                retf 2
+A0F1  97                      xchg di, ax
+A0F2  A1 0B A2                mov ax, word ptr [0xa20b]
+A0F5  16                      push ss
+A0F6  A2 26 A2                mov byte ptr [0xa226], al
+A0F9  3E A2 5F A2             mov byte ptr ds:[0xa25f], al
+A0FD  8E              db 0x8E
+A0FE  A1              db 0xA1
+A0FF  8E              db 0x8E
+
+===== A0A0h-A11Fh =====
+Reason: candidate routine prologue and local stack frame
+A0A0  51                      push cx
+A0A1  52                      push dx
+A0A2  53                      push bx
+A0A3  56                      push si
+A0A4  57                      push di
+A0A5  1E                      push ds
+A0A6  06                      push es
+A0A7  83 EC 08                sub sp, 8
+A0AA  55                      push bp
+A0AB  8B EC                   mov bp, sp
+A0AD  6A 40                   push 0x40
+A0AF  1F                      pop ds
+A0B0  50                      push ax
+A0B1  8A C4                   mov al, ah
+A0B3  98                      cwde
+A0B4  8B F8                   mov di, ax
+A0B6  3C 19                   cmp al, 0x19
+A0B8  58                      pop ax
+A0B9  77 27                   ja 0xa0e2
+A0BB  D1 E7                   shl di, 1
+A0BD  2E FF 95 F1 A0          call word ptr cs:[di - 0x5f0f]
+A0C2  89 46 18                mov word ptr [bp + 0x18], ax
+A0C5  B8 01 02                mov ax, 0x201
+A0C8  72 05                   jb 0xa0cf
+A0CA  80 66 1E FE             and byte ptr [bp + 0x1e], 0xfe
+A0CE  48                      dec ax
+A0CF  09 46 1E                or word ptr [bp + 0x1e], ax
+A0D2  5D                      pop bp
+A0D3  83 C4 08                add sp, 8
+A0D6  07                      pop es
+A0D7  1F                      pop ds
+A0D8  5F                      pop di
+A0D9  5E                      pop si
+A0DA  5B                      pop bx
+A0DB  5A                      pop dx
+A0DC  59                      pop cx
+A0DD  58                      pop ax
+A0DE  E8 D1 EF                call 0x90b2
+A0E1  CF                      iret
+A0E2  B8 00 01                mov ax, 0x100
+A0E5  88 26 74 00             mov byte ptr [0x74], ah
+A0E9  F9                      stc
+A0EA  EB D6                   jmp 0xa0c2
+A0EC  CD 40                   int 0x40
+A0EE  CA 02 00                retf 2
+A0F1  97                      xchg di, ax
+A0F2  A1 0B A2                mov ax, word ptr [0xa20b]
+A0F5  16                      push ss
+A0F6  A2 26 A2                mov byte ptr [0xa226], al
+A0F9  3E A2 5F A2             mov byte ptr ds:[0xa25f], al
+A0FD  8E A1 8E A1             mov fs, word ptr [bx + di - 0x5e72]
+A101  A4                      movsb byte ptr es:[di], byte ptr [si]
+A102  A1 37 A3                mov ax, word ptr [0xa337]
+A105  72 A3                   jb 0xa0aa
+A107  81 A3 74 A4 9E A1       and word ptr [bp + di - 0x5b8c], 0xa19e
+A10D  8E A1 8E A1             mov fs, word ptr [bx + di - 0x5e72]
+A111  D3 A4 01 A5             shl word ptr [si - 0x5aff], cl
+A115  8E A1 8E A1             mov fs, word ptr [bx + di - 0x5e72]
+A119  2B A5 A9 A1             sub sp, word ptr [di - 0x5e57]
+A11D  8E              db 0x8E
+A11E  A1              db 0xA1
+A11F  8E              db 0x8E
+
+===== A0F0h-A16Fh =====
+Reason: possible pointer/dispatch data boundary; inspect both streams
+A0F0  00 97 A1 0B             add byte ptr [bx + 0xba1], dl
+A0F4  A2 16 A2                mov byte ptr [0xa216], al
+A0F7  26 A2 3E A2             mov byte ptr es:[0xa23e], al
+A0FB  5F                      pop di
+A0FC  A2 8E A1                mov byte ptr [0xa18e], al
+A0FF  8E A1 A4 A1             mov fs, word ptr [bx + di - 0x5e5c]
+A103  37                      aaa
+A104  A3 72 A3                mov word ptr [0xa372], ax
+A107  81 A3 74 A4 9E A1       and word ptr [bp + di - 0x5b8c], 0xa19e
+A10D  8E A1 8E A1             mov fs, word ptr [bx + di - 0x5e72]
+A111  D3 A4 01 A5             shl word ptr [si - 0x5aff], cl
+A115  8E A1 8E A1             mov fs, word ptr [bx + di - 0x5e72]
+A119  2B A5 A9 A1             sub sp, word ptr [di - 0x5e57]
+A11D  8E A1 8E A1             mov fs, word ptr [bx + di - 0x5e72]
+A121  8E A1 7B A5             mov fs, word ptr [bx + di - 0x5a85]
+A125  20 20                   and byte ptr [bx + si], ah
+A127  20 20                   and byte ptr [bx + si], ah
+A129  20 20                   and byte ptr [bx + si], ah
+A12B  20 20                   and byte ptr [bx + si], ah
+A12D  20 20                   and byte ptr [bx + si], ah
+A12F  20 20                   and byte ptr [bx + si], ah
+A131  46                      inc si
+A132  6F                      outsw dx, word ptr [si]
+A133  72 6D                   jb 0xa1a2
+A135  61                      popaw
+A136  74 20                   je 0xa158
+A138  21 21                   and word ptr [bx + di], sp
+A13A  21 20                   and word ptr [bx + si], sp
+A13C  20 20                   and byte ptr [bx + si], ah
+A13E  20 20                   and byte ptr [bx + si], ah
+A140  20 20                   and byte ptr [bx + si], ah
+A142  20 20                   and byte ptr [bx + si], ah
+A144  20 20                   and byte ptr [bx + si], ah
+A146  20 20                   and byte ptr [bx + si], ah
+A148  20 20                   and byte ptr [bx + si], ah
+A14A  20 20                   and byte ptr [bx + si], ah
+A14C  20 20                   and byte ptr [bx + si], ah
+A14E  20 42 6F                and byte ptr [bp + si + 0x6f], al
+A151  6F                      outsw dx, word ptr [si]
+A152  74 53                   je 0xa1a7
+A154  65 63 74 6F             arpl word ptr gs:[si + 0x6f], si
+A158  72 20                   jb 0xa17a
+A15A  57                      push di
+A15B  72 69                   jb 0xa1c6
+A15D  74 65                   je 0xa1c4
+A15F  20 21                   and byte ptr [bx + di], ah
+A161  21 21                   and word ptr [bx + di], sp
+A163  20 20                   and byte ptr [bx + si], ah
+A165  20 20                   and byte ptr [bx + si], ah
+A167  20 20                   and byte ptr [bx + si], ah
+A169  20 20                   and byte ptr [bx + si], ah
+A16B  20 50 6F                and byte ptr [bx + si + 0x6f], dl
+A16E  73 73                   jae 0xa1e3
+
 ===== A18Eh-A20Dh =====
 Reason: byte-aligned short helper immediately after embedded prompt
 A18E  B8 00 01                mov ax, 0x100
@@ -123,11 +319,64 @@ A206  88 26 74 00             mov byte ptr [0x74], ah
 A20A  C3                      ret
 A20B  A0 74 00                mov al, byte ptr [0x74]
 
-===== A1A0h-A21Fh =====
-Reason: code-dense raw window; entry not yet caller-verified
-A1A0  04 73                   add al, 0x73
-A1A2  F9                      stc
+===== A197h-A216h =====
+Reason: branch target from A19Ah; likely routine entry
+A197  80 FA 81                cmp dl, 0x81
+A19A  77 07                   ja 0xa1a3
+A19C  EB 15                   jmp 0xa1b3
+A19E  E8 29 04                call 0xa5ca
+A1A1  73 F9                   jae 0xa19c
 A1A3  C3                      ret
+A1A4  E8 4A 01                call 0xa2f1
+A1A7  EB 03                   jmp 0xa1ac
+A1A9  E8 A6 03                call 0xa552
+A1AC  89 56 14                mov word ptr [bp + 0x14], dx
+A1AF  89 4E 16                mov word ptr [bp + 0x16], cx
+A1B2  C3                      ret
+A1B3  C6 06 8E 00 00          mov byte ptr [0x8e], 0
+A1B8  BA F6 03                mov dx, 0x3f6
+A1BB  B0 04                   mov al, 4
+A1BD  EE                      out dx, al
+A1BE  B9 26 00                mov cx, 0x26
+A1C1  E8 78 47                call 0xe93c
+A1C4  B0 00                   mov al, 0
+A1C6  EE                      out dx, al
+A1C7  E8 63 04                call 0xa62d
+A1CA  72 3E                   jb 0xa20a
+A1CC  BA F1 01                mov dx, 0x1f1
+A1CF  EC                      in al, dx
+A1D0  A2 8D 00                mov byte ptr [0x8d], al
+A1D3  3C 01                   cmp al, 1
+A1D5  74 05                   je 0xa1dc
+A1D7  B4 05                   mov ah, 5
+A1D9  F9                      stc
+A1DA  EB 2A                   jmp 0xa206
+A1DC  B2 80                   mov dl, 0x80
+A1DE  BF 22 00                mov di, 0x22
+A1E1  E8 1D 03                call 0xa501
+A1E4  80 3E 75 00 02          cmp byte ptr [0x75], 2
+A1E9  72 05                   jb 0xa1f0
+A1EB  B2 81                   mov dl, 0x81
+A1ED  E8 11 03                call 0xa501
+A1F0  B2 80                   mov dl, 0x80
+A1F2  BF 12 00                mov di, 0x12
+A1F5  E8 3F 01                call 0xa337
+A1F8  80 3E 75 00 02          cmp byte ptr [0x75], 2
+A1FD  72 05                   jb 0xa204
+A1FF  B2 81                   mov dl, 0x81
+A201  E8 33 01                call 0xa337
+A204  32 E4                   xor ah, ah
+A206  88 26 74 00             mov byte ptr [0x74], ah
+A20A  C3                      ret
+A20B  A0 74 00                mov al, byte ptr [0x74]
+A20E  B4 00                   mov ah, 0
+A210  88 26 74 00             mov byte ptr [0x74], ah
+A214  F8                      clc
+A215  C3                      ret
+A216  C7              db 0xC7
+
+===== A1A4h-A223h =====
+Reason: independent routine entry
 A1A4  E8 4A 01                call 0xa2f1
 A1A7  EB 03                   jmp 0xa1ac
 A1A9  E8 A6 03                call 0xa552
@@ -177,13 +426,65 @@ A215  C3                      ret
 A216  C7 46 18 00 02          mov word ptr [bp + 0x18], 0x200
 A21B  E8 4E 05                call 0xa76c
 A21E  72 05                   jb 0xa225
+A220  B4 20                   mov ah, 0x20
+A222  E9              db 0xE9
+A223  74              db 0x74
 
-===== A200h-A27Fh =====
-Reason: code-dense raw window
-A200  81 E8 33 01             sub ax, 0x133
+===== A1B3h-A232h =====
+Reason: branch target from A19Ch; ATA controller initialization path
+A1B3  C6 06 8E 00 00          mov byte ptr [0x8e], 0
+A1B8  BA F6 03                mov dx, 0x3f6
+A1BB  B0 04                   mov al, 4
+A1BD  EE                      out dx, al
+A1BE  B9 26 00                mov cx, 0x26
+A1C1  E8 78 47                call 0xe93c
+A1C4  B0 00                   mov al, 0
+A1C6  EE                      out dx, al
+A1C7  E8 63 04                call 0xa62d
+A1CA  72 3E                   jb 0xa20a
+A1CC  BA F1 01                mov dx, 0x1f1
+A1CF  EC                      in al, dx
+A1D0  A2 8D 00                mov byte ptr [0x8d], al
+A1D3  3C 01                   cmp al, 1
+A1D5  74 05                   je 0xa1dc
+A1D7  B4 05                   mov ah, 5
+A1D9  F9                      stc
+A1DA  EB 2A                   jmp 0xa206
+A1DC  B2 80                   mov dl, 0x80
+A1DE  BF 22 00                mov di, 0x22
+A1E1  E8 1D 03                call 0xa501
+A1E4  80 3E 75 00 02          cmp byte ptr [0x75], 2
+A1E9  72 05                   jb 0xa1f0
+A1EB  B2 81                   mov dl, 0x81
+A1ED  E8 11 03                call 0xa501
+A1F0  B2 80                   mov dl, 0x80
+A1F2  BF 12 00                mov di, 0x12
+A1F5  E8 3F 01                call 0xa337
+A1F8  80 3E 75 00 02          cmp byte ptr [0x75], 2
+A1FD  72 05                   jb 0xa204
+A1FF  B2 81                   mov dl, 0x81
+A201  E8 33 01                call 0xa337
 A204  32 E4                   xor ah, ah
 A206  88 26 74 00             mov byte ptr [0x74], ah
 A20A  C3                      ret
+A20B  A0 74 00                mov al, byte ptr [0x74]
+A20E  B4 00                   mov ah, 0
+A210  88 26 74 00             mov byte ptr [0x74], ah
+A214  F8                      clc
+A215  C3                      ret
+A216  C7 46 18 00 02          mov word ptr [bp + 0x18], 0x200
+A21B  E8 4E 05                call 0xa76c
+A21E  72 05                   jb 0xa225
+A220  B4 20                   mov ah, 0x20
+A222  E9 74 01                jmp 0xa399
+A225  C3                      ret
+A226  E8 DF 05                call 0xa808
+A229  73 03                   jae 0xa22e
+A22B  E9 66 01                jmp 0xa394
+A22E  C7 46 18 00 02          mov word ptr [bp + 0x18], 0x200
+
+===== A20Bh-A28Ah =====
+Reason: status-return helper after A20Ah RET
 A20B  A0 74 00                mov al, byte ptr [0x74]
 A20E  B4 00                   mov ah, 0
 A210  88 26 74 00             mov byte ptr [0x74], ah
@@ -230,11 +531,240 @@ A274  8C C7                   mov di, es
 A276  8B F3                   mov si, bx
 A278  E8 2E 03                call 0xa5a9
 A27B  E8 1A 05                call 0xa798
-A27E  E8              db 0xE8
-A27F  A0              db 0xA0
+A27E  E8 A0 03                call 0xa621
+A281  26 8A 47 0E             mov al, byte ptr es:[bx + 0xe]
+A285  88 46 03                mov byte ptr [bp + 3], al
+A288  BA F2 01                mov dx, 0x1f2
+
+===== A216h-A295h =====
+Reason: routine entry after A215h RET
+A216  C7 46 18 00 02          mov word ptr [bp + 0x18], 0x200
+A21B  E8 4E 05                call 0xa76c
+A21E  72 05                   jb 0xa225
+A220  B4 20                   mov ah, 0x20
+A222  E9 74 01                jmp 0xa399
+A225  C3                      ret
+A226  E8 DF 05                call 0xa808
+A229  73 03                   jae 0xa22e
+A22B  E9 66 01                jmp 0xa394
+A22E  C7 46 18 00 02          mov word ptr [bp + 0x18], 0x200
+A233  E8 36 05                call 0xa76c
+A236  72 05                   jb 0xa23d
+A238  B4 30                   mov ah, 0x30
+A23A  E9 C9 01                jmp 0xa406
+A23D  C3                      ret
+A23E  E8 89 03                call 0xa5ca
+A241  72 1B                   jb 0xa25e
+A243  E8 0F 04                call 0xa655
+A246  72 16                   jb 0xa25e
+A248  E8 4D 05                call 0xa798
+A24B  E8 6C 05                call 0xa7ba
+A24E  E8 D0 03                call 0xa621
+A251  B0 40                   mov al, 0x40
+A253  E8 E8 04                call 0xa73e
+A256  E8 3B 04                call 0xa694
+A259  72 03                   jb 0xa25e
+A25B  E8 7E 04                call 0xa6dc
+A25E  C3                      ret
+A25F  E8 AD 05                call 0xa80f
+A262  73 03                   jae 0xa267
+A264  E9 2D 01                jmp 0xa394
+A267  E8 60 03                call 0xa5ca
+A26A  72 05                   jb 0xa271
+A26C  E8 E6 03                call 0xa655
+A26F  73 03                   jae 0xa274
+A271  EB 7D                   jmp 0xa2f0
+A273  90                      nop
+A274  8C C7                   mov di, es
+A276  8B F3                   mov si, bx
+A278  E8 2E 03                call 0xa5a9
+A27B  E8 1A 05                call 0xa798
+A27E  E8 A0 03                call 0xa621
+A281  26 8A 47 0E             mov al, byte ptr es:[bx + 0xe]
+A285  88 46 03                mov byte ptr [bp + 3], al
+A288  BA F2 01                mov dx, 0x1f2
+A28B  EE                      out dx, al
+A28C  E3 00                   jcxz 0xa28e
+A28E  E3 00                   jcxz 0xa290
+A290  8A C1                   mov al, cl
+A292  24 3F                   and al, 0x3f
+A294  BA              db 0xBA
+A295  F3              db 0xF3
+
+===== A226h-A2A5h =====
+Reason: routine entry after A225h RET
+A226  E8 DF 05                call 0xa808
+A229  73 03                   jae 0xa22e
+A22B  E9 66 01                jmp 0xa394
+A22E  C7 46 18 00 02          mov word ptr [bp + 0x18], 0x200
+A233  E8 36 05                call 0xa76c
+A236  72 05                   jb 0xa23d
+A238  B4 30                   mov ah, 0x30
+A23A  E9 C9 01                jmp 0xa406
+A23D  C3                      ret
+A23E  E8 89 03                call 0xa5ca
+A241  72 1B                   jb 0xa25e
+A243  E8 0F 04                call 0xa655
+A246  72 16                   jb 0xa25e
+A248  E8 4D 05                call 0xa798
+A24B  E8 6C 05                call 0xa7ba
+A24E  E8 D0 03                call 0xa621
+A251  B0 40                   mov al, 0x40
+A253  E8 E8 04                call 0xa73e
+A256  E8 3B 04                call 0xa694
+A259  72 03                   jb 0xa25e
+A25B  E8 7E 04                call 0xa6dc
+A25E  C3                      ret
+A25F  E8 AD 05                call 0xa80f
+A262  73 03                   jae 0xa267
+A264  E9 2D 01                jmp 0xa394
+A267  E8 60 03                call 0xa5ca
+A26A  72 05                   jb 0xa271
+A26C  E8 E6 03                call 0xa655
+A26F  73 03                   jae 0xa274
+A271  EB 7D                   jmp 0xa2f0
+A273  90                      nop
+A274  8C C7                   mov di, es
+A276  8B F3                   mov si, bx
+A278  E8 2E 03                call 0xa5a9
+A27B  E8 1A 05                call 0xa798
+A27E  E8 A0 03                call 0xa621
+A281  26 8A 47 0E             mov al, byte ptr es:[bx + 0xe]
+A285  88 46 03                mov byte ptr [bp + 3], al
+A288  BA F2 01                mov dx, 0x1f2
+A28B  EE                      out dx, al
+A28C  E3 00                   jcxz 0xa28e
+A28E  E3 00                   jcxz 0xa290
+A290  8A C1                   mov al, cl
+A292  24 3F                   and al, 0x3f
+A294  BA F3 01                mov dx, 0x1f3
+A297  EE                      out dx, al
+A298  E3 00                   jcxz 0xa29a
+A29A  E3 00                   jcxz 0xa29c
+A29C  8A 46 07                mov al, byte ptr [bp + 7]
+A29F  BA F6 01                mov dx, 0x1f6
+A2A2  EE                      out dx, al
+A2A3  E3 00                   jcxz 0xa2a5
+A2A5  E3              db 0xE3
+
+===== A23Eh-A2BDh =====
+Reason: routine entry after A23Dh RET
+A23E  E8 89 03                call 0xa5ca
+A241  72 1B                   jb 0xa25e
+A243  E8 0F 04                call 0xa655
+A246  72 16                   jb 0xa25e
+A248  E8 4D 05                call 0xa798
+A24B  E8 6C 05                call 0xa7ba
+A24E  E8 D0 03                call 0xa621
+A251  B0 40                   mov al, 0x40
+A253  E8 E8 04                call 0xa73e
+A256  E8 3B 04                call 0xa694
+A259  72 03                   jb 0xa25e
+A25B  E8 7E 04                call 0xa6dc
+A25E  C3                      ret
+A25F  E8 AD 05                call 0xa80f
+A262  73 03                   jae 0xa267
+A264  E9 2D 01                jmp 0xa394
+A267  E8 60 03                call 0xa5ca
+A26A  72 05                   jb 0xa271
+A26C  E8 E6 03                call 0xa655
+A26F  73 03                   jae 0xa274
+A271  EB 7D                   jmp 0xa2f0
+A273  90                      nop
+A274  8C C7                   mov di, es
+A276  8B F3                   mov si, bx
+A278  E8 2E 03                call 0xa5a9
+A27B  E8 1A 05                call 0xa798
+A27E  E8 A0 03                call 0xa621
+A281  26 8A 47 0E             mov al, byte ptr es:[bx + 0xe]
+A285  88 46 03                mov byte ptr [bp + 3], al
+A288  BA F2 01                mov dx, 0x1f2
+A28B  EE                      out dx, al
+A28C  E3 00                   jcxz 0xa28e
+A28E  E3 00                   jcxz 0xa290
+A290  8A C1                   mov al, cl
+A292  24 3F                   and al, 0x3f
+A294  BA F3 01                mov dx, 0x1f3
+A297  EE                      out dx, al
+A298  E3 00                   jcxz 0xa29a
+A29A  E3 00                   jcxz 0xa29c
+A29C  8A 46 07                mov al, byte ptr [bp + 7]
+A29F  BA F6 01                mov dx, 0x1f6
+A2A2  EE                      out dx, al
+A2A3  E3 00                   jcxz 0xa2a5
+A2A5  E3 00                   jcxz 0xa2a7
+A2A7  8A C5                   mov al, ch
+A2A9  88 46 05                mov byte ptr [bp + 5], al
+A2AC  BA F4 01                mov dx, 0x1f4
+A2AF  EE                      out dx, al
+A2B0  E3 00                   jcxz 0xa2b2
+A2B2  E3 00                   jcxz 0xa2b4
+A2B4  8A C1                   mov al, cl
+A2B6  C0 E8 06                shr al, 6
+A2B9  8A D0                   mov dl, al
+A2BB  8A 46 15                mov al, byte ptr [bp + 0x15]
+
+===== A25Fh-A2DEh =====
+Reason: routine entry after A25Eh RET
+A25F  E8 AD 05                call 0xa80f
+A262  73 03                   jae 0xa267
+A264  E9 2D 01                jmp 0xa394
+A267  E8 60 03                call 0xa5ca
+A26A  72 05                   jb 0xa271
+A26C  E8 E6 03                call 0xa655
+A26F  73 03                   jae 0xa274
+A271  EB 7D                   jmp 0xa2f0
+A273  90                      nop
+A274  8C C7                   mov di, es
+A276  8B F3                   mov si, bx
+A278  E8 2E 03                call 0xa5a9
+A27B  E8 1A 05                call 0xa798
+A27E  E8 A0 03                call 0xa621
+A281  26 8A 47 0E             mov al, byte ptr es:[bx + 0xe]
+A285  88 46 03                mov byte ptr [bp + 3], al
+A288  BA F2 01                mov dx, 0x1f2
+A28B  EE                      out dx, al
+A28C  E3 00                   jcxz 0xa28e
+A28E  E3 00                   jcxz 0xa290
+A290  8A C1                   mov al, cl
+A292  24 3F                   and al, 0x3f
+A294  BA F3 01                mov dx, 0x1f3
+A297  EE                      out dx, al
+A298  E3 00                   jcxz 0xa29a
+A29A  E3 00                   jcxz 0xa29c
+A29C  8A 46 07                mov al, byte ptr [bp + 7]
+A29F  BA F6 01                mov dx, 0x1f6
+A2A2  EE                      out dx, al
+A2A3  E3 00                   jcxz 0xa2a5
+A2A5  E3 00                   jcxz 0xa2a7
+A2A7  8A C5                   mov al, ch
+A2A9  88 46 05                mov byte ptr [bp + 5], al
+A2AC  BA F4 01                mov dx, 0x1f4
+A2AF  EE                      out dx, al
+A2B0  E3 00                   jcxz 0xa2b2
+A2B2  E3 00                   jcxz 0xa2b4
+A2B4  8A C1                   mov al, cl
+A2B6  C0 E8 06                shr al, 6
+A2B9  8A D0                   mov dl, al
+A2BB  8A 46 15                mov al, byte ptr [bp + 0x15]
+A2BE  C0 E8 04                shr al, 4
+A2C1  24 0C                   and al, 0xc
+A2C3  0A C2                   or al, dl
+A2C5  88 46 06                mov byte ptr [bp + 6], al
+A2C8  BA F5 01                mov dx, 0x1f5
+A2CB  EE                      out dx, al
+A2CC  B0 50                   mov al, 0x50
+A2CE  E8 6D 04                call 0xa73e
+A2D1  E8 E7 03                call 0xa6bb
+A2D4  72 1A                   jb 0xa2f0
+A2D6  8C D8                   mov ax, ds
+A2D8  97                      xchg di, ax
+A2D9  8E D8                   mov ds, ax
+A2DB  B9 00 01                mov cx, 0x100
+A2DE  BA              db 0xBA
 
 ===== A300h-A37Fh =====
-Reason: code-dense raw window
+Reason: geometry/parameter conversion candidate
 A300  8A 77 02                mov dh, byte ptr [bx + 2]
 A303  FE CE                   dec dh
 A305  26 8B 07                mov ax, word ptr es:[bx]
@@ -286,12 +816,117 @@ A37A  72 04                   jb 0xa380
 A37C  B4 22                   mov ah, 0x22
 A37E  EB 19                   jmp 0xa399
 
-===== A400h-A47Fh =====
-Reason: code-dense raw window
-A400  0A E4                   or ah, ah
-A402  74 01                   je 0xa405
-A404  F9                      stc
-A405  C3                      ret
+===== A337h-A3B6h =====
+Reason: direct CALL target
+A337  E8 90 02                call 0xa5ca
+A33A  72 35                   jb 0xa371
+A33C  E8 6A 02                call 0xa5a9
+A33F  72 30                   jb 0xa371
+A341  E8 11 03                call 0xa655
+A344  72 2B                   jb 0xa371
+A346  E8 4F 04                call 0xa798
+A349  26 8A 47 0E             mov al, byte ptr es:[bx + 0xe]
+A34D  8A E2                   mov ah, dl
+A34F  BA F2 01                mov dx, 0x1f2
+A352  88 46 03                mov byte ptr [bp + 3], al
+A355  EE                      out dx, al
+A356  E3 00                   jcxz 0xa358
+A358  E3 00                   jcxz 0xa35a
+A35A  BA F6 01                mov dx, 0x1f6
+A35D  8A 46 07                mov al, byte ptr [bp + 7]
+A360  EE                      out dx, al
+A361  B0 91                   mov al, 0x91
+A363  E8 BB 02                call 0xa621
+A366  E8 D5 03                call 0xa73e
+A369  E8 28 03                call 0xa694
+A36C  72 03                   jb 0xa371
+A36E  E8 6B 03                call 0xa6dc
+A371  C3                      ret
+A372  C7 46 18 04 02          mov word ptr [bp + 0x18], 0x204
+A377  E8 F2 03                call 0xa76c
+A37A  72 04                   jb 0xa380
+A37C  B4 22                   mov ah, 0x22
+A37E  EB 19                   jmp 0xa399
+A380  C3                      ret
+A381  E8 84 04                call 0xa808
+A384  72 0E                   jb 0xa394
+A386  C7 46 18 04 02          mov word ptr [bp + 0x18], 0x204
+A38B  E8 DE 03                call 0xa76c
+A38E  72 08                   jb 0xa398
+A390  B4 32                   mov ah, 0x32
+A392  EB 72                   jmp 0xa406
+A394  88 26 74 00             mov byte ptr [0x74], ah
+A398  C3                      ret
+A399  E8 2E 02                call 0xa5ca
+A39C  72 67                   jb 0xa405
+A39E  E8 B4 02                call 0xa655
+A3A1  72 62                   jb 0xa405
+A3A3  8B FB                   mov di, bx
+A3A5  8C C6                   mov si, es
+A3A7  E8 EE 03                call 0xa798
+A3AA  F6 06 76 00 C0          test byte ptr [0x76], 0xc0
+A3AF  74 02                   je 0xa3b3
+A3B1  FE C4                   inc ah
+A3B3  E8 04 04                call 0xa7ba
+A3B6  E8              db 0xE8
+
+===== A372h-A3F1h =====
+Reason: direct dispatch target
+A372  C7 46 18 04 02          mov word ptr [bp + 0x18], 0x204
+A377  E8 F2 03                call 0xa76c
+A37A  72 04                   jb 0xa380
+A37C  B4 22                   mov ah, 0x22
+A37E  EB 19                   jmp 0xa399
+A380  C3                      ret
+A381  E8 84 04                call 0xa808
+A384  72 0E                   jb 0xa394
+A386  C7 46 18 04 02          mov word ptr [bp + 0x18], 0x204
+A38B  E8 DE 03                call 0xa76c
+A38E  72 08                   jb 0xa398
+A390  B4 32                   mov ah, 0x32
+A392  EB 72                   jmp 0xa406
+A394  88 26 74 00             mov byte ptr [0x74], ah
+A398  C3                      ret
+A399  E8 2E 02                call 0xa5ca
+A39C  72 67                   jb 0xa405
+A39E  E8 B4 02                call 0xa655
+A3A1  72 62                   jb 0xa405
+A3A3  8B FB                   mov di, bx
+A3A5  8C C6                   mov si, es
+A3A7  E8 EE 03                call 0xa798
+A3AA  F6 06 76 00 C0          test byte ptr [0x76], 0xc0
+A3AF  74 02                   je 0xa3b3
+A3B1  FE C4                   inc ah
+A3B3  E8 04 04                call 0xa7ba
+A3B6  E8 68 02                call 0xa621
+A3B9  8A C4                   mov al, ah
+A3BB  E8 80 03                call 0xa73e
+A3BE  E8 D3 02                call 0xa694
+A3C1  72 42                   jb 0xa405
+A3C3  E8 16 03                call 0xa6dc
+A3C6  73 07                   jae 0xa3cf
+A3C8  80 3E 74 00 11          cmp byte ptr [0x74], 0x11
+A3CD  75 2D                   jne 0xa3fc
+A3CF  8E C6                   mov es, si
+A3D1  B9 00 01                mov cx, 0x100
+A3D4  BA F0 01                mov dx, 0x1f0
+A3D7  FA                      cli
+A3D8  FC                      cld
+A3D9  F3 6D                   rep insw word ptr es:[di], dx
+A3DB  FB                      sti
+A3DC  F6 46 08 02             test byte ptr [bp + 8], 2
+A3E0  74 15                   je 0xa3f7
+A3E2  E8 D6 02                call 0xa6bb
+A3E5  72 1E                   jb 0xa405
+A3E7  B9 04 00                mov cx, 4
+A3EA  EC                      in al, dx
+A3EB  26 88 05                mov byte ptr es:[di], al
+A3EE  47                      inc di
+A3EF  E3 00                   jcxz 0xa3f1
+A3F1  E3              db 0xE3
+
+===== A406h-A485h =====
+Reason: direct jump target; ATA data transfer path
 A406  E8 C1 01                call 0xa5ca
 A409  72 68                   jb 0xa473
 A40B  E8 47 02                call 0xa655
@@ -344,12 +979,70 @@ A474  E8 53 01                call 0xa5ca
 A477  72 59                   jb 0xa4d2
 A479  E8 D9 01                call 0xa655
 A47C  72 54                   jb 0xa4d2
-A47E  E8              db 0xE8
-A47F  17                      pop ss
+A47E  E8 17 03                call 0xa798
+A481  8A C5                   mov al, ch
+A483  8A EA                   mov ch, dl
+A485  BA              db 0xBA
 
-===== A500h-A57Fh =====
-Reason: code-dense raw window
-A500  C3                      ret
+===== A474h-A4F3h =====
+Reason: routine entry after A473h RET
+A474  E8 53 01                call 0xa5ca
+A477  72 59                   jb 0xa4d2
+A479  E8 D9 01                call 0xa655
+A47C  72 54                   jb 0xa4d2
+A47E  E8 17 03                call 0xa798
+A481  8A C5                   mov al, ch
+A483  8A EA                   mov ch, dl
+A485  BA F4 01                mov dx, 0x1f4
+A488  88 46 05                mov byte ptr [bp + 5], al
+A48B  EE                      out dx, al
+A48C  E3 00                   jcxz 0xa48e
+A48E  E3 00                   jcxz 0xa490
+A490  8A C1                   mov al, cl
+A492  C0 E8 06                shr al, 6
+A495  8A 56 15                mov dl, byte ptr [bp + 0x15]
+A498  C0 EA 04                shr dl, 4
+A49B  80 E2 0C                and dl, 0xc
+A49E  0A C2                   or al, dl
+A4A0  BA F5 01                mov dx, 0x1f5
+A4A3  88 46 06                mov byte ptr [bp + 6], al
+A4A6  EE                      out dx, al
+A4A7  E3 00                   jcxz 0xa4a9
+A4A9  E3 00                   jcxz 0xa4ab
+A4AB  8A 46 07                mov al, byte ptr [bp + 7]
+A4AE  BA F6 01                mov dx, 0x1f6
+A4B1  EE                      out dx, al
+A4B2  E8 6C 01                call 0xa621
+A4B5  B0 70                   mov al, 0x70
+A4B7  E8 84 02                call 0xa73e
+A4BA  E8 D7 01                call 0xa694
+A4BD  72 13                   jb 0xa4d2
+A4BF  E8 1A 02                call 0xa6dc
+A4C2  73 0E                   jae 0xa4d2
+A4C4  80 3E 74 00 40          cmp byte ptr [0x74], 0x40
+A4C9  F9                      stc
+A4CA  75 06                   jne 0xa4d2
+A4CC  32 E4                   xor ah, ah
+A4CE  88 26 74 00             mov byte ptr [0x74], ah
+A4D2  C3                      ret
+A4D3  E8 F4 00                call 0xa5ca
+A4D6  72 28                   jb 0xa500
+A4D8  E8 52 01                call 0xa62d
+A4DB  72 23                   jb 0xa500
+A4DD  BA F6 01                mov dx, 0x1f6
+A4E0  8A 46 07                mov al, byte ptr [bp + 7]
+A4E3  EE                      out dx, al
+A4E4  BA F7 01                mov dx, 0x1f7
+A4E7  51                      push cx
+A4E8  B9 04 00                mov cx, 4
+A4EB  E8 4E 44                call 0xe93c
+A4EE  59                      pop cx
+A4EF  EC                      in al, dx
+A4F0  A2 8C 00                mov byte ptr [0x8c], al
+A4F3  B4              db 0xB4
+
+===== A501h-A580h =====
+Reason: direct CALL target; ATA command path
 A501  E8 C6 00                call 0xa5ca
 A504  72 24                   jb 0xa52a
 A506  E8 4C 01                call 0xa655
@@ -405,16 +1098,191 @@ A579  F8                      clc
 A57A  C3                      ret
 A57B  E8 2B 00                call 0xa5a9
 A57E  73 07                   jae 0xa587
+A580  B4              db 0xB4
 
-===== A600h-A67Fh =====
-Reason: code-dense raw window
-A600  0A 26 8A 77             or ah, byte ptr [0x778a]
-A604  02 FE                   add bh, dh
-A606  CE                      into
-A607  0A CE                   or cl, dh
-A609  EB 05                   jmp 0xa610
-A60B  80 E6 0F                and dh, 0xf
-A60E  0A CE                   or cl, dh
+===== A52Bh-A5AAh =====
+Reason: routine entry after A52Ah RET
+A52B  E8 6A 02                call 0xa798
+A52E  E8 FC 00                call 0xa62d
+A531  72 1E                   jb 0xa551
+A533  B0 90                   mov al, 0x90
+A535  E8 06 02                call 0xa73e
+A538  E8 59 01                call 0xa694
+A53B  72 14                   jb 0xa551
+A53D  BA F1 01                mov dx, 0x1f1
+A540  EC                      in al, dx
+A541  A2 8D 00                mov byte ptr [0x8d], al
+A544  B4 20                   mov ah, 0x20
+A546  3C 01                   cmp al, 1
+A548  F9                      stc
+A549  75 02                   jne 0xa54d
+A54B  32 E4                   xor ah, ah
+A54D  88 26 74 00             mov byte ptr [0x74], ah
+A551  C3                      ret
+A552  E8 75 00                call 0xa5ca
+A555  73 07                   jae 0xa55e
+A557  32 E4                   xor ah, ah
+A559  33 C9                   xor cx, cx
+A55B  33 D2                   xor dx, dx
+A55D  C3                      ret
+A55E  E8 55 00                call 0xa5b6
+A561  26 8B 07                mov ax, word ptr es:[bx]
+A564  48                      dec ax
+A565  26 8A 4F 0E             mov cl, byte ptr es:[bx + 0xe]
+A569  B5 00                   mov ch, 0
+A56B  F7 E1                   mul cx
+A56D  26 8A 4F 02             mov cl, byte ptr es:[bx + 2]
+A571  F7 E1                   mul cx
+A573  8B CA                   mov cx, dx
+A575  8B D0                   mov dx, ax
+A577  B4 03                   mov ah, 3
+A579  F8                      clc
+A57A  C3                      ret
+A57B  E8 2B 00                call 0xa5a9
+A57E  73 07                   jae 0xa587
+A580  B4 01                   mov ah, 1
+A582  88 26 74 00             mov byte ptr [0x74], ah
+A586  C3                      ret
+A587  8A 76 15                mov dh, byte ptr [bp + 0x15]
+A58A  52                      push dx
+A58B  26 8B 47 0C             mov ax, word ptr es:[bx + 0xc]
+A58F  8A E8                   mov ch, al
+A591  8A CC                   mov cl, ah
+A593  C0 E1 06                shl cl, 6
+A596  8A F4                   mov dh, ah
+A598  C0 E6 04                shl dh, 4
+A59B  80 E6 C0                and dh, 0xc0
+A59E  88 76 15                mov byte ptr [bp + 0x15], dh
+A5A1  E8 D0 FE                call 0xa474
+A5A4  5A                      pop dx
+A5A5  88 76 15                mov byte ptr [bp + 0x15], dh
+A5A8  C3                      ret
+A5A9  80              db 0x80
+A5AA  FA                      cli
+
+===== A552h-A5D1h =====
+Reason: direct CALL target
+A552  E8 75 00                call 0xa5ca
+A555  73 07                   jae 0xa55e
+A557  32 E4                   xor ah, ah
+A559  33 C9                   xor cx, cx
+A55B  33 D2                   xor dx, dx
+A55D  C3                      ret
+A55E  E8 55 00                call 0xa5b6
+A561  26 8B 07                mov ax, word ptr es:[bx]
+A564  48                      dec ax
+A565  26 8A 4F 0E             mov cl, byte ptr es:[bx + 0xe]
+A569  B5 00                   mov ch, 0
+A56B  F7 E1                   mul cx
+A56D  26 8A 4F 02             mov cl, byte ptr es:[bx + 2]
+A571  F7 E1                   mul cx
+A573  8B CA                   mov cx, dx
+A575  8B D0                   mov dx, ax
+A577  B4 03                   mov ah, 3
+A579  F8                      clc
+A57A  C3                      ret
+A57B  E8 2B 00                call 0xa5a9
+A57E  73 07                   jae 0xa587
+A580  B4 01                   mov ah, 1
+A582  88 26 74 00             mov byte ptr [0x74], ah
+A586  C3                      ret
+A587  8A 76 15                mov dh, byte ptr [bp + 0x15]
+A58A  52                      push dx
+A58B  26 8B 47 0C             mov ax, word ptr es:[bx + 0xc]
+A58F  8A E8                   mov ch, al
+A591  8A CC                   mov cl, ah
+A593  C0 E1 06                shl cl, 6
+A596  8A F4                   mov dh, ah
+A598  C0 E6 04                shl dh, 4
+A59B  80 E6 C0                and dh, 0xc0
+A59E  88 76 15                mov byte ptr [bp + 0x15], dh
+A5A1  E8 D0 FE                call 0xa474
+A5A4  5A                      pop dx
+A5A5  88 76 15                mov byte ptr [bp + 0x15], dh
+A5A8  C3                      ret
+A5A9  80 FA 81                cmp dl, 0x81
+A5AC  76 08                   jbe 0xa5b6
+A5AE  B4 01                   mov ah, 1
+A5B0  88 26 74 00             mov byte ptr [0x74], ah
+A5B4  F9                      stc
+A5B5  C3                      ret
+A5B6  33 DB                   xor bx, bx
+A5B8  8E C3                   mov es, bx
+A5BA  F6 C2 01                test dl, 1
+A5BD  BB 04 01                mov bx, 0x104
+A5C0  74 03                   je 0xa5c5
+A5C2  BB 18 01                mov bx, 0x118
+A5C5  26 C4 1F                les bx, ptr es:[bx]
+A5C8  F8                      clc
+A5C9  C3                      ret
+A5CA  50                      push ax
+A5CB  A0 75 00                mov al, byte ptr [0x75]
+A5CE  8A E2                   mov ah, dl
+A5D0  80              db 0x80
+A5D1  E4              db 0xE4
+
+===== A57Bh-A5FAh =====
+Reason: routine entry after A57Ah RET
+A57B  E8 2B 00                call 0xa5a9
+A57E  73 07                   jae 0xa587
+A580  B4 01                   mov ah, 1
+A582  88 26 74 00             mov byte ptr [0x74], ah
+A586  C3                      ret
+A587  8A 76 15                mov dh, byte ptr [bp + 0x15]
+A58A  52                      push dx
+A58B  26 8B 47 0C             mov ax, word ptr es:[bx + 0xc]
+A58F  8A E8                   mov ch, al
+A591  8A CC                   mov cl, ah
+A593  C0 E1 06                shl cl, 6
+A596  8A F4                   mov dh, ah
+A598  C0 E6 04                shl dh, 4
+A59B  80 E6 C0                and dh, 0xc0
+A59E  88 76 15                mov byte ptr [bp + 0x15], dh
+A5A1  E8 D0 FE                call 0xa474
+A5A4  5A                      pop dx
+A5A5  88 76 15                mov byte ptr [bp + 0x15], dh
+A5A8  C3                      ret
+A5A9  80 FA 81                cmp dl, 0x81
+A5AC  76 08                   jbe 0xa5b6
+A5AE  B4 01                   mov ah, 1
+A5B0  88 26 74 00             mov byte ptr [0x74], ah
+A5B4  F9                      stc
+A5B5  C3                      ret
+A5B6  33 DB                   xor bx, bx
+A5B8  8E C3                   mov es, bx
+A5BA  F6 C2 01                test dl, 1
+A5BD  BB 04 01                mov bx, 0x104
+A5C0  74 03                   je 0xa5c5
+A5C2  BB 18 01                mov bx, 0x118
+A5C5  26 C4 1F                les bx, ptr es:[bx]
+A5C8  F8                      clc
+A5C9  C3                      ret
+A5CA  50                      push ax
+A5CB  A0 75 00                mov al, byte ptr [0x75]
+A5CE  8A E2                   mov ah, dl
+A5D0  80 E4 7F                and ah, 0x7f
+A5D3  3A C4                   cmp al, ah
+A5D5  58                      pop ax
+A5D6  76 41                   jbe 0xa619
+A5D8  83 FF 2A                cmp di, 0x2a
+A5DB  74 3A                   je 0xa617
+A5DD  83 FF 10                cmp di, 0x10
+A5E0  74 35                   je 0xa617
+A5E2  06                      push es
+A5E3  53                      push bx
+A5E4  52                      push dx
+A5E5  51                      push cx
+A5E6  E8 CD FF                call 0xa5b6
+A5E9  26 8B 4F 05             mov cx, word ptr es:[bx + 5]
+A5ED  C1 E9 02                shr cx, 2
+A5F0  88 4E 02                mov byte ptr [bp + 2], cl
+A5F3  B1 A0                   mov cl, 0xa0
+A5F5  F6 C2 01                test dl, 1
+A5F8  74 02                   je 0xa5fc
+A5FA  B1              db 0xB1
+
+===== A610h-A68Fh =====
+Reason: continuation near ATA status helper
 A610  88 4E 07                mov byte ptr [bp + 7], cl
 A613  59                      pop cx
 A614  5A                      pop dx
@@ -478,11 +1346,314 @@ A677  74 06                   je 0xa67f
 A679  B4 40                   mov ah, 0x40
 A67B  A8 10                   test al, 0x10
 A67D  75 10                   jne 0xa68f
-A67F  E2              db 0xE2
+A67F  E2 DA                   loop 0xa65b
+A681  A2 8C 00                mov byte ptr [0x8c], al
+A684  88 26 74 00             mov byte ptr [0x74], ah
+A688  59                      pop cx
+A689  8A C1                   mov al, cl
+A68B  59                      pop cx
+A68C  5A                      pop dx
+A68D  F9                      stc
+A68E  C3                      ret
+A68F  58                      pop ax
 
-===== A700h-A77Fh =====
-Reason: code-dense raw window
-A700  01 74 2D                add word ptr [si + 0x2d], si
+===== A619h-A698h =====
+Reason: routine entry after A618h RET
+A619  B4 01                   mov ah, 1
+A61B  88 26 74 00             mov byte ptr [0x74], ah
+A61F  F9                      stc
+A620  C3                      ret
+A621  52                      push dx
+A622  50                      push ax
+A623  8A 46 02                mov al, byte ptr [bp + 2]
+A626  BA F1 01                mov dx, 0x1f1
+A629  EE                      out dx, al
+A62A  58                      pop ax
+A62B  5A                      pop dx
+A62C  C3                      ret
+A62D  FB                      sti
+A62E  51                      push cx
+A62F  52                      push dx
+A630  50                      push ax
+A631  B9 10 00                mov cx, 0x10
+A634  BA F7 01                mov dx, 0x1f7
+A637  B4 80                   mov ah, 0x80
+A639  51                      push cx
+A63A  33 C9                   xor cx, cx
+A63C  E8 4F 42                call 0xe88e
+A63F  59                      pop cx
+A640  73 0F                   jae 0xa651
+A642  E2 F5                   loop 0xa639
+A644  EC                      in al, dx
+A645  A2 8C 00                mov byte ptr [0x8c], al
+A648  58                      pop ax
+A649  B4 80                   mov ah, 0x80
+A64B  88 26 74 00             mov byte ptr [0x74], ah
+A64F  EB 01                   jmp 0xa652
+A651  58                      pop ax
+A652  5A                      pop dx
+A653  59                      pop cx
+A654  C3                      ret
+A655  52                      push dx
+A656  51                      push cx
+A657  50                      push ax
+A658  B9 00 0C                mov cx, 0xc00
+A65B  E8 CF FF                call 0xa62d
+A65E  72 28                   jb 0xa688
+A660  BA F6 01                mov dx, 0x1f6
+A663  8A 46 07                mov al, byte ptr [bp + 7]
+A666  EE                      out dx, al
+A667  51                      push cx
+A668  B9 04 00                mov cx, 4
+A66B  E8 CE 42                call 0xe93c
+A66E  59                      pop cx
+A66F  BA F7 01                mov dx, 0x1f7
+A672  EC                      in al, dx
+A673  B4 AA                   mov ah, 0xaa
+A675  A8 40                   test al, 0x40
+A677  74 06                   je 0xa67f
+A679  B4 40                   mov ah, 0x40
+A67B  A8 10                   test al, 0x10
+A67D  75 10                   jne 0xa68f
+A67F  E2 DA                   loop 0xa65b
+A681  A2 8C 00                mov byte ptr [0x8c], al
+A684  88 26 74 00             mov byte ptr [0x74], ah
+A688  59                      pop cx
+A689  8A C1                   mov al, cl
+A68B  59                      pop cx
+A68C  5A                      pop dx
+A68D  F9                      stc
+A68E  C3                      ret
+A68F  58                      pop ax
+A690  59                      pop cx
+A691  5A                      pop dx
+A692  F8                      clc
+A693  C3                      ret
+A694  F8                      clc
+A695  B8 00 90                mov ax, 0x9000
+A698  CD              db 0xCD
+
+===== A621h-A6A0h =====
+Reason: direct CALL target; ATA feature/error register write
+A621  52                      push dx
+A622  50                      push ax
+A623  8A 46 02                mov al, byte ptr [bp + 2]
+A626  BA F1 01                mov dx, 0x1f1
+A629  EE                      out dx, al
+A62A  58                      pop ax
+A62B  5A                      pop dx
+A62C  C3                      ret
+A62D  FB                      sti
+A62E  51                      push cx
+A62F  52                      push dx
+A630  50                      push ax
+A631  B9 10 00                mov cx, 0x10
+A634  BA F7 01                mov dx, 0x1f7
+A637  B4 80                   mov ah, 0x80
+A639  51                      push cx
+A63A  33 C9                   xor cx, cx
+A63C  E8 4F 42                call 0xe88e
+A63F  59                      pop cx
+A640  73 0F                   jae 0xa651
+A642  E2 F5                   loop 0xa639
+A644  EC                      in al, dx
+A645  A2 8C 00                mov byte ptr [0x8c], al
+A648  58                      pop ax
+A649  B4 80                   mov ah, 0x80
+A64B  88 26 74 00             mov byte ptr [0x74], ah
+A64F  EB 01                   jmp 0xa652
+A651  58                      pop ax
+A652  5A                      pop dx
+A653  59                      pop cx
+A654  C3                      ret
+A655  52                      push dx
+A656  51                      push cx
+A657  50                      push ax
+A658  B9 00 0C                mov cx, 0xc00
+A65B  E8 CF FF                call 0xa62d
+A65E  72 28                   jb 0xa688
+A660  BA F6 01                mov dx, 0x1f6
+A663  8A 46 07                mov al, byte ptr [bp + 7]
+A666  EE                      out dx, al
+A667  51                      push cx
+A668  B9 04 00                mov cx, 4
+A66B  E8 CE 42                call 0xe93c
+A66E  59                      pop cx
+A66F  BA F7 01                mov dx, 0x1f7
+A672  EC                      in al, dx
+A673  B4 AA                   mov ah, 0xaa
+A675  A8 40                   test al, 0x40
+A677  74 06                   je 0xa67f
+A679  B4 40                   mov ah, 0x40
+A67B  A8 10                   test al, 0x10
+A67D  75 10                   jne 0xa68f
+A67F  E2 DA                   loop 0xa65b
+A681  A2 8C 00                mov byte ptr [0x8c], al
+A684  88 26 74 00             mov byte ptr [0x74], ah
+A688  59                      pop cx
+A689  8A C1                   mov al, cl
+A68B  59                      pop cx
+A68C  5A                      pop dx
+A68D  F9                      stc
+A68E  C3                      ret
+A68F  58                      pop ax
+A690  59                      pop cx
+A691  5A                      pop dx
+A692  F8                      clc
+A693  C3                      ret
+A694  F8                      clc
+A695  B8 00 90                mov ax, 0x9000
+A698  CD 15                   int 0x15
+A69A  FB                      sti
+A69B  72 10                   jb 0xa6ad
+A69D  BB 8E 00                mov bx, 0x8e
+A6A0  BA              db 0xBA
+
+===== A62Dh-A6ACh =====
+Reason: direct CALL target; ATA status polling
+A62D  FB                      sti
+A62E  51                      push cx
+A62F  52                      push dx
+A630  50                      push ax
+A631  B9 10 00                mov cx, 0x10
+A634  BA F7 01                mov dx, 0x1f7
+A637  B4 80                   mov ah, 0x80
+A639  51                      push cx
+A63A  33 C9                   xor cx, cx
+A63C  E8 4F 42                call 0xe88e
+A63F  59                      pop cx
+A640  73 0F                   jae 0xa651
+A642  E2 F5                   loop 0xa639
+A644  EC                      in al, dx
+A645  A2 8C 00                mov byte ptr [0x8c], al
+A648  58                      pop ax
+A649  B4 80                   mov ah, 0x80
+A64B  88 26 74 00             mov byte ptr [0x74], ah
+A64F  EB 01                   jmp 0xa652
+A651  58                      pop ax
+A652  5A                      pop dx
+A653  59                      pop cx
+A654  C3                      ret
+A655  52                      push dx
+A656  51                      push cx
+A657  50                      push ax
+A658  B9 00 0C                mov cx, 0xc00
+A65B  E8 CF FF                call 0xa62d
+A65E  72 28                   jb 0xa688
+A660  BA F6 01                mov dx, 0x1f6
+A663  8A 46 07                mov al, byte ptr [bp + 7]
+A666  EE                      out dx, al
+A667  51                      push cx
+A668  B9 04 00                mov cx, 4
+A66B  E8 CE 42                call 0xe93c
+A66E  59                      pop cx
+A66F  BA F7 01                mov dx, 0x1f7
+A672  EC                      in al, dx
+A673  B4 AA                   mov ah, 0xaa
+A675  A8 40                   test al, 0x40
+A677  74 06                   je 0xa67f
+A679  B4 40                   mov ah, 0x40
+A67B  A8 10                   test al, 0x10
+A67D  75 10                   jne 0xa68f
+A67F  E2 DA                   loop 0xa65b
+A681  A2 8C 00                mov byte ptr [0x8c], al
+A684  88 26 74 00             mov byte ptr [0x74], ah
+A688  59                      pop cx
+A689  8A C1                   mov al, cl
+A68B  59                      pop cx
+A68C  5A                      pop dx
+A68D  F9                      stc
+A68E  C3                      ret
+A68F  58                      pop ax
+A690  59                      pop cx
+A691  5A                      pop dx
+A692  F8                      clc
+A693  C3                      ret
+A694  F8                      clc
+A695  B8 00 90                mov ax, 0x9000
+A698  CD 15                   int 0x15
+A69A  FB                      sti
+A69B  72 10                   jb 0xa6ad
+A69D  BB 8E 00                mov bx, 0x8e
+A6A0  BA 10 00                mov dx, 0x10
+A6A3  33 C9                   xor cx, cx
+A6A5  E8 5A 42                call 0xe902
+A6A8  73 0B                   jae 0xa6b5
+A6AA  4A                      dec dx
+A6AB  75 F6                   jne 0xa6a3
+
+===== A655h-A6D4h =====
+Reason: direct CALL target; ATA drive/status check
+A655  52                      push dx
+A656  51                      push cx
+A657  50                      push ax
+A658  B9 00 0C                mov cx, 0xc00
+A65B  E8 CF FF                call 0xa62d
+A65E  72 28                   jb 0xa688
+A660  BA F6 01                mov dx, 0x1f6
+A663  8A 46 07                mov al, byte ptr [bp + 7]
+A666  EE                      out dx, al
+A667  51                      push cx
+A668  B9 04 00                mov cx, 4
+A66B  E8 CE 42                call 0xe93c
+A66E  59                      pop cx
+A66F  BA F7 01                mov dx, 0x1f7
+A672  EC                      in al, dx
+A673  B4 AA                   mov ah, 0xaa
+A675  A8 40                   test al, 0x40
+A677  74 06                   je 0xa67f
+A679  B4 40                   mov ah, 0x40
+A67B  A8 10                   test al, 0x10
+A67D  75 10                   jne 0xa68f
+A67F  E2 DA                   loop 0xa65b
+A681  A2 8C 00                mov byte ptr [0x8c], al
+A684  88 26 74 00             mov byte ptr [0x74], ah
+A688  59                      pop cx
+A689  8A C1                   mov al, cl
+A68B  59                      pop cx
+A68C  5A                      pop dx
+A68D  F9                      stc
+A68E  C3                      ret
+A68F  58                      pop ax
+A690  59                      pop cx
+A691  5A                      pop dx
+A692  F8                      clc
+A693  C3                      ret
+A694  F8                      clc
+A695  B8 00 90                mov ax, 0x9000
+A698  CD 15                   int 0x15
+A69A  FB                      sti
+A69B  72 10                   jb 0xa6ad
+A69D  BB 8E 00                mov bx, 0x8e
+A6A0  BA 10 00                mov dx, 0x10
+A6A3  33 C9                   xor cx, cx
+A6A5  E8 5A 42                call 0xe902
+A6A8  73 0B                   jae 0xa6b5
+A6AA  4A                      dec dx
+A6AB  75 F6                   jne 0xa6a3
+A6AD  B4 80                   mov ah, 0x80
+A6AF  88 26 74 00             mov byte ptr [0x74], ah
+A6B3  EB 05                   jmp 0xa6ba
+A6B5  C6 06 8E 00 00          mov byte ptr [0x8e], 0
+A6BA  C3                      ret
+A6BB  51                      push cx
+A6BC  52                      push dx
+A6BD  50                      push ax
+A6BE  B9 C8 00                mov cx, 0xc8
+A6C1  BA F7 01                mov dx, 0x1f7
+A6C4  B4 08                   mov ah, 8
+A6C6  E8 FF 41                call 0xe8c8
+A6C9  73 0D                   jae 0xa6d8
+A6CB  EC                      in al, dx
+A6CC  A2 8C 00                mov byte ptr [0x8c], al
+A6CF  58                      pop ax
+A6D0  B4 80                   mov ah, 0x80
+A6D2  88              db 0x88
+A6D3  26              db 0x26
+A6D4  74              db 0x74
+
+===== A703h-A782h =====
+Reason: ATA error/status decode candidate
 A703  BA F1 01                mov dx, 0x1f1
 A706  EC                      in al, dx
 A707  A2 8D 00                mov byte ptr [0x8d], al
@@ -546,16 +1717,278 @@ A775  03 C2                   add ax, dx
 A777  8E C0                   mov es, ax
 A779  83 E3 0F                and bx, 0xf
 A77C  33 C0                   xor ax, ax
-A77E  BA              db 0xBA
-A77F  01              db 0x01
+A77E  BA 01 00                mov dx, 1
+A781  2B C3                   sub ax, bx
 
-===== A800h-A87Fh =====
-Reason: code-dense raw window
-A800  01 8A 46 07             add word ptr [bp + si + 0x746], cx
+===== A73Eh-A7BDh =====
+Reason: direct CALL target; ATA command register write
+A73E  E8 EC FE                call 0xa62d
+A741  FA                      cli
+A742  50                      push ax
+A743  C6 06 8E 00 00          mov byte ptr [0x8e], 0
+A748  E4 A1                   in al, 0xa1
+A74A  E3 00                   jcxz 0xa74c
+A74C  E3 00                   jcxz 0xa74e
+A74E  24 BF                   and al, 0xbf
+A750  E6 A1                   out 0xa1, al
+A752  E4 21                   in al, 0x21
+A754  E3 00                   jcxz 0xa756
+A756  E3 00                   jcxz 0xa758
+A758  24 FB                   and al, 0xfb
+A75A  E6 21                   out 0x21, al
+A75C  E3 00                   jcxz 0xa75e
+A75E  E3 00                   jcxz 0xa760
+A760  58                      pop ax
+A761  52                      push dx
+A762  BA F7 01                mov dx, 0x1f7
+A765  88 46 08                mov byte ptr [bp + 8], al
+A768  EE                      out dx, al
+A769  5A                      pop dx
+A76A  FB                      sti
+A76B  C3                      ret
+A76C  52                      push dx
+A76D  50                      push ax
+A76E  8B C3                   mov ax, bx
+A770  C1 E8 04                shr ax, 4
+A773  8C C2                   mov dx, es
+A775  03 C2                   add ax, dx
+A777  8E C0                   mov es, ax
+A779  83 E3 0F                and bx, 0xf
+A77C  33 C0                   xor ax, ax
+A77E  BA 01 00                mov dx, 1
+A781  2B C3                   sub ax, bx
+A783  83 DA 00                sbb dx, 0
+A786  F7 76 18                div word ptr [bp + 0x18]
+A789  8A D0                   mov dl, al
+A78B  58                      pop ax
+A78C  3A D0                   cmp dl, al
+A78E  5A                      pop dx
+A78F  73 06                   jae 0xa797
+A791  B4 09                   mov ah, 9
+A793  88 26 74 00             mov byte ptr [0x74], ah
+A797  C3                      ret
+A798  06                      push es
+A799  53                      push bx
+A79A  52                      push dx
+A79B  50                      push ax
+A79C  E8 17 FE                call 0xa5b6
+A79F  26 8A 47 08             mov al, byte ptr es:[bx + 8]
+A7A3  8A E0                   mov ah, al
+A7A5  24 08                   and al, 8
+A7A7  BA F6 03                mov dx, 0x3f6
+A7AA  EE                      out dx, al
+A7AB  A0 76 00                mov al, byte ptr [0x76]
+A7AE  24 C0                   and al, 0xc0
+A7B0  0A C4                   or al, ah
+A7B2  A2 76 00                mov byte ptr [0x76], al
+A7B5  58                      pop ax
+A7B6  5A                      pop dx
+A7B7  5B                      pop bx
+A7B8  07                      pop es
+A7B9  C3                      ret
+A7BA  50                      push ax
+A7BB  52                      push dx
+A7BC  BA              db 0xBA
+A7BD  F2              db 0xF2
+
+===== A76Ch-A7EBh =====
+Reason: direct CALL target; ES:BX buffer normalization
+A76C  52                      push dx
+A76D  50                      push ax
+A76E  8B C3                   mov ax, bx
+A770  C1 E8 04                shr ax, 4
+A773  8C C2                   mov dx, es
+A775  03 C2                   add ax, dx
+A777  8E C0                   mov es, ax
+A779  83 E3 0F                and bx, 0xf
+A77C  33 C0                   xor ax, ax
+A77E  BA 01 00                mov dx, 1
+A781  2B C3                   sub ax, bx
+A783  83 DA 00                sbb dx, 0
+A786  F7 76 18                div word ptr [bp + 0x18]
+A789  8A D0                   mov dl, al
+A78B  58                      pop ax
+A78C  3A D0                   cmp dl, al
+A78E  5A                      pop dx
+A78F  73 06                   jae 0xa797
+A791  B4 09                   mov ah, 9
+A793  88 26 74 00             mov byte ptr [0x74], ah
+A797  C3                      ret
+A798  06                      push es
+A799  53                      push bx
+A79A  52                      push dx
+A79B  50                      push ax
+A79C  E8 17 FE                call 0xa5b6
+A79F  26 8A 47 08             mov al, byte ptr es:[bx + 8]
+A7A3  8A E0                   mov ah, al
+A7A5  24 08                   and al, 8
+A7A7  BA F6 03                mov dx, 0x3f6
+A7AA  EE                      out dx, al
+A7AB  A0 76 00                mov al, byte ptr [0x76]
+A7AE  24 C0                   and al, 0xc0
+A7B0  0A C4                   or al, ah
+A7B2  A2 76 00                mov byte ptr [0x76], al
+A7B5  58                      pop ax
+A7B6  5A                      pop dx
+A7B7  5B                      pop bx
+A7B8  07                      pop es
+A7B9  C3                      ret
+A7BA  50                      push ax
+A7BB  52                      push dx
+A7BC  BA F2 01                mov dx, 0x1f2
+A7BF  88 46 03                mov byte ptr [bp + 3], al
+A7C2  EE                      out dx, al
+A7C3  E3 00                   jcxz 0xa7c5
+A7C5  E3 00                   jcxz 0xa7c7
+A7C7  8A C1                   mov al, cl
+A7C9  24 3F                   and al, 0x3f
+A7CB  BA F3 01                mov dx, 0x1f3
+A7CE  88 46 04                mov byte ptr [bp + 4], al
+A7D1  EE                      out dx, al
+A7D2  E3 00                   jcxz 0xa7d4
+A7D4  E3 00                   jcxz 0xa7d6
+A7D6  8A C5                   mov al, ch
+A7D8  BA F4 01                mov dx, 0x1f4
+A7DB  88 46 05                mov byte ptr [bp + 5], al
+A7DE  EE                      out dx, al
+A7DF  E3 00                   jcxz 0xa7e1
+A7E1  E3 00                   jcxz 0xa7e3
+A7E3  8A C1                   mov al, cl
+A7E5  C0 E8 06                shr al, 6
+A7E8  8A 56 15                mov dl, byte ptr [bp + 0x15]
+A7EB  C0              db 0xC0
+
+===== A798h-A817h =====
+Reason: direct CALL target; ATA transfer setup
+A798  06                      push es
+A799  53                      push bx
+A79A  52                      push dx
+A79B  50                      push ax
+A79C  E8 17 FE                call 0xa5b6
+A79F  26 8A 47 08             mov al, byte ptr es:[bx + 8]
+A7A3  8A E0                   mov ah, al
+A7A5  24 08                   and al, 8
+A7A7  BA F6 03                mov dx, 0x3f6
+A7AA  EE                      out dx, al
+A7AB  A0 76 00                mov al, byte ptr [0x76]
+A7AE  24 C0                   and al, 0xc0
+A7B0  0A C4                   or al, ah
+A7B2  A2 76 00                mov byte ptr [0x76], al
+A7B5  58                      pop ax
+A7B6  5A                      pop dx
+A7B7  5B                      pop bx
+A7B8  07                      pop es
+A7B9  C3                      ret
+A7BA  50                      push ax
+A7BB  52                      push dx
+A7BC  BA F2 01                mov dx, 0x1f2
+A7BF  88 46 03                mov byte ptr [bp + 3], al
+A7C2  EE                      out dx, al
+A7C3  E3 00                   jcxz 0xa7c5
+A7C5  E3 00                   jcxz 0xa7c7
+A7C7  8A C1                   mov al, cl
+A7C9  24 3F                   and al, 0x3f
+A7CB  BA F3 01                mov dx, 0x1f3
+A7CE  88 46 04                mov byte ptr [bp + 4], al
+A7D1  EE                      out dx, al
+A7D2  E3 00                   jcxz 0xa7d4
+A7D4  E3 00                   jcxz 0xa7d6
+A7D6  8A C5                   mov al, ch
+A7D8  BA F4 01                mov dx, 0x1f4
+A7DB  88 46 05                mov byte ptr [bp + 5], al
+A7DE  EE                      out dx, al
+A7DF  E3 00                   jcxz 0xa7e1
+A7E1  E3 00                   jcxz 0xa7e3
+A7E3  8A C1                   mov al, cl
+A7E5  C0 E8 06                shr al, 6
+A7E8  8A 56 15                mov dl, byte ptr [bp + 0x15]
+A7EB  C0 EA 04                shr dl, 4
+A7EE  80 E2 0C                and dl, 0xc
+A7F1  0A C2                   or al, dl
+A7F3  BA F5 01                mov dx, 0x1f5
+A7F6  88 46 06                mov byte ptr [bp + 6], al
+A7F9  EE                      out dx, al
+A7FA  E3 00                   jcxz 0xa7fc
+A7FC  E3 00                   jcxz 0xa7fe
+A7FE  BA F6 01                mov dx, 0x1f6
+A801  8A 46 07                mov al, byte ptr [bp + 7]
 A804  EE                      out dx, al
 A805  5A                      pop dx
 A806  58                      pop ax
 A807  C3                      ret
+A808  51                      push cx
+A809  0A EE                   or ch, dh
+A80B  49                      dec cx
+A80C  59                      pop cx
+A80D  75 36                   jne 0xa845
+A80F  50                      push ax
+A810  2E A0 2C B5             mov al, byte ptr cs:[0xb52c]
+A814  E8 E9 DA                call 0x8300
+A817  74              db 0x74
+
+===== A7BAh-A839h =====
+Reason: direct CALL target; ATA transfer helper
+A7BA  50                      push ax
+A7BB  52                      push dx
+A7BC  BA F2 01                mov dx, 0x1f2
+A7BF  88 46 03                mov byte ptr [bp + 3], al
+A7C2  EE                      out dx, al
+A7C3  E3 00                   jcxz 0xa7c5
+A7C5  E3 00                   jcxz 0xa7c7
+A7C7  8A C1                   mov al, cl
+A7C9  24 3F                   and al, 0x3f
+A7CB  BA F3 01                mov dx, 0x1f3
+A7CE  88 46 04                mov byte ptr [bp + 4], al
+A7D1  EE                      out dx, al
+A7D2  E3 00                   jcxz 0xa7d4
+A7D4  E3 00                   jcxz 0xa7d6
+A7D6  8A C5                   mov al, ch
+A7D8  BA F4 01                mov dx, 0x1f4
+A7DB  88 46 05                mov byte ptr [bp + 5], al
+A7DE  EE                      out dx, al
+A7DF  E3 00                   jcxz 0xa7e1
+A7E1  E3 00                   jcxz 0xa7e3
+A7E3  8A C1                   mov al, cl
+A7E5  C0 E8 06                shr al, 6
+A7E8  8A 56 15                mov dl, byte ptr [bp + 0x15]
+A7EB  C0 EA 04                shr dl, 4
+A7EE  80 E2 0C                and dl, 0xc
+A7F1  0A C2                   or al, dl
+A7F3  BA F5 01                mov dx, 0x1f5
+A7F6  88 46 06                mov byte ptr [bp + 6], al
+A7F9  EE                      out dx, al
+A7FA  E3 00                   jcxz 0xa7fc
+A7FC  E3 00                   jcxz 0xa7fe
+A7FE  BA F6 01                mov dx, 0x1f6
+A801  8A 46 07                mov al, byte ptr [bp + 7]
+A804  EE                      out dx, al
+A805  5A                      pop dx
+A806  58                      pop ax
+A807  C3                      ret
+A808  51                      push cx
+A809  0A EE                   or ch, dh
+A80B  49                      dec cx
+A80C  59                      pop cx
+A80D  75 36                   jne 0xa845
+A80F  50                      push ax
+A810  2E A0 2C B5             mov al, byte ptr cs:[0xb52c]
+A814  E8 E9 DA                call 0x8300
+A817  74 2B                   je 0xa844
+A819  0F 01 E0                smsw ax
+A81C  A8 01                   test al, 1
+A81E  75 13                   jne 0xa833
+A820  51                      push cx
+A821  80 26 16 00 F7          and byte ptr [0x16], 0xf7
+A826  E8 BF 3F                call 0xe7e8
+A829  59                      pop cx
+A82A  75 18                   jne 0xa844
+A82C  80 0E 16 00 08          or byte ptr [0x16], 8
+A831  EB 07                   jmp 0xa83a
+A833  F6 06 16 00 08          test byte ptr [0x16], 8
+A838  74 0A                   je 0xa844
+
+===== A808h-A887h =====
+Reason: direct CALL target; mode/compatibility check
 A808  51                      push cx
 A809  0A EE                   or ch, dh
 A80B  49                      dec cx
@@ -611,56 +2044,136 @@ A876  8A D0                   mov dl, al
 A878  B3 8F                   mov bl, 0x8f
 A87A  A0 49 00                mov al, byte ptr [0x49]
 A87D  3C 07                   cmp al, 7
-A87F  74              db 0x74
+A87F  74 06                   je 0xa887
+A881  3C 03                   cmp al, 3
+A883  76 02                   jbe 0xa887
+A885  B3 07                   mov bl, 7
+A887  8B              db 0x8B
 
-===== A900h-A97Fh =====
-Reason: code-dense raw window
-A900  10 24                   adc byte ptr [si], ah
-A902  DF 3C                   fistp qword ptr [si]
-A904  59                      pop cx
-A905  74 04                   je 0xa90b
-A907  3C 4E                   cmp al, 0x4e
-A909  75 E9                   jne 0xa8f4
-A90B  B4 00                   mov ah, 0
-A90D  8B F0                   mov si, ax
-A90F  8B D7                   mov dx, di
-A911  80 FB 8F                cmp bl, 0x8f
-A914  74 04                   je 0xa91a
-A916  81 CE 00 80             or si, 0x8000
-A91A  80 C2 22                add dl, 0x22
-A91D  80 C6 01                add dh, 1
-A920  8B FA                   mov di, dx
-A922  BD 02 00                mov bp, 2
-A925  B9 23 00                mov cx, 0x23
-A928  B4 02                   mov ah, 2
-A92A  CD 10                   int 0x10
-A92C  58                      pop ax
-A92D  F7 C6 00 80             test si, 0x8000
-A931  74 03                   je 0xa936
-A933  B8 20 07                mov ax, 0x720
-A936  8A DC                   mov bl, ah
-A938  B4 09                   mov ah, 9
-A93A  51                      push cx
-A93B  B9 01 00                mov cx, 1
-A93E  CD 10                   int 0x10
-A940  59                      pop cx
-A941  FE CA                   dec dl
-A943  E2 E3                   loop 0xa928
-A945  8B C7                   mov ax, di
-A947  8A D0                   mov dl, al
-A949  FE CE                   dec dh
-A94B  4D                      dec bp
-A94C  75 D7                   jne 0xa925
-A94E  59                      pop cx
-A94F  5A                      pop dx
-A950  B4 01                   mov ah, 1
-A952  CD 10                   int 0x10
-A954  B4 02                   mov ah, 2
-A956  CD 10                   int 0x10
-A958  8B C6                   mov ax, si
-A95A  3C 59                   cmp al, 0x59
-A95C  61                      popaw
-A95D  C3                      ret
+===== A80Fh-A88Eh =====
+Reason: direct CALL target; prompt decision path
+A80F  50                      push ax
+A810  2E A0 2C B5             mov al, byte ptr cs:[0xb52c]
+A814  E8 E9 DA                call 0x8300
+A817  74 2B                   je 0xa844
+A819  0F 01 E0                smsw ax
+A81C  A8 01                   test al, 1
+A81E  75 13                   jne 0xa833
+A820  51                      push cx
+A821  80 26 16 00 F7          and byte ptr [0x16], 0xf7
+A826  E8 BF 3F                call 0xe7e8
+A829  59                      pop cx
+A82A  75 18                   jne 0xa844
+A82C  80 0E 16 00 08          or byte ptr [0x16], 8
+A831  EB 07                   jmp 0xa83a
+A833  F6 06 16 00 08          test byte ptr [0x16], 8
+A838  74 0A                   je 0xa844
+A83A  58                      pop ax
+A83B  E8 09 00                call 0xa847
+A83E  74 05                   je 0xa845
+A840  B4 80                   mov ah, 0x80
+A842  F9                      stc
+A843  C3                      ret
+A844  58                      pop ax
+A845  F8                      clc
+A846  C3                      ret
+A847  60                      pushaw
+A848  FB                      sti
+A849  BE 25 A1                mov si, 0xa125
+A84C  80 FC 05                cmp ah, 5
+A84F  74 03                   je 0xa854
+A851  BE 48 A1                mov si, 0xa148
+A854  8A 3E 62 00             mov bh, byte ptr [0x62]
+A858  B4 03                   mov ah, 3
+A85A  CD 10                   int 0x10
+A85C  52                      push dx
+A85D  51                      push cx
+A85E  B9 07 02                mov cx, 0x207
+A861  B4 01                   mov ah, 1
+A863  CD 10                   int 0x10
+A865  A0 84 00                mov al, byte ptr [0x84]
+A868  D0 E8                   shr al, 1
+A86A  FE C8                   dec al
+A86C  8A F0                   mov dh, al
+A86E  A1 4A 00                mov ax, word ptr [0x4a]
+A871  2D 23 00                sub ax, 0x23
+A874  D1 E8                   shr ax, 1
+A876  8A D0                   mov dl, al
+A878  B3 8F                   mov bl, 0x8f
+A87A  A0 49 00                mov al, byte ptr [0x49]
+A87D  3C 07                   cmp al, 7
+A87F  74 06                   je 0xa887
+A881  3C 03                   cmp al, 3
+A883  76 02                   jbe 0xa887
+A885  B3 07                   mov bl, 7
+A887  8B FA                   mov di, dx
+A889  BD 02 00                mov bp, 2
+A88C  B9 23 00                mov cx, 0x23
+
+===== A847h-A8C6h =====
+Reason: direct CALL target; BIOS display/input prompt
+A847  60                      pushaw
+A848  FB                      sti
+A849  BE 25 A1                mov si, 0xa125
+A84C  80 FC 05                cmp ah, 5
+A84F  74 03                   je 0xa854
+A851  BE 48 A1                mov si, 0xa148
+A854  8A 3E 62 00             mov bh, byte ptr [0x62]
+A858  B4 03                   mov ah, 3
+A85A  CD 10                   int 0x10
+A85C  52                      push dx
+A85D  51                      push cx
+A85E  B9 07 02                mov cx, 0x207
+A861  B4 01                   mov ah, 1
+A863  CD 10                   int 0x10
+A865  A0 84 00                mov al, byte ptr [0x84]
+A868  D0 E8                   shr al, 1
+A86A  FE C8                   dec al
+A86C  8A F0                   mov dh, al
+A86E  A1 4A 00                mov ax, word ptr [0x4a]
+A871  2D 23 00                sub ax, 0x23
+A874  D1 E8                   shr ax, 1
+A876  8A D0                   mov dl, al
+A878  B3 8F                   mov bl, 0x8f
+A87A  A0 49 00                mov al, byte ptr [0x49]
+A87D  3C 07                   cmp al, 7
+A87F  74 06                   je 0xa887
+A881  3C 03                   cmp al, 3
+A883  76 02                   jbe 0xa887
+A885  B3 07                   mov bl, 7
+A887  8B FA                   mov di, dx
+A889  BD 02 00                mov bp, 2
+A88C  B9 23 00                mov cx, 0x23
+A88F  B4 02                   mov ah, 2
+A891  CD 10                   int 0x10
+A893  B4 08                   mov ah, 8
+A895  CD 10                   int 0x10
+A897  50                      push ax
+A898  FE C2                   inc dl
+A89A  E2 F3                   loop 0xa88f
+A89C  8B C7                   mov ax, di
+A89E  8A D0                   mov dl, al
+A8A0  FE C6                   inc dh
+A8A2  4D                      dec bp
+A8A3  75 E7                   jne 0xa88c
+A8A5  8B D7                   mov dx, di
+A8A7  80 FB 8F                cmp bl, 0x8f
+A8AA  74 1B                   je 0xa8c7
+A8AC  BD 02 00                mov bp, 2
+A8AF  FE CE                   dec dh
+A8B1  B4 02                   mov ah, 2
+A8B3  CD 10                   int 0x10
+A8B5  B9 23 00                mov cx, 0x23
+A8B8  B8 20 09                mov ax, 0x920
+A8BB  CD 10                   int 0x10
+A8BD  8B D7                   mov dx, di
+A8BF  80 C6 02                add dh, 2
+A8C2  4D                      dec bp
+A8C3  75 EC                   jne 0xa8b1
+A8C5  8B D7                   mov dx, di
+
+===== A95Eh-A9DDh =====
+Reason: candidate IVT hook installation stream
 A95E  FA                      cli
 A95F  FC                      cld
 A960  BE 4C 00                mov si, 0x4c
@@ -675,11 +2188,55 @@ A974  B8 45 E8                mov ax, 0xe845
 A977  BF D8 01                mov di, 0x1d8
 A97A  AB                      stosw word ptr es:[di], ax
 A97B  26 8C 0D                mov word ptr es:[di], cs
-A97E  BF              db 0xBF
-A97F  42                      inc dx
+A97E  BF 42 04                mov di, 0x442
+A981  33 C0                   xor ax, ax
+A983  AB                      stosw word ptr es:[di], ax
+A984  AB                      stosw word ptr es:[di], ax
+A985  AB                      stosw word ptr es:[di], ax
+A986  AA                      stosb byte ptr es:[di], al
+A987  BF 74 04                mov di, 0x474
+A98A  AB                      stosw word ptr es:[di], ax
+A98B  AA                      stosb byte ptr es:[di], al
+A98C  BF 8C 04                mov di, 0x48c
+A98F  AB                      stosw word ptr es:[di], ax
+A990  AA                      stosb byte ptr es:[di], al
+A991  BE 01 E4                mov si, 0xe401
+A994  BF 04 01                mov di, 0x104
+A997  26 8C 4D 02             mov word ptr es:[di + 2], cs
+A99B  B0 92                   mov al, 0x92
+A99D  E8 0A 45                call 0xeeaa
+A9A0  8A C8                   mov cl, al
+A9A2  C0 E8 04                shr al, 4
+A9A5  74 19                   je 0xa9c0
+A9A7  48                      dec ax
+A9A8  3C 0E                   cmp al, 0xe
+A9AA  75 20                   jne 0xa9cc
+A9AC  B0 99                   mov al, 0x99
+A9AE  E8 F9 44                call 0xeeaa
+A9B1  2C 01                   sub al, 1
+A9B3  72 0B                   jb 0xa9c0
+A9B5  3C 2E                   cmp al, 0x2e
+A9B7  77 07                   ja 0xa9c0
+A9B9  75 11                   jne 0xa9cc
+A9BB  E8 A5 6D                call 0x1763
+A9BE  EB 12                   jmp 0xa9d2
+A9C0  8B C6                   mov ax, si
+A9C2  AB                      stosw word ptr es:[di], ax
+A9C3  BF 18 01                mov di, 0x118
+A9C6  AB                      stosw word ptr es:[di], ax
+A9C7  8C C8                   mov ax, cs
+A9C9  AB                      stosw word ptr es:[di], ax
+A9CA  EB 54                   jmp 0xaa20
+A9CC  C1 E0 04                shl ax, 4
+A9CF  03 C6                   add ax, si
+A9D1  AB                      stosw word ptr es:[di], ax
+A9D2  FE 06 75 00             inc byte ptr [0x75]
+A9D6  BF 18 01                mov di, 0x118
+A9D9  26 8C 4D 02             mov word ptr es:[di + 2], cs
+A9DD  8A              db 0x8A
 
 ===== AA00h-AA7Fh =====
-Reason: code-dense raw window
+Reason: INT 13h disk-service path candidate
 AA00  EB 0A                   jmp 0xaa0c
 AA02  C1 E0 04                shl ax, 4
 AA05  03 C6                   add ax, si
@@ -735,43 +2292,80 @@ AA79  B8 01 04                mov ax, 0x401
 AA7C  CD 13                   int 0x13
 AA7E  73 22                   jae 0xaaa2
 
-===== AB00h-AB7Fh =====
-Reason: code-dense raw window
-AB00  B6 4B                   mov dh, 0x4b
-AB02  58                      pop ax
-AB03  E6 80                   out 0x80, al
-AB05  5B                      pop bx
-AB06  5A                      pop dx
-AB07  75 27                   jne 0xab30
-AB09  8A E2                   mov ah, dl
-AB0B  BA F7 01                mov dx, 0x1f7
-AB0E  EC                      in al, dx
-AB0F  A8 80                   test al, 0x80
-AB11  75 1D                   jne 0xab30
-AB13  B0 A0                   mov al, 0xa0
-AB15  80 FC 80                cmp ah, 0x80
-AB18  74 02                   je 0xab1c
-AB1A  B0 B0                   mov al, 0xb0
-AB1C  BA F6 01                mov dx, 0x1f6
-AB1F  EE                      out dx, al
-AB20  BA F7 01                mov dx, 0x1f7
-AB23  51                      push cx
-AB24  B9 04 00                mov cx, 4
-AB27  E8 12 3E                call 0xe93c
-AB2A  59                      pop cx
-AB2B  EC                      in al, dx
-AB2C  A8 40                   test al, 0x40
-AB2E  75 01                   jne 0xab31
-AB30  F9                      stc
-AB31  58                      pop ax
-AB32  5A                      pop dx
-AB33  C3                      ret
+===== AA6Fh-AAEEh =====
+Reason: direct CALL target; INT 13h drive parameter query
+AA6F  B4 08                   mov ah, 8
+AA71  52                      push dx
+AA72  CD 13                   int 0x13
+AA74  58                      pop ax
+AA75  8A D0                   mov dl, al
+AA77  72 29                   jb 0xaaa2
+AA79  B8 01 04                mov ax, 0x401
+AA7C  CD 13                   int 0x13
+AA7E  73 22                   jae 0xaaa2
+AA80  80 FC 0A                cmp ah, 0xa
+AA83  74 1D                   je 0xaaa2
+AA85  80 FC 10                cmp ah, 0x10
+AA88  74 18                   je 0xaaa2
+AA8A  80 FC 11                cmp ah, 0x11
+AA8D  74 13                   je 0xaaa2
+AA8F  A1 6C 00                mov ax, word ptr [0x6c]
+AA92  2B C6                   sub ax, si
+AA94  3D D8 02                cmp ax, 0x2d8
+AA97  F5                      cmc
+AA98  72 08                   jb 0xaaa2
+AA9A  FE C9                   dec cl
+AA9C  F6 C1 3F                test cl, 0x3f
+AA9F  75 D8                   jne 0xaa79
+AAA1  F9                      stc
+AAA2  C3                      ret
+AAA3  8B 36 6C 00             mov si, word ptr [0x6c]
+AAA7  B4 09                   mov ah, 9
+AAA9  CD 13                   int 0x13
+AAAB  72 06                   jb 0xaab3
+AAAD  B4 11                   mov ah, 0x11
+AAAF  CD 13                   int 0x13
+AAB1  73 0B                   jae 0xaabe
+AAB3  A1 6C 00                mov ax, word ptr [0x6c]
+AAB6  2B C6                   sub ax, si
+AAB8  3D D8 02                cmp ax, 0x2d8
+AABB  F5                      cmc
+AABC  73 E9                   jae 0xaaa7
+AABE  C3                      ret
+AABF  51                      push cx
+AAC0  50                      push ax
+AAC1  9C                      pushf
+AAC2  FB                      sti
+AAC3  B9 A0 00                mov cx, 0xa0
+AAC6  B4 01                   mov ah, 1
+AAC8  CD 16                   int 0x16
+AACA  74 0C                   je 0xaad8
+AACC  B4 00                   mov ah, 0
+AACE  CD 16                   int 0x16
+AAD0  3C 1B                   cmp al, 0x1b
+AAD2  75 04                   jne 0xaad8
+AAD4  0B F6                   or si, si
+AAD6  75 11                   jne 0xaae9
+AAD8  E8 18 00                call 0xaaf3
+AADB  B4 00                   mov ah, 0
+AADD  73 0C                   jae 0xaaeb
+AADF  51                      push cx
+AAE0  B9 00 40                mov cx, 0x4000
+AAE3  E8 56 3E                call 0xe93c
+AAE6  59                      pop cx
+AAE7  E2 DD                   loop 0xaac6
+AAE9  B4 01                   mov ah, 1
+AAEB  9D                      popf
+AAEC  80 FC 01                cmp ah, 1
+
+===== AB34h-ABB3h =====
+Reason: routine entry after AB33h RET; disk metadata path
 AB34  BE FF FF                mov si, 0xffff
 AB37  E8 85 FF                call 0xaabf
 AB3A  B0 00                   mov al, 0
 AB3C  72 6E                   jb 0xabac
 AB3E  52                      push dx
-AB3F  E8 18 6D                call 0x1185a
+AB3F  E8 18 6D                call 0x185a
 AB42  5A                      pop dx
 AB43  B4 01                   mov ah, 1
 AB45  E8 65 00                call 0xabad
@@ -797,12 +2391,43 @@ AB75  E2 F6                   loop 0xab6d
 AB77  8B C8                   mov cx, ax
 AB79  B0 2F                   mov al, 0x2f
 AB7B  EB 20                   jmp 0xab9d
-AB7D  2E              db 0x2E
-AB7E  3A              db 0x3A
-AB7F  74              db 0x74
+AB7D  2E 3A 74 02             cmp dh, byte ptr cs:[si + 2]
+AB81  75 EF                   jne 0xab72
+AB83  2E 3A 5C 0E             cmp bl, byte ptr cs:[si + 0xe]
+AB87  75 E9                   jne 0xab72
+AB89  2E 83 7C 05 FF          cmp word ptr cs:[si + 5], -1
+AB8E  75 E2                   jne 0xab72
+AB90  83 E9 2E                sub cx, 0x2e
+AB93  F7 D9                   neg cx
+AB95  41                      inc cx
+AB96  91                      xchg cx, ax
+AB97  3C 0F                   cmp al, 0xf
+AB99  75 02                   jne 0xab9d
+AB9B  B0 00                   mov al, 0
+AB9D  52                      push dx
+AB9E  51                      push cx
+AB9F  53                      push bx
+ABA0  50                      push ax
+ABA1  9C                      pushf
+ABA2  FA                      cli
+ABA3  E8 B4 6C                call 0x185a
+ABA6  9D                      popf
+ABA7  58                      pop ax
+ABA8  5B                      pop bx
+ABA9  59                      pop cx
+ABAA  5A                      pop dx
+ABAB  07                      pop es
+ABAC  C3                      ret
+ABAD  FB                      sti
+ABAE  FC                      cld
+ABAF  50                      push ax
+ABB0  51                      push cx
+ABB1  52                      push dx
+ABB2  53                      push bx
+ABB3  56                      push si
 
 ===== AC00h-AC7Fh =====
-Reason: code-dense raw window
+Reason: ATA identify/read transfer path candidate
 AC00  BA F6 01                mov dx, 0x1f6
 AC03  8A 46 07                mov al, byte ptr [bp + 7]
 AC06  EE                      out dx, al
@@ -920,7 +2545,7 @@ AEDE  80              db 0x80
 AEDF  0E                      push cs
 
 ===== AF00h-AF7Fh =====
-Reason: code-dense raw window
+Reason: keyboard/BIOS event handling code candidate
 AF00  03 E9                   add bp, cx
 AF02  89 00                   mov word ptr [bx + si], ax
 AF04  24 7F                   and al, 0x7f
