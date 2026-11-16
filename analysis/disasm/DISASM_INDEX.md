@@ -390,3 +390,11 @@ This phase is semantic classification of selected regions, not a complete CFG. S
 - Confirmed AH=87h ordinary path clears CR0.PE and disables A20 before RETF 2; documented early enable failure and exceptional cleanup paths.
 - Added A20 helper callers at 528Eh/5291h (two consecutive disables) and F47Eh (POST keyboard initialization).
 - Consolidated direct references to 8ACFh/8AD2h/F66Ah/F66Eh, with explicit limits of linear-disassembly xref coverage.
+
+
+## Semantic map — phase 31 (2026-11-16)
+
+- [AMI486_SEMANTIC_MAP_PHASE31_20261116.md](AMI486_SEMANTIC_MAP_PHASE31_20261116.md)
+- Checked all references to CS:[8281h].6: stock byte is zero; no direct static in-ROM write/initializer was found in the full linear decode.
+- Connected POST flow 1B58h -> 208Dh -> 20C9h A20 enable -> protected-mode memory-address tests -> 23CBh A20 disable -> 23CEh POST continuation.
+- Documented ALi table programming, PIT/port-61 setup, and limits on identifying the upstream entry and chipset register semantics.
