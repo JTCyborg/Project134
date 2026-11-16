@@ -1003,3 +1003,12 @@ This phase is semantic classification of selected regions, not a complete CFG. S
 - Identified 0B5Dh and 0B6Dh as aligned indirect instruction entries reached by the 05A3h/05B4h nested dispatcher.
 - The same byte region also aligns as four-byte next-cursor/target-like records, so it is now classified as a dual-use/overlapping code-and-record candidate, not plain data.
 - The 0B5Dh linear stream has branches at 0B71h, 0B85h and 0BA1h and reaches a conditional Setup-page initialization path at 0BE5h / common editor 0C7Dh. Runtime record consumption and stack/flag contracts remain open.
+
+
+## Semantic map — phase 94 (2026-11-16)
+
+- [AMI486_SEMANTIC_MAP_PHASE94_20261116.md](AMI486_SEMANTIC_MAP_PHASE94_20261116.md)
+- Reconstructed 05B4h linked-record traversal: [BX] is the next cursor, [BX+2] is the near callback target; CF/ZF/AH determine exit, skip, or continuation.
+- Corrected dispatcher entry: 05E0h is a RET stub; renderer 05EBh is invoked only on exit.
+- Downgraded 0B5Dh/0B6Dh from confirmed executable entries to raw-image indirect CALL targets with unresolved validity. Their offsets lie inside a regular four-byte record region and linear decode is implausible; active CS mapping/shadow image must be established.
+- Withdrawn phase-93 linear branch/control-flow claims through 0BE5h as established code facts.
