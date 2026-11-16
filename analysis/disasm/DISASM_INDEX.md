@@ -95,3 +95,20 @@ The existing two linear listings do not cover offsets `0000-D603` (54,788 bytes)
 3. A code/data classification map for tables, strings, padding, option-ROM payloads and embedded structures.
 4. A revised index with verified coverage and source-image hash.
 
+
+
+## Full-ROM linear disassembly generator — 2026-11-16
+
+A reproducible generator is now tracked at `tools/disasm_ami486_full.ps1`.
+
+Run from the repository root in PowerShell:
+
+```powershell
+.\tools\disasm_ami486_full.ps1 -RomPath .\ami486.bin -Ndisasm ndisasm
+```
+
+The script requires the exact 65,536-byte ROM and NASM `ndisasm`, decodes in 16-bit mode from offset `0000`, verifies that the listing accounts for exactly 65,536 input bytes, and writes:
+- `analysis/disasm/ami486_full_linear.disasm.txt`
+- `analysis/disasm/ami486_full_linear.disasm.manifest.txt`
+
+The manifest records the local ROM SHA-256, disassembler path, mode, origin, line count and decoded byte count. The generated linear listing is a mechanical decode only; it does not establish code reachability or distinguish embedded data from instructions. Preserve the existing reset/POST entry-point listings as separate views.
