@@ -644,9 +644,19 @@ This phase is semantic classification of selected regions, not a complete CFG. S
 ## Semantic map — phase 59 (2026-11-16)
 
 - [AMI486_SEMANTIC_MAP_PHASE59_20261116.md](AMI486_SEMANTIC_MAP_PHASE59_20261116.md)
-- Reset vector E000h far-jumps to F000:E005; E005h jumps F73Bh. F73Ch sets BP=SP as a stack-frame pointer, not a bitmap initializer.
-- Protected-mode return F096h jumps E05Bh; E05Bh is an alternate code entry whose actual instruction jumps to D604h.
-- D604h checks 8042 port64 bit2 and branches to 88CEh or 8A04h; the latter reads/clears CMOS8F and dispatches a saved selector.
-- D724h path executes XOR BP,BP at D743h. Its D74Ch continuation may set BP.12 and BP.15, not BP.13. This path is not yet proven to connect to E380h/E3ACh.
-- Local E3ACh→10E0h→120Dh→1656h→1662h bitmap chain remains valid, but its upstream relation to the reset/selector dispatch is unresolved.
-- BP.13 producer remains unresolved; do not conflate the reset path, D724h selector path, and E3xx stack-crafted path without a proven transfer edge.
+- Corrected reset-vector location: the hardware reset vector is at file offset FFF0h and executes LJMP F000:E05B; E05Bh jumps to D604h.
+- E000h→E005h→F73Bh is a separate ROM entry, not the hardware reset path. F73Ch copies SP to BP, but no connection to the later BP bitmap path is proven.
+- D604h checks 8042 port64 bit2 and branches to 88CEh or 8A04h.
+- D724h path clears BP at D743h; D74Ch can set BP.12 and BP.15, not BP.13.
+- Relationship between the D604h dispatcher and the E2C6h/E3xx POST route remains unresolved.
+
+
+
+## Semantic map — phase 60 (2026-11-16)
+
+- [AMI486_SEMANTIC_MAP_PHASE60_20261116.md](AMI486_SEMANTIC_MAP_PHASE60_20261116.md)
+- Corrected the reset-vector analysis: FFF0h contains LJMP F000:E05B; E05Bh jumps to D604h. E000h is a separate code entry, not the reset vector.
+- Identified the successful upstream edge into the E3xx POST route: 52C1h → E2C6h → (normal path) E2F7h…E380h → E394h → E3ACh → 10E0h. E2F4h→E382h is a conditional error path.
+- PUSHAW at 525Fh saves the incoming BP after temporary BP=1 at 51F4h is undone by POP BP at 5239h; POPAW at 5289h restores it before E2C6h.
+- The bitmap BP.13 is therefore already present at 5194h. Its caller/producer and the connection to D604h remain unresolved.
+
