@@ -722,3 +722,11 @@ This phase is semantic classification of selected regions, not a complete CFG. S
 - Updated [project plan](../../docs/PROJECT134_PLAN.md) to separate byte-complete linear disassembly from unfinished semantic CFG/code-data classification and to clarify build evidence.
 - Additional 6.27.10 reference files reviewed: MBIOSEQU, DIM, DEVNODE, PCI, PNP, ESCD, DMI and SMB definitions. These describe BIOS data structures/interfaces; they do not establish the target AMI486 hardware inventory or ALi 1429 programming.
 - Flagged conflicting BIOS-stack layout notes in MBIOSEQU.EQU and DIM.EQU; treat them as subsystem-specific reference data, not a unified Project134 memory map.
+
+
+## Semantic map — phase 66 (2026-11-16)
+
+- [AMI486_SEMANTIC_MAP_PHASE66_20261116.md](AMI486_SEMANTIC_MAP_PHASE66_20261116.md)
+- Audited the CS-resident pointer slots at 82D8h–82E6h: 82DAh defaults to 19ABh, a JMP DI trampoline used by 8A78h; 82DEh and 82E2h default to RET stubs at 19ADh/19AEh.
+- The indirect CALLs at 1C06h and 1C5Eh are therefore no-op callbacks in the stock ROM and cannot produce BP.13 or enter DAxx.
+- Runtime patching by unsearched store/copy forms and external hooks remains unproven; next step is a complete write-form audit of these slots.
