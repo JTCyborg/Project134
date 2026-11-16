@@ -297,3 +297,11 @@ This phase is semantic classification of selected regions, not a complete CFG. S
 - Completed the common ROM-window helper family 2415h–244Ch, including the previously missed E000h and alternate C800h entries; documented register 13h/14h staging and the 32-KiB same-address read/write operation.
 - Traced the 5E05h POST scan and the 1BB3h Option-ROM checksum/initialization far call.
 - Corrected Phase 18: the 26F9h/2686h memory test path performs a 55AA55AAh write and compare at its base address; it is not read-only.
+
+
+## Semantic map — phase 20 (2026-11-16)
+
+- [AMI486_SEMANTIC_MAP_PHASE20_20261116.md](AMI486_SEMANTIC_MAP_PHASE20_20261116.md)
+- Fully decoded the 8306h CMOS-to-option lookup and its 83AEh companion metadata lookup; caller ZF/JNZ checks test the decoded option, not a raw Boolean feature flag.
+- Audited all static references to 82C6h/82C8h: no ROM write sites exist; stock optional extended Setup-record range remains inactive absent external/runtime initialization.
+- Refined the POST memory-test sequence at 26F9h–29EAh: documented overlapping pattern writes, compared offsets, spaced reads, 32-KiB read pass, 16-KiB fill/scan/clear, and the unresolved physical mapping.
