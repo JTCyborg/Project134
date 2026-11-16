@@ -372,3 +372,12 @@ This phase is semantic classification of selected regions, not a complete CFG. S
 - Traced the INT 15h AH=87h extended-memory move path: A20 enabled before CR0.PE, disabled after PE is cleared on the normal return path.
 - Identified a second A20/PE sequencing pair at 20C9h–23CBh and an additional protected-mode entry at 933Ah.
 - Established that the D1h writes use fixed DFh/DDh values rather than saving and restoring the previous 8042 output-port byte.
+
+
+## Semantic map — phase 29 (2026-11-16)
+
+- [AMI486_SEMANTIC_MAP_PHASE29_20261116.md](AMI486_SEMANTIC_MAP_PHASE29_20261116.md)
+- Resolved 933Ah from the INT 15h dispatch table as AH=89h, the protected-mode entry service.
+- Established that AH=89h enables A20, loads caller GDT/IDT, sets PE, loads protected-mode selectors, and intentionally returns with A20/PE enabled.
+- Reframed 20C9h–23CBh as an A20-bracketed protected-mode memory-address probe/configuration sequence; ALi register 10h remains unnamed.
+- Refined AH=87h exit analysis: the normal path is paired, but alternate/error branches have distinct cleanup and require separate tracing.
