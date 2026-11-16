@@ -8850,6 +8850,27 @@ D476  B0 40                   mov al, 0x40
 D478  C6              db 0xC6
 D479  87              db 0x87
 
+===== D46Dh-D496h =====
+Reason: FDC alternate CMOS-configuration rate-probe path
+D46D  B0 00                   mov al, 0
+D46F  E8 27 00                call 0xd499
+D472  B0 15                   mov al, 0x15
+D474  73 20                   jae 0xd496
+D476  B0 40                   mov al, 0x40
+D478  C6 87 90 00 02          mov byte ptr [bx + 0x90], 2
+D47D  E8 19 00                call 0xd499
+D480  B0 74                   mov al, 0x74
+D482  73 12                   jae 0xd496
+D484  B0 80                   mov al, 0x80
+D486  E8 10 00                call 0xd499
+D489  B0 97                   mov al, 0x97
+D48B  73 09                   jae 0xd496
+D48D  B0 C0                   mov al, 0xc0
+D48F  E8 07 00                call 0xd499
+D492  B0 D7                   mov al, 0xd7
+D494  72 CE                   jb 0xd464
+D496  E9              db 0xE9
+
 ===== D400h-D47Fh =====
 Reason: FDC I/O continuation candidate
 D400  74 62                   je 0xd464
