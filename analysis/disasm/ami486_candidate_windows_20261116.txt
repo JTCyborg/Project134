@@ -52,6 +52,10 @@ E451  67 02 04 00 00 FF FF 00 00 00 00 00 67 02 11 00 g...........g...
 E461  CE 01 08 00 00 00 01 00 00 00 00 00 FF 01 11 00 ................
 E471  DD 02 05 00 00 FF FF 00 00 00 00 00 DD 02 11 00 ................
 
+===== DATA C5FAh-C60Fh =====
+Reason: Legacy floppy INT 13h AH dispatch table
+Words: C69A, C6CE, C7E2, C7E2, C7E2, C8E1, C999, C6D9, C78B, C716, CB09
+
 ===== A000h-A07Fh =====
 Reason: code-dense raw window; entry not yet caller-verified
 A000  04 B4                   add al, 0xb4
@@ -4969,18 +4973,8 @@ D1D0  FE CD                   dec ch
 D1D2  76 41                   jbe 0xd215
 D1D4  8B C7                   mov ax, di
 
-===== C600h-C67Fh =====
-Reason: candidate INT13/INT40 diskette service entry region
-C600  E2 C7                   loop 0xc5c9
-C602  E2 C7                   loop 0xc5cb
-C604  E1 C8                   loope 0xc5ce
-C606  99                      cdq
-C607  C9                      leave
-C608  D9 C6                   fld st(6)
-C60A  8B C7                   mov ax, di
-C60C  16                      push ss
-C60D  C7              db 0xC7
-C60E  09 CB                   or bx, cx
+===== C610h-C68Fh =====
+Reason: legacy floppy INT 13h handler entry; saved into INT 40h by A95Eh
 C610  FB                      sti
 C611  FC                      cld
 C612  E8 9D CA                call 0x90b2
@@ -5041,7 +5035,19 @@ C675  B8 01 02                mov ax, 0x201
 C678  72 05                   jb 0xc67f
 C67A  80 66 18 FE             and byte ptr [bp + 0x18], 0xfe
 C67E  48                      dec ax
-C67F  09              db 0x09
+C67F  09 46 18                or word ptr [bp + 0x18], ax
+C682  5D                      pop bp
+C683  07                      pop es
+C684  1F                      pop ds
+C685  5F                      pop di
+C686  5E                      pop si
+C687  5D                      pop bp
+C688  5B                      pop bx
+C689  5A                      pop dx
+C68A  59                      pop cx
+C68B  58                      pop ax
+C68C  E8 23 CA                call 0x90b2
+C68F  CF                      iret
 
 ===== C648h-C6C7h =====
 Reason: shared FDC/INT13 status epilogue
