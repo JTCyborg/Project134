@@ -135,3 +135,8 @@ The divisor sequence is generated as 0600h shifted right by the selector value, 
 ## 7. Wrapper entry alignment correction
 
 Raw bytes establish the guarded entry at F8E7h, not F900h or F8E8h. F8E7h begins `83 FA 04` (CMP DX,04h); the guards at F8EAh and F8F0h branch to the cleanup CALL at F926h. The valid path begins with PUSHA at F8F2h. F900h is the final displacement byte of `MOV DX,[DI+0000h]` at F8FDh, and F8E8h is an interior byte of the CMP instruction. IRET is at F929h; the six-word table begins at F92Ah. The candidate-window generator is now seeded at F8E7h and clipped after F929h. The INT 14h IVT target remains unverified.
+
+
+## 8. INT 14h vector provenance check
+
+A full 64-KiB raw-byte scan found no direct near CALL/JMP target to F8E7h, no literal word reference F8E7h, and no literal far pointer F000:F8E7h. This does not prove the handler is unused: the IVT entry may be initialized by external firmware, copied from a table, or set dynamically. Until the runtime IVT slot at 0000:0054h/0056h is captured, classify F8E7h as a structurally confirmed INT 14h-style UART dispatcher candidate, not a proven installed INT 14h vector target.
