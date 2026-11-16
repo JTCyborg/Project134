@@ -106,9 +106,9 @@ A95Eh saves the previous INT 13h vector into the INT 40h vector slot. A08Dh forw
 
 1. Identify the INT 40h vector target and prove whether it enters this FDC subsystem.
 2. Trace callers and parameter contracts for D104h, D156h, D1C0h, D216h, D2FDh, D3CFh and D520h.
-3. Decode the command bytes at D40Ah–D462h against the 8272/765 command format and the state at BP+0Eh / [BX+90h].
+3. Trace the remaining drive-type/state branches around D407h–D462h; the D499h transaction is now identified as a Read ID probe and the immediate AL values are rate/state tokens, not command bytes.
 4. Capture the initialized INT 40h vector to confirm the exact runtime segment:offset of the legacy floppy handler (C610h is the strong in-ROM candidate).
-5. Determine whether D520h/D5DDh are media-change checks, drive-type probes or a separate controller diagnostic.
+5. Trace the source of the two configuration bytes read through EEAAh before the perpendicular-mode setup; the extended FDC feature sequence itself is now identified.
 
 No whole-ROM semantic percentage is inferred from this subsystem map.
 
@@ -120,3 +120,42 @@ The mode bytes passed to D156h are visible in the direct callers:
 - C936h and C913h load AH=4Ah before calling D156h. 4Ah = channel 2, single mode, transfer type 10b (read: FDC to memory). This is the disk-read direction.
 
 Thus the FDC DMA channel is channel 2, with direction selected by the caller's AH mode byte. The D156h helper itself writes the supplied mode byte unchanged to DMA port 0Bh.
+
+
+## 7. D40Ah–D462h: data-rate probing and Read ID transaction
+
+The bytes loaded into AL in this region are **not FDC command opcodes**. They are drive-state/rate tokens passed through D3EDh/D499h:
+
+- D3EDh extracts AL[7:6] into DH and calls D517h.
+- D517h writes DH (0..3) to port 03F7h, the Configuration Control Register/data-rate selector.
+- D3FAh stores the full token in [BX+90h], then tests bit 4 as part of the drive-state path.
+- D499h repeats the rate selection from AL[7:6] before probing the selected drive.
+
+D499h performs a two-byte **READ ID** command transaction:
+
+1. It loads the selected drive number from [BP+0Eh], sets SI to 4Axxh, and sets CH=2.
+2. D1C0h emits exactly two FIFO bytes: 4Ah, then the drive/head byte. The opcode 4Ah is the µPD765 READ ID command (base opcode 0Ah with MFM bit 6 set).
+3. D270h reads exactly seven result bytes: ST0, ST1, ST2, C, H, R and N.
+4. D2BDh maps status bytes into the BIOS error code; D499h retries up to three times and returns CF on failure.
+
+This matches the µPD765 READ ID command's two command bytes and seven-byte result phase. The D40Ah–D462h constants therefore select candidate data rates and saved per-drive state, while the actual command is constructed in D499h/D1C0h. The exact meaning of every low-bit state token in [BX+90h] still needs caller/state-transition tracing.
+
+## 8. D520h–D5D9h: enhanced FDC identification and configuration
+
+The sequence is a controller-capability/configuration path, not a media-change-only routine:
+
+| Address | Bytes / action | Interpretation |
+|---:|---|---|
+| D520h | CH=1, SI=0010h; D216h sends one byte; D294h reads one byte; compare AL=90h | VERSION command 10h; response 90h identifies the 82077AA-class enhanced controller family |
+| D53Bh | CH=1, SI=000Eh; D216h sends one byte | DUMPREG command 0Eh |
+| D54Ah–D567h | Reads 7 + 1 + 2 result bytes | Ten-byte enhanced DUMPREG result block |
+| D584h–D589h | AL=00h; call D5DDh | UNLOCK command 14h; expects returned lock state 00h |
+| D58Bh–D59Bh | CH=4, SI=0013h, DI=0008h; D216h sends 13 00 08 00 | CONFIGURE command 13h with parameters 00h,08h,00h |
+| D59Dh–D5C1h | Calls EEAAh with selectors 0Eh and 10h; folds returned bits into CH | Source and exact semantics of these configuration bits remain open |
+| D5C4h–D5D2h | SI receives command 12h plus the computed parameter; CH=2; D216h sends both bytes | PERPENDICULAR MODE command 12h |
+| D5D4h–D5D9h | AL=80h; call D5DDh | LOCK command 94h; expects returned lock state 10h |
+
+D5DDh is a generic lock-state verifier. It computes expected result CL=AL>>3, constructs the command byte AL OR 14h, sends one command byte through D216h, reads one result byte through D294h and compares it with CL. Thus AL=00h produces UNLOCK 14h and expected result 00h; AL=80h produces LOCK 94h and expected result 10h. This is the 82077AA LOCK/UNLOCK extension.
+
+The VERSION response 90h, DUMPREG, LOCK/UNLOCK, CONFIGURE and PERPENDICULAR MODE sequence is consistent with an 82077AA-or-later enhanced 765-compatible controller. It does not by itself distinguish an 82077AA from later compatible variants. The actual controller model fitted to the board is not established by the ROM bytes alone.
+
