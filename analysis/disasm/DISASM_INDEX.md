@@ -1117,3 +1117,8 @@ C610h is the in-ROM legacy floppy INT 13h handler candidate. Its 11-word dispatc
 ## Memory alias and chipset-init sequence — 2026-11-16
 
 Detailed report: [AMI486_MEMORY_CHIPSET_INITIALIZATION_20261116.md](AMI486_MEMORY_CHIPSET_INITIALIZATION_20261116.md). The 2100h/2187h/2253h/22DBh streams test aliasing at 8 MiB, 64 MiB and 2/4/8 KiB offsets. Stack-threaded code uses 8DCFh/8DDCh to read/write indexed registers through ports 22h/23h. Confirmed operations include register 16h |= 30h and register 11h = 44h; the 2381h path updates registers 10h/11h and clears CR0.PE before F66Eh. Exact chipset identity and register semantics remain open.
+
+
+## RTC and numeric display helpers — 2026-11-16
+
+Detailed map: [AMI486_CLOCK_AND_TEXT_RENDERING_20261116.md](AMI486_CLOCK_AND_TEXT_RENDERING_20261116.md). 6774h reads RTC date via INT 1Ah AH=04h; 67AEh reads RTC time via AH=02h; 6805h prints sequential decimal labels; 6841h formats decimal digits; 68B0h displays hexadecimal bytes; 6860h/68C8h write characters with attributes through INT 10h. The exact UI caller and 67D8h field transform remain open.
