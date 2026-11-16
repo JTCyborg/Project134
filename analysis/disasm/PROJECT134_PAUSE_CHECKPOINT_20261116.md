@@ -79,7 +79,7 @@ First-pass page ledger created at `analysis/disasm/AMI486_ADDRESS_LEDGER_2026111
 
 Raw-byte sampling shows that several pages with no phase-address tokens contain code candidates, especially 2100h, 6800h, A000h–ACFFh, AE60h–AFFFh, D100h–D5FFh and F900h. A000h–AFFFh is mixed: the Format/BootSector Write/Possible VIRUS message is embedded at A125h–A18Dh; the INT 13h handler at A08Dh dispatches AH through a 26-entry little-endian table at A0F1h–A124h; AD00h–AE5Fh contains keyboard translation data candidates. D100h–D5FFh contains I/O code candidates referencing ports 03F4h/03F7h.
 
-**No phase 97.** Continue by validating the runtime INT 40h target (C610h is the strong in-ROM floppy handler candidate), tracing the remaining low-bit [BX+90h] FDC state tokens and EEAAh configuration-byte source, finding the INT 14h vector source for F8E7h, identifying chipset registers 10h/11h/16h, and tracing the RTC display callers. The address ledger is still a first-pass classification; whole-ROM semantic coverage is not complete.
+**No phase 97.** Continue by verifying ES=0000h at A95Eh's caller and capturing the displaced INT 13h vector copied into INT 40h (C610h is only a strong in-ROM candidate), tracing the remaining low-bit [BX+90h] FDC state tokens and EEAAh configuration-byte source, finding the INT 14h vector source for F8E7h, identifying chipset registers 10h/11h/16h, and tracing the RTC display callers. The address ledger is still a first-pass classification; whole-ROM semantic coverage is not complete.
 
 
 ## Seeded decode results — 2026-11-16
@@ -121,7 +121,7 @@ A08Dh/A0A0h is now mapped as the hard-disk INT 13h handler and AH dispatcher. Th
 
 ## FDC/DMA follow-up — 2026-11-16
 
-See AMI486_FDC_DMA_SUBSYSTEM_20261116.md. D156h programs DMA channel 2; D243h and D294h implement FDC FIFO command/result byte exchange; D270h collects result blocks; D2FDh issues Sense Interrupt Status 08h; D348h resets the controller; D3B5h reads CMOS floppy type register 10h; D499h performs a three-attempt FDC command/result transaction. D40Ah–D462h is now understood as data-rate/state-token selection feeding a D499h MFM READ ID transaction; D520h–D5D9h performs VERSION/DUMPREG/UNLOCK/CONFIGURE/PERPENDICULAR/LOCK setup. Remaining gaps are low-bit state-token semantics, EEAAh configuration-byte provenance and the runtime INT 40h segment:offset; C610h remains the strong matching floppy handler candidate.
+See AMI486_FDC_DMA_SUBSYSTEM_20261116.md. D156h programs DMA channel 2; D243h and D294h implement FDC FIFO command/result byte exchange; D270h collects result blocks; D2FDh issues Sense Interrupt Status 08h; D348h resets the controller; D3B5h reads CMOS floppy type register 10h; D499h performs a three-attempt FDC command/result transaction. D40Ah–D462h is now understood as data-rate/state-token selection feeding a D499h MFM READ ID transaction; D520h–D5D9h performs VERSION/DUMPREG/UNLOCK/CONFIGURE/PERPENDICULAR/LOCK setup. Remaining gaps are low-bit state-token semantics, EEAAh configuration-byte provenance and the runtime INT 40h segment:offset (it is copied dynamically from the previous INT 13h vector by A95Eh); C610h remains a strong in-ROM candidate but is not proven as that runtime target.
 
 
 ## Keyboard subsystem follow-up — 2026-11-16
@@ -187,3 +187,8 @@ D499h is now identified as a three-attempt MFM READ ID transaction: command 4Ah 
 ## FDC drive-type state-machine refinement — 2026-11-16
 
 D3B5h checks CMOS 0Eh bits C0h and, when clear, extracts the selected nibble from CMOS 10h. D3CFh maps normal drive types to READ ID data-rate probes: type 1 selects 250-kbps code 2; type 2 tries 0/1; type 3 tries 0/2; type 4/default tries 3/0/2. The CMOS 0Eh alternate path D46Dh tries 0/1/2/3. D3FAh establishes [BX+90h] bit 4 as success and bits 7:6 as rate code. Caller C84Bh invokes D3CFh when bit 4 is clear; C855h maps D7h/17h/other tokens to SPECIFY command bytes 03 AF 02 / 03 BF 02 / 03 DF 02. Remaining low-nibble semantics and the meaning of CMOS 0Eh C0h remain open.
+
+
+## INT 40h dynamic vector chain — 2026-11-16
+
+A95Eh installs CS:A08Dh at INT 13h and copies the displaced INT 13h offset:segment to INT 40h at ES:0100h/0102h. A08Dh forwards floppy DL<80h requests through INT 40h. Thus INT 40h is the prior INT 13h handler, not a hardcoded C610h address. A95Eh's direct caller is 134Eh; the routine does not set ES=0000h itself, so the caller's ES precondition must be proven. EC59h JMPs to C610h, making C610h a strong candidate, but the runtime vector remains unverified.
