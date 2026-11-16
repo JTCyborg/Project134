@@ -111,3 +111,8 @@ It invokes the common EE94h hardware/CMOS access helper with DH=B6h and returns 
 - 29EDh has four direct callers and is a separate one-bit hardware test helper.
 
 Next: reconstruct the full 27A8h–27D8h caller path and the 01E8h–0208h overlapping continuation, trace EE94h for selector B6h, and continue the BP.13 / DA5Eh/DA61h search independently.
+
+
+## Superseded findings — phase 73 correction
+
+The claim in section 3 that the RET at `29EAh` returns to `01F1h` and enters an overlapping-code continuation is withdrawn. `SP=27CAh` makes RET pop the word at `27CAh`, namely `27CCh`; execution resumes at `27CCh` (`JZ 27DEh`). The `29BBh` routine is a two-pattern `55AAh/AA55h` write/verify test, then clears the tested 16 KiB and returns with ZF carrying pass/fail. Also, `29EDh` loads `AX=B6B6h`, calls `EE94h`, and tests CMOS `B6h.0`; it does not set `DH=B6h`. See phase 73. The rest of this report must be read with those corrections applied.
