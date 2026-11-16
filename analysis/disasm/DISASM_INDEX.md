@@ -578,3 +578,13 @@ This phase is semantic classification of selected regions, not a complete CFG. S
 - Selector 6 -> 5486 likewise restores BP from that saved frame at 5493, then saves/restores working registers around INT 15h/AH=89h.
 - Selector 2 -> F71E explicitly sets BP=7 and enters fatal POST handling; it cannot produce BP.13.
 - BP.13 producer remains unresolved; trace the caller/context that populated the PUSHAW frame at 5260.
+
+
+## Semantic map — phase 53 (2026-11-16)
+
+- [AMI486_SEMANTIC_MAP_PHASE53_20261116.md](AMI486_SEMANTIC_MAP_PHASE53_20261116.md)
+- Traced the stack-crafted transfer at 5189h through FA4Eh back to 5190h.
+- 5194h tests BP sign (bit 15). The nonnegative branch temporarily sets BP=1 but restores the original BP at 5239h; the negative branch does not modify BP.
+- PUSHAW at 525Fh therefore saves the inherited BP value at 5260h, not the temporary BP=1.
+- Earlier 5DF7h also tests bit 15 and writes 1234h to BDA 0040:0072 when BP is negative.
+- 5F7Dh and 5ECCh set only BP bits 6 and 7. BP.13 producer remains unresolved.
