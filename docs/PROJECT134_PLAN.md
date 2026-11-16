@@ -12,9 +12,9 @@ The original Spectrum software accesses memory, ROM, I/O ports and timing direct
 
 - [ ] Confirm the upstream PCem source baseline and revision.
 - [ ] Inspect the AMI486 machine registration, initialization and device setup.
-- [ ] Identify the currently working AMI486 BIOS ROM and its provenance.
+- [x] Locate `ami486.bin` in the Project134 repository and record its provenance; full binary validation/disassembly remains open.
 - [x] Add the AMI BIOS 6.27.10 collection as an architectural reference; keep it separate from the target AMI486 ROM/source identification.
-- [ ] Identify ROM loading, reset-vector mapping and BIOS execution path.
+- [ ] Identify ROM loading, reset-vector mapping and BIOS execution path in the exact PCem/Project133 runtime.
 - [x] Create the separate Project134 repository and record this plan without changing Project133.
 - [ ] Import/establish the PCem source baseline and create an isolated Project134 machine/profile.
 - [ ] Record a reproducible runtime baseline.
@@ -125,6 +125,40 @@ No Spectrum-specific implementation in this phase. First establish that the inhe
 - [ ] Document BIOS interfaces, memory map, ports and configuration.
 - [ ] Tag a reproducible stable release.
 
+## Source register and mandatory research workflow
+
+The following sources are mandatory inputs to every relevant design or implementation decision. Do not silently substitute one for another.
+
+| Source | Role | What it can establish | What it cannot establish |
+|---|---|---|---|
+| [Project134/docs/627.10](627.10) | AMI BIOS 6.27.10 architectural reference collection | BIOS subsystem organization, POST/CMOS/CPU design patterns, shared interfaces and diagnostic checklists | It is not proven to be the source of `ami486.bin`; SIS530-specific code is not evidence for ALi 1429 |
+| [`ami486.bin`](../ami486.bin) | Target AMI486 ROM behavioral reference | Actual bytes, strings, vectors, disassembly, tables and observed POST behavior once analyzed | Strings alone do not prove implementation behavior; do not copy proprietary implementation |
+| [AMI486_REFERENCE.md](AMI486_REFERENCE.md) | PCem AMI486 model notes | Recorded upstream model registration and known chipset/profile facts | Does not replace verification against the exact Project133 revision |
+| Project133 checkout (read-only) | Exact emulator integration reference | Actual PCem revision, ROM-set/profile configuration, loader, mapping and runtime behavior | Must never be modified as part of Project134 |
+| Upstream PCem source and ALi 1429 implementation | Emulator/hardware-model reference | Machine registration, chipset callbacks, device models and emulated register behavior | Verify revision and local differences before relying on it |
+| Project134 source/build/logs | Authoritative implementation and test evidence | What this project actually implements and what has been built/tested | A successful assembly build alone does not prove BIOS boot or hardware compatibility |
+
+### Mandatory source-review procedure
+
+Before implementing or changing any BIOS subsystem:
+
+1. Identify the target behavior from `ami486.bin` (when relevant) and the actual AMI486/ALi 1429 PCem model.
+2. Consult `docs/627.10` for the corresponding BIOS architecture and subsystem responsibilities. Search the whole collection where appropriate; do not rely only on the three files already inspected.
+3. Classify every consulted 6.27.10 item as **generic architecture/interface**, **device-generic**, **chipset/OEM-specific**, or **binary/object-only**. Do not treat SIS530 or other chipset-specific code as ALi 1429 programming evidence.
+4. Record the exact file paths, relevant routines/definitions, applicable findings, and any mismatch in the relevant Project134 design note or source comments.
+5. Author Project134 implementation independently. Do not copy or redistribute proprietary source; do not port platform-specific tables/routines without proving hardware correspondence and checking provenance/permissions.
+6. Validate against the exact PCem/Project133 revision and runtime trace. If evidence is missing, leave the task open and request the needed artifact/log rather than guessing.
+
+### Source review status
+
+- [x] Add the 6.27.10 collection as a mandatory architectural reference.
+- [x] Inspect `ASM1/BIOS.ASM`, `ASM2/CMOS.ASM`, `CPUCORE/CPUEQU.EQU`.
+- [x] Inspect `INCLUDE/CPUDATA.ASM`, `INCLUDE/IO.EQU`, `INCLUDE/RT.EQU`, `INCLUDE/PCI.EQU`, and `IO.112/IO.SSP` through `IO3.SSP`.
+- [x] Inventory the collection: 1,293 files; distinguish source, setup scripts, prebuilt objects, utilities and chipset-specific material.
+- [ ] Review remaining relevant readable source modules in `INCLUDE` and `IO.112`, classifying each before use.
+- [ ] Map generic reference concepts to actual AMI486/ALi 1429 hardware and emulator interfaces.
+- [ ] Compare the 6.27.10 POST architecture against a disassembly and runtime trace of the exact `ami486.bin`.
+
 ## Working rules
 
 1. Work in phase order; do not begin later phases until the current phase exit criteria are met.
@@ -145,4 +179,4 @@ No Spectrum-specific implementation in this phase. First establish that the inhe
 - [ ] Phase 5 — Hardware expansion
 - [ ] Phase 6 — Stabilization and release
 
-**Current evidence:** the upstream PCem AMI486 model registration has been inspected and recorded in [docs/AMI486_REFERENCE.md](AMI486_REFERENCE.md). It identifies the AT initialization path and ALi 1429 chipset callback, but does not yet establish the exact Project133 source revision or runtime configuration. The AMI BIOS 6.27.10 collection under [docs/627.10](627.10) has also been inspected as an architectural reference only; it is not verified as the source of the target AMI486 ROM, and its platform-specific code is not assumed to match ALi 1429.\n\n**Next action:** obtain the exact `ami486.bin` and record the Project133 source commit plus ROM-set 46 configuration; inspect the actual ROM loader/reset mapping before selecting the final image size or testing the bootstrap in PCem. The Visual Studio Debug|x64 build is verified, including automatic NASM discovery from the local vcpkg tool cache and successful ROM validation (2026-11-16). The generated binary has not yet been independently inspected; the 64 KiB/F0000h bootstrap layout remains provisional and is not a usable AMI486 BIOS.
+**Current evidence:** the upstream PCem AMI486 model registration has been inspected and recorded in [docs/AMI486_REFERENCE.md](AMI486_REFERENCE.md). It identifies the AT initialization path and ALi 1429 chipset callback, but the exact Project133 source revision and runtime configuration are still unverified. The `docs/627.10` collection has been inventoried (1,293 files) and key BIOS/CMOS/CPU/interface materials inspected; it remains an architectural reference, not the proven source of the target ROM. The target `ami486.bin` was fetched from this repository and had an initial static inspection: 64 KiB, AMI copyright/date strings (1993), and reset vector bytes `EA 5B E0 00 F0` (far jump to F000:E05B). A full disassembly, checksum record, POST trace and loader/mapping verification remain open.\n\nThe Visual Studio Debug|x64 BIOS scaffold build is verified, including automatic NASM discovery and ROM validation (2026-11-16). This only verifies the build pipeline: the generated 64 KiB F000:E000 bootstrap is provisional and is not yet an operational AMI486 BIOS.\n\n**Next actions (in order):** (1) record the exact Project133 `git rev-parse HEAD`, ROM-set 46 configuration and machine profile; (2) inspect the actual ROM loader, mapping and reset path; (3) record a reproducible checksum and disassemble `ami486.bin` from F000:E05B; (4) continue 6.27.10 source review for the subsystem being implemented, then correlate it with the target ROM and ALi 1429 emulator behavior before coding.
