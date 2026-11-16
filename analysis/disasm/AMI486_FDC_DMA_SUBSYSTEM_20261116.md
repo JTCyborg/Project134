@@ -157,7 +157,7 @@ D499h performs a two-byte **READ ID** command transaction:
 3. D270h reads exactly seven result bytes: ST0, ST1, ST2, C, H, R and N.
 4. D2BDh maps status bytes into the BIOS error code; D499h retries up to three times and returns CF on failure.
 
-This matches the µPD765 READ ID command's two command bytes and seven-byte result phase. The D40Ah–D462h constants therefore select candidate data rates and saved per-drive state, while the actual command is constructed in D499h/D1C0h. The exact meaning of every low-bit state token in [BX+90h] still needs caller/state-transition tracing.
+This matches the µPD765 READ ID command's two command bytes and seven-byte result phase. The D40Ah–D462h constants therefore select candidate data rates and saved per-drive state, while the actual command is constructed in D499h/D1C0h. The exact meaning of the low-nibble state fields in [BX+90h] still needs caller/state-transition tracing.
 
 ## 8. D520h–D5D9h: enhanced FDC identification and configuration
 
