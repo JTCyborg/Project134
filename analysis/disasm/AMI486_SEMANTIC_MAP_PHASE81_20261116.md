@@ -1,14 +1,12 @@
-# AMI486 semantic map — phase 81 (2026-11-16)
+# AMI486 semantic map — phase 81 (corrected, 2026-11-16)
 
-## 1. CMOS[B8h] writer/reader search
+## 1. CMOS[B8h] selector
 
-A raw scan of the 64 KiB ROM finds only two immediate `MOV AX,00B8h` instructions, both in the adjustment routine at 5D6Ah and 5D72h. The routine reads CMOS[B8h] into DI, then writes zero back to CMOS[B8h]. No other aligned immediate selector for B8h was found in the image.
+A raw scan of the 64 KiB ROM finds only one immediate `MOV AX,00B8h` read/write pair, in the routine at 5D6Ah and 5D72h. The first call reads CMOS[B8h] into AX and copies it to DI; the second writes zero to CMOS[B8h]. This establishes a one-shot use in this POST path, but does not exclude indirect/register-indexed accesses elsewhere.
 
-This makes the old CMOS[B8h] byte a one-shot adjustment input in this POST path, but does not prove there are no indirect/register-indexed accesses to B8h.
+## 2. CMOS[8Eh] is shared
 
-## 2. CMOS[8Eh] is a shared status/configuration byte
-
-The ROM contains multiple immediate CMOS[8Eh] reads through the common EE94h helper. Confirmed CALL sites include:
+Immediate CMOS[8Eh] reads through EE94h are found at these selector/call pairs:
 
 - 121Ah
 - 1271h
@@ -24,38 +22,32 @@ The ROM contains multiple immediate CMOS[8Eh] reads through the common EE94h hel
 - 8662h
 - F481h
 
-These sites all resolve to EE94h. The 5D78h caller tests bits C0h (bits 6 and 7) and conditionally skips the BEh:BFh adjustment. Other callers need separate path analysis; the byte is clearly shared, not a private flag for the 5D block.
+Each sequence selects index 8Eh and calls EE94h. The 5D78h caller tests mask C0h and skips the BEh:BFh adjustment if either bit 6 or bit 7 is set. Other callers need separate control-flow analysis; 8Eh is a shared status/configuration byte, not a private flag for the 5D block.
 
-Two apparent immediate 8Eh selectors at CC87h and CD8Bh, and one at F10Dh, resolve to EEAAh rather than EE94h. They must not be labelled reads without decoding the alternate helper entry and its exact operation.
+The similar byte patterns at CC87h and CD8Bh, and at F10Dh, resolve to EEAAh rather than EE94h. They are not yet classified as CMOS reads; the alternate EEAAh entry must be decoded separately.
 
-## 3. Corrected POST status helper address
+## 3. Corrected keyboard-controller status call
 
-The call at 5D54h is:
+The actual caller bytes are:
 
 ```asm
-5D50  MOV AL,25h
-5D52  OUT 80h,AL
-5D54  CALL F5DBh
-5D57  MOV [0012h],AL
-5D5A  TEST AL,20h
-5D5C  JNZ 5D9Eh
+5D4E  MOV AL,25h
+5D50  OUT 80h,AL
+5D52  CALL F5D9h
+5D55  MOV [0012h],AL
+5D58  TEST AL,20h
+5D5A  JNZ 5D9Ch
 ```
 
-The target is F5DBh, not E5DBh. The earlier report's E5DBh target was a hex-address arithmetic typo. F5DBh begins with `TEST AL,01h` and then a conditional keyboard-controller status/data path using ports 64h/60h (the preceding byte F5D9h is `IN AL,64h`). This path returns a status/data byte in AL; the caller stores it at DS:0012h and tests bit 5.
+The CALL displacement at 5D52h resolves to F5D9h, not F5DBh. F5D9h begins with `IN AL,64h`; the following code tests status bit 0 and conditionally reads port 60h. The caller stores the returned AL at DS:0012h and tests bit 5. The exact hardware meaning of the returned bit 5 is not established yet.
 
-Do not yet assign a hardware meaning to bit 5 without tracing the full caller and the possible return paths through F5DBh.
+## 4. BEh:BFh and unresolved work
 
-## 4. Corrections and limits
+CMOS[BEh:BFh] has at least two distinct writers: the range-sum write-back path at 17F0h/1810h and the conditional subtraction path at 5D81h..5D99h. Its global semantic role and the ordering of those writers remain open.
 
-- CMOS[B8h] has one clearly decoded immediate read/write pair in the ROM, at 5D6Dh/5D75h.
-- CMOS[8Eh] has many readers and is a shared byte.
-- The 5D54h helper target is F5DBh, not E5DBh.
-- CMOS[BEh:BFh] still has at least two distinct writers: the checksum sum writer at 17F0h/1810h and the conditional adjustment at 5D8Fh..5D99h. The adjustment reads its old value through EE94h, subtracts CMOS[B8h]'s saved byte, and writes it back.
-- BP.13 provenance and dynamic entry into DA5Eh/DA61h remain unresolved.
-
-## 5. Next steps
-
-- Trace the other CMOS[8Eh] readers, especially 121Ah, 1271h, 1338h, 140Eh and 1C64h, to label the individual bits.
-- Trace all indirect CMOS index paths to rule out additional B8h readers/writers.
-- Establish ordering between checksum refresh and BEh:BFh adjustment.
-- Continue BP.13 and DA5Eh/DA61h control-flow reconstruction.
+Still unresolved:
+- indirect CMOS accesses that may also use B8h or 8Eh;
+- individual bit meanings for the other 8Eh readers;
+- readers and update ordering for BEh:BFh;
+- producer of BP.13;
+- dynamic/indirect entry into DA5Eh/DA61h.
