@@ -838,3 +838,12 @@ This phase is semantic classification of selected regions, not a complete CFG. S
 - Identified explicit DI setup and indirect-dispatch candidates around 1837h–1859h. The 184Eh short jump targets the aligned second sum loop at 1810h.
 - Correction: calls at 1840h/1847h resolve to EE9Eh, an alternate entry into the CMOS write helper (one byte after EE9Dh). They skip index-select OUT 70h and write the data byte through OUT 71h to the already-selected CMOS index.
 - CMOS index-selection state and actual runtime reachability of the overlapping dispatcher remain under investigation.
+
+
+## Semantic map — phase 78 (2026-11-16)
+
+- [AMI486_SEMANTIC_MAP_PHASE78_20261116.md](AMI486_SEMANTIC_MAP_PHASE78_20261116.md)
+- Resolved both DI-selected CMOS sum-loop continuations: the 90h..ADh sum is written as BH:BL to CMOS AEh:AFh; the B4h..BDh plus C0h..E0h sum is written to CMOS BEh:BFh.
+- Verified the three CALLs at 183Fh, 1846h and 1853h all target EE9Dh, the complete CMOS write helper (including OUT 70h,AL). These are checksum write-back fields, not just read-only accumulators.
+- Corrected phase 77 byte alignment: 1834h is JMP DI; 1836h sets DI=183Bh; 1839h jumps to aligned 17F2h. The second setup at 184Ah jumps to aligned 1810h. Withdrawn phase 77's 17F3h alternate-entry claim and EE9Eh CALL-target claim.
+- Stored checksum fields are established; when/how they are validated and which callers refresh them remain open. BP.13 provenance and DA5Eh/DA61h dynamic entry remain unresolved.
