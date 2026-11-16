@@ -865,3 +865,6 @@ This phase is semantic classification of selected regions, not a complete CFG. S
 - Decoded the second BEh:BFh writer: read CMOS[B8h] into DI, clear CMOS[B8h], read CMOS[8Eh] and test bits 6/7; if clear, read CMOS[BEh:BFh], subtract the saved old CMOS[B8h] byte, and write the adjusted word back.
 - Withdrawn phase 79's incorrect CS-relative BFBEh interpretation. BEh:BFh has at least two writers (range-sum writer and this conditional adjustment), so its global semantic role and update ordering remain unresolved.
 - CMOS[B8h]/[8Eh] provenance, E5DBh status source, BP.13 producer and DA5Eh/DA61h dynamic entry remain open.
+
+
+- Phase 80 correction: the prelude is `MOV DI,0020h; INC SP; PUSH DS; STOSW; MOV AX,CS; STOSW`; there is no PUSHA at 5D5Fh. The two STOSW stores remain at ES:0020h and ES:0022h.
