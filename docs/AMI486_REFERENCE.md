@@ -73,6 +73,27 @@ The collection includes platform-specific material, including SIS530-related sou
 
 The inspected source files carry American Megatrends copyright notices and rights reservations. Unless the repository's provenance and applicable license/permissions establish otherwise, treat the collection as reference material only. Project134's BIOS implementation should be independently authored; do not copy or redistribute proprietary source code.
 
+
+### Collection inventory
+
+A recursive Git tree inspection found 1,293 files under `docs/627.10` (the tree response was not truncated). Top-level distribution:
+
+| Directory | Files | Initial relevance |
+|---|---:|---|
+| `ASM1` | 2 | Core BIOS startup/POST flow |
+| `ASM2` | 2 | CMOS implementation |
+| `CPUCORE` | 13 | CPU/FPU detection and initialization |
+| `INCLUDE` | 31 | Shared BIOS structures, constants and interfaces |
+| `IO.112` | 234 | I/O subsystem; includes generic/system object modules and chipset-specific source sets |
+| `OBJ` | 284 | Primarily prebuilt object/library artifacts; not a substitute for source |
+| `SIS530` | 679 | Platform/OEM implementation for a different chipset; do not assume applicable |
+| `EXE` | 41 | Build/configuration utilities; executable binaries are not source |
+| Other directories | 7 | Add-on ROMs and boot initialization material |
+
+The next useful source-review targets are the shared `INCLUDE` definitions and the source-level system I/O modules under `IO.112`. The latter must be checked file by file: a module named for a generic device (RTC, timer, keyboard controller, DMA, interrupt controller, memory) may explain BIOS responsibilities, while the actual chipset register programming remains platform-specific. Prebuilt `.OBJ` files are not to be treated as inspectable source.
+
+This inventory is a directory-level classification only. It does not establish that any module is compatible with the Project134 target or licensed for reuse.
+
 ### Research status
 
 - [x] Confirm that the collection is available in Project134 under `docs/627.10`.
