@@ -228,3 +228,15 @@ The caller at C846h–C855h independently confirms the state-byte contract:
   - all other observed tokens -> SI=DF03h, DI=0002h, CH=3 -> command bytes 03 DF 02.
 
 This is the µPD765 SPECIFY command (03h). It confirms that [BX+90h] is a per-drive configuration/status token: bit 4 marks a successful/valid setup, bits 7:6 carry the data-rate selector, and selected full-byte values D7h/17h choose distinct step-rate/head-unload timing parameters. The remaining low-nibble distinctions are not yet fully explained. The C84Bh caller is a verified direct near-CALL xref to D3CFh; the larger caller's own entry boundary remains outside this FDC-focused pass.
+
+
+## 11. D4EAh: global data-rate synchronization
+
+D4EAh provides an independent confirmation of the [BX+90h] rate field:
+
+- SI is set to 0090h+drive-index and DH is loaded from the per-drive state byte.
+- DL is loaded from the global byte at 008Bh.
+- AND DX,C0C0h isolates the top two bits of both values; CMP DL,DH compares the global selected rate with the per-drive rate.
+- If they differ, the code preserves the low six bits of [008Bh], copies the per-drive rate bits into [008Bh], shifts DH[7:6] down to DH[1:0] and calls D517h to write the rate code to port 03F7h.
+
+Therefore [BX+90h] bits 7:6 are definitively the per-drive data-rate selector, while [008Bh] stores the currently programmed global rate. D4EAh restores the original drive selector in DX before returning. The token's bit 4 success flag and its D7h/17h SPECIFY timing uses are established in section 10; the remaining low-nibble flags still need caller tracing.
