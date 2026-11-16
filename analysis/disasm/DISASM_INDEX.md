@@ -692,3 +692,14 @@ This phase is semantic classification of selected regions, not a complete CFG. S
 - Reconstructed the stack-crafted path DA9Fh → 5BF8h → 5C04h → 5F62h → 509Eh.
 - No BP.13 producer appears on the successful DAxx/5Cxx path; BP.13 is inherited from an earlier context.
 - Corrected a linear-disassembly false positive: the apparent 1B05h SBB BP instruction is skipped stack data because EE94h RET consumes the word at 1B04h and resumes at 1B06h.
+
+
+## Semantic map — phase 64 (2026-11-16)
+
+- [AMI486_SEMANTIC_MAP_PHASE64_20261116.md](AMI486_SEMANTIC_MAP_PHASE64_20261116.md)
+- Early POST 1100h–11C2h sets BP bits9,10,8,11 only; no BP.13 producer found.
+- 12D3h–12D4h restores BP then masks with C000h, clearing bits0–13 on that path.
+- 145Eh sets bit6; 157Ch/1580h clear bits0,8,15 inside a saved-BP diagnostic frame; 27D0h sets bit14 only.
+- 2913h resets BP and uses it as a memory-segment counter.
+- D6CEh copies AX through general registers into BP in a stack/register self-test; no edge to DAxx established.
+- BP.13 source remains unresolved; likely inherited or dynamically loaded rather than set by an immediate mask in these paths.
