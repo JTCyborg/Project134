@@ -1042,3 +1042,14 @@ Audit report: [AMI486_PHASES_1_96_AUDIT_20261116.md](AMI486_PHASES_1_96_AUDIT_20
 - Corrected this index's stale 5D54h/F5DBh statement; authoritative call is 5D52h -> F5D9h.
 - Phases 72, 77 and 79 now carry explicit supersession notes for the later byte-verified corrections.
 - Semantic byte-classification ledger is still missing. Do not publish a whole-ROM semantic percentage or start phase 97 until the address ledger is built and audited.
+
+
+## First address-ledger pass — 2026-11-16
+
+See [AMI486_ADDRESS_LEDGER_20261116.md](AMI486_ADDRESS_LEDGER_20261116.md).
+
+- The 256-page ledger distinguishes explicit phase-address references from semantic code/data classification.
+- Narrow token scan: 153 pages have explicit address references; 103 pages have none. This is not a coverage percentage.
+- Raw-byte checks uncovered substantial executable-looking content in pages without explicit phase references, including 2100h, 6800h, A000h–ACFFh, AE60h–AFFFh, D100h–D5FFh and F900h.
+- Confirmed data candidates include the Format/BootSector Write/Possible VIRUS message at A125h–A18Dh and keyboard translation tables at AD00h–AE5Fh.
+- Next focus: resolve the A000h–AFFFh mixed subsystem and connect it to D100h–D5FFh controller routines; then verify 2100h and F900h entry/caller provenance.
