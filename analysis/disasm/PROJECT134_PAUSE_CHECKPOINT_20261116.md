@@ -162,3 +162,8 @@ See AMI486_INT14_SERIAL_BIOS_20261116.md. F900h is a six-function IRET dispatch 
 ## INT 14h service mapping confirmed — 2026-11-16
 
 F900h implements the BIOS INT 14h serial service family. AH=00h initializes the UART with baud divisors 0417/0300/0180/00C0/0060/0030/0018/000C for 110–9600 baud; AH=01h transmits; AH=02h receives; AH=03h reads LSR/MSR; AH=04h/05h control modem outputs. The IVT entry/caller remains open. Full report: AMI486_INT14_SERIAL_BIOS_20261116.md.
+
+
+## FDC DMA direction — 2026-11-16
+
+The caller mode bytes resolve DMA direction: C8BBh passes 46h (memory-to-FDC write), while C936h/C913h pass 4Ah (FDC-to-memory read). Both use 8237 DMA channel 2 in single-transfer mode. Remaining FDC work is the command sequence at D40Ah–D462h and runtime INT40 vector capture.
