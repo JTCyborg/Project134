@@ -143,8 +143,76 @@ A0FD  8E              db 0x8E
 A0FE  A1              db 0xA1
 A0FF  8E              db 0x8E
 
+===== A08Dh-A10Ch =====
+Reason: INT 13h hard-disk handler entry; forwards DL<80h to INT 40h
+A08D  80 FA 80                cmp dl, 0x80
+A090  FB                      sti
+A091  FC                      cld
+A092  72 58                   jb 0xa0ec
+A094  0A E4                   or ah, ah
+A096  75 04                   jne 0xa09c
+A098  CD 40                   int 0x40
+A09A  32 E4                   xor ah, ah
+A09C  E8 13 F0                call 0x90b2
+A09F  50                      push ax
+A0A0  51                      push cx
+A0A1  52                      push dx
+A0A2  53                      push bx
+A0A3  56                      push si
+A0A4  57                      push di
+A0A5  1E                      push ds
+A0A6  06                      push es
+A0A7  83 EC 08                sub sp, 8
+A0AA  55                      push bp
+A0AB  8B EC                   mov bp, sp
+A0AD  6A 40                   push 0x40
+A0AF  1F                      pop ds
+A0B0  50                      push ax
+A0B1  8A C4                   mov al, ah
+A0B3  98                      cwde
+A0B4  8B F8                   mov di, ax
+A0B6  3C 19                   cmp al, 0x19
+A0B8  58                      pop ax
+A0B9  77 27                   ja 0xa0e2
+A0BB  D1 E7                   shl di, 1
+A0BD  2E FF 95 F1 A0          call word ptr cs:[di - 0x5f0f]
+A0C2  89 46 18                mov word ptr [bp + 0x18], ax
+A0C5  B8 01 02                mov ax, 0x201
+A0C8  72 05                   jb 0xa0cf
+A0CA  80 66 1E FE             and byte ptr [bp + 0x1e], 0xfe
+A0CE  48                      dec ax
+A0CF  09 46 1E                or word ptr [bp + 0x1e], ax
+A0D2  5D                      pop bp
+A0D3  83 C4 08                add sp, 8
+A0D6  07                      pop es
+A0D7  1F                      pop ds
+A0D8  5F                      pop di
+A0D9  5E                      pop si
+A0DA  5B                      pop bx
+A0DB  5A                      pop dx
+A0DC  59                      pop cx
+A0DD  58                      pop ax
+A0DE  E8 D1 EF                call 0x90b2
+A0E1  CF                      iret
+A0E2  B8 00 01                mov ax, 0x100
+A0E5  88 26 74 00             mov byte ptr [0x74], ah
+A0E9  F9                      stc
+A0EA  EB D6                   jmp 0xa0c2
+A0EC  CD 40                   int 0x40
+A0EE  CA 02 00                retf 2
+A0F1  97                      xchg di, ax
+A0F2  A1 0B A2                mov ax, word ptr [0xa20b]
+A0F5  16                      push ss
+A0F6  A2 26 A2                mov byte ptr [0xa226], al
+A0F9  3E A2 5F A2             mov byte ptr ds:[0xa25f], al
+A0FD  8E A1 8E A1             mov fs, word ptr [bx + di - 0x5e72]
+A101  A4                      movsb byte ptr es:[di], byte ptr [si]
+A102  A1 37 A3                mov ax, word ptr [0xa337]
+A105  72 A3                   jb 0xa0aa
+A107  81 A3 74 A4 9E A1       and word ptr [bp + di - 0x5b8c], 0xa19e
+
 ===== A0A0h-A11Fh =====
-Reason: candidate routine prologue and local stack frame
+Reason: INT 13h AH-function dispatcher prologue
 A0A0  51                      push cx
 A0A1  52                      push dx
 A0A2  53                      push bx
@@ -208,16 +276,42 @@ A11D  8E              db 0x8E
 A11E  A1              db 0xA1
 A11F  8E              db 0x8E
 
-===== A0F0h-A16Fh =====
-Reason: possible pointer/dispatch data boundary; inspect both streams
-A0F0  00 97 A1 0B             add byte ptr [bx + 0xba1], dl
-A0F4  A2 16 A2                mov byte ptr [0xa216], al
-A0F7  26 A2 3E A2             mov byte ptr es:[0xa23e], al
-A0FB  5F                      pop di
-A0FC  A2 8E A1                mov byte ptr [0xa18e], al
-A0FF  8E A1 A4 A1             mov fs, word ptr [bx + di - 0x5e5c]
-A103  37                      aaa
-A104  A3 72 A3                mov word ptr [0xa372], ax
+===== A0BDh-A13Ch =====
+Reason: indirect CALL through CS-relative 26-entry function table
+A0BD  2E FF 95 F1 A0          call word ptr cs:[di - 0x5f0f]
+A0C2  89 46 18                mov word ptr [bp + 0x18], ax
+A0C5  B8 01 02                mov ax, 0x201
+A0C8  72 05                   jb 0xa0cf
+A0CA  80 66 1E FE             and byte ptr [bp + 0x1e], 0xfe
+A0CE  48                      dec ax
+A0CF  09 46 1E                or word ptr [bp + 0x1e], ax
+A0D2  5D                      pop bp
+A0D3  83 C4 08                add sp, 8
+A0D6  07                      pop es
+A0D7  1F                      pop ds
+A0D8  5F                      pop di
+A0D9  5E                      pop si
+A0DA  5B                      pop bx
+A0DB  5A                      pop dx
+A0DC  59                      pop cx
+A0DD  58                      pop ax
+A0DE  E8 D1 EF                call 0x90b2
+A0E1  CF                      iret
+A0E2  B8 00 01                mov ax, 0x100
+A0E5  88 26 74 00             mov byte ptr [0x74], ah
+A0E9  F9                      stc
+A0EA  EB D6                   jmp 0xa0c2
+A0EC  CD 40                   int 0x40
+A0EE  CA 02 00                retf 2
+A0F1  97                      xchg di, ax
+A0F2  A1 0B A2                mov ax, word ptr [0xa20b]
+A0F5  16                      push ss
+A0F6  A2 26 A2                mov byte ptr [0xa226], al
+A0F9  3E A2 5F A2             mov byte ptr ds:[0xa25f], al
+A0FD  8E A1 8E A1             mov fs, word ptr [bx + di - 0x5e72]
+A101  A4                      movsb byte ptr es:[di], byte ptr [si]
+A102  A1 37 A3                mov ax, word ptr [0xa337]
+A105  72 A3                   jb 0xa0aa
 A107  81 A3 74 A4 9E A1       and word ptr [bp + di - 0x5b8c], 0xa19e
 A10D  8E A1 8E A1             mov fs, word ptr [bx + di - 0x5e72]
 A111  D3 A4 01 A5             shl word ptr [si - 0x5aff], cl
@@ -238,31 +332,7 @@ A135  61                      popaw
 A136  74 20                   je 0xa158
 A138  21 21                   and word ptr [bx + di], sp
 A13A  21 20                   and word ptr [bx + si], sp
-A13C  20 20                   and byte ptr [bx + si], ah
-A13E  20 20                   and byte ptr [bx + si], ah
-A140  20 20                   and byte ptr [bx + si], ah
-A142  20 20                   and byte ptr [bx + si], ah
-A144  20 20                   and byte ptr [bx + si], ah
-A146  20 20                   and byte ptr [bx + si], ah
-A148  20 20                   and byte ptr [bx + si], ah
-A14A  20 20                   and byte ptr [bx + si], ah
-A14C  20 20                   and byte ptr [bx + si], ah
-A14E  20 42 6F                and byte ptr [bp + si + 0x6f], al
-A151  6F                      outsw dx, word ptr [si]
-A152  74 53                   je 0xa1a7
-A154  65 63 74 6F             arpl word ptr gs:[si + 0x6f], si
-A158  72 20                   jb 0xa17a
-A15A  57                      push di
-A15B  72 69                   jb 0xa1c6
-A15D  74 65                   je 0xa1c4
-A15F  20 21                   and byte ptr [bx + di], ah
-A161  21 21                   and word ptr [bx + di], sp
-A163  20 20                   and byte ptr [bx + si], ah
-A165  20 20                   and byte ptr [bx + si], ah
-A167  20 20                   and byte ptr [bx + si], ah
-A169  20 20                   and byte ptr [bx + si], ah
-A16B  20 50 6F                and byte ptr [bx + si + 0x6f], dl
-A16E  73 73                   jae 0xa1e3
+A13C  20              db 0x20
 
 ===== A18Eh-A20Dh =====
 Reason: byte-aligned short helper immediately after embedded prompt
