@@ -58,3 +58,22 @@ This is a CPU/memory timing calibration benchmark. Given the adjacent 0–3.75 u
 4. The exact chipset vendor and register semantics must not be inferred from ports 22h/23h alone.
 
 This report classifies the Setup label tables and timing benchmark. It does not claim the entire chipset Setup screen or chipset register map is complete.
+
+
+## 6. Mixed final entry in the 2AB3h table
+
+The eighth word at 2AC1h is 5756h. This is not a string start. The aligned stream at 5753h is:
+
+```asm
+5753 TEST WORD [E19D],0001h
+5759 JZ 575Dh
+575B MOV AL,CDh
+575D RET
+575E MOV AL,B3h
+5760 TEST WORD [E19D],0002h
+5766 JZ 576Ah
+5768 MOV AL,BAh
+576A RET
+```
+
+The table-selected entry 5756h begins inside the TEST instruction's immediate/displacement bytes and produces a different overlapping instruction stream. It is not safe to call this entry a string pointer or to infer its purpose from the neighboring clock labels. The exact caller behavior for selector value 7 remains open.
