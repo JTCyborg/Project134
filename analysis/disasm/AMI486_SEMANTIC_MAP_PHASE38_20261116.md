@@ -23,7 +23,7 @@ The adjacent NUL-terminated strings include:
 - 19DCh: "MHz CPU Clock"
 - 19ECh: "MHz DX2 CPU"
 
-The status-display routine at 1A24h reads the category from BDA 0040:E2h, uses it as an index into the 19C2h byte table, prints the resulting numeric value, and chooses the label at 19DCh or 19ECh according to CMOS B3h bit 1. The code therefore explicitly labels the displayed values as CPU clock MHz or DX2 CPU MHz. Category 7 is outside the seven-byte numeric table; it indexes the following string byte rather than a valid numeric entry, so this phase does not assign a numeric MHz value to category 7.
+The status-display routine at 1A24h reads the category from BDA 0040:E2h, uses it as an index into the 19C2h byte table, prints the resulting numeric value, and chooses the label at 19DCh or 19ECh according to CMOS B3h bit 1. The code therefore explicitly labels the displayed values as CPU clock MHz or DX2 CPU MHz. Category 7 reads the byte at 19C9h, which is 20h (decimal 32), and therefore displays 32 with the selected MHz label. 19C9h is also the leading space of the cache suffix string; phase 39 documents this data-layout alias in detail.
 
 This is a display/label lookup, distinct from the measurement itself. The measurement remains the PIT2 DIV timing differential established in phase37. The values 16, 20, 25, 33, 40, 50 and 66 are the BIOS's displayed nominal labels for categories 0–6, not direct readings from a frequency counter.
 
@@ -74,7 +74,7 @@ Confirmed:
 
 Unresolved:
 - Whether the seven displayed nominal MHz labels are intended as exact supported CPU clocks or rounded marketing categories.
-- Why category 7 has no corresponding numeric entry in the table.
+- Whether the category-7 / cache-suffix byte overlap at 19C9h was intentional (see phase 39).
 - Hardware meanings of the ALi registers written at 1A60h.
 
 ## Reproducibility
