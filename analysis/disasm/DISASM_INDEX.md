@@ -1132,3 +1132,8 @@ Detailed map: [AMI486_INT14_SERIAL_BIOS_20261116.md](AMI486_INT14_SERIAL_BIOS_20
 ## INT 14h serial service confirmation — 2026-11-16
 
 The F900h wrapper's AH=00h–05h table is confirmed as the BIOS serial-service family: AH=00h programs UART baud divisor/LCR, AH=01h transmits, AH=02h receives, AH=03h returns LSR/MSR, AH=04h/05h manipulate modem-control outputs. The baud table exactly matches 110–9600 baud divisors. Only the IVT installation/caller for F900h remains unresolved. See AMI486_INT14_SERIAL_BIOS_20261116.md.
+
+
+## FDC DMA direction verified — 2026-11-16
+
+D156h receives mode 46h from C8BBh (8237 channel 2, single, memory-to-FDC write) and mode 4Ah from C936h/C913h (channel 2, single, FDC-to-memory read). The DMA direction is now resolved at these callers; D40Ah–D462h command-byte semantics remain open.
