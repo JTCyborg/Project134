@@ -71,32 +71,32 @@ Raw samples show several distinct content types inside this 4 KiB area:
 - `A000h–A0FFh`: instruction-dense bytes, including BIOS interrupt and register-save/restore sequences.
 - `A0F1h–A124h`: 26-entry native little-endian INT 13h function table. The A0A0h dispatcher indexes it with incoming AH (0–19h) via `CS:[DI-5F0Fh]`. Targets: `A197, A20B, A216, A226, A23E, A25F, A18E, A18E, A1A4, A337, A372, A381, A474, A19E, A18E, A18E, A4D3, A501, A18E, A18E, A52B, A1A9, A18E, A18E, A18E, A57B`. A100h is an interior address in this table, not its beginning.
 - `A125h–A18Dh`: padded message text including **“Format !!!”**, **“BootSector Write !!!”**, and **“Possible VIRUS: Continue (Y/N)?”**. This is confirmed embedded text/data, not executable code.
-- `A18Eh`: aligned bytes `B8 00 01 88 26 74 00 F9 C3`; a short executable helper candidate. Its side effect and caller contract remain to be established.
+- `A18Eh`: aligned bytes `B8 00 01 88 26 74 00 F9 C3`; shared INT 13h unsupported/error stub. It sets AH=01h, stores status 01h at DS:0074h, sets CF and returns.
 - `A200h–ACFFh`: instruction-dense routines; raw samples include repeated I/O and conditional control flow. Treat as code candidates with embedded data not yet excluded.
 - `AD00h–AE5Fh`: keyboard translation data candidates. The bytes contain scan-code-like values and recognizable QWERTY/ASDF/Z/X/C/V/B/N/M and numeric-key sequences.
 - `AE60h–AFFFh`: returns to instruction-dense code, including BIOS interrupt calls and control-flow branches.
 
 The A100h words must not be mistaken for a fully understood native little-endian pointer table. The raw pairs, when byte-reversed, match plausible code entries such as A1A4h, A137h, A372h, A381h, A49Eh, A18Eh, A1D3h, A401h and A5A9h. This is a strong byte-swapped-table hypothesis, not yet a proven table contract.
 
-### 4.3 D100h–D5FFh — floppy-controller I/O code candidate
+### 4.3 D100h–D5FFh — floppy-controller/DMA subsystem
 
-The raw stream includes repeated immediate port references to `03F7h` and `03F4h`, `IN AL,DX`-style byte patterns, status-bit tests, retries and calls. This is strongly consistent with floppy-disk-controller access routines. Exact routine boundaries, calling convention and relation to the separate INT 40h floppy service remain to be traced.
+The FDC/DMA routines are called from the legacy floppy INT 13h handler at C610h (notably C8BBh/C936h -> D156h and C913h -> D4EAh/D381h/D197h/D156h/D216h/D270h/D2BDh). A95Eh saves the displaced INT 13h vector at INT 40h; A08Dh forwards DL<80h requests through INT 40h. C610h is the strong matching in-ROM floppy handler candidate; the actual runtime pointer stored at 0000:0100h still needs an IVT snapshot. See AMI486_FDC_DMA_SUBSYSTEM_20261116.md.
 
 ### 4.4 6800h — executable code candidate
 
 At 6800h the bytes begin `86 C4 8B F8 C3 3B F7 74 37 ...`, followed by arithmetic, BIOS INT 10h calls and a divide-based conversion sequence. This is a code candidate despite the absence of explicit phase-address tokens for page 68.
 
-### 4.5 F900h — executable code candidate
+### 4.5 F900h–F9FCh — BIOS serial service / UART dispatch
 
-At F900h the stream begins `00 23 D2 74 1F D1 EF 8B BD 7C 00 ...` and contains indirect-call opcode `FF D0` in the sampled continuation. This is a code candidate; the entry point and target provenance are not yet established.
+F900h–F929h is an IRET-terminated six-function dispatcher. F92Ah–F935h is a six-word table. The handlers use DX-relative UART registers +0/+1/+3/+4/+5/+6 (RBR/THR/DLL, IER/DLM, LCR, MCR, LSR, MSR). AH=00h programs the exact 110–9600 baud divisor table; AH=01h transmits; AH=02h receives; AH=03h returns LSR/MSR; AH=04h/05h manage modem-control outputs. This is the BIOS INT 14h serial-service family; IVT installation/caller provenance remains unresolved. See AMI486_INT14_SERIAL_BIOS_20261116.md.
 
 ## 5. Immediate priority order
 
-1. **A000h–AFFFh**: map the mixed IDE/ATA hard-disk format/boot-sector path, separate the pointer-like words and keyboard tables, and trace the message callers.
-2. **D100h–D5FFh**: identify all FDC routines and connect their callers to the A000h subsystem.
-3. **2100h onward**: verify the memory-test alternate stream and caller.
-4. **F900h–F9FFh** and **6800h–68FFh**: establish entry points and callers.
-5. Continue through the remaining reference-scan gaps in address order, but only after a raw-byte classification pass.
+1. **INT 40h runtime target**: capture the initialized IVT value at 0000:0100h and confirm the legacy floppy handler segment:offset (C610h is the strong in-ROM candidate).
+2. **FDC command semantics**: decode D40Ah–D462h and D520h–D5DCh against the 8272/765 command format; verify DMA mode at every D156h call.
+3. **INT 14h vector provenance**: locate the IVT installation/caller for the now-mapped F900h serial service.
+4. **Chipset register semantics**: identify the chipset family and map registers 10h/11h/16h used by the 2100h–23E1h memory-alias/configuration path.
+5. **Remaining regions**: map incoming callers for the RTC/date-time renderer (6700h/6774h/67AEh), the F9xx serial handler, and other unclassified pages. Continue by uncovered byte ranges, not phase numbers.
 
 ## 6. Rules for subsequent updates
 
@@ -123,8 +123,8 @@ Confirmed from the decoded bytes:
 - A501h and A52Bh issue ATA commands and inspect status/error state; A52Bh uses command 90h and reads 01F1h.
 - A621h writes the feature/error register at 01F1h; A62Dh polls status at 01F7h; A655h selects a drive and checks status.
 - A847h renders the embedded A125h/A148h prompt via BIOS INT 10h. This ties the “Possible VIRUS” message to the ATA/boot-sector protection path.
-- A95Eh writes the INT 13h vector at 0000:004Ch and stores the displaced vector in low memory; full hook semantics still require the rest of the routine and caller path.
-- D100h–D5FFh accesses ports 03F4h/03F7h and is a separate floppy-controller candidate. Do not merge it with the ATA routines at A000h–AFFFh.
+- A95Eh replaces INT 13h at 0000:004Ch with F000:A08Dh, saves the displaced INT 13h vector at INT 40h (0000:0100h), installs INT 76h/IRQ14 at F000:E845h, and configures INT 41h/INT 46h fixed-disk parameter table pointers at E401h-based 16-byte records. A08Dh forwards floppy DL<80h requests through INT 40h.
+- D100h–D5FFh is the FDC/DMA subsystem called by the legacy floppy INT 13h handler at C610h; C8BBh/C936h call D156h DMA setup. A08Dh forwards DL<80h requests to the saved old INT 13h vector in INT 40h.
 - AE60h onward enters a keyboard/INT 15h related handler path; AD00h–AE5Fh remains translation-table data candidate.
 
 The first A000h seed decodes the initial bytes as unusual but syntactically valid instructions. Its true entry boundary remains unconfirmed; prefer the aligned entries established by direct calls/branches in the seeded listing.
@@ -196,3 +196,28 @@ See [AMI486_INT14_SERIAL_BIOS_20261116.md](AMI486_INT14_SERIAL_BIOS_20261116.md)
 ## INT 14h service family
 
 The F900h–F9FCh dispatcher is now classified as the BIOS INT 14h serial-service family from the AH function table, DX port-base convention, UART DLAB/DLL/DLM/LCR/IER/THR/RBR/MCR/LSR/MSR accesses, and exact 110–9600 baud divisor table. IVT installation remains unverified. See AMI486_INT14_SERIAL_BIOS_20261116.md.
+
+
+## 9. Corrected subsystem classifications and linked reports
+
+The first-pass region descriptions above have been refined by raw-byte and caller analysis. Use the following as the current authoritative region summaries:
+
+| Region | Current classification | Detailed report |
+|---|---|---|
+| A08Dh–A124h | Hooked hard-disk INT 13h handler, AH dispatcher and 26-entry function table | AMI486_STORAGE_AND_DISPATCH_REGIONS_20261116.md |
+| A125h–A18Dh | Format / boot-sector warning text | AMI486_STORAGE_AND_DISPATCH_REGIONS_20261116.md |
+| A18Eh | Shared INT 13h unsupported/error stub | AMI486_STORAGE_AND_DISPATCH_REGIONS_20261116.md |
+| A197h–A946h | ATA reset/read/write/verify/format/seek/diagnostic/capacity handlers and shared helpers | AMI486_STORAGE_AND_DISPATCH_REGIONS_20261116.md |
+| A95Eh onward | INT 13h/INT 40h chaining, INT 76h IRQ14 install, INT 41h/46h disk parameter tables | AMI486_STORAGE_AND_DISPATCH_REGIONS_20261116.md |
+| C5FAh–C60Fh | Legacy floppy INT 13h AH dispatch table | AMI486_FDC_DMA_SUBSYSTEM_20261116.md |
+| C610h onward | Legacy floppy INT 13h handler; direct callers of D100h–D5FFh FDC/DMA helpers | AMI486_FDC_DMA_SUBSYSTEM_20261116.md |
+| AD00h–AE5Fh | Keyboard translation data | AMI486_KEYBOARD_SUBSYSTEM_20261116.md |
+| AE6Fh onward / B1E9h–B4xxh | Scan-code intercept, 8042 commands, BIOS keyboard buffer and INT 16h services | AMI486_KEYBOARD_SUBSYSTEM_20261116.md |
+| 2100h–23E1h | Memory-alias probes, stack-threaded indexed chipset I/O, CR0.PE transition | AMI486_MEMORY_CHIPSET_INITIALIZATION_20261116.md |
+| 6700h–68E2h | RTC date/time display and numeric/hex text rendering helpers | AMI486_CLOCK_AND_TEXT_RENDERING_20261116.md |
+| D100h–D5FFh | FDC FIFO, DMA channel 2, CMOS floppy type, reset and status/error handling | AMI486_FDC_DMA_SUBSYSTEM_20261116.md |
+| E401h–E480h | First eight 16-byte fixed-disk parameter records | AMI486_STORAGE_AND_DISPATCH_REGIONS_20261116.md |
+| E845h–E864h | INT 76h / IRQ14 handler | AMI486_STORAGE_AND_DISPATCH_REGIONS_20261116.md |
+| F900h–F9FCh | BIOS INT 14h serial-service dispatcher and UART handlers | AMI486_INT14_SERIAL_BIOS_20261116.md |
+
+The current candidate-window artifact has 146 unique bounded code windows and 6 separately emitted data ranges (152 headers). Its union is 8,618 bytes across 46 pages: 7,974 code-candidate bytes, 671 data-candidate bytes and 27 bytes of code/data overlap. This is a sampling footprint only, not semantic coverage.
