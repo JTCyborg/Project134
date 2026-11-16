@@ -79,7 +79,7 @@ First-pass page ledger created at `analysis/disasm/AMI486_ADDRESS_LEDGER_2026111
 
 Raw-byte sampling shows that several pages with no phase-address tokens contain code candidates, especially 2100h, 6800h, A000h–ACFFh, AE60h–AFFFh, D100h–D5FFh and F900h. A000h–AFFFh is mixed: the Format/BootSector Write/Possible VIRUS message is embedded at A125h–A18Dh; the INT 13h handler at A08Dh dispatches AH through a 26-entry little-endian table at A0F1h–A124h; AD00h–AE5Fh contains keyboard translation data candidates. D100h–D5FFh contains I/O code candidates referencing ports 03F4h/03F7h.
 
-**No phase 97.** Continue by validating the runtime INT 40h target (C610h is the strong in-ROM floppy handler candidate), decoding FDC command bytes D40Ah–D462h, finding the INT 14h vector source for F900h, identifying chipset registers 10h/11h/16h, and tracing the RTC display callers. The address ledger is still a first-pass classification; whole-ROM semantic coverage is not complete.
+**No phase 97.** Continue by validating the runtime INT 40h target (C610h is the strong in-ROM floppy handler candidate), tracing the remaining low-bit [BX+90h] FDC state tokens and EEAAh configuration-byte source, finding the INT 14h vector source for F8E7h, identifying chipset registers 10h/11h/16h, and tracing the RTC display callers. The address ledger is still a first-pass classification; whole-ROM semantic coverage is not complete.
 
 
 ## Seeded decode results — 2026-11-16
@@ -121,7 +121,7 @@ A08Dh/A0A0h is now mapped as the hard-disk INT 13h handler and AH dispatcher. Th
 
 ## FDC/DMA follow-up — 2026-11-16
 
-See AMI486_FDC_DMA_SUBSYSTEM_20261116.md. D156h programs DMA channel 2; D243h and D294h implement FDC FIFO command/result byte exchange; D270h collects result blocks; D2FDh issues Sense Interrupt Status 08h; D348h resets the controller; D3B5h reads CMOS floppy type register 10h; D499h performs a three-attempt FDC command/result transaction. D40Ah–D462h command sequences and the runtime INT 40h segment:offset remain open; C610h is the strong matching floppy handler candidate.
+See AMI486_FDC_DMA_SUBSYSTEM_20261116.md. D156h programs DMA channel 2; D243h and D294h implement FDC FIFO command/result byte exchange; D270h collects result blocks; D2FDh issues Sense Interrupt Status 08h; D348h resets the controller; D3B5h reads CMOS floppy type register 10h; D499h performs a three-attempt FDC command/result transaction. D40Ah–D462h is now understood as data-rate/state-token selection feeding a D499h MFM READ ID transaction; D520h–D5D9h performs VERSION/DUMPREG/UNLOCK/CONFIGURE/PERPENDICULAR/LOCK setup. Remaining gaps are low-bit state-token semantics, EEAAh configuration-byte provenance and the runtime INT 40h segment:offset; C610h remains the strong matching floppy handler candidate.
 
 
 ## Keyboard subsystem follow-up — 2026-11-16
@@ -177,3 +177,8 @@ The F9xx serial dispatcher entry was byte-aligned again against the generated Ca
 ## Candidate-window refresh — 2026-11-16
 
 The generated candidate listing now contains 189 code windows plus 6 data windows (195 headers total). Their distinct union is 10,493 bytes across 54 pages; this is not a semantic coverage percentage. The F9xx serial window is aligned at F8E7h–F929h, with F92Ah–F935h emitted as the handler table. The INT 14h vector source remains open.
+
+
+## FDC command-sequence update — 2026-11-16
+
+D499h is now identified as a three-attempt MFM READ ID transaction: command 4Ah plus drive/head, followed by seven result bytes. D40Ah–D462h supplies data-rate tokens for 03F7h and per-drive state values, not command opcodes. D520h–D5D9h probes an enhanced 765-compatible FDC (VERSION 10h returns 90h), reads DUMPREG, unlocks FIFO config, sends CONFIGURE 13h with 00 08 00, sets PERPENDICULAR MODE 12h, then locks the configuration. Still open: low-bit [BX+90h] meanings, EEAAh config-source semantics, and the runtime INT 40h vector.
