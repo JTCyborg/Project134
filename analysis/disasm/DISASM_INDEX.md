@@ -364,3 +364,11 @@ This phase is semantic classification of selected regions, not a complete CFG. S
 - Mapped the 8042 command/data helpers F635h, F644h, F622h, F62Dh, F651h and response/read helpers.
 - Identified F66Ah as D1h/DFh (A20 gate enable) and F66Eh as D1h/DDh (A20 gate disable), using output-port bit 1.
 - Separated the POST C0h input-port probe at F5D9h from the actual D1h output-port writes.
+
+
+## Semantic map — phase 28 (2026-11-16)
+
+- [AMI486_SEMANTIC_MAP_PHASE28_20261116.md](AMI486_SEMANTIC_MAP_PHASE28_20261116.md)
+- Traced the INT 15h AH=87h extended-memory move path: A20 enabled before CR0.PE, disabled after PE is cleared on the normal return path.
+- Identified a second A20/PE sequencing pair at 20C9h–23CBh and an additional protected-mode entry at 933Ah.
+- Established that the D1h writes use fixed DFh/DDh values rather than saving and restoring the previous 8042 output-port byte.
