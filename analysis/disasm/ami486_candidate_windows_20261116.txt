@@ -56,6 +56,11 @@ E471  DD 02 05 00 00 FF FF 00 00 00 00 00 DD 02 11 00 ................
 Reason: Legacy floppy INT 13h AH dispatch table
 Words: C69A, C6CE, C7E2, C7E2, C7E2, C8E1, C999, C6D9, C78B, C716, CB09
 
+===== DATA 2236h-2252h =====
+Reason: Memory-probe crafted stack-frame templates
+2236  38 22 0C 30 86 E0 BC 42 22 E9 9A 6B 44 22 B8 11 8".0...B"..kD"..
+2246  44 90 BC 4E 22 E9 8E 6B 50 22 B3 FF 26          D..N"..kP"..&
+
 ===== A000h-A07Fh =====
 Reason: code-dense raw window; entry not yet caller-verified
 A000  04 B4                   add al, 0xb4
@@ -4656,6 +4661,199 @@ Reason: memory-pattern failure trampoline with crafted stack frame
 22A9  B3 02                   mov bl, 2
 22AB  26              db 0x26
 22AC  66              db 0x66
+
+===== 2381h-2400h =====
+Reason: second memory-probe failure trampoline
+2381  81 E2 0F 0F             and dx, 0xf0f
+2385  8A E6                   mov ah, dh
+2387  C0 E4 04                shl ah, 4
+238A  0A E2                   or ah, dl
+238C  B0 10                   mov al, 0x10
+238E  BC 94 23                mov sp, 0x2394
+2391  E9 48 6A                jmp 0x8ddc
+2394  96                      xchg si, ax
+2395  23 81 E3 0F             and ax, word ptr [bx + di + 0xfe3]
+2399  0F 8A E7 C0             jp 0xe484
+239D  E4 04                   in al, 4
+239F  0A E3                   or ah, bl
+23A1  B0 11                   mov al, 0x11
+23A3  90                      nop
+23A4  BC AA 23                mov sp, 0x23aa
+23A7  E9 32 6A                jmp 0x8ddc
+23AA  AC                      lodsb al, byte ptr [si]
+23AB  23 B8 16 00             and di, word ptr [bx + si + 0x16]
+23AF  90                      nop
+23B0  BC B6 23                mov sp, 0x23b6
+23B3  E9 26 6A                jmp 0x8ddc
+23B6  B8 23 B8                mov ax, 0xb823
+23B9  10 00                   adc byte ptr [bx + si], al
+23BB  8E C0                   mov es, ax
+23BD  0F 20 C0                mov eax, cr0
+23C0  24 FE                   and al, 0xfe
+23C2  0F 22 C0                mov cr0, eax
+23C5  EB 00                   jmp 0x23c7
+23C7  90                      nop
+23C8  BC CE 23                mov sp, 0x23ce
+23CB  E9 A0 D2                jmp 0xf66e
+23CE  D0 23                   shl byte ptr [bp + di], 1
+23D0  BB 00 04                mov bx, 0x400
+23D3  90                      nop
+23D4  BC DA 23                mov sp, 0x23da
+23D7  E9 53 31                jmp 0x552d
+23DA  DC 23                   fsub qword ptr [bp + di]
+23DC  74 06                   je 0x23e4
+23DE  BD 03 00                mov bp, 3
+23E1  E9 C1 D0                jmp 0xf4a5
+23E4  B8 30 00                mov ax, 0x30
+23E7  8E D0                   mov ss, ax
+23E9  BC 00 01                mov sp, 0x100
+23EC  E8 1B 00                call 0x240a
+23EF  E8 A3 00                call 0x2495
+23F2  E8 F8 05                call 0x29ed
+23F5  74 06                   je 0x23fd
+23F7  E8 18 6B                call 0x8f12
+23FA  E8 3A 01                call 0x2537
+23FD  2B C0                   sub ax, ax
+23FF  8E D8                   mov ds, ax
+
+===== 8DCFh-8E4Eh =====
+Reason: memory-probe common failure/report handler
+8DCF  E6 22                   out 0x22, al
+8DD1  E3 00                   jcxz 0x8dd3
+8DD3  E3 00                   jcxz 0x8dd5
+8DD5  E4 23                   in al, 0x23
+8DD7  E3 00                   jcxz 0x8dd9
+8DD9  E3 00                   jcxz 0x8ddb
+8DDB  C3                      ret
+8DDC  E6 22                   out 0x22, al
+8DDE  E3 00                   jcxz 0x8de0
+8DE0  E3 00                   jcxz 0x8de2
+8DE2  86 C4                   xchg ah, al
+8DE4  E6 23                   out 0x23, al
+8DE6  E3 00                   jcxz 0x8de8
+8DE8  E3 00                   jcxz 0x8dea
+8DEA  86 C4                   xchg ah, al
+8DEC  C3                      ret
+8DED  E6 22                   out 0x22, al
+8DEF  E3 00                   jcxz 0x8df1
+8DF1  E3 00                   jcxz 0x8df3
+8DF3  E4 23                   in al, 0x23
+8DF5  E3 00                   jcxz 0x8df7
+8DF7  E3 00                   jcxz 0x8df9
+8DF9  FF E7                   jmp di
+8DFB  E6 22                   out 0x22, al
+8DFD  E3 00                   jcxz 0x8dff
+8DFF  E3 00                   jcxz 0x8e01
+8E01  86 C4                   xchg ah, al
+8E03  E6 23                   out 0x23, al
+8E05  E3 00                   jcxz 0x8e07
+8E07  E3 00                   jcxz 0x8e09
+8E09  86 C4                   xchg ah, al
+8E0B  FF E7                   jmp di
+8E0D  16                      push ss
+8E0E  16                      push ss
+8E0F  17                      pop ss
+8E10  19 20                   sbb word ptr [bx + si], sp
+8E12  20 16 17 19             and byte ptr [0x1917], dl
+8E16  20 25                   and byte ptr [di], ah
+8E18  16                      push ss
+8E19  17                      pop ss
+8E1A  19 20                   sbb word ptr [bx + si], sp
+8E1C  33 16 17 19             xor dx, word ptr [0x1917]
+8E20  20 40 16                and byte ptr [bx + si + 0x16], al
+8E23  17                      pop ss
+8E24  19 20                   sbb word ptr [bx + si], sp
+8E26  50                      push ax
+8E27  16                      push ss
+8E28  17                      pop ss
+8E29  19 20                   sbb word ptr [bx + si], sp
+8E2B  66 16                   push ss
+8E2D  17                      pop ss
+8E2E  19 20                   sbb word ptr [bx + si], sp
+8E30  24 16                   and al, 0x16
+8E32  17                      pop ss
+8E33  19 20                   sbb word ptr [bx + si], sp
+8E35  25 16 17                and ax, 0x1716
+8E38  19 20                   sbb word ptr [bx + si], sp
+8E3A  33 16 17 19             xor dx, word ptr [0x1917]
+8E3E  20 40 16                and byte ptr [bx + si + 0x16], al
+8E41  17                      pop ss
+8E42  19 20                   sbb word ptr [bx + si], sp
+8E44  8D 36 0D 8E             lea si, [0x8e0d]
+8E48  2C 80                   sub al, 0x80
+8E4A  03 F0                   add si, ax
+8E4C  AC                      lodsb al, byte ptr [si]
+8E4D  C3                      ret
+8E4E  C0              db 0xC0
+
+===== 8DDCh-8E5Bh =====
+Reason: memory-probe alternate failure/report handler
+8DDC  E6 22                   out 0x22, al
+8DDE  E3 00                   jcxz 0x8de0
+8DE0  E3 00                   jcxz 0x8de2
+8DE2  86 C4                   xchg ah, al
+8DE4  E6 23                   out 0x23, al
+8DE6  E3 00                   jcxz 0x8de8
+8DE8  E3 00                   jcxz 0x8dea
+8DEA  86 C4                   xchg ah, al
+8DEC  C3                      ret
+8DED  E6 22                   out 0x22, al
+8DEF  E3 00                   jcxz 0x8df1
+8DF1  E3 00                   jcxz 0x8df3
+8DF3  E4 23                   in al, 0x23
+8DF5  E3 00                   jcxz 0x8df7
+8DF7  E3 00                   jcxz 0x8df9
+8DF9  FF E7                   jmp di
+8DFB  E6 22                   out 0x22, al
+8DFD  E3 00                   jcxz 0x8dff
+8DFF  E3 00                   jcxz 0x8e01
+8E01  86 C4                   xchg ah, al
+8E03  E6 23                   out 0x23, al
+8E05  E3 00                   jcxz 0x8e07
+8E07  E3 00                   jcxz 0x8e09
+8E09  86 C4                   xchg ah, al
+8E0B  FF E7                   jmp di
+8E0D  16                      push ss
+8E0E  16                      push ss
+8E0F  17                      pop ss
+8E10  19 20                   sbb word ptr [bx + si], sp
+8E12  20 16 17 19             and byte ptr [0x1917], dl
+8E16  20 25                   and byte ptr [di], ah
+8E18  16                      push ss
+8E19  17                      pop ss
+8E1A  19 20                   sbb word ptr [bx + si], sp
+8E1C  33 16 17 19             xor dx, word ptr [0x1917]
+8E20  20 40 16                and byte ptr [bx + si + 0x16], al
+8E23  17                      pop ss
+8E24  19 20                   sbb word ptr [bx + si], sp
+8E26  50                      push ax
+8E27  16                      push ss
+8E28  17                      pop ss
+8E29  19 20                   sbb word ptr [bx + si], sp
+8E2B  66 16                   push ss
+8E2D  17                      pop ss
+8E2E  19 20                   sbb word ptr [bx + si], sp
+8E30  24 16                   and al, 0x16
+8E32  17                      pop ss
+8E33  19 20                   sbb word ptr [bx + si], sp
+8E35  25 16 17                and ax, 0x1716
+8E38  19 20                   sbb word ptr [bx + si], sp
+8E3A  33 16 17 19             xor dx, word ptr [0x1917]
+8E3E  20 40 16                and byte ptr [bx + si + 0x16], al
+8E41  17                      pop ss
+8E42  19 20                   sbb word ptr [bx + si], sp
+8E44  8D 36 0D 8E             lea si, [0x8e0d]
+8E48  2C 80                   sub al, 0x80
+8E4A  03 F0                   add si, ax
+8E4C  AC                      lodsb al, byte ptr [si]
+8E4D  C3                      ret
+8E4E  C0 21 C1                shl byte ptr [bx + di], 0xc1
+8E51  00 C5                   add ch, al
+8E53  00 C6                   add dh, al
+8E55  0F C8                   bswap ax
+8E57  00 C9                   add cl, cl
+8E59  00 CB                   add bl, cl
+8E5B  00              db 0x00
 
 ===== 2253h-22D2h =====
 Reason: second memory-pattern probe stream
