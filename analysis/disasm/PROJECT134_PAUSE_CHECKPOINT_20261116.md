@@ -217,3 +217,8 @@ The call at 1BAAh enters 131Fh, an overlapping stream that reaches A95Eh at 134E
 ## Candidate-window / CMOS status refresh — 2026-11-16
 
 Generated candidate listing: 168 code windows + 18 data ranges; 10,700-byte union across 56 pages. The direct-call alternate entry at 131Fh is included through 1364h. CMOS 0Eh bit 7/6 gating and EEAAh CMOS reads are mapped; remaining FDC token uncertainty is the low nibble of [BX+90h].
+
+
+## INT 14h vector-reference scan — 2026-11-16
+
+No direct near CALL/JMP xref, literal F8E7h word reference or far pointer F000:F8E7h was found in the 64-KiB ROM. The F8E7h UART dispatcher remains an INT 14h-style candidate, not a proven installed IVT target; runtime IVT slot 0000:0054h/0056h capture is required.
