@@ -127,3 +127,8 @@ The B8E5, BCFC and related explanatory strings are help/description payloads, no
 - `BCAE`, `C3B5` and other multi-choice records need their complete option tails decoded against the editor's translation logic.
 - The Advanced CHIPSET item `AUTO Config Function` has descriptor `B6 01 84 00`; its CMOS/index and flag fields should be interpreted only after tracing the editor's special-flag path.
 - Continue by tracing `0C7D` and its record consumers to establish descriptor-field semantics, option display translation, and per-item write-back side effects.
+
+
+## Erratum — authoritative record boundaries (phase 13)
+
+The label offsets in the original phase-11 tables were approximate and several drifted after variable-length auxiliary help strings. Do not use those offsets as record starts. The record walker at `6024` advances by `20h + [record+1F]` and, when `[record+1E].7` is set, skips NUL-terminated auxiliary strings through the empty-string terminator. The exact record-start lists are now documented in phase 13: [AMI486_SEMANTIC_MAP_PHASE13_20261116.md](AMI486_SEMANTIC_MAP_PHASE13_20261116.md). The descriptor byte interpretations in phase 12 remain based on the fixed record-relative offsets and are not changed by this correction.
