@@ -509,3 +509,11 @@ This phase is semantic classification of selected regions, not a complete CFG. S
 - Audited BP bit 13 at 5CF9h: it is tested but no direct immediate setter is present in the full linear listing. BP bit 12 is a separate test at 5C8Ch; 5D07h clears bit 12, not bit 13.
 - The 5CF9h→F651h→F622h 8042 command-byte path does not assign DX/DH/DL; the values used at 88D3h are inherited from an unresolved upstream context.
 - Confirmed 1B5Eh and 1B5Fh are RET stubs and do not initialize BP/DX. The relationship of POST's POP BP / AND BP,C000h path to the 5C70h entry remains unproven.
+
+
+## Semantic map — phase 45 (2026-11-16)
+
+- [AMI486_SEMANTIC_MAP_PHASE45_20261116.md](AMI486_SEMANTIC_MAP_PHASE45_20261116.md)
+- Reconstructed stack-crafted control flow around 5BF8h–5C8Ch; 5C70h is not a proven standalone entry point.
+- The only direct linear-list transfer into 5BF8h is DA9Fh. The apparent D9E0h–DA9Fh caller block is not reached sequentially from D9D9h, whose 16-bit near JMP wraps to 1AFBh. No static direct entry or stack setup into D9DCh–DA9Fh was found.
+- DX=0061h is only a conditional result if the unverified D9E0h alternate block executes; it is not established as the register value at 88D3h. BP bit 13 source remains unresolved.
