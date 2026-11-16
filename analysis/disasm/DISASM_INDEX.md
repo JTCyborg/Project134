@@ -920,3 +920,13 @@ This phase is semantic classification of selected regions, not a complete CFG. S
 - Callback return CF/ZF controls traversal (JAE adds 4; otherwise JZ re-enters without adding; otherwise exits through 099Dh). This is a flag-controlled threaded structure, not a simple fixed array.
 - Following the JAE continuation from 0AF5h yields callback targets 6373h, 63C9h, 641Fh, 6485h, 64E3h, 6541h, 0319h, 0351h, 02DBh, 02F1h, 0236h, 026Fh, then 6373h again.
 - The six 63xx handlers share a port/parameter + helper + saved-flags prologue; 0319h/0351h/02DBh/02F1h manipulate BP-relative editor state. Individual field labels and actual callback execution outcomes remain open.
+
+
+## Semantic map — phase 86 (2026-11-16)
+
+- [AMI486_SEMANTIC_MAP_PHASE86_20261116.md](AMI486_SEMANTIC_MAP_PHASE86_20261116.md)
+- Classified the six 63xx callbacks as a shared Setup UI/input family, not independent raw-port handlers.
+- Resolved the common alternate entries 656Eh/6573h: select one of two prompt-string bases (75D2h/7625h), call shared display/input helpers, and retry on AH=3Ch/3Dh.
+- Resolved 659Bh as a deliberate alternate entry into a display-cell helper at 65A7h; the helper uses INT 10h/AH=02h, AH=08h and AH=09h.
+- Identified 65BFh/65C3h as alternate entry modes of a decimal/character validation helper that ultimately calls INT 1Ah/AH=05h. Calendar field labels remain provisional pending string and caller analysis.
+- Callback target meanings are not yet individually named; year-like comparisons in 641Fh/6485h and character checks in 64E3h/6541h are recorded as evidence, not final labels.
