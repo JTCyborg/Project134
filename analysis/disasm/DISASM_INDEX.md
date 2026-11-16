@@ -884,3 +884,12 @@ This phase is semantic classification of selected regions, not a complete CFG. S
 - Phase 80's exact aligned sequence is corrected in its report: it begins at 5D5Ch with `MOV DI,0020h; MOV AX,1E44h; STOSW; MOV AX,CS; STOSW`. The earlier INC SP/PUSH DS and PUSHA interpretations at this location are withdrawn.
 - Correct phase80 CALL sites remain 5D6Dh, 5D75h, 5D7Ah, 5D84h, 5D89h, 5D91h and 5D99h; their targets are EE94h/EE9Dh as tabulated in the corrected report. The conditional branch at 5D7Fh targets 5D9Ch.
 - Phase 81 keyboard-controller call correction: the CALL is at 5D52h and targets F5D9h (not 5D54h/F5DBh). F5D9h begins with IN AL,64h; caller stores AL at DS:0012h and tests bit 5. The corrected phase81 report replaces the earlier offset/target statement.
+
+
+## Semantic map — phase 82 (2026-11-16)
+
+- [AMI486_SEMANTIC_MAP_PHASE82_20261116.md](AMI486_SEMANTIC_MAP_PHASE82_20261116.md)
+- Classified thirteen immediate CMOS[8Eh] reads through EE94h by their immediate consumer masks: bit 0 at 121Ah/F481h, bit 5 at 1271h, C0h at 1338h/140Eh/1C64h/5D78h/84D3h/8630h/8649h/8662h, D0h at 15ACh, and a compound 8Eh→8Fh path at 5EDFh.
+- Several callers use C0h as a gate, but their subsequent branches and helpers differ; this is not evidence that bits 6/7 have one global semantic meaning.
+- EEAAh pattern matches at CC87h, CD8Bh and F10Dh are excluded from the EE94h CMOS-read group.
+- CMOS[8Eh] writers, indirect B8h/8Eh accesses, BEh:BFh update order, BP.13 producer and DA5Eh/DA61h dynamic entry remain open.
