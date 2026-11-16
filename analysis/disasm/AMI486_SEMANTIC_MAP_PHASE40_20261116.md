@@ -35,7 +35,6 @@ This proves that bit 0 is set on this completion path and that other B3h bits ar
 | 2–3 | 1A60h–1A88h | Only if both bits are clear and SMSW AH is nonzero, clears bit 4 of ALi register 12h and writes 88h to ALi register 24h; always writes 55h to ALi register 03h on this path. |
 | 2–3 | 1EECh–1F16h | With SMSW AH zero, selects one of two small ALi word lists: bit 2 chooses 8E62h–8E75h; bit 2 clear with bit 3 set chooses 8E7Ah–8E7Dh. |
 | 2–3 | 41A5h–41DAh | Selects alternate diagnostic/status text branches, with additional tests of bit 1, INT 11h equipment flags and an OEM record lookup. |
-| 2 | 1A? | The bit-2-only path at 1AFBh is distinct from the two-bit selector at POST A1h. |
 
 The table lists only direct consumers recovered in this audit. It does not imply that unlisted bits are unused by external firmware, Setup records or runtime patches.
 
@@ -66,3 +65,4 @@ Unresolved:
 Primary listing: `analysis/disasm/ami486_full_linear_16bit.disasm.txt`.
 ROM SHA-256: `91fd62ce3ccb0b79b42f5fd6c6a7262ed52824b8ade917181b8a12267fec003b`.
 Key ranges: 11C8h–11DCh, 1AFBh–1B2Ah, 1A60h–1A8Eh, 1EC8h–1F18h, 25C4h–2628h, 27DEh–2800h, 4142h–41E3h.
+
