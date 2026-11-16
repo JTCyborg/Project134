@@ -14,7 +14,7 @@ Both nibble callbacks (02DBh and 02F1h) call 05A3h, with different cursor coordi
 05B3  RET
 ```
 
-The called helper at 0A0Dh is MOV AX,DX; OR AX,0E30h; INT 10h; RET. It emits the current low-nibble value as a BIOS teletype character. The subsequent string at 76F1h begins " Options:-". Thus 05A3h displays the current digit and enters a secondary option/callback menu; it is not the generic 0383h editor used by the BP+12h callbacks.
+The called helper at 0A0Dh is MOV AX,DX; OR AX,0E30h; INT 10h; RET. Since the callers set DX=0A16h or 0B16h, this emits character '6' (DL=16h OR 30h), not the nibble in AL. The preceding AND AL,0Fh is overwritten by MOV AX,DX before any visible use; its purpose is unresolved. The subsequent string at 76F1h begins " Options:-". Thus 05A3h enters a secondary option/callback menu; it is not the generic 0383h editor used by the BP+12h callbacks.
 
 ## 2. Secondary table at 0AE1h
 
@@ -45,7 +45,7 @@ This rules out the simple explanation that 05E0h changes BX and thereby redirect
 ## 5. Current conclusions and next checks
 
 Confirmed:
-- 02DBh/02F1h both call 05A3h; 05A3h displays the current digit and the "Options:-" prompt before entering 05B4h.
+- 02DBh/02F1h both call 05A3h; 05A3h emits the character '6' from DL=16h, then displays the "Options:-" prompt and enters 05B4h. The masked AL value is overwritten and its purpose remains open.
 - 05B4h is a linked callback dispatcher driven by record next-cursors and callback return flags/AH.
 - The first table target is 0B5Dh; the next is 0B6Dh; a later record targets 026Fh.
 - 05E0h/0845h preserve BX, so the initial table cursor is not lost during prompt rendering.
@@ -56,3 +56,8 @@ Unresolved:
 - The relationship between the 05A3h digit-option menu and the BP+10h nibble validation state.
 
 Next: establish the live CS value/base and whether the BIOS executes from a shadow/relocated image at the time of Setup callbacks; then trace 0B5Dh and 0B6Dh with the correct runtime address mapping before assigning semantics.
+
+
+## Correction — 0A0Dh output value
+
+The earlier description that 0A0Dh displays the current nibble was incorrect. 0A0Dh loads AX from DX, then ORs AX with 0E30h before INT 10h/AH=0Eh. With DX=0A16h or 0B16h, the emitted character is '6'. The AL nibble masked at 05A3h is overwritten by MOV AX,DX and has no proven downstream use in this helper path.
