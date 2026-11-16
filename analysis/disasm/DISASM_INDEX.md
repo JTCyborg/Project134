@@ -118,3 +118,21 @@ The manifest records the local ROM SHA-256, disassembler path, mode, origin, lin
 ## Automated full-ROM disassembly
 
 A GitHub Actions workflow (`.github/workflows/ami486-full-disasm.yml`) generates `ami486_full_linear_16bit.disasm.txt` directly from the checked-in 64-KiB ROM using NASM `ndisasm -b 16`. The listing is a complete **linear byte decode**, not a claim that every decoded byte is executable code; embedded tables, strings, vectors and overlapping entry points must be classified separately. The workflow uses Capstone in 16-bit x86 mode, emits undecodable bytes as `db`, verifies exact byte coverage and commits the generated listing.
+
+
+## Semantic map — phase 1 (2026-11-16)
+
+| Region | Classification / finding | Status |
+|---|---|---|
+| 19A2–1A8E | Mixed CPU/cache reporting code, lookup values and embedded strings | Partial; data ranges identified |
+| 8E89–8EA6 | Indexed indirect dispatcher; five handler slots selected by AH | Confirmed dispatch mechanics; targets pending |
+| 8EA7–8EB0 | Indirect target table used by dispatcher | Confirmed table role; entries pending reconciliation |
+| 82C0–82E7 | Pointer/record metadata, not a continuous instruction stream | Confirmed data region |
+| B500–B7D0 | Setup/CMOS record and string/table region | Strongly supported |
+| 26A2–26BA | GDT/CR0 protected-mode transition with 32-bit-prefixed operation | Confirmed |
+| 2761–27B8 | 32-bit memory pattern write/read verification | Confirmed |
+| 27BC–284F | Memory sizing/configuration continuation | Partial |
+
+Detailed report: [AMI486_SEMANTIC_MAP_PHASE1_20261116.md](AMI486_SEMANTIC_MAP_PHASE1_20261116.md)
+
+This phase is semantic classification of selected regions, not a complete CFG. See the report for confidence levels and unresolved target/record details.
