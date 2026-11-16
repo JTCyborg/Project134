@@ -967,7 +967,7 @@ This phase is semantic classification of selected regions, not a complete CFG. S
 - Resolved callback 026Fh as an "Options:" path that tests and updates BP+14h bit 2 through the secondary dispatcher at 05B4h.
 - Resolved 02DBh as the high-nibble editor for BP+10h and the overlapping alternate entry 02F1h as the low-nibble editor. Both recompute BP+14h bit 6 based on whether both nibbles are nonzero.
 - Preserved unresolved stack/return behavior: 02DBh has no visible local PUSH AX for its POP AX, while 02F1h begins with PUSH CS. The nested 05A4h/05A3h -> 05B4h path and indirect target 0BA5h require further tracing.
-- The apparent table/code overlap around 0BA5h..0BDFh remains unclassified; do not treat it as ordinary data or executable code without proving its entry/return behavior.
+- Phase 89's initial 0BA5h table alignment was corrected in its report: 0BA5h is a record offset, and the first 026Fh-selected callbacks are 064Ah or 06AEh. See phases 90–91.
 
 
 ## Semantic map — phase 90 (2026-11-16)
@@ -977,3 +977,12 @@ This phase is semantic classification of selected regions, not a complete CFG. S
 - Identified 0644h/064Ah as "Installed"/"Not Installed" prompt entries into 02BAh.
 - Mapped the shared list-selection helper at 0749h and five field callbacks (0650h, 066Bh, 068Ah, 069Ch, 06AEh) writing BP+1Bh, BP+1Dh, BP+1Eh, BP+21h and BP+23h.
 - Secondary dispatcher 05B4h follows a linked record chain controlled by returned CF/ZF and AH; exact runtime traversal and alternate entries 0745h/0747h remain open.
+
+
+## Semantic map — phase 91 (2026-11-16)
+
+- [AMI486_SEMANTIC_MAP_PHASE91_20261116.md](AMI486_SEMANTIC_MAP_PHASE91_20261116.md)
+- Decoded the shared numeric list-selection editor at 0749h: BIOS text rendering, keyboard navigation, digit entry, and decimal conversion.
+- Decoded 080Fh as the decimal parser returning the value in DX and entered-digit count in CX; the callbacks commit their fields only when CX is nonzero.
+- Preserved alternate-entry boundaries at 0745h and 0747h; neither is the aligned 0749h entry.
+- Remaining: caller-specific AH/CF interpretation, alternate-entry contracts, and exact runtime traversal through the 05B4h linked callback dispatcher.
