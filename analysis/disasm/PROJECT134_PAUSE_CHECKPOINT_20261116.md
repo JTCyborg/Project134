@@ -99,7 +99,7 @@ See `analysis/disasm/AMI486_STORAGE_AND_DISPATCH_REGIONS_20261116.md`.
 
 The A000h subsystem is now classified as IDE/ATA hard-disk and boot-sector protection code (01F0h–01F7h, 03F6h), including IDENTIFY DEVICE at AC00h, a 512-byte data-out routine at A406h, and a Y/N “Possible VIRUS” prompt at A847h/A8F4h. The A95Eh stream writes the INT 13h vector slot through ES; ES=0 is not yet proven from the caller.
 
-D100h–D5FFh is a separate FDC/DMA subsystem (03F2h/03F4h/03F5h/03F7h and DMA 0Ch/0Bh/05h/04h). F92Ah–F935h is a six-entry dispatch table; F977h is an overlapping entry in the F936h stream. The generated candidate decode now covers 109 unique bounded code windows plus separately emitted data ranges with 16-bit near-branch wraparound.
+D100h–D5FFh is a separate FDC/DMA subsystem (03F2h/03F4h/03F5h/03F7h and DMA 0Ch/0Bh/05h/04h). F92Ah–F935h is a six-entry dispatch table; F977h is an overlapping entry in the F936h stream. The generated candidate decode now covers 111 unique bounded code windows plus separately emitted data ranges with 16-bit near-branch wraparound.
 
 Next: validate the actual incoming vector/caller for F900h, confirm ES provenance at A95Eh, and map full helper boundaries/callers for ATA and FDC. No phase 97.
 
@@ -127,3 +127,8 @@ See AMI486_FDC_DMA_SUBSYSTEM_20261116.md. D156h programs DMA channel 2; D243h an
 ## Keyboard subsystem follow-up — 2026-11-16
 
 See AMI486_KEYBOARD_SUBSYSTEM_20261116.md. The AD00h–AE5Fh keymap data is followed by scan-code processing at AE6Fh (INT 15h AH=4Fh), E0h/E1h prefix tracking, modifier/lock state updates, 8042 commands ADh/AEh/EDh/F3h/F4h, BIOS ring-buffer insertion/dequeue, and an INT 16h dispatcher at B3E2h. AH=00/01/02/03/05/10/11/12 paths are mapped; exact flag contracts remain to be verified.
+
+
+## INT vector and parameter-table wiring — 2026-11-16
+
+A95Eh replaces INT 13h with F000:A08Dh and saves the old INT 13h vector at the INT 40h slot; A08Dh forwards DL<80h requests to INT 40h. It installs IRQ14/INT 76h at F000:E845h and configures INT 41h/INT 46h fixed-disk parameter table pointers into 16-byte records at E401h, selected via CMOS 92h/99h/9Ah. E845h sends EOIs to both PICs and calls INT 15h AX=9100h. See AMI486_STORAGE_AND_DISPATCH_REGIONS_20261116.md.
