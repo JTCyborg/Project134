@@ -117,7 +117,7 @@ The manifest records the local ROM SHA-256, disassembler path, mode, origin, lin
 
 ## Automated full-ROM disassembly
 
-A GitHub Actions workflow (`.github/workflows/ami486-full-disasm.yml`) generates `ami486_full_linear_16bit.disasm.txt` directly from the checked-in 64-KiB ROM using NASM `ndisasm -b 16`. The listing is a complete **linear byte decode**, not a claim that every decoded byte is executable code; embedded tables, strings, vectors and overlapping entry points must be classified separately. The workflow uses Capstone in 16-bit x86 mode, emits undecodable bytes as `db`, verifies exact byte coverage and commits the generated listing.
+A GitHub Actions workflow (`.github/workflows/ami486-full-disasm.yml`) generates `ami486_full_linear_16bit.disasm.txt` directly from the checked-in 64-KiB ROM using Capstone x86 in 16-bit mode. The listing is a complete **linear byte decode**, not a claim that every decoded byte is executable code; embedded tables, strings, vectors and overlapping entry points must be classified separately. Undecodable bytes are emitted as `db`, exact byte coverage is verified, and the generated listing is committed.
 
 
 ## Semantic map — phase 1 (2026-11-16)
