@@ -142,4 +142,4 @@ No Spectrum-specific implementation in this phase. First establish that the inhe
 - [ ] Phase 5 — Hardware expansion
 - [ ] Phase 6 — Stabilization and release
 
-**Next action:** inspect the repository baseline and AMI486 implementation, then identify the exact working BIOS ROM and its POST/reset-vector path.
+**Current evidence:** the upstream PCem AMI486 model registration has been inspected and recorded in [docs/AMI486_REFERENCE.md](AMI486_REFERENCE.md). It identifies the AT initialization path and ALi 1429 chipset callback, but does not yet establish the exact Project133 source revision or runtime configuration.\n\n**Next action:** obtain the exact `ami486.bin` again and record the Project133 source commit plus ROM-set 46 configuration; then disassemble the BIOS and trace its reset-vector/POST path.
