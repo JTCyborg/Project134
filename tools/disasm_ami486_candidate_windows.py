@@ -13,7 +13,7 @@ ROM_PATH = ROOT / "ami486.bin"
 OUT_PATH = ROOT / "analysis" / "disasm" / "ami486_candidate_windows_20261116.txt"
 MANIFEST_PATH = ROOT / "analysis" / "disasm" / "ami486_candidate_windows_20261116.manifest.txt"
 WINDOW = 0x80
-LIMITS = {0xA08D: 0x64, 0xA0A0: 0x51, 0xA0BD: 0x34, 0xE845: 0x20, 0x2238: 0x0A, 0x2244: 0x0B, 0x2250: 0x03, 0xF8E8: 0x42}
+LIMITS = {0xA08D: 0x64, 0xA0A0: 0x51, 0xA0BD: 0x34, 0xE845: 0x20, 0x2238: 0x0A, 0x2244: 0x0B, 0x2250: 0x03, 0xF8E7: 0x43}
 
 DATA_RANGES = [
     (0xA0F1, 0xA125, "INT 13h AH function table", "words"),
@@ -165,7 +165,7 @@ SEEDS = [
     (0xD580, "FDC command completion continuation"),
     (0xD5DB, "FDC routine continuation / return path"),
     (0xE845, "INT 76h / IRQ14 handler installed by A95Eh"),
-    (0xF8E8, "guarded six-service interrupt-dispatch wrapper candidate; F92Ah handler table follows at the next byte boundary"),
+    (0xF8E7, "guarded six-service INT 14h serial dispatcher candidate; F92Ah handler table follows after IRET"),
     (0xF936, "target listed in F92Ah dispatch table"),
     (0xF977, "target listed in F92Ah dispatch table"),
     (0xF986, "target listed in F92Ah dispatch table"),
