@@ -227,3 +227,11 @@ This phase is semantic classification of selected regions, not a complete CFG. S
 - Catalogued the stock Advanced CMOS Setup descriptors in `B7D0–BD53` and Advanced CHIPSET descriptors in `BD54–C5F8`.
 - Extracted Setup item labels, raw descriptor bytes, selector counts/values, and associated explanatory strings.
 - Kept Setup descriptor records separate from the 81-entry CMOS initialization table and the ALi1429 indexed-register path; exact field semantics and hardware bit meanings remain under investigation.
+
+
+## Semantic map — phase 12 (2026-11-16)
+
+- [AMI486_SEMANTIC_MAP_PHASE12_20261116.md](AMI486_SEMANTIC_MAP_PHASE12_20261116.md)
+- Resolved the common Setup record layout: key/index at `+1C`, mask/routing byte at `+1D`, flags/callback selector at `+1E`, option count at `+1F`, option codes from `+20`.
+- Traced variable-length record advancement, hidden-item filtering, working-image bit extraction/writeback, optional callback dispatch, and option-label translation.
+- Confirmed the editor manipulates the `DS:E000` RAM working image; hardware/CMOS application is a separate later path.
