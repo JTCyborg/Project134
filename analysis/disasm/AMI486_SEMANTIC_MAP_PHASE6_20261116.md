@@ -110,3 +110,10 @@ A second call site at 5A92 invokes 85B3 after the E187-related checks and an add
 - `ami486_pointer_init_85D0_8640_20261116_01.txt`
 - `ami486_config_tables_8400_20261116_01.txt`
 - `ami486_cmos_table_raw_873C_8888_20261116_01.txt`
+
+
+## Correction from phase 8 — zero selector in 85D6
+
+The phase-6 statement that 85D6 falls back to the five-entry built-in table when `CS:[82B0]` is zero was incorrect. The routine zeroes CX before reading the selector; when selector is zero, DEC BL branches around the count lookup, CX remains zero, and the common worker exits immediately. The five-entry table is selected only by the separate 85F5 routine.
+
+The stock ROM initializes `82B0=00h`, `82C0=0000h`, and `82C2=0000h`, so 85D6 is a no-op in the unpatched image. See [phase 8](AMI486_SEMANTIC_MAP_PHASE8_20261116.md) for the byte-level verification and corrected call-path summary.
