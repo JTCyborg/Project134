@@ -4606,6 +4606,446 @@ Reason: 5555h/AAAAh pattern-write and compare stream candidate
 2179  81 3E 00 20 AA AA       cmp word ptr [0x2000], 0xaaaa
 217F  55                      push bp
 
+===== 2A00h-2A7Fh =====
+Reason: unreferenced page sample; classify raw code/data
+2A00  26 36 E0 FE             loopne 0x2a02
+2A04  80 26 66 E0 00          and byte ptr [0xe066], 0
+2A09  0A C0                   or al, al
+2A0B  0F 85 20 00             jne 0x2a2f
+2A0F  F6 C3 01                test bl, 1
+2A12  0F 84 13 00             je 0x2a29
+2A16  80 0E 66 E0 01          or byte ptr [0xe066], 1
+2A1B  EB 1A                   jmp 0x2a37
+2A1D  90                      nop
+2A1E  80 0E 36 E0 01          or byte ptr [0xe036], 1
+2A23  B8 71 B5                mov ax, 0xb571
+2A26  E9 86 00                jmp 0x2aaf
+2A29  B8 68 B5                mov ax, 0xb568
+2A2C  E9 80 00                jmp 0x2aaf
+2A2F  02 C3                   add al, bl
+2A31  24 01                   and al, 1
+2A33  08 06 36 E0             or byte ptr [0xe036], al
+2A37  1E                      push ds
+2A38  B8 40 00                mov ax, 0x40
+2A3B  8E D8                   mov ds, ax
+2A3D  BE A9 87                mov si, 0x87a9
+2A40  03 36 E6 00             add si, word ptr [0xe6]
+2A44  2E AD                   lodsw ax, word ptr cs:[si]
+2A46  22 E0                   and ah, al
+2A48  8A FC                   mov bh, ah
+2A4A  83 C6 02                add si, 2
+2A4D  2E AD                   lodsw ax, word ptr cs:[si]
+2A4F  22 E0                   and ah, al
+2A51  8A DC                   mov bl, ah
+2A53  83 C6 02                add si, 2
+2A56  2E AD                   lodsw ax, word ptr cs:[si]
+2A58  22 E0                   and ah, al
+2A5A  8A F4                   mov dh, ah
+2A5C  83 C6 02                add si, 2
+2A5F  B8 02 02                mov ax, 0x202
+2A62  E8 6A 63                call 0x8dcf
+2A65  A8 08                   test al, 8
+2A67  0F 84 0B 00             je 0x2a76
+2A6B  46                      inc si
+2A6C  2E AD                   lodsw ax, word ptr cs:[si]
+2A6E  80 E4 07                and ah, 7
+2A71  8A D4                   mov dl, ah
+2A73  EB 07                   jmp 0x2a7c
+2A75  90                      nop
+2A76  2E AD                   lodsw ax, word ptr cs:[si]
+2A78  22 E0                   and ah, al
+2A7A  8A D4                   mov dl, ah
+2A7C  1F                      pop ds
+2A7D  80              db 0x80
+2A7E  26 46                   inc si
+
+===== 2A80h-2AFFh =====
+Reason: unreferenced page sample; classify raw code/data
+2A80  E0 F0                   loopne 0x2a72
+2A82  80 26 47 E0 7C          and byte ptr [0xe047], 0x7c
+2A87  80 26 49 E0 9F          and byte ptr [0xe049], 0x9f
+2A8C  80 26 50 E0 F8          and byte ptr [0xe050], 0xf8
+2A91  08 3E 46 E0             or byte ptr [0xe046], bh
+2A95  08 1E 47 E0             or byte ptr [0xe047], bl
+2A99  08 36 49 E0             or byte ptr [0xe049], dh
+2A9D  08 16 50 E0             or byte ptr [0xe050], dl
+2AA1  33 C0                   xor ax, ax
+2AA3  F6 06 66 E0 01          test byte ptr [0xe066], 1
+2AA8  0F 84 03 00             je 0x2aaf
+2AAC  E9 6F FF                jmp 0x2a1e
+2AAF  5F                      pop di
+2AB0  5E                      pop si
+2AB1  07                      pop es
+2AB2  CB                      retf
+2AB3  2D B6 5C                sub ax, 0x5cb6
+2AB6  B6 64                   mov dh, 0x64
+2AB8  B6 6C                   mov dh, 0x6c
+2ABA  B6 74                   mov dh, 0x74
+2ABC  B6 7C                   mov dh, 0x7c
+2ABE  B6 85                   mov dh, 0x85
+2AC0  B6 56                   mov dh, 0x56
+2AC2  57                      push di
+2AC3  33 DB                   xor bx, bx
+2AC5  BE B3 2A                mov si, 0x2ab3
+2AC8  8A 1E 50 E0             mov bl, byte ptr [0xe050]
+2ACC  F6 06 36 E0 01          test byte ptr [0xe036], 1
+2AD1  0F 84 0D 00             je 0x2ae2
+2AD5  80 E3 07                and bl, 7
+2AD8  D0 E3                   shl bl, 1
+2ADA  03 F3                   add si, bx
+2ADC  2E 8B 04                mov ax, word ptr cs:[si]
+2ADF  EB 27                   jmp 0x2b08
+2AE1  90                      nop
+2AE2  80 26 50 E0 F8          and byte ptr [0xe050], 0xf8
+2AE7  02 D8                   add bl, al
+2AE9  80 E3 07                and bl, 7
+2AEC  80 FB 07                cmp bl, 7
+2AEF  0F 85 0A 00             jne 0x2afd
+2AF3  B3 06                   mov bl, 6
+2AF5  3C 80                   cmp al, 0x80
+2AF7  0F 87 02 00             ja 0x2afd
+2AFB  B3 00                   mov bl, 0
+2AFD  08              db 0x08
+2AFE  1E                      push ds
+2AFF  50                      push ax
+
+===== 2B00h-2B7Fh =====
+Reason: unreferenced page sample; classify raw code/data
+2B00  E0 D0                   loopne 0x2ad2
+2B02  E3 03                   jcxz 0x2b07
+2B04  F3 2E 8B 04             mov ax, word ptr cs:[si]
+2B08  5F                      pop di
+2B09  5E                      pop si
+2B0A  CB                      retf
+2B0B  FF B5 04 B6             push word ptr [di - 0x49fc]
+2B0F  0B B6 10 B6             or si, word ptr [bp - 0x49f0]
+2B13  56                      push si
+2B14  57                      push di
+2B15  33 DB                   xor bx, bx
+2B17  BE 0B 2B                mov si, 0x2b0b
+2B1A  8A 1E 46 E0             mov bl, byte ptr [0xe046]
+2B1E  F6 06 36 E0 01          test byte ptr [0xe036], 1
+2B23  0F 84 0D 00             je 0x2b34
+2B27  80 E3 03                and bl, 3
+2B2A  D0 E3                   shl bl, 1
+2B2C  03 F3                   add si, bx
+2B2E  2E 8B 04                mov ax, word ptr cs:[si]
+2B31  EB 16                   jmp 0x2b49
+2B33  90                      nop
+2B34  80 26 46 E0 FC          and byte ptr [0xe046], 0xfc
+2B39  02 D8                   add bl, al
+2B3B  80 E3 03                and bl, 3
+2B3E  08 1E 46 E0             or byte ptr [0xe046], bl
+2B42  D0 E3                   shl bl, 1
+2B44  03 F3                   add si, bx
+2B46  2E 8B 04                mov ax, word ptr cs:[si]
+2B49  5F                      pop di
+2B4A  5E                      pop si
+2B4B  CB                      retf
+2B4C  56                      push si
+2B4D  57                      push di
+2B4E  33 DB                   xor bx, bx
+2B50  BE 0B 2B                mov si, 0x2b0b
+2B53  8A 1E 46 E0             mov bl, byte ptr [0xe046]
+2B57  F6 06 36 E0 01          test byte ptr [0xe036], 1
+2B5C  0F 84 0D 00             je 0x2b6d
+2B60  80 E3 0C                and bl, 0xc
+2B63  D0 EB                   shr bl, 1
+2B65  03 F3                   add si, bx
+2B67  2E 8B 04                mov ax, word ptr cs:[si]
+2B6A  EB 1E                   jmp 0x2b8a
+2B6C  90                      nop
+2B6D  80 26 46 E0 F3          and byte ptr [0xe046], 0xf3
+2B72  C0 EB 02                shr bl, 2
+2B75  02 D8                   add bl, al
+2B77  80 E3 03                and bl, 3
+2B7A  8A C3                   mov al, bl
+2B7C  C0 E0 02                shl al, 2
+2B7F  08              db 0x08
+
+===== 2B80h-2BFFh =====
+Reason: unreferenced page sample; classify raw code/data
+2B80  06                      push es
+2B81  46                      inc si
+2B82  E0 D0                   loopne 0x2b54
+2B84  E3 03                   jcxz 0x2b89
+2B86  F3 2E 8B 04             mov ax, word ptr cs:[si]
+2B8A  5F                      pop di
+2B8B  5E                      pop si
+2B8C  CB                      retf
+2B8D  D3 B6 D8 B6             sal word ptr [bp - 0x4928], cl
+2B91  56                      push si
+2B92  57                      push di
+2B93  33 DB                   xor bx, bx
+2B95  BE 8D 2B                mov si, 0x2b8d
+2B98  8A 1E 49 E0             mov bl, byte ptr [0xe049]
+2B9C  F6 06 36 E0 01          test byte ptr [0xe036], 1
+2BA1  0F 84 0E 00             je 0x2bb3
+2BA5  80 E3 40                and bl, 0x40
+2BA8  C0 EB 05                shr bl, 5
+2BAB  03 F3                   add si, bx
+2BAD  2E 8B 04                mov ax, word ptr cs:[si]
+2BB0  EB 1E                   jmp 0x2bd0
+2BB2  90                      nop
+2BB3  80 26 49 E0 BF          and byte ptr [0xe049], 0xbf
+2BB8  C0 EB 06                shr bl, 6
+2BBB  02 D8                   add bl, al
+2BBD  80 E3 01                and bl, 1
+2BC0  8A C3                   mov al, bl
+2BC2  C0 E0 06                shl al, 6
+2BC5  08 06 49 E0             or byte ptr [0xe049], al
+2BC9  D0 E3                   shl bl, 1
+2BCB  03 F3                   add si, bx
+2BCD  2E 8B 04                mov ax, word ptr cs:[si]
+2BD0  5F                      pop di
+2BD1  5E                      pop si
+2BD2  CB                      retf
+2BD3  56                      push si
+2BD4  57                      push di
+2BD5  33 DB                   xor bx, bx
+2BD7  BE 8D 2B                mov si, 0x2b8d
+2BDA  8A 1E 49 E0             mov bl, byte ptr [0xe049]
+2BDE  F6 06 36 E0 01          test byte ptr [0xe036], 1
+2BE3  0F 84 0E 00             je 0x2bf5
+2BE7  80 E3 20                and bl, 0x20
+2BEA  C0 EB 04                shr bl, 4
+2BED  03 F3                   add si, bx
+2BEF  2E 8B 04                mov ax, word ptr cs:[si]
+2BF2  EB 1E                   jmp 0x2c12
+2BF4  90                      nop
+2BF5  80 26 49 E0 DF          and byte ptr [0xe049], 0xdf
+2BFA  C0 EB 05                shr bl, 5
+2BFD  02 D8                   add bl, al
+2BFF  80              db 0x80
+
+===== 2C00h-2C7Fh =====
+Reason: unreferenced page sample; classify raw code/data
+2C00  E3 01                   jcxz 0x2c03
+2C02  8A C3                   mov al, bl
+2C04  C0 E0 05                shl al, 5
+2C07  08 06 49 E0             or byte ptr [0xe049], al
+2C0B  D0 E3                   shl bl, 1
+2C0D  03 F3                   add si, bx
+2C0F  2E 8B 04                mov ax, word ptr cs:[si]
+2C12  5F                      pop di
+2C13  5E                      pop si
+2C14  CB                      retf
+2C15  5F                      pop di
+2C16  B5 0B                   mov ch, 0xb
+2C18  B6 04                   mov dh, 4
+2C1A  B6 FF                   mov dh, 0xff
+2C1C  B5 56                   mov ch, 0x56
+2C1E  57                      push di
+2C1F  33 DB                   xor bx, bx
+2C21  BE 15 2C                mov si, 0x2c15
+2C24  8A 1E 47 E0             mov bl, byte ptr [0xe047]
+2C28  F6 06 36 E0 01          test byte ptr [0xe036], 1
+2C2D  0F 84 0D 00             je 0x2c3e
+2C31  80 E3 03                and bl, 3
+2C34  D0 E3                   shl bl, 1
+2C36  03 F3                   add si, bx
+2C38  2E 8B 04                mov ax, word ptr cs:[si]
+2C3B  EB 29                   jmp 0x2c66
+2C3D  90                      nop
+2C3E  80 26 47 E0 FC          and byte ptr [0xe047], 0xfc
+2C43  02 D8                   add bl, al
+2C45  80 E3 03                and bl, 3
+2C48  80 FB 00                cmp bl, 0
+2C4B  0F 85 0A 00             jne 0x2c59
+2C4F  B3 03                   mov bl, 3
+2C51  3C 80                   cmp al, 0x80
+2C53  0F 87 02 00             ja 0x2c59
+2C57  B3 01                   mov bl, 1
+2C59  08 1E 47 E0             or byte ptr [0xe047], bl
+2C5D  8A D3                   mov dl, bl
+2C5F  D0 E3                   shl bl, 1
+2C61  03 F3                   add si, bx
+2C63  2E 8B 04                mov ax, word ptr cs:[si]
+2C66  5F                      pop di
+2C67  5E                      pop si
+2C68  CB                      retf
+2C69  56                      push si
+2C6A  57                      push di
+2C6B  8A 1E 42 E0             mov bl, byte ptr [0xe042]
+2C6F  0A C0                   or al, al
+2C71  0F 85 1C 00             jne 0x2c91
+2C75  80 0E 42 E0 20          or byte ptr [0xe042], 0x20
+2C7A  BE 71 B5                mov si, 0xb571
+2C7D  F6 C3 20                test bl, 0x20
+
+===== 2C80h-2CFFh =====
+Reason: unreferenced page sample; classify raw code/data
+2C80  0F 85 08 00             jne 0x2c8c
+2C84  80 26 42 E0 1F          and byte ptr [0xe042], 0x1f
+2C89  BE 68 B5                mov si, 0xb568
+2C8C  8B C6                   mov ax, si
+2C8E  EB 1C                   jmp 0x2cac
+2C90  90                      nop
+2C91  C0 EB 05                shr bl, 5
+2C94  02 C3                   add al, bl
+2C96  24 01                   and al, 1
+2C98  0F 84 08 00             je 0x2ca4
+2C9C  80 0E 42 E0 20          or byte ptr [0xe042], 0x20
+2CA1  EB 09                   jmp 0x2cac
+2CA3  90                      nop
+2CA4  80 26 42 E0 1F          and byte ptr [0xe042], 0x1f
+2CA9  B8 00 00                mov ax, 0
+2CAC  5F                      pop di
+2CAD  5E                      pop si
+2CAE  CB                      retf
+2CAF  FB                      sti
+2CB0  B6 00                   mov dh, 0
+2CB2  B7 08                   mov bh, 8
+2CB4  B7 0F                   mov bh, 0xf
+2CB6  B7 17                   mov bh, 0x17
+2CB8  B7 1C                   mov bh, 0x1c
+2CBA  B7 24                   mov bh, 0x24
+2CBC  B7 29                   mov bh, 0x29
+2CBE  B7 31                   mov bh, 0x31
+2CC0  B7 36                   mov bh, 0x36
+2CC2  B7 3E                   mov bh, 0x3e
+2CC4  B7 45                   mov bh, 0x45
+2CC6  B7 4D                   mov bh, 0x4d
+2CC8  B7 52                   mov bh, 0x52
+2CCA  B7 5A                   mov bh, 0x5a
+2CCC  B7 61                   mov bh, 0x61
+2CCE  B7 56                   mov bh, 0x56
+2CD0  57                      push di
+2CD1  33 DB                   xor bx, bx
+2CD3  BE AF 2C                mov si, 0x2caf
+2CD6  8A 1E 52 E0             mov bl, byte ptr [0xe052]
+2CDA  F6 06 52 E0 01          test byte ptr [0xe052], 1
+2CDF  0F 85 0E 00             jne 0x2cf1
+2CE3  80 E3 F0                and bl, 0xf0
+2CE6  C0 EB 03                shr bl, 3
+2CE9  03 F3                   add si, bx
+2CEB  2E 8B 04                mov ax, word ptr cs:[si]
+2CEE  EB 1E                   jmp 0x2d0e
+2CF0  90                      nop
+2CF1  80 26 52 E0 0F          and byte ptr [0xe052], 0xf
+2CF6  C0 EB 04                shr bl, 4
+2CF9  02 D8                   add bl, al
+2CFB  80 E3 0F                and bl, 0xf
+2CFE  8A C3                   mov al, bl
+
+===== 2D00h-2D7Fh =====
+Reason: unreferenced page sample; classify raw code/data
+2D00  C0 E0 04                shl al, 4
+2D03  08 06 52 E0             or byte ptr [0xe052], al
+2D07  D0 E3                   shl bl, 1
+2D09  03 F3                   add si, bx
+2D0B  2E 8B 04                mov ax, word ptr cs:[si]
+2D0E  5F                      pop di
+2D0F  5E                      pop si
+2D10  CB                      retf
+2D11  00 1E 06 FA             add byte ptr [0xfa06], bl
+2D15  B8 00 10                mov ax, 0x1000
+2D18  8E C0                   mov es, ax
+2D1A  BF 00 00                mov di, 0
+2D1D  B8 F7 F3                mov ax, 0xf3f7
+2D20  50                      push ax
+2D21  FC                      cld
+2D22  B9 E8 03                mov cx, 0x3e8
+2D25  F3 AB                   rep stosw word ptr es:[di], ax
+2D27  B0 CB                   mov al, 0xcb
+2D29  AA                      stosb byte ptr es:[di], al
+2D2A  58                      pop ax
+2D2B  48                      dec ax
+2D2C  BF 00 08                mov di, 0x800
+2D2F  FC                      cld
+2D30  B9 E8 03                mov cx, 0x3e8
+2D33  F3 AB                   rep stosw word ptr es:[di], ax
+2D35  B0 CB                   mov al, 0xcb
+2D37  AA                      stosb byte ptr es:[di], al
+2D38  8C C0                   mov ax, es
+2D3A  8E D8                   mov ds, ax
+2D3C  E8 B6 00                call 0x2df5
+2D3F  BF 00 F0                mov di, 0xf000
+2D42  B9 28 00                mov cx, 0x28
+2D45  51                      push cx
+2D46  57                      push di
+2D47  E8 AB 00                call 0x2df5
+2D4A  5F                      pop di
+2D4B  AB                      stosw word ptr es:[di], ax
+2D4C  59                      pop cx
+2D4D  E2 F6                   loop 0x2d45
+2D4F  BE 00 F0                mov si, 0xf000
+2D52  B9 28 00                mov cx, 0x28
+2D55  51                      push cx
+2D56  2B C0                   sub ax, ax
+2D58  2B D2                   sub dx, dx
+2D5A  03 04                   add ax, word ptr [si]
+2D5C  83 D2 00                adc dx, 0
+2D5F  83 C6 02                add si, 2
+2D62  E2 F6                   loop 0x2d5a
+2D64  59                      pop cx
+2D65  F7 F1                   div cx
+2D67  8B C8                   mov cx, ax
+2D69  A3 00 F8                mov word ptr [0xf800], ax
+2D6C  BA 0E 00                mov dx, 0xe
+2D6F  B8 6E 23                mov ax, 0x236e
+2D72  F7 F1                   div cx
+2D74  BB 04 00                mov bx, 4
+2D77  3D C2 01                cmp ax, 0x1c2
+2D7A  76 6B                   jbe 0x2de7
+2D7C  BB 05 00                mov bx, 5
+2D7F  3D              db 0x3D
+
+===== 2D80h-2DFFh =====
+Reason: unreferenced page sample; classify raw code/data
+2D80  26 02 76 63             add dh, byte ptr es:[bp + 0x63]
+2D84  BB 06 00                mov bx, 6
+2D87  3D BC 02                cmp ax, 0x2bc
+2D8A  76 5B                   jbe 0x2de7
+2D8C  BB 08 00                mov bx, 8
+2D8F  3D 84 03                cmp ax, 0x384
+2D92  76 53                   jbe 0x2de7
+2D94  BB 0A 00                mov bx, 0xa
+2D97  3D 4C 04                cmp ax, 0x44c
+2D9A  76 4B                   jbe 0x2de7
+2D9C  BB 0C 00                mov bx, 0xc
+2D9F  3D 78 05                cmp ax, 0x578
+2DA2  76 43                   jbe 0x2de7
+2DA4  BB 10 00                mov bx, 0x10
+2DA7  3D 40 06                cmp ax, 0x640
+2DAA  76 3B                   jbe 0x2de7
+2DAC  BB 10 00                mov bx, 0x10
+2DAF  3D 08 07                cmp ax, 0x708
+2DB2  76 33                   jbe 0x2de7
+2DB4  BB 14 00                mov bx, 0x14
+2DB7  3D CA 08                cmp ax, 0x8ca
+2DBA  76 2B                   jbe 0x2de7
+2DBC  BB 19 00                mov bx, 0x19
+2DBF  3D BE 0A                cmp ax, 0xabe
+2DC2  76 23                   jbe 0x2de7
+2DC4  BB 21 00                mov bx, 0x21
+2DC7  3D 2E 0E                cmp ax, 0xe2e
+2DCA  76 1B                   jbe 0x2de7
+2DCC  BB 28 00                mov bx, 0x28
+2DCF  3D 30 11                cmp ax, 0x1130
+2DD2  76 13                   jbe 0x2de7
+2DD4  BB 32 00                mov bx, 0x32
+2DD7  3D E0 15                cmp ax, 0x15e0
+2DDA  76 0B                   jbe 0x2de7
+2DDC  BB 42 00                mov bx, 0x42
+2DDF  3D BC 1B                cmp ax, 0x1bbc
+2DE2  76 03                   jbe 0x2de7
+2DE4  BB 50 00                mov bx, 0x50
+2DE7  33 FF                   xor di, di
+2DE9  B9 00 80                mov cx, 0x8000
+2DEC  33 C0                   xor ax, ax
+2DEE  F3 AB                   rep stosw word ptr es:[di], ax
+2DF0  8B C3                   mov ax, bx
+2DF2  07                      pop es
+2DF3  1F                      pop ds
+2DF4  C3                      ret
+2DF5  FA                      cli
+2DF6  E4 61                   in al, 0x61
+2DF8  A2 04 F8                mov byte ptr [0xf804], al
+2DFB  E8 5A 00                call 0x2e58
+2DFE  BB              db 0xBB
+2DFF  FF              db 0xFF
+
 ===== 2187h-2206h =====
 Reason: 64-MiB memory-alias probe continuation
 2187  B6 FF                   mov dh, 0xff
