@@ -86,15 +86,15 @@ The FDC/DMA routines are called from the legacy floppy INT 13h handler at C610h 
 
 At 6800h the bytes begin `86 C4 8B F8 C3 3B F7 74 37 ...`, followed by arithmetic, BIOS INT 10h calls and a divide-based conversion sequence. This is a code candidate despite the absence of explicit phase-address tokens for page 68.
 
-### 4.5 F900h–F9FCh — BIOS serial service / UART dispatch
+### 4.5 F8E7h–F9FCh — BIOS serial service / UART dispatch
 
-F900h–F929h is an IRET-terminated six-function dispatcher. F92Ah–F935h is a six-word table. The handlers use DX-relative UART registers +0/+1/+3/+4/+5/+6 (RBR/THR/DLL, IER/DLM, LCR, MCR, LSR, MSR). AH=00h programs the exact 110–9600 baud divisor table; AH=01h transmits; AH=02h receives; AH=03h returns LSR/MSR; AH=04h/05h manage modem-control outputs. This is the BIOS INT 14h serial-service family; IVT installation/caller provenance remains unresolved. See AMI486_INT14_SERIAL_BIOS_20261116.md.
+F8E7h–F929h is the guarded IRET-terminated six-function dispatcher candidate. DX is the COM-port index (0..3); the wrapper reads the base word from BDA 0040:0000+2*DX and skips dispatch if it is zero. It also reads the per-port timeout byte at 0040:007Ch+DX and scales the low byte by four into DI. F92Ah–F935h is the six-word handler table. The handlers use DX-relative UART registers +0/+1/+3/+4/+5/+6 (RBR/THR/DLL, IER/DLM, LCR, MCR, LSR, MSR). AH=00h programs the exact 110–9600 baud divisor table; AH=01h transmits; AH=02h receives; AH=03h returns LSR/MSR; AH=04h/05h manage modem-control outputs. This is the BIOS INT 14h serial-service family; IVT installation/caller provenance remains unresolved. See AMI486_INT14_SERIAL_BIOS_20261116.md.
 
 ## 5. Immediate priority order
 
 1. **INT 40h runtime target**: capture the initialized IVT value at 0000:0100h and confirm the legacy floppy handler segment:offset (C610h is the strong in-ROM candidate).
 2. **FDC command semantics**: decode D40Ah–D462h and D520h–D5DCh against the 8272/765 command format; verify DMA mode at every D156h call.
-3. **INT 14h vector provenance**: locate the IVT installation/caller for the now-mapped F900h serial service.
+3. **INT 14h vector provenance**: locate the IVT installation/caller for the now-mapped F8E7h serial service.
 4. **Chipset register semantics**: identify the chipset family and map registers 10h/11h/16h used by the 2100h–23E1h memory-alias/configuration path.
 5. **Remaining regions**: map incoming callers for the RTC/date-time renderer (6700h/6774h/67AEh), the F9xx serial handler, and other unclassified pages. Continue by uncovered byte ranges, not phase numbers.
 
@@ -138,7 +138,7 @@ Important correction to the initial gap hypothesis: A000h–AFFFh is **IDE/ATA h
 
 D100h–D5FFh is the separate floppy-controller/DMA subsystem: FDC ports 03F2h/03F4h/03F5h/03F7h plus DMA ports 0Ch/0Bh/05h/04h.
 
-F92Ah–F935h is a six-word little-endian dispatch table with targets F936h, F986h, F9C4h, F977h, F999h and F9D3h. F977h overlaps the F936h stream as an alternate entry. The F900h wrapper ends in IRET; its actual vector entry remains unknown.
+F92Ah–F935h is a six-word little-endian dispatch table with targets F936h, F986h, F9C4h, F977h, F999h and F9D3h. F977h overlaps the F936h stream as an alternate entry. The F8E7h wrapper ends in IRET at F929h; its actual vector entry remains unknown.
 
 The current seeded Capstone output contains 146 unique bounded code windows plus 6 separately emitted data ranges (152 window headers total). The windows cover 7,974 unique code-candidate bytes and 671 data-candidate bytes, with 27 bytes overlapping between code/data windows; the union is 8,618 distinct ROM bytes across 46 pages. This is only the union of selected seeded windows, not total semantic coverage. Near-branch targets are normalized to 16-bit IP wraparound.
 
@@ -190,12 +190,12 @@ See [AMI486_CLOCK_AND_TEXT_RENDERING_20261116.md](AMI486_CLOCK_AND_TEXT_RENDERIN
 
 ## Serial BIOS / UART dispatch map
 
-See [AMI486_INT14_SERIAL_BIOS_20261116.md](AMI486_INT14_SERIAL_BIOS_20261116.md). F900h–F929h is an IRET-terminated six-function dispatch wrapper; the F92Ah table targets F936h, F986h, F9C4h, F977h, F999h and F9D3h. The handlers use DX-relative UART offsets +0/+1/+3/+4/+5/+6, including DLAB, DLL/DLM, LCR, MCR, LSR and MSR. This is strongly consistent with BIOS INT 14h serial services; the vector source is not yet proven.
+See [AMI486_INT14_SERIAL_BIOS_20261116.md](AMI486_INT14_SERIAL_BIOS_20261116.md). F8E7h–F929h is an IRET-terminated six-function dispatch wrapper candidate; the F92Ah table targets F936h, F986h, F9C4h, F977h, F999h and F9D3h. The handlers use DX-relative UART offsets +0/+1/+3/+4/+5/+6, including DLAB, DLL/DLM, LCR, MCR, LSR and MSR. This is strongly consistent with BIOS INT 14h serial services; the vector source is not yet proven.
 
 
 ## INT 14h service family
 
-The F900h–F9FCh dispatcher is now classified as the BIOS INT 14h serial-service family from the AH function table, DX port-base convention, UART DLAB/DLL/DLM/LCR/IER/THR/RBR/MCR/LSR/MSR accesses, and exact 110–9600 baud divisor table. IVT installation remains unverified. See AMI486_INT14_SERIAL_BIOS_20261116.md.
+The F8E7h–F9FCh dispatcher is classified as the BIOS INT 14h serial-service family from the AH function table, DX COM-port index, BDA COM-base/timeout lookups, UART DLAB/DLL/DLM/LCR/IER/THR/RBR/MCR/LSR/MSR accesses, and exact 110–9600 baud divisor table. IVT installation remains unverified. See AMI486_INT14_SERIAL_BIOS_20261116.md.
 
 
 ## 9. Corrected subsystem classifications and linked reports
@@ -218,14 +218,14 @@ The first-pass region descriptions above have been refined by raw-byte and calle
 | D100h–D5FFh | FDC FIFO, DMA channel 2, CMOS floppy type, reset and status/error handling | AMI486_FDC_DMA_SUBSYSTEM_20261116.md |
 | E401h–E480h | First eight 16-byte fixed-disk parameter records | AMI486_STORAGE_AND_DISPATCH_REGIONS_20261116.md |
 | E845h–E864h | INT 76h / IRQ14 handler | AMI486_STORAGE_AND_DISPATCH_REGIONS_20261116.md |
-| F900h–F9FCh | BIOS INT 14h serial-service dispatcher and UART handlers | AMI486_INT14_SERIAL_BIOS_20261116.md |
+| F8E7h–F9FCh | BIOS INT 14h serial-service dispatcher and UART handlers | AMI486_INT14_SERIAL_BIOS_20261116.md |
 
 The current candidate-window artifact has 146 unique bounded code windows and 6 separately emitted data ranges (152 headers). Its union is 8,618 bytes across 46 pages: 7,974 code-candidate bytes, 671 data-candidate bytes and 27 bytes of code/data overlap. This is a sampling footprint only, not semantic coverage.
 
 
 ## 9. F9xx dispatcher entry-boundary correction
 
-The prior candidate-window seed at F900h was one byte misaligned. Raw bytes show F8FDh–F900h is the complete instruction `MOV DX,[BP+DI]`; therefore F900h is its final displacement byte, not a valid decode start. The guarded wrapper begins at F8E8h (CMP DX,04h; JAE F927h; CMP AH,06h; NOP; JAE F927h), and the valid path begins PUSHA at F8F2h. The common cleanup CALL is at F927h, IRET at F92Ah, and the six-word handler table starts immediately after the IRET at F92Ah? **Byte-boundary note:** the IRET is at F929h; the table begins at F92Ah. The generator was corrected to seed F8E8h for 42h bytes and no longer seeds F900h. The interrupt vector and service contract remain unproven.
+The first candidate seed at F900h was misaligned; the attempted replacement at F8E8h was also one byte late. The verified entry candidate begins at F8E7h with `83 FA 04` (CMP DX,04h). F8E7h–F8E8h is the instruction's first two bytes; F8E8h is not an entry. F8FDh–F900h is `MOV DX,[DI+0000h]`, so F900h is its final displacement byte. With DS=0040h, DX is a COM-port index and the wrapper reads the COM base from BDA 0040:0000+2*DX; it then reads the timeout byte at 0040:007Ch+DX. Both range guards target the cleanup CALL at F926h; IRET is at F929h; the six-word handler table begins at F92Ah. The generator is now seeded at F8E7h for 43h bytes. The INT 14h vector source remains unproven.
 
 
 ## FDC DMA direction cross-reference
