@@ -12,6 +12,7 @@ Mode: 16-bit
 | ami486_reset.disasm.txt | F000:E05B | Reset entry and initial code |
 | ami486_post_entry.disasm.txt | F000:D604 | POST entry investigation |
 | ami486_branches.disasm.txt | Multiple | Branch targets and alternate entry points |
+| analysis/disasm/ami486_full_linear_16bit.disasm.txt | 0000-FFFF | Complete byte-covering linear 16-bit decode; see manifest for SHA-256 and coverage |
 
 ## Address investigation
 
@@ -81,19 +82,19 @@ The existing two linear listings do not cover offsets `0000-D603` (54,788 bytes)
 
 ### Status and required method
 
-- **Full 64-KiB disassembly: NOT COMPLETE.**
+- **Byte-complete 64-KiB linear disassembly: COMPLETE** (`analysis/disasm/ami486_full_linear_16bit.disasm.txt`; 65,536/65,536 bytes). Semantic code/data classification remains incomplete.
 - Existing listings are preserved as historical entry-point listings.
 - Do not label a listing as complete based only on reaching `FFFF`; its starting offset matters.
 - To finish, run NASM `ndisasm -b 16` against the exact `ami486.bin` for the missing range `0000-D603`, then reconcile code/data and alternate-entry regions against the existing listings.
-- The GitHub file connector can retrieve text files and base64-encode binary files, but cannot provide a local binary file to the disassembler in this execution environment. No synthetic or guessed bytes are to be substituted.
+- Source image SHA-256: `91fd62ce3ccb0b79b42f5fd6c6a7262ed52824b8ade917181b8a12267fec003b`. Generated listing contains 29,731 records and explicitly emits undecodable bytes as `db`.
 - Verify the input image SHA-256 and byte length before generating the final master listing. Preserve the existing reset/POST listings unchanged.
 
 ### Next deliverables
 
-1. A byte-complete linear listing covering `0000-FFFF`.
-2. A separate control-flow/alternate-entry map so overlapping instruction streams remain explicit.
-3. A code/data classification map for tables, strings, padding, option-ROM payloads and embedded structures.
-4. A revised index with verified coverage and source-image hash.
+1. **Done:** byte-complete linear listing covering `0000-FFFF`.
+2. Build a separate control-flow/alternate-entry map so overlapping instruction streams remain explicit.
+3. Build a code/data classification map for tables, strings, padding, option-ROM payloads and embedded structures.
+4. **Done:** index updated with verified coverage and source-image hash.
 
 
 
