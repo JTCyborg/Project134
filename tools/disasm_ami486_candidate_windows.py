@@ -18,8 +18,10 @@ WINDOW = 0x80
 SEEDS = [
     (0xA000, "code-dense raw window; entry not yet caller-verified"),
     (0xA080, "continuation candidate after initial A000h helper group"),
-    (0xA0A0, "candidate routine prologue and local stack frame"),
-    (0xA0F0, "possible pointer/dispatch data boundary; inspect both streams"),
+    (0xA08D, "INT 13h hard-disk handler entry; forwards DL<80h to INT 40h"),
+    (0xA0A0, "INT 13h AH-function dispatcher prologue"),
+    (0xA0BD, "indirect CALL through CS-relative 26-entry function table"),
+
     (0xA18E, "byte-aligned short helper immediately after embedded prompt"),
     (0xA197, "branch target from A19Ah; likely routine entry"),
     (0xA1A4, "independent routine entry"),
