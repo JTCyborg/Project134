@@ -628,3 +628,14 @@ This phase is semantic classification of selected regions, not a complete CFG. S
 - D743h initializes BP=0; D760h can set bit12; D76Ch can set bit15. D794h/D7F2h/D8B8h set fatal numeric codes 9/6/10. D8DCh/D8EEh/D8F3h set bits3/5/4.
 - 2913h–2939h uses BP as a memory-size counter, copies the count to BX, then repurposes BP as a stack-frame pointer.
 - No newly audited path writes BP.13. Its producer and the runtime entry into DAxx/5Cxx remain unresolved.
+
+
+## Semantic map — phase 58 (2026-11-16)
+
+- [AMI486_SEMANTIC_MAP_PHASE58_20261116.md](AMI486_SEMANTIC_MAP_PHASE58_20261116.md)
+- The 120Dh CALL 1656h enters the BP bitmap consumer by fall-through: 1656h calls F571h, sets CX=2000h, calls E93Ch, calls F571h, then reaches 1662h.
+- 1662h–1675h rotates and consumes all 16 bits of BP, restores BP, then 1676h tests BX against the original bitmap.
+- E3ACh jumps to POST entry 10E0h (16-bit IP wrap explains linear target 110E0h). EEE7h PIC setup and F419h checksum helper do not assign BP.
+- Early POST writes bits 8–11 only; 11FDh AND BP,7FFFh clears bit15 but preserves bit13. Thus BP.13 is already present at entry 10E0h or was set by an unlocated predecessor.
+- 12D3h POP BP / 12D4h AND BP,C000h is cleanup after the bitmap consumer on the 120Dh path, not a pre-consumer clear.
+- Upstream BP source before E3ACh and the relation to the later DAxx/5Cxx path remain unresolved.
