@@ -221,3 +221,8 @@ The first-pass region descriptions above have been refined by raw-byte and calle
 | F900h–F9FCh | BIOS INT 14h serial-service dispatcher and UART handlers | AMI486_INT14_SERIAL_BIOS_20261116.md |
 
 The current candidate-window artifact has 146 unique bounded code windows and 6 separately emitted data ranges (152 headers). Its union is 8,618 bytes across 46 pages: 7,974 code-candidate bytes, 671 data-candidate bytes and 27 bytes of code/data overlap. This is a sampling footprint only, not semantic coverage.
+
+
+## 9. F9xx dispatcher entry-boundary correction
+
+The prior candidate-window seed at F900h was one byte misaligned. Raw bytes show F8FDh–F900h is the complete instruction `MOV DX,[BP+DI]`; therefore F900h is its final displacement byte, not a valid decode start. The guarded wrapper begins at F8E8h (CMP DX,04h; JAE F927h; CMP AH,06h; NOP; JAE F927h), and the valid path begins PUSHA at F8F2h. The common cleanup CALL is at F927h, IRET at F92Ah, and the six-word handler table starts immediately after the IRET at F92Ah? **Byte-boundary note:** the IRET is at F929h; the table begins at F92Ah. The generator was corrected to seed F8E8h for 42h bytes and no longer seeds F900h. The interrupt vector and service contract remain unproven.
