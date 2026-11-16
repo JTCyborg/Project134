@@ -7,6 +7,7 @@ on:
       - "ami486.bin"
       - ".github/workflows/ami486-full-disasm.yml"
       - "analysis/disasm/DISASM_INDEX.md"
+      - "tools/disasm_ami486_candidate_windows.py"
   workflow_dispatch:
 
 permissions:
@@ -57,12 +58,14 @@ jobs:
           )
           print(f"Verified 65536/65536 bytes; {len(out)} records; SHA-256 {sha}")
           PY
+      - name: Generate independently seeded candidate windows
+        run: python3 tools/disasm_ami486_candidate_windows.py
       - name: Commit generated disassembly
         run: |
           set -euo pipefail
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add analysis/disasm/ami486_full_linear_16bit.disasm.txt analysis/disasm/ami486_full_linear_16bit.manifest.txt
+          git add analysis/disasm/ami486_full_linear_16bit.disasm.txt analysis/disasm/ami486_full_linear_16bit.manifest.txt analysis/disasm/ami486_candidate_windows_20261116.txt analysis/disasm/ami486_candidate_windows_20261116.manifest.txt
           if git diff --cached --quiet; then
             echo "Disassembly is already current"
             exit 0
