@@ -140,7 +140,7 @@ D100h–D5FFh is the separate floppy-controller/DMA subsystem: FDC ports 03F2h/0
 
 F92Ah–F935h is a six-word little-endian dispatch table with targets F936h, F986h, F9C4h, F977h, F999h and F9D3h. F977h overlaps the F936h stream as an alternate entry. The F900h wrapper ends in IRET; its actual vector entry remains unknown.
 
-The seeded Capstone output now contains 69 independent 0x80-byte windows and normalizes near-branch targets to 16-bit IP wraparound.
+The seeded Capstone output now contains 68 independent code windows plus separately emitted data ranges and normalizes near-branch targets to 16-bit IP wraparound.
 
 
 ## INT 13h dispatch correction
