@@ -406,3 +406,12 @@ This phase is semantic classification of selected regions, not a complete CFG. S
 - Separated the CMOS-B3-bit2-selected ALi table at 8E4Eh/8E76h from the independent 8750h–87A4h table at 208Dh.
 - Traced port 61h, port 8Fh, PIT control/data writes and the 400h-byte fill preceding the A20-bracketed protected-mode probe.
 - Decoded the probe's ordinal alias-test outcomes and packing into ALi indexed registers 10h/11h; left chipset meanings and capacity interpretation unresolved pending independent register documentation.
+
+
+## Semantic map — phase 33 (2026-11-16)
+
+- [AMI486_SEMANTIC_MAP_PHASE33_20261116.md](AMI486_SEMANTIC_MAP_PHASE33_20261116.md)
+- Corrected the CMOS-B3-selected small table ranges to 8E4Eh–8E61h and 8E76h–8E79h.
+- Disassembled helper 8DDCh and proved that each small-table word is a direct ALi index/value byte pair written through ports 22h/23h.
+- Established that 8750h–87A3h is a separate 21-record, four-byte encoding with a transformed selector and a value byte; entries resolving to selector 26h are skipped.
+- Explicitly supersedes the incorrect small-table range/encoding description in phase32.
