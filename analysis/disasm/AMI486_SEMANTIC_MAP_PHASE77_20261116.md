@@ -22,7 +22,7 @@ Additional nearby byte sequences include:
 184E  JMP SHORT 1810h
 1850  MOV AL,BEh
 1852  MOV AH, BH
-1854  CALL D69Eh
+1854  CALL EE9Eh
 1857  MOV AL,BFh
 1859  JMP SHORT 1845h
 ```
@@ -43,3 +43,8 @@ However, no verified caller/continuation currently proves that BX is compared wi
 - Trace DI values at every reachable entry into 17F2h and 1810h.
 - Find consumers of BX after each indirect dispatch.
 - Continue the independent BP.13 producer search and dynamic entry into DA5Eh/DA61h.
+
+
+## Correction: helper target
+
+The relative CALL displacements in this dispatcher resolve to **EE9Eh**, not D69Eh. This is an alternate entry one byte into the CMOS write helper at EE9Dh: it skips `OUT 70h,AL` and enters at `XCHG AH,AL`, then proceeds through the delays and `OUT 71h,AL`. Thus these call sites write the data byte to the currently selected CMOS index; they do not select a new index themselves. The AL/AH setup immediately before each call is therefore significant, and the index-selection state must be traced from the preceding code.
