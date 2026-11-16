@@ -1,6 +1,6 @@
 # AMI486 semantic map — phase 32 (2026-11-16)
 
-## 1. POST memory setup table at 8E62h / 8E76h
+## 1. POST memory setup tables at 8E4Eh / 8E76h
 
 The block at 1AFBh–1B58h begins by arranging a return trampoline at 1B04h and jumping to EE94h with AL=B3h. EE94h is the protected CMOS read helper. On return, AL is the CMOS B3h value.
 
