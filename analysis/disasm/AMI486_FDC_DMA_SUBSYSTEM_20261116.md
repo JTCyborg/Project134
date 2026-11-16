@@ -100,7 +100,26 @@ The native little-endian table at C5FAh is:
 
 The AH=02h/03h/04h shared target uses request state to choose the data direction/operation. The direct paths from C8BBh and C936h call D156h for DMA channel-2 setup; C913h calls D4EAh, D381h, D197h, D156h, D216h, D270h and D2BDh. C6BCh jumps into D2FDh for Sense Interrupt Status. This directly connects the C610h legacy floppy handler to the D100h–D5FFh FDC/DMA routines.
 
-A95Eh saves the previous INT 13h vector into the INT 40h vector slot. A08Dh forwards requests with DL<80h by executing INT 40h. This is the chain to the legacy floppy handler. C610h is the matching in-ROM floppy INT 13h implementation and is the strong candidate for the saved target; the actual runtime segment:offset stored at 0000:0100h should still be confirmed from a trace or initialized IVT snapshot.
+A95Eh is the INT 13h hook installer. Its exact operations are:
+
+```asm
+A95E  CLI
+A95F  CLD
+A960  MOV SI,004Ch
+A963  MOV DI,0100h
+A966  MOV AX,A08Dh
+A969  XCHG AX,[ES:SI]       ; new INT 13h offset, old offset -> AX
+A96C  STOSW                 ; save old offset at ES:0100h (INT 40h)
+A96D  MOV AX,CS
+A96F  XCHG AX,[ES:SI+02h]   ; new INT 13h segment, old segment -> AX
+A973  STOSW                 ; save old segment at ES:0102h
+```
+
+Thus INT 13h is replaced with **CS:A08Dh**, while INT 40h is dynamically set to the *previous* INT 13h vector. A08Dh forwards floppy requests (DL<80h) through INT 40h; it also forwards AH=00h through INT 40h. Therefore INT 40h is a chain to the pre-existing INT 13h handler, not a ROM-hardcoded pointer.
+
+Important precondition: A95Eh uses ES-relative IVT addresses but does not itself load ES=0000h. Its direct caller is at 134Eh. The caller's ES value at that point must be verified before treating the writes as proven IVT writes; the routine's intent and address constants clearly target the IVT, but the ES setup is a separate unresolved caller contract.
+
+C610h is the in-ROM legacy floppy INT 13h implementation candidate. A separate in-ROM near JMP at EC59h targets C610h, which supports a relationship between the two streams, but the ROM contains no direct far-pointer literal C610h:F000h and A95Eh does not hardcode C610h. Consequently C610h is a strong candidate for the prior handler, not a proven runtime INT 40h target. The actual INT 40h segment:offset is inherited dynamically and requires an initialized IVT snapshot or trace.
 
 ## 5. Remaining work
 
