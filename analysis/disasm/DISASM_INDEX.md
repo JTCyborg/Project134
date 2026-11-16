@@ -485,3 +485,11 @@ This phase is semantic classification of selected regions, not a complete CFG. S
 - Identified Setup/editor selector 575Eh, which returns CMOS index B3h or BAh according to UI state word E19Dh bit 1; the corresponding user-visible label remains unresolved.
 - Documented additional B3h bit-2 table selection at 8A2Eh and separated it from the other read-only consumers.
 - Explicitly left the stack/caller contract of the 88D3h continuation family unresolved rather than guessing its Setup trigger.
+
+
+## Semantic map — phase 42 (2026-11-16)
+
+- [AMI486_SEMANTIC_MAP_PHASE42_20261116.md](AMI486_SEMANTIC_MAP_PHASE42_20261116.md)
+- Traced the Setup/editor renderer: E19Dh bit 1 selects CMOS index B3h/BAh at 575Eh, consumed by 587Ah; 571Ch decodes packed UI state and 5862h has Setup/menu callers.
+- Corrected the Phase 41 open question: 88D3h is not directly called by the Setup renderer; it follows the delay loop at 88CEh, reached via D60Ch. The 8914h CMOS B3h write is a separate continuation.
+- Confirmed the local 88FAh–8919h path ORs mask 02h into CMOS B3h only when DL bits 4 and 5 are both set; it never clears existing bits. Exact Setup label and D60Ch caller/register contract remain unresolved.
