@@ -148,3 +148,42 @@ Read-only reference checkout: [JTCyborg/Project133](https://github.com/JTCyborg/
 ### Next evidence required
 
 Ask the user to run `git -C <Project133 path> rev-parse HEAD` and provide the exact AMI486 configuration file (or the relevant [Machine] settings) from the machine that produced the reported POST/ROM-set log. Then inspect the local diff against the remote commit, resolve the ROM enum, trace `at_ali1429_init` and the AT setup path, and verify the actual reset-vector fetch at physical `FFFF0h`.
+
+
+### AT initialization chain — confirmed 2026-11-16
+
+The exact model callback implementation is in `src/models/model.c`:
+
+```c
+void at_ali1429_init() {
+        at_init();
+        ali1429_init();
+}
+```
+
+The common `at_init()` sequence in the same file is:
+
+1. Set `AT = 1`.
+2. Call `common_init()`.
+3. Call `mem_add_bios()`.
+4. Connect PIT channel 1 output to `pit_refresh_timer_at`.
+5. Initialize 16-bit DMA (`dma16_init()`).
+6. Initialize AT keyboard controller (`keyboard_at_init()`).
+7. Add NVR device (`nvr_device`).
+8. Initialize secondary PIC (`pic2_init()`).
+9. Add gameport device.
+10. Clear NMI mask (`nmi_mask = 0`).
+
+Then `ali1429_init()` installs the chipset I/O handler at `22h`–`23h`.
+
+This is the emulator's device/platform construction order, not a BIOS POST sequence. `model_init()` invokes the selected model callback after device initialization and before the later machine startup work; do not confuse host-side emulator setup with BIOS firmware execution.
+
+### ALi 1429 behavior implemented by this emulator
+
+- `ali1429_reset()` fills the 256-byte register array with `FFh`.
+- Writes to index register port `22h` select an internal register; writes to data port `23h` update it.
+- Writes to register `13h` or `14h` recalculate memory visibility.
+- Register `13h` selects eight 32-KiB blocks starting at `C0000h`; register `14h` selects read/write internal/external combinations.
+- For Cyrix CPUs, reads of indices `C0h` and above, and `20h`, return `FFh` to avoid conflicts with Cyrix configuration registers.
+- This describes the Project133 emulator model only. It is not a complete datasheet-level specification of the physical ALi chipset.
+
