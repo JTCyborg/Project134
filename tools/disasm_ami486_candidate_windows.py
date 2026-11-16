@@ -13,13 +13,14 @@ ROM_PATH = ROOT / "ami486.bin"
 OUT_PATH = ROOT / "analysis" / "disasm" / "ami486_candidate_windows_20261116.txt"
 MANIFEST_PATH = ROOT / "analysis" / "disasm" / "ami486_candidate_windows_20261116.manifest.txt"
 WINDOW = 0x80
-LIMITS = {0xA08D: 0x64, 0xA0A0: 0x51, 0xA0BD: 0x34}
+LIMITS = {0xA08D: 0x64, 0xA0A0: 0x51, 0xA0BD: 0x34, 0xE845: 0x20}
 
 DATA_RANGES = [
     (0xA0F1, 0xA125, "INT 13h AH function table", "words"),
     (0xA125, 0xA18E, "Format / BootSector Write / Possible VIRUS prompt", "ascii"),
     (0xAD00, 0xAE60, "Keyboard translation data candidates", "hexascii"),
     (0xF92A, 0xF936, "F9xx indirect-handler offset table", "words"),
+    (0xE401, 0xE481, "First eight 16-byte fixed-disk parameter records", "hexascii"),
 ]
 
 SEEDS = [
