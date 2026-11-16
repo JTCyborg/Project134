@@ -588,3 +588,13 @@ This phase is semantic classification of selected regions, not a complete CFG. S
 - PUSHAW at 525Fh therefore saves the inherited BP value at 5260h, not the temporary BP=1.
 - Earlier 5DF7h also tests bit 15 and writes 1234h to BDA 0040:0072 when BP is negative.
 - 5F7Dh and 5ECCh set only BP bits 6 and 7. BP.13 producer remains unresolved.
+
+
+## Semantic map — phase 54 (2026-11-16)
+
+- [AMI486_SEMANTIC_MAP_PHASE54_20261116.md](AMI486_SEMANTIC_MAP_PHASE54_20261116.md)
+- Traced the BP value tested at 5CF9h through the crafted memory-test continuations at 5C24h/5C26h and 5C66h/5C68h.
+- Both paths converge into the 5C70h keyboard-controller setup without modifying BP; 5C58h tests bit 15, 5C8Ch tests bit 12, and 5CF9h tests bit 13.
+- 5CC6h and 5CF0h OR BP,0 are no-ops; 5D07h clears bit 12 only. 5C37h MOV BP,3 is confined to the fatal memory-test error path.
+- The BP.13 producer must precede the 5C04h memory test or arrive via an earlier stack restore; DA9Fh -> 5BF8h remains an unproven runtime chain.
+- Separated the 546Ch PUSHAW frame from 525Fh: 546Ch is called at 51FEh, 5403h and 541Ah and captures caller-dependent BP.
