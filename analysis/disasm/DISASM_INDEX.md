@@ -501,3 +501,11 @@ This phase is semantic classification of selected regions, not a complete CFG. S
 - Recovered the sole direct entry to D604h from 5D04h: conditional on BP bit 13, the caller sends 8042 command 60h with data 30h (command-byte programming) before the status branch.
 - Corrected the interpretation of D606h: port 64h bit 2 is the 8042 SYS flag, not IBF/busy. SYS=0 reaches the 88CEh delay and 88D3h continuation; SYS=1 branches to 8A04h.
 - Narrowed the CMOS B3h bit-1 update to the SYS=0, real-mode, non-special-DH path; (DL AND 30h)=30h ORs bit 1 into B3h. DH=4 selects a separate stack continuation whose full register contract remains unresolved.
+
+
+## Semantic map — phase 44 (2026-11-16)
+
+- [AMI486_SEMANTIC_MAP_PHASE44_20261116.md](AMI486_SEMANTIC_MAP_PHASE44_20261116.md)
+- Audited BP bit 13 at 5CF9h: it is tested but no direct immediate setter is present in the full linear listing. BP bit 12 is a separate test at 5C8Ch; 5D07h clears bit 12, not bit 13.
+- The 5CF9h→F651h→F622h 8042 command-byte path does not assign DX/DH/DL; the values used at 88D3h are inherited from an unresolved upstream context.
+- Confirmed 1B5Eh and 1B5Fh are RET stubs and do not initialize BP/DX. The relationship of POST's POP BP / AND BP,C000h path to the 5C70h entry remains unproven.
