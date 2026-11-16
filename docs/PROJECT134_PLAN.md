@@ -13,6 +13,7 @@ The original Spectrum software accesses memory, ROM, I/O ports and timing direct
 - [ ] Confirm the upstream PCem source baseline and revision.
 - [ ] Inspect the AMI486 machine registration, initialization and device setup.
 - [ ] Identify the currently working AMI486 BIOS ROM and its provenance.
+- [x] Add the AMI BIOS 6.27.10 collection as an architectural reference; keep it separate from the target AMI486 ROM/source identification.
 - [ ] Identify ROM loading, reset-vector mapping and BIOS execution path.
 - [x] Create the separate Project134 repository and record this plan without changing Project133.
 - [ ] Import/establish the PCem source baseline and create an isolated Project134 machine/profile.
@@ -142,4 +143,4 @@ No Spectrum-specific implementation in this phase. First establish that the inhe
 - [ ] Phase 5 — Hardware expansion
 - [ ] Phase 6 — Stabilization and release
 
-**Current evidence:** the upstream PCem AMI486 model registration has been inspected and recorded in [docs/AMI486_REFERENCE.md](AMI486_REFERENCE.md). It identifies the AT initialization path and ALi 1429 chipset callback, but does not yet establish the exact Project133 source revision or runtime configuration.\n\n**Next action:** obtain the exact `ami486.bin` again and record the Project133 source commit plus ROM-set 46 configuration; then disassemble the BIOS and trace its reset-vector/POST path.
+**Current evidence:** the upstream PCem AMI486 model registration has been inspected and recorded in [docs/AMI486_REFERENCE.md](AMI486_REFERENCE.md). It identifies the AT initialization path and ALi 1429 chipset callback, but does not yet establish the exact Project133 source revision or runtime configuration. The AMI BIOS 6.27.10 collection under [docs/627.10](627.10) has also been inspected as an architectural reference only; it is not verified as the source of the target AMI486 ROM, and its platform-specific code is not assumed to match ALi 1429.\n\n**Next action:** obtain the exact `ami486.bin` again and record the Project133 source commit plus ROM-set 46 configuration; then disassemble the BIOS and trace its reset-vector/POST path. In parallel, inventory the remaining 6.27.10 reference modules without copying proprietary implementation code.
