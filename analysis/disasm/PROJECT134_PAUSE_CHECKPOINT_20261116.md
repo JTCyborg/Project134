@@ -31,7 +31,7 @@ If work is resumed, start from these items rather than repeating the completed C
 
 1. Resolve callback 026Fh and its dispatch/table around 0280h..02A5h.
 2. Decode callback 02DBh and the BP+10h/BP+14h state it manipulates.
-3. Decode 02F1h as a separate alternate entry. It overlaps the linear instruction stream beginning at 02F0h; do not merge the two instruction streams without proof.
+3. Decode 02F1h as the aligned low-nibble callback entry. The short jump is at 02EFh (EB 0E), its displacement is at 02F0h, and 02F1h begins MOV AL,[BP+10h]. The 02DBh high-nibble path jumps to shared code at 02FFh.
 4. Trace shared helpers 05E0h/05EEh, 08C8h/08CDh and the date/time helper paths only where needed to close the Setup callback contracts.
 5. Resume the ROM-wide range coverage ledger. The full 64 KiB BIOS is **not** completely semantically disassembled; no whole-ROM completion percentage was established.
 
