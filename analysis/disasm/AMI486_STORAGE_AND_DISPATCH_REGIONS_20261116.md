@@ -126,19 +126,62 @@ Observed ports:
 
 The D100h seed begins with a short register/return fragment and should not be assumed to be the subsystem's true entry. Direct call targets such as D156h, D216h, D243h, D294h and D348h are better-aligned analysis roots.
 
-## 3. F900h–F9FCh: indirect I/O dispatch wrapper and handler table
+## 3. F8E7h–F9FCh: BIOS INT 14h serial dispatcher and UART handlers
 
-The six words at F92Ah–F935h decode little-endian to:
-- F936h
-- F986h
-- F9C4h
-- F977h
-- F999h
-- F9D3h
+The six-entry service dispatcher is identified as the BIOS INT 14h serial communications family from its AH selector and direct UART register access. The exact interrupt-vector installation/caller is still unresolved, so F8E7h is a strongly supported handler-entry candidate rather than a proven live IVT target.
 
-The F900h–F929h stream computes an index, loads a target through CS-relative memory at F92Ah, calls the selected handler indirectly through AX, restores the saved context and executes IRET. This is a dispatch wrapper; the exact interrupt/vector entry that reaches it is not yet established.
+Entry-aligned stream:
 
-Important overlap: F977h is inside the F936h routine's sequential instruction stream (F936h through F985h) and is also a table-selected entry. Preserve both interpretations. F986h, F999h, F9C4h and F9D3h are additional handler entries. F9FDh onward appears to transition into non-code data, but its exact table boundary is not yet verified.
+```asm
+F8E7  CMP DX,04h
+F8EA  JAE F926h
+F8EC  CMP AH,06h
+F8EF  NOP
+F8F0  JAE F926h
+F8F2  PUSHA
+F8F3  MOV BP,SP
+F8F5  PUSH DS
+F8F6  PUSH 40h
+F8F8  POP DS
+F8F9  MOV DI,DX
+F8FB  SHL DI,1
+F8FD  MOV DX,[BP+DI]
+F901  AND DX,DX
+F903  JE F924h
+F905  SHR DI,1
+F907  MOV DI,[DI+7Ch]
+F90B  AND DI,00FFh
+F90F  SHL DI,2
+F912  MOV AL,AH
+F914  MOV AH,00h
+F916  SHL AX,1
+F918  XCHG DI,AX
+F919  MOV DI,[CS:DI-06D6h]
+F91E  XCHG DI,AX
+F91F  CALL AX
+F921  MOV [BP+0Eh],AX
+F924  POP DS
+F925  POPA
+F926  CALL 90B2h
+F929  IRET
+```
+
+The initial guards reject DX>=4 or AH>=6 and branch to the common cleanup at F926h. On the valid path, PUSHA establishes a saved-register frame; DX selects a word in that frame, which is loaded into DX and tested. A zero selected value branches to the restore path at F924h. The handler selector AH indexes the six-word CS-relative table at F92Ah. The wrapper stores the handler's returned AX into the saved AX slot at [BP+0Eh], restores DS/registers, calls 90B2h and IRETs.
+
+The native little-endian table at F92Ah–F935h is:
+
+| AH selector | Target | Function |
+|---:|---:|---|
+| 00h | F936h | Initialize UART |
+| 01h | F986h | Transmit character |
+| 02h | F9C4h | Receive character |
+| 03h | F977h | Return line/modem status |
+| 04h | F999h | Configure modem-control outputs |
+| 05h | F9D3h | Write modem-control outputs and sample status |
+
+F977h is an alternate entry inside the F936h sequential instruction stream (F936h–F985h); retain both the initialization stream and the table-selected status entry. F986h, F999h, F9C4h and F9D3h are additional table targets. The handlers use UART offsets +0 through +6, including DLAB/DLL/DLM/LCR/IER/THR/RBR/MCR/LSR/MSR. Detailed behavior and baud divisors are documented in [AMI486_INT14_SERIAL_BIOS_20261116.md](AMI486_INT14_SERIAL_BIOS_20261116.md).
+
+**Entry-alignment correction:** the earlier F900h seed began on the last displacement byte of `MOV DX,[BP+DI]` at F8FDh. The first replacement seed at F8E8h was also one byte late: F8E8h is inside the three-byte `CMP DX,04h` instruction beginning at F8E7h. The generator is now rooted at F8E7h and clipped after the IRET at F929h. The table begins at F92Ah. Do not treat F900h or F8E8h as function entries.
 
 ## 4. 2100h: memory-pattern probe candidate
 
@@ -150,7 +193,7 @@ The stream writes and compares 5555h/AAAAh patterns using 16-/32-bit operand/add
 2. Confirm the parameters and error contracts for the 26 INT 13h service handlers, especially A216h/A226h/A23Eh/A25Fh and A372h/A381h/A374h.
 3. Recover complete routine boundaries and error contracts for A5CAh, A5A9h, A655h, A694h, A6BBh, A6DCh, A798h and A7BAh.
 4. Identify the FDC commands in D400h–D5FFh and connect DMA channel programming to the command/result paths.
-5. Establish the interrupt/vector source and selector contract for the F92Ah dispatch table.
+5. Find the IVT installation/caller for the F8E7h INT 14h candidate and verify its runtime vector.
 6. Trace the 2100h memory-probe caller and the meaning of the 00800000h comparison.
 
 ## 6. Method and confidence
