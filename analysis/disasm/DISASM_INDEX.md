@@ -1064,3 +1064,16 @@ The first seeded Capstone decode is in `analysis/disasm/ami486_candidate_windows
 - AD00h–AE5Fh contains keyboard translation-table candidates; AE60h onward contains keyboard/INT 15h handler code.
 - A100h–A123h contains 18 two-byte entries. Byte-reversed values match plausible code offsets; the dispatch encoding remains unconfirmed.
 - Candidate windows are not CFGs. The script normalizes near-branch targets to 16-bit IP wraparound.
+
+
+## Storage and interrupt-dispatch analysis — 2026-11-16
+
+Detailed report: [AMI486_STORAGE_AND_DISPATCH_REGIONS_20261116.md](AMI486_STORAGE_AND_DISPATCH_REGIONS_20261116.md).
+
+- A000h–AFFFh is IDE/ATA hard-disk code, not FDC. It uses ports 01F0h–01F7h and 03F6h; A406h transfers 256 words out, AC00h issues IDENTIFY DEVICE and reads 256 words in. The A125h warning is displayed by A847h; A8F4h accepts Y/N.
+- D100h–D5FFh is the independent floppy controller/DMA subsystem using 03F2h/03F4h/03F5h/03F7h and DMA ports 0Ch/0Bh/05h/04h.
+- AD00h–AE5Fh is keyboard translation data candidate; AE60h onward includes INT 15h AH=4Fh keyboard intercept handling.
+- F92Ah–F935h is a six-entry handler-offset table; F977h is an overlapping alternate entry inside the F936h stream. F900h wrapper returns with IRET; vector provenance remains unresolved.
+- The Capstone candidate-window output is now 69 independent windows, with 16-bit near-target wraparound.
+
+Do not merge ATA, FDC, keyboard and F9xx dispatch code into one subsystem.
