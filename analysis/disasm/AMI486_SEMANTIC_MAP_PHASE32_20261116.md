@@ -5,12 +5,12 @@
 The block at 1AFBh–1B58h begins by arranging a return trampoline at 1B04h and jumping to EE94h with AL=B3h. EE94h is the protected CMOS read helper. On return, AL is the CMOS B3h value.
 
 At 1B12h the code tests AL bit 2:
-- If bit 2 is set, SI=8E62h and CX=8E62h initially (the end pointer is later set to 8E62h in the literal decode; the following subtraction makes the zero-length case possible).
+- If bit 2 is set, SI=8E4Eh and CX=8E62h.
 - If bit 2 is clear, SI=8E76h and CX=8E7Ah.
 
 The selected words are then loaded from CS:[SI] and written through the ALi indexed-register helper 8DDCh using the stack-return trampoline at 1B24h–1B2Ah. The loop at 1B20h–1B2Ch advances by words and decrements CX by LOOP.
 
-Important correction: this is not the same table at 8750h–87A4h used by the later 208Dh setup loop. These are two separate tables with different selectors and purposes. The 8E62h/8E76h selection is controlled by CMOS B3h bit 2.
+Important correction: this is not the same table at 8750h–87A4h used by the later 208Dh setup loop. These are two separate tables with different selectors and purposes. The 8E4Eh/8E76h selection is controlled by CMOS B3h bit 2.
 
 ## 2. What happens after the ALi table writes
 
@@ -42,7 +42,7 @@ No direct near CALL/JMP reference to 1B20h, 1AFBh, or 1B04h was found in the lin
 
 ## 5. Confirmed findings
 
-- 8E62h/8E76h is a separate CMOS-B3-bit2-selected ALi configuration table.
+- 8E4Eh/8E76h is a separate CMOS-B3-bit2-selected ALi configuration table.
 - The table is written via 8DDCh before port-61/PIT setup and before the later 8750h table.
 - The memory test encodes four probe-result bytes across ALi registers 10h/11h; values are ordinal branch results, not yet verified capacities.
 - The high-memory probe explicitly tests 64 MiB base and 72 MiB alias-related address (04000000h and 04800000h), plus offsets 800h/1000h/2000h.
