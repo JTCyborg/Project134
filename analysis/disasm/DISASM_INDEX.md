@@ -1127,3 +1127,8 @@ Detailed map: [AMI486_CLOCK_AND_TEXT_RENDERING_20261116.md](AMI486_CLOCK_AND_TEX
 ## Serial BIOS / UART subsystem — 2026-11-16
 
 Detailed map: [AMI486_INT14_SERIAL_BIOS_20261116.md](AMI486_INT14_SERIAL_BIOS_20261116.md). The F900h wrapper dispatches six AH functions through F92Ah. The handlers program UART DLAB/DLL/DLM/LCR/IER, transmit/receive via THR/RBR, and read/write MCR/LSR/MSR. The UART identity is high-confidence; INT 14h vector provenance and exact return contracts remain open.
+
+
+## INT 14h serial service confirmation — 2026-11-16
+
+The F900h wrapper's AH=00h–05h table is confirmed as the BIOS serial-service family: AH=00h programs UART baud divisor/LCR, AH=01h transmits, AH=02h receives, AH=03h returns LSR/MSR, AH=04h/05h manipulate modem-control outputs. The baud table exactly matches 110–9600 baud divisors. Only the IVT installation/caller for F900h remains unresolved. See AMI486_INT14_SERIAL_BIOS_20261116.md.
