@@ -6285,6 +6285,76 @@ D658  F6              db 0xF6
 D659  06                      push es
 D65A  81              db 0x81
 
+===== E845h-E8C4h =====
+Reason: INT 76h / IRQ14 handler installed by A95Eh
+E845  FB                      sti
+E846  50                      push ax
+E847  1E                      push ds
+E848  6A 40                   push 0x40
+E84A  1F                      pop ds
+E84B  C6 06 8E 00 FF          mov byte ptr [0x8e], 0xff
+E850  B0 20                   mov al, 0x20
+E852  E6 A0                   out 0xa0, al
+E854  E3 00                   jcxz 0xe856
+E856  E3 00                   jcxz 0xe858
+E858  E6 20                   out 0x20, al
+E85A  B8 00 91                mov ax, 0x9100
+E85D  1F                      pop ds
+E85E  CD 15                   int 0x15
+E860  58                      pop ax
+E861  CF                      iret
+E862  E3 00                   jcxz 0xe864
+E864  E3 00                   jcxz 0xe866
+E866  E3 00                   jcxz 0xe868
+E868  E3 00                   jcxz 0xe86a
+E86A  E3 00                   jcxz 0xe86c
+E86C  E3 00                   jcxz 0xe86e
+E86E  E3 00                   jcxz 0xe870
+E870  E3 00                   jcxz 0xe872
+E872  E3 00                   jcxz 0xe874
+E874  E3 00                   jcxz 0xe876
+E876  E3 00                   jcxz 0xe878
+E878  E3 00                   jcxz 0xe87a
+E87A  C3                      ret
+E87B  00 00                   add byte ptr [bx + si], al
+E87D  00 52 3A                add byte ptr [bp + si + 0x3a], dl
+E880  45                      inc bp
+E881  46                      inc si
+E882  38 1D                   cmp byte ptr [di], bl
+E884  2A 36 80 40             sub dh, byte ptr [0x4080]
+E888  20 10                   and byte ptr [bx + si], dl
+E88A  08 04                   or byte ptr [si], al
+E88C  02 01                   add al, byte ptr [bx + di]
+E88E  50                      push ax
+E88F  2E A0 85 82             mov al, byte ptr cs:[0x8285]
+E893  0A C0                   or al, al
+E895  74 12                   je 0xe8a9
+E897  EC                      in al, dx
+E898  84 C4                   test ah, al
+E89A  74 2A                   je 0xe8c6
+E89C  2E A0 85 82             mov al, byte ptr cs:[0x8285]
+E8A0  FE C8                   dec al
+E8A2  75 FC                   jne 0xe8a0
+E8A4  49                      dec cx
+E8A5  75 F0                   jne 0xe897
+E8A7  EB 1C                   jmp 0xe8c5
+E8A9  EC                      in al, dx
+E8AA  84 C4                   test ah, al
+E8AC  74 18                   je 0xe8c6
+E8AE  E4 61                   in al, 0x61
+E8B0  A8 10                   test al, 0x10
+E8B2  74 FA                   je 0xe8ae
+E8B4  49                      dec cx
+E8B5  74 0E                   je 0xe8c5
+E8B7  EC                      in al, dx
+E8B8  84 C4                   test ah, al
+E8BA  74 0A                   je 0xe8c6
+E8BC  E4 61                   in al, 0x61
+E8BE  A8 10                   test al, 0x10
+E8C0  75 FA                   jne 0xe8bc
+E8C2  49                      dec cx
+E8C3  75 E4                   jne 0xe8a9
+
 ===== F900h-F97Fh =====
 Reason: interrupt/dispatch wrapper candidate; indirect-call provenance unresolved
 F900  00 23                   add byte ptr [bp + di], ah
