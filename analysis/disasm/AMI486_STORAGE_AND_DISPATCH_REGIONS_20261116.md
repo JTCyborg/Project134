@@ -7,7 +7,7 @@ Decoder: Capstone x86, 16-bit; independently seeded windows with near-branch tar
 
 ## 1. A000h–AFFFh: IDE/ATA hard-disk and boot-sector protection code
 
-This region is not a floppy-disk controller driver. Its I/O port set is the primary ATA task-file interface:
+This region is the hard-disk half of a hooked BIOS INT 13h implementation, not a floppy-disk controller driver. Entry A08Dh handles INT 13h requests for DL>=80h and forwards DL<80h requests to INT 40h. Its I/O port set is the primary ATA task-file interface:
 - 01F0h — data
 - 01F1h — error/features
 - 01F2h — sector count
@@ -19,6 +19,8 @@ This region is not a floppy-disk controller driver. Its I/O port set is the prim
 
 | Entry | Observed behavior | Confidence |
 |---:|---|---|
+| A08Dh | INT 13h handler entry. If DL<80h it executes INT 40h and RETF 2; otherwise it enters the hard-disk path. | High: exact branch and software interrupt |
+| A0A0h | Saves registers, sets DS=0040h, validates AH<=19h and dispatches through CS:[DI-5F0Fh]. Unsupported AH returns error 0100h with CF set. | High: exact instruction stream |
 | A1B3h | Writes 04h then 00h to 03F6h, waits via E93Ch, polls through A62Dh, reads 01F1h, checks for value 01h, then probes selectors 80h/81h using A501h and A337h. | High: direct I/O and control flow |
 | A337h | Calls readiness/parameter helpers, writes sector count to 01F2h, selects drive/head through 01F6h, then sends command 91h through the command path. | High |
 | A406h | Prepares ES:SI buffer and transfers 0100h words using `REP OUTSW` to 01F0h; optional path sends four extra bytes. | High |
@@ -32,7 +34,7 @@ This region is not a floppy-disk controller driver. Its I/O port set is the prim
 | A76Ch | Converts ES:BX into a normalized ES:offset buffer address. | High |
 | A847h | Renders one of the embedded prompts through BIOS INT 10h. | High |
 | A8F4h | Reads a key with BIOS INT 16h and accepts Y/N; other keys repeat the prompt. | High |
-| A95Eh | Writes through ES:[004Ch] and ES:[004Eh], saving displaced words at ES:[0100h]/ES:[0102h]. If ES=0, this replaces INT 13h and preserves its old vector. It also writes a second vector-like pair at ES:[01D8h]. | High for writes; ES base/caller context still to verify |
+| A95Eh | Writes handler offset A08Dh to ES:[004Ch] and CS to ES:[004Eh], saving the displaced words at ES:[0100h]/ES:[0102h]. Because 004Ch is the INT 13h vector slot, this is the INT 13h hook installer when ES=0; the caller's ES provenance is still to be checked. It also writes a second vector-like pair at ES:[01D8h]. | High for INT 13h slot and handler target; ES base/caller context still to verify |
 | AA00h | Calls BIOS INT 13h services including AH=14h, AH=08h, AH=04h, AH=09h and AH=11h while probing drive 80h/81h. | High |
 | AABFh | Keyboard abort/poll helper using INT 16h AH=01h/AH=00h; checks Escape and uses a timed retry path. | High |
 | AB34h | Reads and compares disk metadata against a CS-resident record array beginning E401h; full record semantics remain open. | Medium |
@@ -54,12 +56,40 @@ The padded message at A125h–A18Dh contains:
 
 A847h selects SI=A125h or SI=A148h, positions the cursor and renders the text with BIOS INT 10h. A8F4h waits for keyboard input with INT 16h, uppercases the response and explicitly compares against `Y` (59h) and `N` (4Eh). This ties the warning to a real user-confirmation path, not just an unused string.
 
-### 1.3 A100h–A123h dispatch-like words
+### 1.3 A0F1h–A124h: 26-entry INT 13h function table
 
-There are 18 two-byte entries. Their byte-reversed interpretations match plausible code offsets:
-`A1A4, A137, A372, A381, A374, A49E, A18E, A18E, A1D3, A401, A58E, A18E, A12B, A5A9, A18E, A18E, A18E, A17B`.
+The indirect call at A0BDh uses CS:[DI-5F0Fh]. Before the call, DI is set to twice the incoming AH selector. With 16-bit offset arithmetic, selector zero resolves to A0F1h; each entry is a native little-endian near offset. The guard at A0B6h rejects AH>19h, so the table has 26 entries.
 
-This is a strong byte-swapped offset-table hypothesis. Do not call it a confirmed near-pointer table until the consumer is found and its byte order is proven.
+| AH | Target | Notes |
+|---:|---:|---|
+| 00h | A197h | Disk reset / device probe path |
+| 01h | A20Bh | Return and clear saved status |
+| 02h | A216h | Read-sector path candidate |
+| 03h | A226h | Write-sector path candidate |
+| 04h | A23Eh | Verify/related transfer path candidate |
+| 05h | A25Fh | Format/related transfer path candidate |
+| 06h | A18Eh | Unsupported/error stub |
+| 07h | A18Eh | Unsupported/error stub |
+| 08h | A1A4h | Drive parameter/geometry path |
+| 09h | A337h | Initialize device parameters; sends ATA command 91h |
+| 0Ah | A372h | Long-sector path candidate |
+| 0Bh | A381h | Long-sector path candidate |
+| 0Ch | A374h | Seek/related path candidate |
+| 0Dh | A19Eh | Secondary drive-detection path |
+| 0Eh | A18Eh | Unsupported/error stub |
+| 0Fh | A18Eh | Unsupported/error stub |
+| 10h | A4D3h | Drive diagnostic/related path candidate |
+| 11h | A501h | Recalibrate command path |
+| 12h | A18Eh | Unsupported/error stub |
+| 13h | A18Eh | Unsupported/error stub |
+| 14h | A52Bh | Execute device diagnostic (ATA command 90h) |
+| 15h | A1A9h | Alternate geometry path |
+| 16h | A18Eh | Unsupported/error stub |
+| 17h | A18Eh | Unsupported/error stub |
+| 18h | A18Eh | Unsupported/error stub |
+| 19h | A57Bh | Extended geometry/parameter path candidate |
+
+The table occupies A0F1h–A124h inclusive. A100h is inside the table, not its start. The repeated A18Eh target is a shared error-return stub. Names marked “candidate” require full parameter/caller tracing before mapping them to a specific BIOS service.
 
 ### 1.4 Keyboard data island
 
@@ -116,8 +146,8 @@ The stream writes and compares 5555h/AAAAh patterns using 16-/32-bit operand/add
 
 ## 5. Remaining unknowns
 
-1. Confirm the true entry into the A000h ATA subsystem and the caller/consumer of A100h–A123h's byte-swapped entries.
-2. Trace the INT 13h hook installation and its companion vector at 01D8h with ES provenance.
+1. Trace the INT 13h hook installation at A95Eh through the caller to prove ES=0 and validate the companion vector at 01D8h.
+2. Confirm the parameters and error contracts for the 26 INT 13h service handlers, especially A216h/A226h/A23Eh/A25Fh and A372h/A381h/A374h.
 3. Recover complete routine boundaries and error contracts for A5CAh, A5A9h, A655h, A694h, A6BBh, A6DCh, A798h and A7BAh.
 4. Identify the FDC commands in D400h–D5FFh and connect DMA channel programming to the command/result paths.
 5. Establish the interrupt/vector source and selector contract for the F92Ah dispatch table.
@@ -128,3 +158,8 @@ The stream writes and compares 5555h/AAAAh patterns using 16-/32-bit operand/add
 The report is based on raw source bytes and independently seeded Capstone decodes. Direct port operands, branch targets and literal message bytes are high-confidence. Routine names are descriptive labels only where the actual hardware command or BIOS service is explicit. Candidate entry offsets are not promoted to confirmed entries without caller or vector evidence.
 
 No semantic completion percentage is inferred from these sampled windows.
+
+
+## 7. Corrected INT 13h dispatch finding
+
+The previous note that A100h–A123h might be a separate byte-swapped table is withdrawn. The actual dispatcher is A08Dh/A0A0h: A08Dh is the INT 13h hard-disk handler entry; DL<80h is forwarded to INT 40h via INT 40h / RETF 2; A0A0h dispatches by incoming AH, accepts selectors 00h–19h, and calls through the 26-word native little-endian table at A0F1h. The table runs through A124h; A100h is an interior address. The indirect-call base is derived from the displacement at A0BFh: DI-5F0Fh, with 16-bit offset wraparound. This correction supersedes the earlier A100h–A123h byte-swapped-table hypothesis in the first-pass address ledger.
