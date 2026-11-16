@@ -381,3 +381,12 @@ This phase is semantic classification of selected regions, not a complete CFG. S
 - Established that AH=89h enables A20, loads caller GDT/IDT, sets PE, loads protected-mode selectors, and intentionally returns with A20/PE enabled.
 - Reframed 20C9h–23CBh as an A20-bracketed protected-mode memory-address probe/configuration sequence; ALi register 10h remains unnamed.
 - Refined AH=87h exit analysis: the normal path is paired, but alternate/error branches have distinct cleanup and require separate tracing.
+
+
+## Semantic map — phase 30 (2026-11-16)
+
+- [AMI486_SEMANTIC_MAP_PHASE30_20261116.md](AMI486_SEMANTIC_MAP_PHASE30_20261116.md)
+- Enumerated the AH=87h ordinary transfer and CS:[8281h].6 alternate reset/recovery branches; the alternate branch is not a normal return path.
+- Confirmed AH=87h ordinary path clears CR0.PE and disables A20 before RETF 2; documented early enable failure and exceptional cleanup paths.
+- Added A20 helper callers at 528Eh/5291h (two consecutive disables) and F47Eh (POST keyboard initialization).
+- Consolidated direct references to 8ACFh/8AD2h/F66Ah/F66Eh, with explicit limits of linear-disassembly xref coverage.
