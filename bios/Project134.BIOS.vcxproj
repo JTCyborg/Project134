@@ -27,18 +27,15 @@
     <IntDir>$(SolutionDir)obj\$(Configuration)\</IntDir>
     <NasmExe Condition="'$(NasmExe)'==''">nasm.exe</NasmExe>
     <RomSize Condition="'$(RomSize)'==''">65536</RomSize>
+    <NMakeBuildCommandLine>if not exist "$(OutDir)" mkdir "$(OutDir)" &amp; "$(NasmExe)" -f bin -DROM_SIZE=$(RomSize) -o "$(OutDir)Project134.bin" "$(ProjectDir)src\reset.asm" &amp;&amp; powershell.exe -NoProfile -ExecutionPolicy Bypass -File "$(ProjectDir)tools\validate_rom.ps1" -RomPath "$(OutDir)Project134.bin" -ExpectedSize $(RomSize)</NMakeBuildCommandLine>
+    <NMakeReBuildCommandLine>if exist "$(OutDir)Project134.bin" del /Q "$(OutDir)Project134.bin" &amp; $(NMakeBuildCommandLine)</NMakeReBuildCommandLine>
+    <NMakeCleanCommandLine>if exist "$(OutDir)Project134.bin" del /Q "$(OutDir)Project134.bin"</NMakeCleanCommandLine>
+    <NMakeOutput>$(OutDir)Project134.bin</NMakeOutput>
   </PropertyGroup>
   <ItemGroup>
-    <CustomBuild Include="$(ProjectDir)src\reset.asm">
-      <Message>Assembling Project134 bootstrap BIOS (16-bit real mode)</Message>
-      <Command>"$(NasmExe)" -f bin -DROM_SIZE=$(RomSize) -o "$(OutDir)Project134.bin" "%(FullPath)"</Command>
-      <Outputs>$(OutDir)Project134.bin</Outputs>
-    </CustomBuild>
+    <None Include="$(ProjectDir)src\reset.asm" />
     <None Include="$(ProjectDir)tools\validate_rom.ps1" />
     <None Include="$(ProjectDir)README.md" />
   </ItemGroup>
-  <Target Name="ValidateProject134Rom" AfterTargets="Build">
-    <Exec Command="powershell.exe -NoProfile -ExecutionPolicy Bypass -File &quot;$(ProjectDir)tools\validate_rom.ps1&quot; -RomPath &quot;$(OutDir)Project134.bin&quot; -ExpectedSize $(RomSize)" />
-  </Target>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
 </Project>
