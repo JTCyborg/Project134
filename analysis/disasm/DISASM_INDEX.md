@@ -608,3 +608,13 @@ This phase is semantic classification of selected regions, not a complete CFG. S
 - External runtime entry into the DAxx timing block remains unknown; no direct CALL/JMP to DA61h or DA9Fh appears in the linear listing.
 - 5DBDh saves BP around CALL 1B5Fh and 5DC1h restores it; the RET stub cannot create BP.13.
 - Audited early POST BP flag producers at 113Bh, 1141h, 117Fh, 11A1h/11BCh and 145Eh; none sets bit 13. 12D3h–12D4h restores BP then clears bits 0–13 on a separate path.
+
+
+## Semantic map — phase 56 (2026-11-16)
+
+- [AMI486_SEMANTIC_MAP_PHASE56_20261116.md](AMI486_SEMANTIC_MAP_PHASE56_20261116.md)
+- Audited early POST BP status collection: 113Bh/1141h/117Fh/11A1h/11BCh set bits 8–11; the saved value is restored at 12D3h and masked with C000h at 12D4h, discarding bits 0–13 on that path.
+- 27D0h sets BP.14 (4000h), not BP.13, and only on the memory-probe failure branch.
+- The verified 5C04h–5F7Dh path still has no local producer of BP.13; 5CF9h only tests it.
+- The apparent 87xx indirect jumps overlap structured configuration/default data and are not accepted as control-flow edges without runtime/table-base proof.
+- Runtime ordering between 12D3h and the DAxx/5Cxx sequence, and the upstream BP stack frame, remain unresolved.
