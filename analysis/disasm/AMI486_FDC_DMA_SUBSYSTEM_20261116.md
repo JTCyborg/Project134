@@ -196,3 +196,16 @@ When CMOS 0Eh bits C0h are set, the code bypasses the normal type-nibble switch 
 Each successful READ ID exits through D3FAh. If all four probes fail, the routine returns with CF set. The new candidate window D46Dh–D496h records this previously clipped alternate path.
 
 This maps the high-bit rate and success fields of [BX+90h], but it does not assign meanings to every low nibble bit or identify the exact CMOS 0Eh board-specific flag semantics.
+
+
+## 10. C84Bh caller: state-byte validity and SPECIFY timing selection
+
+The caller at C846h–C855h independently confirms the state-byte contract:
+
+- C846h tests bit 4 of the per-drive byte at [SI]. If set, it skips D3CFh and calls D4EAh; if clear, it calls D3CFh at C84Bh. CF from D3CFh controls retry through C838h.
+- After successful setup, C855h indexes the per-drive state array at 0090h+DX and selects the three-byte FDC SPECIFY command through D216h:
+  - token D7h -> SI=AF03h, DI=0002h, CH=3 -> command bytes 03 AF 02;
+  - token 17h -> SI=BF03h, DI=0002h, CH=3 -> command bytes 03 BF 02;
+  - all other observed tokens -> SI=DF03h, DI=0002h, CH=3 -> command bytes 03 DF 02.
+
+This is the µPD765 SPECIFY command (03h). It confirms that [BX+90h] is a per-drive configuration/status token: bit 4 marks a successful/valid setup, bits 7:6 carry the data-rate selector, and selected full-byte values D7h/17h choose distinct step-rate/head-unload timing parameters. The remaining low-nibble distinctions are not yet fully explained. The C84Bh caller is a verified direct near-CALL xref to D3CFh; the larger caller's own entry boundary remains outside this FDC-focused pass.
