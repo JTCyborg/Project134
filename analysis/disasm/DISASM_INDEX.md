@@ -1020,3 +1020,11 @@ This phase is semantic classification of selected regions, not a complete CFG. S
 - Reconstructed first records for AL=0..6. For AL=3 the base is 0B5Dh and the first record at 0B61h calls 061Ah; for AL=5 the base is 0B6Dh and the first record at 0B71h calls 0626h.
 - Resolved the apparent 0B5Dh/0B6Dh code/data contradiction: they are chain bases, not callback targets. The 0B45h..0B9Dh bytes are linked callback records.
 - Identified 026Fh as a special overlap: AL=7 selects it as a chain base, while 026Fh is also an executable code entry; first record at 0273h calls 16BAh.
+
+
+## Semantic map — phase 96 (2026-11-16)
+
+- [AMI486_SEMANTIC_MAP_PHASE96_20261116.md](AMI486_SEMANTIC_MAP_PHASE96_20261116.md)
+- Expanded the 0AE1h selector into a full 16-entry first-record map, preserving overlapping code/table cases for indices 7, 9, 11 and 13.
+- Reconstructed the AL=6 date/time chain: Month 6373h → Day 63C9h → Year 641Fh → Hour 6485h → Minute 64E3h → Second 6541h, with alternate/backward links and the 0319h nibble editor.
+- Confirmed AL=0..5 select short option-label chains using wrappers 060Eh..064Ah; these wrappers tail-jump back into the 05BAh record-fetch block.
