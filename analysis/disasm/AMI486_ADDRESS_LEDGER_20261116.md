@@ -140,7 +140,7 @@ D100h–D5FFh is the separate floppy-controller/DMA subsystem: FDC ports 03F2h/0
 
 F92Ah–F935h is a six-word little-endian dispatch table with targets F936h, F986h, F9C4h, F977h, F999h and F9D3h. F977h overlaps the F936h stream as an alternate entry. The F8E7h wrapper ends in IRET at F929h; its actual vector entry remains unknown.
 
-The current seeded Capstone output contains 167 unique bounded code windows plus 18 separately emitted data ranges (185 window headers total). The windows cover 9,380 unique code-candidate bytes and 1,333 data-candidate bytes, with 83 bytes overlapping between code/data windows; the union is 10,630 distinct ROM bytes across 55 pages. This is only the union of selected seeded windows, not total semantic coverage. Near-branch targets are normalized to 16-bit IP wraparound.
+The current seeded Capstone output contains 168 unique bounded code windows plus 18 separately emitted data ranges (186 window headers total). The windows cover 9,450 unique code-candidate bytes and 1,333 data-candidate bytes, with 83 bytes overlapping between code/data windows; the union is 10,700 distinct ROM bytes across 56 pages. This is only the union of selected seeded windows, not total semantic coverage. Near-branch targets are normalized to 16-bit IP wraparound.
 
 
 ## INT 13h dispatch correction
@@ -268,3 +268,8 @@ A95Eh is called at 134Eh within the function entered at 131Fh; 131Fh is directly
 ## 131Fh alternate-entry correction — 2026-11-16
 
 131Fh is a direct CALL target from 1BAAh, but it is an overlapping entry into bytes that are part of another linear stream. The alternate stream beginning at 131Fh reaches A95Eh at 134Eh after checking CMOS 0Eh and 92h. The apparent ES=0000h setup at 1303h is in the preceding linear stream and is bypassed by the call to 131Fh; it cannot establish ES for A95Eh. The 1BAAh caller does not set ES. Keep the IVT-write interpretation conditional on ES=0000h at runtime.
+
+
+## Candidate-window and CMOS-gate refresh — 2026-11-16
+
+The generated candidate listing now contains 168 code windows and 18 data windows (186 headers), with a 10,700-byte union across 56 pages (9,450 code bytes, 1,333 data bytes, 83 overlap bytes). The 131Fh alternate entry is included as a separate window through 1364h. The CMOS 0Eh C0h gate behavior is now mapped: bit 7/6 status causes the BIOS to bypass CMOS 10h drive-type-specific setup and use its alternate probe path; EEAAh reads CMOS through ports 70h/71h. Remaining FDC state uncertainty is confined to the low nibble of [BX+90h].
