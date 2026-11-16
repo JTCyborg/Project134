@@ -109,7 +109,7 @@ For each interval record:
 - unresolved bytes and alternate-entry candidates;
 - confidence and evidence source.
 
-Do not infer that an entire 256-byte page is code because one function starts there. Do not infer data from linear-decoder output alone. No whole-ROM semantic percentage is currently defensible. The seeded-window union is 8,618/65,536 bytes (13.15%) but this is a sampling footprint, not a ROM semantic-coverage percentage.
+Do not infer that an entire 256-byte page is code because one function starts there. Do not infer data from linear-decoder output alone. No whole-ROM semantic percentage is currently defensible. The seeded-window union is 10,493/65,536 bytes (16.01%) but this is a sampling footprint, not a ROM semantic-coverage percentage.
 
 
 ## 7. Seeded Capstone decode — first executable evidence
@@ -140,7 +140,7 @@ D100h–D5FFh is the separate floppy-controller/DMA subsystem: FDC ports 03F2h/0
 
 F92Ah–F935h is a six-word little-endian dispatch table with targets F936h, F986h, F9C4h, F977h, F999h and F9D3h. F977h overlaps the F936h stream as an alternate entry. The F8E7h wrapper ends in IRET at F929h; its actual vector entry remains unknown.
 
-The current seeded Capstone output contains 146 unique bounded code windows plus 6 separately emitted data ranges (152 window headers total). The windows cover 7,974 unique code-candidate bytes and 671 data-candidate bytes, with 27 bytes overlapping between code/data windows; the union is 8,618 distinct ROM bytes across 46 pages. This is only the union of selected seeded windows, not total semantic coverage. Near-branch targets are normalized to 16-bit IP wraparound.
+The current seeded Capstone output contains 189 unique bounded code windows plus 6 separately emitted data ranges (195 window headers total). The windows cover 9,837 unique code-candidate bytes and 671 data-candidate bytes, with 15 bytes overlapping between code/data windows; the union is 10,493 distinct ROM bytes across 54 pages. This is only the union of selected seeded windows, not total semantic coverage. Near-branch targets are normalized to 16-bit IP wraparound.
 
 
 ## INT 13h dispatch correction
