@@ -1082,3 +1082,8 @@ Do not merge ATA, FDC, keyboard and F9xx dispatch code into one subsystem.
 ## INT 13h dispatcher correction — 2026-11-16
 
 The earlier A100h–A123h byte-swapped-table hypothesis is withdrawn. The actual table begins at A0F1h and contains 26 native little-endian offsets selected by AH through the indirect CALL at A0BDh. A08Dh is the INT 13h handler entry; DL<80h is forwarded to INT 40h. The complete selector-to-target map is in AMI486_STORAGE_AND_DISPATCH_REGIONS_20261116.md.
+
+
+## INT 13h service handlers resolved — 2026-11-16
+
+The 26-entry table at A0F1h now has confirmed standard-service mappings for the main operations: AH=02 read sectors (ATA 20h/REP INSW), 03 write sectors (30h/REP OUTSW), 04 verify (40h), 05 format track (50h with guard/prompt), 08 get parameters, 09 initialize parameters (91h), 0Ah/0Bh read/write long (22h/32h, 204h-byte buffers), 0Ch seek (70h), 0Dh reset path, 10h ready/status, 11h recalibrate (10h), 14h diagnostic (90h), and 15h get disk type/capacity (AH=03h, total sectors CX:DX). The shared A18Eh error stub handles unsupported selectors. AH=19h remains unresolved. Full map: AMI486_STORAGE_AND_DISPATCH_REGIONS_20261116.md.
