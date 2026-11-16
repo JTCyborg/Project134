@@ -157,3 +157,8 @@ The address ledger is present as a first-pass reference map; it is not yet the c
 ## Serial BIOS follow-up — 2026-11-16
 
 See AMI486_INT14_SERIAL_BIOS_20261116.md. F900h is a six-function IRET dispatch wrapper strongly matching BIOS INT 14h. F936h initializes UART baud divisor and LCR; F986h transmits; F9C4h receives; F977h reads LSR/MSR; F999h/F9D3h configure modem-control outputs. DX-relative register offsets match a 16550-compatible UART. The actual vector installation remains unresolved.
+
+
+## INT 14h service mapping confirmed — 2026-11-16
+
+F900h implements the BIOS INT 14h serial service family. AH=00h initializes the UART with baud divisors 0417/0300/0180/00C0/0060/0030/0018/000C for 110–9600 baud; AH=01h transmits; AH=02h receives; AH=03h reads LSR/MSR; AH=04h/05h control modem outputs. The IVT entry/caller remains open. Full report: AMI486_INT14_SERIAL_BIOS_20261116.md.
