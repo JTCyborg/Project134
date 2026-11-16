@@ -1,0 +1,64 @@
+00001C40  FB                sti
+00001C41  E806FC            call 0x184a
+00001C44  E8CB72            call 0x8f12
+00001C47  E87A09            call 0x25c4
+00001C4A  A3E600            mov [0xe6],ax
+00001C4D  C3                ret
+00001C4E  C3                ret
+00001C4F  C3                ret
+00001C50  B81313            mov ax,0x1313
+00001C53  E87971            call 0x8dcf
+00001C56  24C1              and al,0xc1
+00001C58  86E0              xchg ah,al
+00001C5A  E87F71            call 0x8ddc
+00001C5D  C3                ret
+00001C5E  2EA1E282          mov ax,[cs:0x82e2]
+00001C62  FF                db 0xff
+00001C63  D0                db 0xd0
+00001C64  B08E              mov al,0x8e
+00001C66  E82BD2            call 0xee94
+00001C69  A8C0              test al,0xc0
+00001C6B  0F840300          jz 0x1c72
+00001C6F  E96101            jmp 0x1dd3
+00001C72  E8780D            call 0x29ed
+00001C75  0F840C00          jz 0x1c85
+00001C79  E89672            call 0x8f12
+00001C7C  E8B808            call 0x2537
+00001C7F  E8E808            call 0x256a
+00001C82  EB31              jmp 0x1cb5
+00001C84  90                nop
+00001C85  B050              mov al,0x50
+00001C87  E80AD2            call 0xee94
+00001C8A  2407              and al,0x7
+00001C8C  8AD8              mov bl,al
+00001C8E  B82020            mov ax,0x2020
+00001C91  E83B71            call 0x8dcf
+00001C94  24F8              and al,0xf8
+00001C96  0AC3              or al,bl
+00001C98  86E0              xchg ah,al
+00001C9A  E83F71            call 0x8ddc
+00001C9D  B047              mov al,0x47
+00001C9F  E8F2D1            call 0xee94
+00001CA2  2483              and al,0x83
+00001CA4  8AD8              mov bl,al
+00001CA6  B81717            mov ax,0x1717
+00001CA9  E82371            call 0x8dcf
+00001CAC  247C              and al,0x7c
+00001CAE  0AC3              or al,bl
+00001CB0  86E0              xchg ah,al
+00001CB2  E82771            call 0x8ddc
+00001CB5  B042              mov al,0x42
+00001CB7  E8DAD1            call 0xee94
+00001CBA  24E0              and al,0xe0
+00001CBC  8AD8              mov bl,al
+00001CBE  B81212            mov ax,0x1212
+00001CC1  E80B71            call 0x8dcf
+00001CC4  241F              and al,0x1f
+00001CC6  0AC3              or al,bl
+00001CC8  86E0              xchg ah,al
+00001CCA  E80F71            call 0x8ddc
+00001CCD  B044              mov al,0x44
+00001CCF  E8C2D1            call 0xee94
+00001CD2  24A0              and al,0xa0
+00001CD4  8AD8              mov bl,al
+00001CD6  B81414            mov ax,0x1414

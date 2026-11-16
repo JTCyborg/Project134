@@ -1,0 +1,266 @@
+
+===== RAM_TEST_2772_284F =====
+00002772  67668B1E          mov ebx,[esi]
+00002776  67668906          mov [esi],eax
+0000277A  EB00              jmp 0x277c
+0000277C  67668B5E04        mov ebx,[esi+0x4]
+00002781  6766894604        mov [esi+0x4],eax
+00002786  EB00              jmp 0x2788
+00002788  67668B9E00080000  mov ebx,[esi+0x800]
+00002790  67668B9E00100000  mov ebx,[esi+0x1000]
+00002798  67668B9E00180000  mov ebx,[esi+0x1800]
+000027A0  67668B9E00200000  mov ebx,[esi+0x2000]
+000027A8  67663B06          cmp eax,[esi]
+000027AC  0F850600          jnz 0x27b6
+000027B0  6683C604          add esi,0x4
+000027B4  E2BC              loop 0x2772
+000027B6  0BC9              or cx,cx
+000027B8  0F851400          jnz 0x27d0
+000027BC  B80010            mov ax,0x1000
+000027BF  8ED8              mov ds,ax
+000027C1  8EC0              mov es,ax
+000027C3  90                nop
+000027C4  BCCA27            mov sp,0x27ca
+000027C7  E9F101            jmp 0x29bb
+000027CA  CC                int3
+000027CB  27                daa
+000027CC  0F840E00          jz 0x27de
+000027D0  81CD0040          or bp,0x4000
+000027D4  BCDA27            mov sp,0x27da
+000027D7  E9A965            jmp 0x8d83
+000027DA  DC27              fsub qword [bx]
+000027DC  EB22              jmp 0x2800
+000027DE  8CD8              mov ax,ds
+000027E0  050004            add ax,0x400
+000027E3  3D0090            cmp ax,0x9000
+000027E6  75D7              jnz 0x27bf
+000027E8  B8B3B3            mov ax,0xb3b3
+000027EB  90                nop
+000027EC  BCF227            mov sp,0x27f2
+000027EF  E9A2C6            jmp 0xee94
+000027F2  F4                hlt
+000027F3  27                daa
+000027F4  0C01              or al,0x1
+000027F6  86C4              xchg al,ah
+000027F8  BCFE27            mov sp,0x27fe
+000027FB  E99FC6            jmp 0xee9d
+000027FE  0028              add [bx+si],ch
+00002800  B81919            mov ax,0x1919
+00002803  90                nop
+00002804  BC0A28            mov sp,0x280a
+00002807  E9C565            jmp 0x8dcf
+0000280A  0C28              or al,0x28
+0000280C  0C03              or al,0x3
+0000280E  86E0              xchg ah,al
+00002810  BC1628            mov sp,0x2816
+00002813  E9C665            jmp 0x8ddc
+00002816  1828              sbb [bx+si],ch
+00002818  BF1E28            mov di,0x281e
+0000281B  E968FE            jmp 0x2686
+0000281E  B81919            mov ax,0x1919
+00002821  90                nop
+00002822  BC2828            mov sp,0x2828
+00002825  E9A765            jmp 0x8dcf
+00002828  2A28              sub ch,[bx+si]
+0000282A  24FC              and al,0xfc
+0000282C  86E0              xchg ah,al
+0000282E  BC3428            mov sp,0x2834
+00002831  E9A865            jmp 0x8ddc
+00002834  3628B84000        sub [ss:bx+si+0x40],bh
+00002839  8ED8              mov ds,ax
+0000283B  E680              out byte 0x80,al
+0000283D  8E166900          mov ss,word [0x69]
+00002841  8B266700          mov sp,[0x67]
+00002845  8F066900          pop word [0x69]
+00002849  8F066700          pop word [0x67]
+0000284D  07                pop es
+0000284E  1F                pop ds
+0000284F  C3                ret
+00002850  B803C5            mov ax,0xc503
+00002853  E88665            call 0x8ddc
+00002856  BF5C28            mov di,0x285c
+00002859  E95664            jmp 0x8cb2
+0000285C  B81919            mov ax,0x1919
+0000285F  BF6528            mov di,0x2865
+00002862  E98865            jmp 0x8ded
+00002865  0C03              or al,0x3
+00002867  86E0              xchg ah,al
+00002869  BF6F28            mov di,0x286f
+0000286C  E98C65            jmp 0x8dfb
+0000286F  B81843            mov ax,0x4318
+00002872  BF7828            mov di,0x2878
+00002875  E98365            jmp 0x8dfb
+00002878  BF7E28            mov di,0x287e
+0000287B  E908FE            jmp 0x2686
+0000287E  B81919            mov ax,0x1919
+00002881  E680              out byte 0x80,al
+00002883  BF8928            mov di,0x2889
+00002886  E96465            jmp 0x8ded
+00002889  24FC              and al,0xfc
+0000288B  86E0              xchg ah,al
+0000288D  BF9328            mov di,0x2893
+00002890  E96865            jmp 0x8dfb
+
+===== RAM_TEST_29A0_2A80 =====
+000029A0  D8BB0800          fdivr dword [bp+di+0x8]
+000029A4  33F6              xor si,si
+000029A6  B90080            mov cx,0x8000
+000029A9  F3AD              rep lodsw
+000029AB  8CD8              mov ax,ds
+000029AD  050010            add ax,0x1000
+000029B0  8ED8              mov ds,ax
+000029B2  4B                dec bx
+000029B3  80FB00            cmp bl,0x0
+000029B6  75EC              jnz 0x29a4
+000029B8  5E                pop si
+000029B9  1F                pop ds
+000029BA  C3                ret
+000029BB  33F6              xor si,si
+000029BD  B90020            mov cx,0x2000
+000029C0  F366AD            rep lodsd
+000029C3  B8AA55            mov ax,0x55aa
+000029C6  B90020            mov cx,0x2000
+000029C9  33FF              xor di,di
+000029CB  F3AB              rep stosw
+000029CD  B90020            mov cx,0x2000
+000029D0  33FF              xor di,di
+000029D2  F3AF              repe scasw
+000029D4  0F850700          jnz 0x29df
+000029D8  F7D0              not ax
+000029DA  3DAA55            cmp ax,0x55aa
+000029DD  75E7              jnz 0x29c6
+000029DF  B80000            mov ax,0x0
+000029E2  BF0000            mov di,0x0
+000029E5  B90020            mov cx,0x2000
+000029E8  F3AB              rep stosw
+000029EA  C3                ret
+000029EB  FF                db 0xff
+000029EC  E7B8              out byte 0xb8,ax
+000029EE  B6B6              mov dh,0xb6
+000029F0  E8A1C4            call 0xee94
+000029F3  A801              test al,0x1
+000029F5  C3                ret
+000029F6  06                push es
+000029F7  56                push si
+000029F8  57                push di
+000029F9  33DB              xor bx,bx
+000029FB  8A1E36E0          mov bl,[0xe036]
+000029FF  802636E0FE        and byte [0xe036],0xfe
+00002A04  802666E000        and byte [0xe066],0x0
+00002A09  0AC0              or al,al
+00002A0B  0F852000          jnz 0x2a2f
+00002A0F  F6C301            test bl,0x1
+00002A12  0F841300          jz 0x2a29
+00002A16  800E66E001        or byte [0xe066],0x1
+00002A1B  EB1A              jmp 0x2a37
+00002A1D  90                nop
+00002A1E  800E36E001        or byte [0xe036],0x1
+00002A23  B871B5            mov ax,0xb571
+00002A26  E98600            jmp 0x2aaf
+00002A29  B868B5            mov ax,0xb568
+00002A2C  E98000            jmp 0x2aaf
+00002A2F  02C3              add al,bl
+00002A31  2401              and al,0x1
+00002A33  080636E0          or [0xe036],al
+00002A37  1E                push ds
+00002A38  B84000            mov ax,0x40
+00002A3B  8ED8              mov ds,ax
+00002A3D  BEA987            mov si,0x87a9
+00002A40  0336E600          add si,[0xe6]
+00002A44  2EAD              cs lodsw
+00002A46  22E0              and ah,al
+00002A48  8AFC              mov bh,ah
+00002A4A  83C602            add si,0x2
+00002A4D  2EAD              cs lodsw
+00002A4F  22E0              and ah,al
+00002A51  8ADC              mov bl,ah
+00002A53  83C602            add si,0x2
+00002A56  2EAD              cs lodsw
+00002A58  22E0              and ah,al
+00002A5A  8AF4              mov dh,ah
+00002A5C  83C602            add si,0x2
+00002A5F  B80202            mov ax,0x202
+00002A62  E86A63            call 0x8dcf
+00002A65  A808              test al,0x8
+00002A67  0F840B00          jz 0x2a76
+00002A6B  46                inc si
+00002A6C  2EAD              cs lodsw
+00002A6E  80E407            and ah,0x7
+00002A71  8AD4              mov dl,ah
+00002A73  EB07              jmp 0x2a7c
+00002A75  90                nop
+00002A76  2EAD              cs lodsw
+00002A78  22E0              and ah,al
+00002A7A  8AD4              mov dl,ah
+00002A7C  1F                pop ds
+00002A7D  802646E0F0        and byte [0xe046],0xf0
+00002A82  802647E07C        and byte [0xe047],0x7c
+00002A87  802649E09F        and byte [0xe049],0x9f
+00002A8C  802650E0F8        and byte [0xe050],0xf8
+00002A91  083E46E0          or [0xe046],bh
+00002A95  081E47E0          or [0xe047],bl
+00002A99  083649E0          or [0xe049],dh
+00002A9D  081650E0          or [0xe050],dl
+00002AA1  33C0              xor ax,ax
+00002AA3  F60666E001        test byte [0xe066],0x1
+00002AA8  0F840300          jz 0x2aaf
+00002AAC  E96FFF            jmp 0x2a1e
+00002AAF  5F                pop di
+00002AB0  5E                pop si
+00002AB1  07                pop es
+00002AB2  CB                retf
+00002AB3  2DB65C            sub ax,0x5cb6
+00002AB6  B664              mov dh,0x64
+00002AB8  B66C              mov dh,0x6c
+00002ABA  B674              mov dh,0x74
+00002ABC  B67C              mov dh,0x7c
+
+===== RAM_TEST_CALLERS_2740_2765 =====
+00002740  86E0              xchg ah,al
+00002742  BF4827            mov di,0x2748
+00002745  E9B366            jmp 0x8dfb
+00002748  BF4E27            mov di,0x274e
+0000274B  E938FF            jmp 0x2686
+0000274E  B81919            mov ax,0x1919
+00002751  BF5727            mov di,0x2757
+00002754  E99666            jmp 0x8ded
+00002757  24FC              and al,0xfc
+00002759  86E0              xchg ah,al
+0000275B  BF6127            mov di,0x2761
+0000275E  E99A66            jmp 0x8dfb
+00002761  B80010            mov ax,0x1000
+00002764  8ED8              mov ds,ax
+00002766  B90200            mov cx,0x2
+00002769  6633F6            xor esi,esi
+0000276C  66B8AA55AA55      mov eax,0x55aa55aa
+00002772  67668B1E          mov ebx,[esi]
+00002776  67668906          mov [esi],eax
+0000277A  EB00              jmp 0x277c
+0000277C  67668B5E04        mov ebx,[esi+0x4]
+00002781  6766894604        mov [esi+0x4],eax
+00002786  EB00              jmp 0x2788
+00002788  67668B9E00080000  mov ebx,[esi+0x800]
+00002790  67668B9E00100000  mov ebx,[esi+0x1000]
+00002798  67668B9E00180000  mov ebx,[esi+0x1800]
+000027A0  67668B9E00200000  mov ebx,[esi+0x2000]
+000027A8  67663B06          cmp eax,[esi]
+000027AC  0F850600          jnz 0x27b6
+000027B0  6683C604          add esi,0x4
+000027B4  E2BC              loop 0x2772
+000027B6  0BC9              or cx,cx
+000027B8  0F851400          jnz 0x27d0
+000027BC  B80010            mov ax,0x1000
+000027BF  8ED8              mov ds,ax
+000027C1  8EC0              mov es,ax
+000027C3  90                nop
+000027C4  BCCA27            mov sp,0x27ca
+000027C7  E9F101            jmp 0x29bb
+000027CA  CC                int3
+000027CB  27                daa
+000027CC  0F840E00          jz 0x27de
+000027D0  81CD0040          or bp,0x4000
+000027D4  BCDA27            mov sp,0x27da
+000027D7  E9A965            jmp 0x8d83
+000027DA  DC27              fsub qword [bx]
+000027DC  EB22              jmp 0x2800
+000027DE  8CD8              mov ax,ds

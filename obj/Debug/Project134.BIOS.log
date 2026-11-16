@@ -1,0 +1,7 @@
+﻿  Project134 BIOS build
+  NASM:   C:\vcpkg\downloads\tools\nasm\nasm-3.01\nasm.exe
+  Source: C:\Temp\trdos\134\bios\src\reset.asm
+  Output: C:\Temp\trdos\134\out\Debug\Project134.bin
+  Size:   65536 bytes
+  BIOS ROM validation PASS: 65536 bytes; reset vector FFFF:0000 -> F000:E000
+  BUILD SUCCESS: C:\Temp\trdos\134\out\Debug\Project134.bin (65536 bytes)

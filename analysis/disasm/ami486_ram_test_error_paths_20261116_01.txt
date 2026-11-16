@@ -1,0 +1,231 @@
+
+===== CONFIG_2800_2940 =====
+00002800  B81919            mov ax,0x1919
+00002803  90                nop
+00002804  BC0A28            mov sp,0x280a
+00002807  E9C565            jmp 0x8dcf
+0000280A  0C28              or al,0x28
+0000280C  0C03              or al,0x3
+0000280E  86E0              xchg ah,al
+00002810  BC1628            mov sp,0x2816
+00002813  E9C665            jmp 0x8ddc
+00002816  1828              sbb [bx+si],ch
+00002818  BF1E28            mov di,0x281e
+0000281B  E968FE            jmp 0x2686
+0000281E  B81919            mov ax,0x1919
+00002821  90                nop
+00002822  BC2828            mov sp,0x2828
+00002825  E9A765            jmp 0x8dcf
+00002828  2A28              sub ch,[bx+si]
+0000282A  24FC              and al,0xfc
+0000282C  86E0              xchg ah,al
+0000282E  BC3428            mov sp,0x2834
+00002831  E9A865            jmp 0x8ddc
+00002834  3628B84000        sub [ss:bx+si+0x40],bh
+00002839  8ED8              mov ds,ax
+0000283B  E680              out byte 0x80,al
+0000283D  8E166900          mov ss,word [0x69]
+00002841  8B266700          mov sp,[0x67]
+00002845  8F066900          pop word [0x69]
+00002849  8F066700          pop word [0x67]
+0000284D  07                pop es
+0000284E  1F                pop ds
+0000284F  C3                ret
+00002850  B803C5            mov ax,0xc503
+00002853  E88665            call 0x8ddc
+00002856  BF5C28            mov di,0x285c
+00002859  E95664            jmp 0x8cb2
+0000285C  B81919            mov ax,0x1919
+0000285F  BF6528            mov di,0x2865
+00002862  E98865            jmp 0x8ded
+00002865  0C03              or al,0x3
+00002867  86E0              xchg ah,al
+00002869  BF6F28            mov di,0x286f
+0000286C  E98C65            jmp 0x8dfb
+0000286F  B81843            mov ax,0x4318
+00002872  BF7828            mov di,0x2878
+00002875  E98365            jmp 0x8dfb
+00002878  BF7E28            mov di,0x287e
+0000287B  E908FE            jmp 0x2686
+0000287E  B81919            mov ax,0x1919
+00002881  E680              out byte 0x80,al
+00002883  BF8928            mov di,0x2889
+00002886  E96465            jmp 0x8ded
+00002889  24FC              and al,0xfc
+0000288B  86E0              xchg ah,al
+0000288D  BF9328            mov di,0x2893
+00002890  E96865            jmp 0x8dfb
+00002893  E85C00            call 0x28f2
+00002896  3C70              cmp al,0x70
+00002898  0F850500          jnz 0x28a1
+0000289C  B370              mov bl,0x70
+0000289E  EB3C              jmp 0x28dc
+000028A0  90                nop
+000028A1  3C60              cmp al,0x60
+000028A3  0F850500          jnz 0x28ac
+000028A7  B330              mov bl,0x30
+000028A9  EB31              jmp 0x28dc
+000028AB  90                nop
+000028AC  3C50              cmp al,0x50
+000028AE  0F850500          jnz 0x28b7
+000028B2  B350              mov bl,0x50
+000028B4  EB26              jmp 0x28dc
+000028B6  90                nop
+000028B7  3C40              cmp al,0x40
+000028B9  0F850500          jnz 0x28c2
+000028BD  B310              mov bl,0x10
+000028BF  EB1B              jmp 0x28dc
+000028C1  90                nop
+000028C2  3C30              cmp al,0x30
+000028C4  0F850500          jnz 0x28cd
+000028C8  B340              mov bl,0x40
+000028CA  EB10              jmp 0x28dc
+000028CC  90                nop
+000028CD  3C20              cmp al,0x20
+000028CF  0F850500          jnz 0x28d8
+000028D3  B300              mov bl,0x0
+000028D5  EB05              jmp 0x28dc
+000028D7  90                nop
+000028D8  E8A864            call 0x8d83
+000028DB  C3                ret
+000028DC  BFE228            mov di,0x28e2
+000028DF  E9DCFD            jmp 0x26be
+000028E2  B81818            mov ax,0x1818
+000028E5  E8E764            call 0x8dcf
+000028E8  248D              and al,0x8d
+000028EA  0AC3              or al,bl
+000028EC  86E0              xchg ah,al
+000028EE  E8EB64            call 0x8ddc
+000028F1  C3                ret
+000028F2  FA                cli
+000028F3  B8009C            mov ax,0x9c00
+000028F6  8ED8              mov ds,ax
+000028F8  33F6              xor si,si
+000028FA  B90020            mov cx,0x2000
+000028FD  F3AD              rep lodsw
+000028FF  8CD8              mov ax,ds
+00002901  80EC04            sub ah,0x4
+00002904  80FC1C            cmp ah,0x1c
+00002907  73ED              jnc 0x28f6
+00002909  8ED8              mov ds,ax
+0000290B  BF1129            mov di,0x2911
+0000290E  EB5B              jmp 0x296b
+00002910  90                nop
+00002911  8BD3              mov dx,bx
+00002913  33ED              xor bp,bp
+00002915  BF1B29            mov di,0x291b
+00002918  EB51              jmp 0x296b
+0000291A  90                nop
+0000291B  2BDA              sub bx,dx
+0000291D  0F890200          jns 0x2923
+00002921  F7DB              neg bx
+00002923  80FF01            cmp bh,0x1
+00002926  0F820D00          jc 0x2937
+0000292A  45                inc bp
+0000292B  8CD8              mov ax,ds
+0000292D  80C404            add ah,0x4
+00002930  80FCA0            cmp ah,0xa0
+00002933  8ED8              mov ds,ax
+00002935  75DE              jnz 0x2915
+00002937  8BDD              mov bx,bp
+00002939  8BEC              mov bp,sp
+0000293B  8BC3              mov ax,bx
+0000293D  E681              out byte 0x81,al
+0000293F  83FB20            cmp bx,0x20
+00002942  0F860300          jna 0x2949
+00002946  BB4000            mov bx,0x40
+00002949  B90800            mov cx,0x8
+0000294C  D0E3              shl bl,0x0
+0000294E  0F820200          jc 0x2954
+00002952  E2F8              loop 0x294c
+00002954  80E107            and cl,0x7
+00002957  8AE1              mov ah,cl
+00002959  B104              mov cl,0x4
+0000295B  D2E4              shl ah,cl
+0000295D  1E                push ds
+0000295E  BB4000            mov bx,0x40
+00002961  8EDB              mov ds,bx
+00002963  8AC4              mov al,ah
+00002965  8826E000          mov [0xe0],ah
+00002969  1F                pop ds
+0000296A  C3                ret
+0000296B  33F6              xor si,si
+0000296D  B90020            mov cx,0x2000
+00002970  B000              mov al,0x0
+00002972  E643              out byte 0x43,al
+00002974  EB00              jmp 0x2976
+00002976  EB00              jmp 0x2978
+00002978  E440              in al,byte 0x40
+0000297A  8AD8              mov bl,al
+0000297C  EB00              jmp 0x297e
+0000297E  E440              in al,byte 0x40
+00002980  8AF8              mov bh,al
+
+===== RAM_TEST_29BB_CALLERS =====
+000029B0  8ED8              mov ds,ax
+000029B2  4B                dec bx
+000029B3  80FB00            cmp bl,0x0
+000029B6  75EC              jnz 0x29a4
+000029B8  5E                pop si
+000029B9  1F                pop ds
+000029BA  C3                ret
+000029BB  33F6              xor si,si
+000029BD  B90020            mov cx,0x2000
+000029C0  F366AD            rep lodsd
+000029C3  B8AA55            mov ax,0x55aa
+000029C6  B90020            mov cx,0x2000
+000029C9  33FF              xor di,di
+000029CB  F3AB              rep stosw
+000029CD  B90020            mov cx,0x2000
+000029D0  33FF              xor di,di
+000029D2  F3AF              repe scasw
+000029D4  0F850700          jnz 0x29df
+000029D8  F7D0              not ax
+000029DA  3DAA55            cmp ax,0x55aa
+000029DD  75E7              jnz 0x29c6
+000029DF  B80000            mov ax,0x0
+000029E2  BF0000            mov di,0x0
+000029E5  B90020            mov cx,0x2000
+000029E8  F3AB              rep stosw
+000029EA  C3                ret
+000029EB  FF                db 0xff
+000029EC  E7B8              out byte 0xb8,ax
+000029EE  B6B6              mov dh,0xb6
+000029F0  E8A1C4            call 0xee94
+000029F3  A801              test al,0x1
+000029F5  C3                ret
+000029F6  06                push es
+000029F7  56                push si
+000029F8  57                push di
+000029F9  33DB              xor bx,bx
+000029FB  8A1E36E0          mov bl,[0xe036]
+000029FF  802636E0FE        and byte [0xe036],0xfe
+00002A04  802666E000        and byte [0xe066],0x0
+00002A09  0AC0              or al,al
+00002A0B  0F852000          jnz 0x2a2f
+00002A0F  F6C301            test bl,0x1
+00002A12  0F841300          jz 0x2a29
+00002A16  800E66E001        or byte [0xe066],0x1
+00002A1B  EB1A              jmp 0x2a37
+00002A1D  90                nop
+00002A1E  800E36E001        or byte [0xe036],0x1
+00002A23  B871B5            mov ax,0xb571
+00002A26  E98600            jmp 0x2aaf
+00002A29  B868B5            mov ax,0xb568
+00002A2C  E98000            jmp 0x2aaf
+00002A2F  02C3              add al,bl
+00002A31  2401              and al,0x1
+00002A33  080636E0          or [0xe036],al
+00002A37  1E                push ds
+00002A38  B84000            mov ax,0x40
+00002A3B  8ED8              mov ds,ax
+00002A3D  BEA987            mov si,0x87a9
+00002A40  0336E600          add si,[0xe6]
+00002A44  2EAD              cs lodsw
+00002A46  22E0              and ah,al
+00002A48  8AFC              mov bh,ah
+00002A4A  83C602            add si,0x2
+00002A4D  2EAD              cs lodsw
+
+===== BP BIT 14 REFERENCES =====
+Offset: 0x27D0

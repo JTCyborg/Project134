@@ -1,0 +1,18 @@
+
+===== CALLER FILE OFFSET 2893 =====
+00002883  BF8928            mov di,0x2889
+00002886  E96465            jmp 0x8ded
+00002889  24FC              and al,0xfc
+0000288B  86E0              xchg ah,al
+0000288D  BF9328            mov di,0x2893
+00002890  E96865            jmp 0x8dfb
+00002893  E85C00            call 0x28f2
+00002896  3C70              cmp al,0x70
+00002898  0F850500          jnz 0x28a1
+0000289C  B370              mov bl,0x70
+0000289E  EB3C              jmp 0x28dc
+000028A0  90                nop
+000028A1  3C60              cmp al,0x60
+000028A3  0F850500          jnz 0x28ac
+000028A7  B330              mov bl,0x30
+000028A9  EB31              jmp 0x28dc

@@ -1,0 +1,109 @@
+===== RAW 8A78-8B10 =====
+8A78: 2E A1 DA 82 BF 81 8A FF E0 BF 87 8A E9 46 02 90
+8A88: BC 8E 8A E9 F5 02 90 8A B8 B3 B3 90 BC 9A 8A E9
+8A98: FA 63 9C 8A 24 FE 86 C4 BC A6 8A E9 F7 63 A8 8A
+8AA8: B8 03 C5 90 BC B2 8A E9 2A 03 B4 8A B8 13 13 90
+8AB8: BC BE 8A E9 11 03 C0 8A 24 3F 86 E0 BC CA 8A E9
+8AC8: 12 03 CC 8A E9 A8 4C E9 98 6B E9 99 6B FA FA 33
+8AD8: C9 E3 00 E4 64 A8 02 E0 F8 B0 FE E6 64 F4 EB FD
+8AE8: 1E 80 FC 4F 75 19 50 B8 40 00 8E D8 A0 17 00 24
+8AF8: 0C 3C 0C 75 09 58 50 E8 2B 00 58 EB 02 90 58 1F
+8B08: C3 50 B0 FF FE C8 58 C3 C3
+
+===== DISASSEMBLY FROM 8A81 =====
+00008A81  BF878A            mov di,0x8a87
+00008A84  E94602            jmp 0x8ccd
+00008A87  90                nop
+00008A88  BC8E8A            mov sp,0x8a8e
+00008A8B  E9F502            jmp 0x8d83
+00008A8E  90                nop
+00008A8F  8AB8B3B3          mov bh,[bx+si-0x4c4d]
+00008A93  90                nop
+00008A94  BC9A8A            mov sp,0x8a9a
+00008A97  E9FA63            jmp 0xee94
+00008A9A  9C                pushf
+00008A9B  8A24              mov ah,[si]
+00008A9D  FE86C4BC          inc byte [bp-0x433c]
+00008AA1  A6                cmpsb
+00008AA2  8AE9              mov ch,cl
+00008AA4  F763A8            mul word [bp+di-0x58]
+00008AA7  8AB803C5          mov bh,[bx+si-0x3afd]
+00008AAB  90                nop
+00008AAC  BCB28A            mov sp,0x8ab2
+00008AAF  E92A03            jmp 0x8ddc
+00008AB2  B48A              mov ah,0x8a
+00008AB4  B81313            mov ax,0x1313
+00008AB7  90                nop
+00008AB8  BCBE8A            mov sp,0x8abe
+00008ABB  E91103            jmp 0x8dcf
+00008ABE  C08A243F86        ror byte [bp+si+0x3f24],byte 0x86
+00008AC3  E0BC              loopne 0x8a81
+00008AC5  CA8AE9            retf word 0xe98a
+00008AC8  1203              adc al,[bp+di]
+00008ACA  CC                int3
+00008ACB  8AE9              mov ch,cl
+00008ACD  A84C              test al,0x4c
+00008ACF  E9986B            jmp 0xf66a
+00008AD2  E9996B            jmp 0xf66e
+00008AD5  FA                cli
+00008AD6  FA                cli
+00008AD7  33C9              xor cx,cx
+00008AD9  E300              jcxz 0x8adb
+00008ADB  E464              in al,byte 0x64
+00008ADD  A802              test al,0x2
+00008ADF  E0F8              loopne 0x8ad9
+00008AE1  B0FE              mov al,0xfe
+00008AE3  E664              out byte 0x64,al
+00008AE5  F4                hlt
+00008AE6  EBFD              jmp 0x8ae5
+00008AE8  1E                push ds
+00008AE9  80FC4F            cmp ah,0x4f
+00008AEC  7519              jnz 0x8b07
+00008AEE  50                push ax
+00008AEF  B84000            mov ax,0x40
+00008AF2  8ED8              mov ds,ax
+00008AF4  A01700            mov al,[0x17]
+00008AF7  240C              and al,0xc
+00008AF9  3C0C              cmp al,0xc
+00008AFB  7509              jnz 0x8b06
+00008AFD  58                pop ax
+00008AFE  50                push ax
+00008AFF  E82B00            call 0x8b2d
+00008B02  58                pop ax
+00008B03  EB02              jmp 0x8b07
+00008B05  90                nop
+00008B06  58                pop ax
+00008B07  1F                pop ds
+00008B08  C3                ret
+00008B09  50                push ax
+00008B0A  B0FF              mov al,0xff
+00008B0C  FEC8              dec al
+00008B0E  58                pop ax
+00008B0F  C3                ret
+00008B10  C3                ret
+00008B11  2EF606818240      test byte [cs:0x8281],0x40
+00008B17  7513              jnz 0x8b2c
+00008B19  B02D              mov al,0x2d
+00008B1B  E670              out byte 0x70,al
+00008B1D  E300              jcxz 0x8b1f
+00008B1F  E300              jcxz 0x8b21
+00008B21  E471              in al,byte 0x71
+00008B23  D1E0              shl ax,0x0
+00008B25  250001            and ax,0x100
+00008B28  66C1E010          shl eax,byte 0x10
+00008B2C  C3                ret
+00008B2D  FA                cli
+00008B2E  2E3A066E82        cmp al,[cs:0x826e]
+00008B33  7511              jnz 0x8b46
+00008B35  F606170003        test byte [0x17],0x3
+00008B3A  7405              jz 0x8b41
+00008B3C  E8A900            call 0x8be8
+00008B3F  EB1B              jmp 0x8b5c
+00008B41  E81A00            call 0x8b5e
+00008B44  EB16              jmp 0x8b5c
+00008B46  2E3A065E82        cmp al,[cs:0x825e]
+00008B4B  750F              jnz 0x8b5c
+00008B4D  F606170003        test byte [0x17],0x3
+00008B52  7405              jz 0x8b59
+00008B54  E8F600            call 0x8c4d
+00008B57  EB03              jmp 0x8b5c

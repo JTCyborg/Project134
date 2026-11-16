@@ -1,0 +1,64 @@
+0000F6A0  60                pusha
+0000F6A1  B0FF              mov al,0xff
+0000F6A3  E680              out byte 0x80,al
+0000F6A5  61                popa
+0000F6A6  EC                in al,dx
+0000F6A7  3AC4              cmp al,ah
+0000F6A9  58                pop ax
+0000F6AA  750B              jnz 0xf6b7
+0000F6AC  0BDB              or bx,bx
+0000F6AE  7407              jz 0xf6b7
+0000F6B0  E300              jcxz 0xf6b2
+0000F6B2  E300              jcxz 0xf6b4
+0000F6B4  EC                in al,dx
+0000F6B5  3AC4              cmp al,ah
+0000F6B7  C3                ret
+0000F6B8  B855AA            mov ax,0xaa55
+0000F6BB  E8D3FF            call 0xf691
+0000F6BE  7518              jnz 0xf6d8
+0000F6C0  B8AA55            mov ax,0x55aa
+0000F6C3  E8CBFF            call 0xf691
+0000F6C6  7510              jnz 0xf6d8
+0000F6C8  B80FCC            mov ax,0xcc0f
+0000F6CB  E8C3FF            call 0xf691
+0000F6CE  7508              jnz 0xf6d8
+0000F6D0  B80000            mov ax,0x0
+0000F6D3  E8BBFF            call 0xf691
+0000F6D6  7500              jnz 0xf6d8
+0000F6D8  C3                ret
+0000F6D9  FA                cli
+0000F6DA  FC                cld
+0000F6DB  1E                push ds
+0000F6DC  8EDB              mov ds,bx
+0000F6DE  33F6              xor si,si
+0000F6E0  AD                lodsw
+0000F6E1  3555AA            xor ax,0xaa55
+0000F6E4  7532              jnz 0xf718
+0000F6E6  B98000            mov cx,0x80
+0000F6E9  81FB00E0          cmp bx,0xe000
+0000F6ED  7403              jz 0xf6f2
+0000F6EF  AC                lodsb
+0000F6F0  8BC8              mov cx,ax
+0000F6F2  C1E105            shl cx,byte 0x5
+0000F6F5  03D9              add bx,cx
+0000F6F7  C1E104            shl cx,byte 0x4
+0000F6FA  33F6              xor si,si
+0000F6FC  AC                lodsb
+0000F6FD  02E0              add ah,al
+0000F6FF  E2FB              loop 0xf6fc
+0000F701  7519              jnz 0xf71c
+0000F703  FB                sti
+0000F704  06                push es
+0000F705  53                push bx
+0000F706  55                push bp
+0000F707  0E                push cs
+0000F708  680FF7            push word 0xf70f
+0000F70B  1E                push ds
+0000F70C  6A03              push word 0x3
+0000F70E  CB                retf
+0000F70F  FA                cli
+0000F710  FC                cld
+0000F711  5D                pop bp
+0000F712  5B                pop bx
+0000F713  07                pop es
+0000F714  1F                pop ds

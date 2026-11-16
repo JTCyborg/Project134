@@ -1,0 +1,714 @@
+
+========== ALTERNATE ENTRY F000:8904 ==========
+00008904  B400              mov ah,0x0
+00008906  B0B3              mov al,0xb3
+00008908  BC0E89            mov sp,0x890e
+0000890B  E98665            jmp 0xee94
+0000890E  108924F1          adc [bx+di-0xedc],cl
+00008912  0AE0              or ah,al
+00008914  B0B3              mov al,0xb3
+00008916  BC1C89            mov sp,0x891c
+00008919  E98165            jmp 0xee9d
+0000891C  1E                push ds
+0000891D  89E9              mov cx,bp
+0000891F  EE                out dx,al
+00008920  4C                dec sp
+00008921  33C0              xor ax,ax
+00008923  9E                sahf
+00008924  B80500            mov ax,0x5
+00008927  BB0200            mov bx,0x2
+0000892A  F6F3              div bl
+0000892C  9F                lahf
+0000892D  80FC02            cmp ah,0x2
+00008930  C3                ret
+00008931  32C9              xor cl,cl
+00008933  B8C2C2            mov ax,0xc2c2
+00008936  BC3C89            mov sp,0x893c
+00008939  E99304            jmp 0x8dcf
+0000893C  3E898AD80C        mov [ds:bp+si+0xcd8],cx
+00008941  0486              add al,0x86
+00008943  C4BC4A89          les di,word [si-0x76b6]
+00008947  E99204            jmp 0x8ddc
+0000894A  4C                dec sp
+0000894B  89BC5289          mov [si-0x76ae],di
+0000894F  E97D04            jmp 0x8dcf
+00008952  54                push sp
+00008953  89A80474          mov [bx+si+0x7404],bp
+00008957  1C8A              sbb al,0x8a
+00008959  E380              jcxz 0x88db
+0000895B  E4FB              in al,byte 0xfb
+0000895D  B0C2              mov al,0xc2
+0000895F  90                nop
+00008960  BC6689            mov sp,0x8966
+00008963  E97604            jmp 0x8ddc
+00008966  6889BC            push word 0xbc89
+00008969  6E                outsb
+0000896A  89E9              mov cx,bp
+0000896C  61                popa
+0000896D  0470              add al,0x70
+0000896F  89A80474          mov [bx+si+0x7404],bp
+00008973  0380C902          add ax,[bx+si+0x2c9]
+00008977  8AE3              mov ah,bl
+00008979  B0C2              mov al,0xc2
+0000897B  90                nop
+0000897C  BC8289            mov sp,0x8982
+0000897F  E95A04            jmp 0x8ddc
+00008982  8489B8C3          test [bx+di-0x3c48],cl
+00008986  C3                ret
+00008987  90                nop
+00008988  BC8E89            mov sp,0x898e
+0000898B  E94104            jmp 0x8dcf
+0000898E  90                nop
+0000898F  898AD80C          mov [bp+si+0xcd8],cx
+00008993  0286C4BC          add al,[bp-0x433c]
+00008997  9C                pushf
+00008998  89E9              mov cx,bp
+0000899A  40                inc ax
+0000899B  049E              add al,0x9e
+0000899D  89BCA489          mov [si-0x765c],di
+000089A1  E92B04            jmp 0x8dcf
+000089A4  A6                cmpsb
+000089A5  89A80274          mov [bx+si+0x7402],bp
+000089A9  1C8A              sbb al,0x8a
+000089AB  E380              jcxz 0x892d
+000089AD  E4FD              in al,byte 0xfd
+000089AF  B0C3              mov al,0xc3
+000089B1  90                nop
+000089B2  BCB889            mov sp,0x89b8
+000089B5  E92404            jmp 0x8ddc
+000089B8  BA89BC            mov dx,0xbc89
+000089BB  C089E90F04        ror byte [bx+di+0xfe9],byte 0x4
+000089C0  C289A8            ret word 0xa889
+000089C3  027403            add dh,[si+0x3]
+000089C6  80C901            or cl,0x1
+000089C9  8AE3              mov ah,bl
+000089CB  B0C3              mov al,0xc3
+000089CD  90                nop
+000089CE  BCD489            mov sp,0x89d4
+000089D1  E90804            jmp 0x8ddc
+000089D4  D6                salc
+000089D5  89B40880          mov [si-0x7ff8],si
+000089D9  F9                stc
+000089DA  017425            add [si+0x25],si
+000089DD  B404              mov ah,0x4
+000089DF  80F903            cmp cl,0x3
+000089E2  741E              jz 0x8a02
+000089E4  B0FE              mov al,0xfe
+000089E6  BCEC89            mov sp,0x89ec
+000089E9  E9E303            jmp 0x8dcf
+000089EC  EE                out dx,al
+000089ED  89B4043C          mov [si+0x3c04],si
+000089F1  05760E            add ax,0xe76
+000089F4  B406              mov ah,0x6
+
+========== ALTERNATE ENTRY F000:8906 ==========
+00008906  B0B3              mov al,0xb3
+00008908  BC0E89            mov sp,0x890e
+0000890B  E98665            jmp 0xee94
+0000890E  108924F1          adc [bx+di-0xedc],cl
+00008912  0AE0              or ah,al
+00008914  B0B3              mov al,0xb3
+00008916  BC1C89            mov sp,0x891c
+00008919  E98165            jmp 0xee9d
+0000891C  1E                push ds
+0000891D  89E9              mov cx,bp
+0000891F  EE                out dx,al
+00008920  4C                dec sp
+00008921  33C0              xor ax,ax
+00008923  9E                sahf
+00008924  B80500            mov ax,0x5
+00008927  BB0200            mov bx,0x2
+0000892A  F6F3              div bl
+0000892C  9F                lahf
+0000892D  80FC02            cmp ah,0x2
+00008930  C3                ret
+00008931  32C9              xor cl,cl
+00008933  B8C2C2            mov ax,0xc2c2
+00008936  BC3C89            mov sp,0x893c
+00008939  E99304            jmp 0x8dcf
+0000893C  3E898AD80C        mov [ds:bp+si+0xcd8],cx
+00008941  0486              add al,0x86
+00008943  C4BC4A89          les di,word [si-0x76b6]
+00008947  E99204            jmp 0x8ddc
+0000894A  4C                dec sp
+0000894B  89BC5289          mov [si-0x76ae],di
+0000894F  E97D04            jmp 0x8dcf
+00008952  54                push sp
+00008953  89A80474          mov [bx+si+0x7404],bp
+00008957  1C8A              sbb al,0x8a
+00008959  E380              jcxz 0x88db
+0000895B  E4FB              in al,byte 0xfb
+0000895D  B0C2              mov al,0xc2
+0000895F  90                nop
+00008960  BC6689            mov sp,0x8966
+00008963  E97604            jmp 0x8ddc
+00008966  6889BC            push word 0xbc89
+00008969  6E                outsb
+0000896A  89E9              mov cx,bp
+0000896C  61                popa
+0000896D  0470              add al,0x70
+0000896F  89A80474          mov [bx+si+0x7404],bp
+00008973  0380C902          add ax,[bx+si+0x2c9]
+00008977  8AE3              mov ah,bl
+00008979  B0C2              mov al,0xc2
+0000897B  90                nop
+0000897C  BC8289            mov sp,0x8982
+0000897F  E95A04            jmp 0x8ddc
+00008982  8489B8C3          test [bx+di-0x3c48],cl
+00008986  C3                ret
+00008987  90                nop
+00008988  BC8E89            mov sp,0x898e
+0000898B  E94104            jmp 0x8dcf
+0000898E  90                nop
+0000898F  898AD80C          mov [bp+si+0xcd8],cx
+00008993  0286C4BC          add al,[bp-0x433c]
+00008997  9C                pushf
+00008998  89E9              mov cx,bp
+0000899A  40                inc ax
+0000899B  049E              add al,0x9e
+0000899D  89BCA489          mov [si-0x765c],di
+000089A1  E92B04            jmp 0x8dcf
+000089A4  A6                cmpsb
+000089A5  89A80274          mov [bx+si+0x7402],bp
+000089A9  1C8A              sbb al,0x8a
+000089AB  E380              jcxz 0x892d
+000089AD  E4FD              in al,byte 0xfd
+000089AF  B0C3              mov al,0xc3
+000089B1  90                nop
+000089B2  BCB889            mov sp,0x89b8
+000089B5  E92404            jmp 0x8ddc
+000089B8  BA89BC            mov dx,0xbc89
+000089BB  C089E90F04        ror byte [bx+di+0xfe9],byte 0x4
+000089C0  C289A8            ret word 0xa889
+000089C3  027403            add dh,[si+0x3]
+000089C6  80C901            or cl,0x1
+000089C9  8AE3              mov ah,bl
+000089CB  B0C3              mov al,0xc3
+000089CD  90                nop
+000089CE  BCD489            mov sp,0x89d4
+000089D1  E90804            jmp 0x8ddc
+000089D4  D6                salc
+000089D5  89B40880          mov [si-0x7ff8],si
+000089D9  F9                stc
+000089DA  017425            add [si+0x25],si
+000089DD  B404              mov ah,0x4
+000089DF  80F903            cmp cl,0x3
+000089E2  741E              jz 0x8a02
+000089E4  B0FE              mov al,0xfe
+000089E6  BCEC89            mov sp,0x89ec
+000089E9  E9E303            jmp 0x8dcf
+000089EC  EE                out dx,al
+000089ED  89B4043C          mov [si+0x3c04],si
+000089F1  05760E            add ax,0xe76
+000089F4  B406              mov ah,0x6
+000089F6  3C07              cmp al,0x7
+
+========== ALTERNATE ENTRY F000:891E ==========
+0000891E  E9EE4C            jmp 0xd60f
+00008921  33C0              xor ax,ax
+00008923  9E                sahf
+00008924  B80500            mov ax,0x5
+00008927  BB0200            mov bx,0x2
+0000892A  F6F3              div bl
+0000892C  9F                lahf
+0000892D  80FC02            cmp ah,0x2
+00008930  C3                ret
+00008931  32C9              xor cl,cl
+00008933  B8C2C2            mov ax,0xc2c2
+00008936  BC3C89            mov sp,0x893c
+00008939  E99304            jmp 0x8dcf
+0000893C  3E898AD80C        mov [ds:bp+si+0xcd8],cx
+00008941  0486              add al,0x86
+00008943  C4BC4A89          les di,word [si-0x76b6]
+00008947  E99204            jmp 0x8ddc
+0000894A  4C                dec sp
+0000894B  89BC5289          mov [si-0x76ae],di
+0000894F  E97D04            jmp 0x8dcf
+00008952  54                push sp
+00008953  89A80474          mov [bx+si+0x7404],bp
+00008957  1C8A              sbb al,0x8a
+00008959  E380              jcxz 0x88db
+0000895B  E4FB              in al,byte 0xfb
+0000895D  B0C2              mov al,0xc2
+0000895F  90                nop
+00008960  BC6689            mov sp,0x8966
+00008963  E97604            jmp 0x8ddc
+00008966  6889BC            push word 0xbc89
+00008969  6E                outsb
+0000896A  89E9              mov cx,bp
+0000896C  61                popa
+0000896D  0470              add al,0x70
+0000896F  89A80474          mov [bx+si+0x7404],bp
+00008973  0380C902          add ax,[bx+si+0x2c9]
+00008977  8AE3              mov ah,bl
+00008979  B0C2              mov al,0xc2
+0000897B  90                nop
+0000897C  BC8289            mov sp,0x8982
+0000897F  E95A04            jmp 0x8ddc
+00008982  8489B8C3          test [bx+di-0x3c48],cl
+00008986  C3                ret
+00008987  90                nop
+00008988  BC8E89            mov sp,0x898e
+0000898B  E94104            jmp 0x8dcf
+0000898E  90                nop
+0000898F  898AD80C          mov [bp+si+0xcd8],cx
+00008993  0286C4BC          add al,[bp-0x433c]
+00008997  9C                pushf
+00008998  89E9              mov cx,bp
+0000899A  40                inc ax
+0000899B  049E              add al,0x9e
+0000899D  89BCA489          mov [si-0x765c],di
+000089A1  E92B04            jmp 0x8dcf
+000089A4  A6                cmpsb
+000089A5  89A80274          mov [bx+si+0x7402],bp
+000089A9  1C8A              sbb al,0x8a
+000089AB  E380              jcxz 0x892d
+000089AD  E4FD              in al,byte 0xfd
+000089AF  B0C3              mov al,0xc3
+000089B1  90                nop
+000089B2  BCB889            mov sp,0x89b8
+000089B5  E92404            jmp 0x8ddc
+000089B8  BA89BC            mov dx,0xbc89
+000089BB  C089E90F04        ror byte [bx+di+0xfe9],byte 0x4
+000089C0  C289A8            ret word 0xa889
+000089C3  027403            add dh,[si+0x3]
+000089C6  80C901            or cl,0x1
+000089C9  8AE3              mov ah,bl
+000089CB  B0C3              mov al,0xc3
+000089CD  90                nop
+000089CE  BCD489            mov sp,0x89d4
+000089D1  E90804            jmp 0x8ddc
+000089D4  D6                salc
+000089D5  89B40880          mov [si-0x7ff8],si
+000089D9  F9                stc
+000089DA  017425            add [si+0x25],si
+000089DD  B404              mov ah,0x4
+000089DF  80F903            cmp cl,0x3
+000089E2  741E              jz 0x8a02
+000089E4  B0FE              mov al,0xfe
+000089E6  BCEC89            mov sp,0x89ec
+000089E9  E9E303            jmp 0x8dcf
+000089EC  EE                out dx,al
+000089ED  89B4043C          mov [si+0x3c04],si
+000089F1  05760E            add ax,0xe76
+000089F4  B406              mov ah,0x6
+000089F6  3C07              cmp al,0x7
+000089F8  7608              jna 0x8a02
+000089FA  B40A              mov ah,0xa
+000089FC  A801              test al,0x1
+000089FE  7502              jnz 0x8a02
+00008A00  B408              mov ah,0x8
+00008A02  FF                db 0xff
+00008A03  E70F              out byte 0xf,ax
+00008A05  01E0              add ax,sp
+00008A07  A801              test al,0x1
+00008A09  740F              jz 0x8a1a
+00008A0B  B08F              mov al,0x8f
+
+========== ALTERNATE ENTRY F000:8921 ==========
+00008921  33C0              xor ax,ax
+00008923  9E                sahf
+00008924  B80500            mov ax,0x5
+00008927  BB0200            mov bx,0x2
+0000892A  F6F3              div bl
+0000892C  9F                lahf
+0000892D  80FC02            cmp ah,0x2
+00008930  C3                ret
+00008931  32C9              xor cl,cl
+00008933  B8C2C2            mov ax,0xc2c2
+00008936  BC3C89            mov sp,0x893c
+00008939  E99304            jmp 0x8dcf
+0000893C  3E898AD80C        mov [ds:bp+si+0xcd8],cx
+00008941  0486              add al,0x86
+00008943  C4BC4A89          les di,word [si-0x76b6]
+00008947  E99204            jmp 0x8ddc
+0000894A  4C                dec sp
+0000894B  89BC5289          mov [si-0x76ae],di
+0000894F  E97D04            jmp 0x8dcf
+00008952  54                push sp
+00008953  89A80474          mov [bx+si+0x7404],bp
+00008957  1C8A              sbb al,0x8a
+00008959  E380              jcxz 0x88db
+0000895B  E4FB              in al,byte 0xfb
+0000895D  B0C2              mov al,0xc2
+0000895F  90                nop
+00008960  BC6689            mov sp,0x8966
+00008963  E97604            jmp 0x8ddc
+00008966  6889BC            push word 0xbc89
+00008969  6E                outsb
+0000896A  89E9              mov cx,bp
+0000896C  61                popa
+0000896D  0470              add al,0x70
+0000896F  89A80474          mov [bx+si+0x7404],bp
+00008973  0380C902          add ax,[bx+si+0x2c9]
+00008977  8AE3              mov ah,bl
+00008979  B0C2              mov al,0xc2
+0000897B  90                nop
+0000897C  BC8289            mov sp,0x8982
+0000897F  E95A04            jmp 0x8ddc
+00008982  8489B8C3          test [bx+di-0x3c48],cl
+00008986  C3                ret
+00008987  90                nop
+00008988  BC8E89            mov sp,0x898e
+0000898B  E94104            jmp 0x8dcf
+0000898E  90                nop
+0000898F  898AD80C          mov [bp+si+0xcd8],cx
+00008993  0286C4BC          add al,[bp-0x433c]
+00008997  9C                pushf
+00008998  89E9              mov cx,bp
+0000899A  40                inc ax
+0000899B  049E              add al,0x9e
+0000899D  89BCA489          mov [si-0x765c],di
+000089A1  E92B04            jmp 0x8dcf
+000089A4  A6                cmpsb
+000089A5  89A80274          mov [bx+si+0x7402],bp
+000089A9  1C8A              sbb al,0x8a
+000089AB  E380              jcxz 0x892d
+000089AD  E4FD              in al,byte 0xfd
+000089AF  B0C3              mov al,0xc3
+000089B1  90                nop
+000089B2  BCB889            mov sp,0x89b8
+000089B5  E92404            jmp 0x8ddc
+000089B8  BA89BC            mov dx,0xbc89
+000089BB  C089E90F04        ror byte [bx+di+0xfe9],byte 0x4
+000089C0  C289A8            ret word 0xa889
+000089C3  027403            add dh,[si+0x3]
+000089C6  80C901            or cl,0x1
+000089C9  8AE3              mov ah,bl
+000089CB  B0C3              mov al,0xc3
+000089CD  90                nop
+000089CE  BCD489            mov sp,0x89d4
+000089D1  E90804            jmp 0x8ddc
+000089D4  D6                salc
+000089D5  89B40880          mov [si-0x7ff8],si
+000089D9  F9                stc
+000089DA  017425            add [si+0x25],si
+000089DD  B404              mov ah,0x4
+000089DF  80F903            cmp cl,0x3
+000089E2  741E              jz 0x8a02
+000089E4  B0FE              mov al,0xfe
+000089E6  BCEC89            mov sp,0x89ec
+000089E9  E9E303            jmp 0x8dcf
+000089EC  EE                out dx,al
+000089ED  89B4043C          mov [si+0x3c04],si
+000089F1  05760E            add ax,0xe76
+000089F4  B406              mov ah,0x6
+000089F6  3C07              cmp al,0x7
+000089F8  7608              jna 0x8a02
+000089FA  B40A              mov ah,0xa
+000089FC  A801              test al,0x1
+000089FE  7502              jnz 0x8a02
+00008A00  B408              mov ah,0x8
+00008A02  FF                db 0xff
+00008A03  E70F              out byte 0xf,ax
+00008A05  01E0              add ax,sp
+00008A07  A801              test al,0x1
+00008A09  740F              jz 0x8a1a
+00008A0B  B08F              mov al,0x8f
+00008A0D  E670              out byte 0x70,al
+
+========== ALTERNATE ENTRY F000:8931 ==========
+00008931  32C9              xor cl,cl
+00008933  B8C2C2            mov ax,0xc2c2
+00008936  BC3C89            mov sp,0x893c
+00008939  E99304            jmp 0x8dcf
+0000893C  3E898AD80C        mov [ds:bp+si+0xcd8],cx
+00008941  0486              add al,0x86
+00008943  C4BC4A89          les di,word [si-0x76b6]
+00008947  E99204            jmp 0x8ddc
+0000894A  4C                dec sp
+0000894B  89BC5289          mov [si-0x76ae],di
+0000894F  E97D04            jmp 0x8dcf
+00008952  54                push sp
+00008953  89A80474          mov [bx+si+0x7404],bp
+00008957  1C8A              sbb al,0x8a
+00008959  E380              jcxz 0x88db
+0000895B  E4FB              in al,byte 0xfb
+0000895D  B0C2              mov al,0xc2
+0000895F  90                nop
+00008960  BC6689            mov sp,0x8966
+00008963  E97604            jmp 0x8ddc
+00008966  6889BC            push word 0xbc89
+00008969  6E                outsb
+0000896A  89E9              mov cx,bp
+0000896C  61                popa
+0000896D  0470              add al,0x70
+0000896F  89A80474          mov [bx+si+0x7404],bp
+00008973  0380C902          add ax,[bx+si+0x2c9]
+00008977  8AE3              mov ah,bl
+00008979  B0C2              mov al,0xc2
+0000897B  90                nop
+0000897C  BC8289            mov sp,0x8982
+0000897F  E95A04            jmp 0x8ddc
+00008982  8489B8C3          test [bx+di-0x3c48],cl
+00008986  C3                ret
+00008987  90                nop
+00008988  BC8E89            mov sp,0x898e
+0000898B  E94104            jmp 0x8dcf
+0000898E  90                nop
+0000898F  898AD80C          mov [bp+si+0xcd8],cx
+00008993  0286C4BC          add al,[bp-0x433c]
+00008997  9C                pushf
+00008998  89E9              mov cx,bp
+0000899A  40                inc ax
+0000899B  049E              add al,0x9e
+0000899D  89BCA489          mov [si-0x765c],di
+000089A1  E92B04            jmp 0x8dcf
+000089A4  A6                cmpsb
+000089A5  89A80274          mov [bx+si+0x7402],bp
+000089A9  1C8A              sbb al,0x8a
+000089AB  E380              jcxz 0x892d
+000089AD  E4FD              in al,byte 0xfd
+000089AF  B0C3              mov al,0xc3
+000089B1  90                nop
+000089B2  BCB889            mov sp,0x89b8
+000089B5  E92404            jmp 0x8ddc
+000089B8  BA89BC            mov dx,0xbc89
+000089BB  C089E90F04        ror byte [bx+di+0xfe9],byte 0x4
+000089C0  C289A8            ret word 0xa889
+000089C3  027403            add dh,[si+0x3]
+000089C6  80C901            or cl,0x1
+000089C9  8AE3              mov ah,bl
+000089CB  B0C3              mov al,0xc3
+000089CD  90                nop
+000089CE  BCD489            mov sp,0x89d4
+000089D1  E90804            jmp 0x8ddc
+000089D4  D6                salc
+000089D5  89B40880          mov [si-0x7ff8],si
+000089D9  F9                stc
+000089DA  017425            add [si+0x25],si
+000089DD  B404              mov ah,0x4
+000089DF  80F903            cmp cl,0x3
+000089E2  741E              jz 0x8a02
+000089E4  B0FE              mov al,0xfe
+000089E6  BCEC89            mov sp,0x89ec
+000089E9  E9E303            jmp 0x8dcf
+000089EC  EE                out dx,al
+000089ED  89B4043C          mov [si+0x3c04],si
+000089F1  05760E            add ax,0xe76
+000089F4  B406              mov ah,0x6
+000089F6  3C07              cmp al,0x7
+000089F8  7608              jna 0x8a02
+000089FA  B40A              mov ah,0xa
+000089FC  A801              test al,0x1
+000089FE  7502              jnz 0x8a02
+00008A00  B408              mov ah,0x8
+00008A02  FF                db 0xff
+00008A03  E70F              out byte 0xf,ax
+00008A05  01E0              add ax,sp
+00008A07  A801              test al,0x1
+00008A09  740F              jz 0x8a1a
+00008A0B  B08F              mov al,0x8f
+00008A0D  E670              out byte 0x70,al
+00008A0F  E300              jcxz 0x8a11
+00008A11  E300              jcxz 0x8a13
+00008A13  B000              mov al,0x0
+00008A15  E671              out byte 0x71,al
+00008A17  E9BB00            jmp 0x8ad5
+00008A1A  E9F84B            jmp 0xd615
+00008A1D  E9044D            jmp 0xd724
+00008A20  8BC6              mov ax,si
+
+========== ALTERNATE ENTRY F000:8DCF ==========
+00008DCF  E622              out byte 0x22,al
+00008DD1  E300              jcxz 0x8dd3
+00008DD3  E300              jcxz 0x8dd5
+00008DD5  E423              in al,byte 0x23
+00008DD7  E300              jcxz 0x8dd9
+00008DD9  E300              jcxz 0x8ddb
+00008DDB  C3                ret
+00008DDC  E622              out byte 0x22,al
+00008DDE  E300              jcxz 0x8de0
+00008DE0  E300              jcxz 0x8de2
+00008DE2  86C4              xchg al,ah
+00008DE4  E623              out byte 0x23,al
+00008DE6  E300              jcxz 0x8de8
+00008DE8  E300              jcxz 0x8dea
+00008DEA  86C4              xchg al,ah
+00008DEC  C3                ret
+00008DED  E622              out byte 0x22,al
+00008DEF  E300              jcxz 0x8df1
+00008DF1  E300              jcxz 0x8df3
+00008DF3  E423              in al,byte 0x23
+00008DF5  E300              jcxz 0x8df7
+00008DF7  E300              jcxz 0x8df9
+00008DF9  FF                db 0xff
+00008DFA  E7E6              out byte 0xe6,ax
+00008DFC  22E3              and ah,bl
+00008DFE  00E3              add bl,ah
+00008E00  0086C4E6          add [bp-0x193c],al
+00008E04  23E3              and sp,bx
+00008E06  00E3              add bl,ah
+00008E08  0086C4FF          add [bp-0x3c],al
+00008E0C  E716              out byte 0x16,ax
+00008E0E  16                push ss
+00008E0F  17                pop ss
+00008E10  1920              sbb [bx+si],sp
+00008E12  20161719          and [0x1917],dl
+00008E16  2025              and [di],ah
+00008E18  16                push ss
+00008E19  17                pop ss
+00008E1A  1920              sbb [bx+si],sp
+00008E1C  33161719          xor dx,[0x1917]
+00008E20  204016            and [bx+si+0x16],al
+00008E23  17                pop ss
+00008E24  1920              sbb [bx+si],sp
+00008E26  50                push ax
+00008E27  16                push ss
+00008E28  17                pop ss
+00008E29  1920              sbb [bx+si],sp
+00008E2B  6616              o32 push ss
+00008E2D  17                pop ss
+00008E2E  1920              sbb [bx+si],sp
+00008E30  2416              and al,0x16
+00008E32  17                pop ss
+00008E33  1920              sbb [bx+si],sp
+00008E35  251617            and ax,0x1716
+00008E38  1920              sbb [bx+si],sp
+00008E3A  33161719          xor dx,[0x1917]
+00008E3E  204016            and [bx+si+0x16],al
+00008E41  17                pop ss
+00008E42  1920              sbb [bx+si],sp
+00008E44  8D360D8E          lea si,[0x8e0d]
+00008E48  2C80              sub al,0x80
+00008E4A  03F0              add si,ax
+00008E4C  AC                lodsb
+00008E4D  C3                ret
+00008E4E  C021C1            shl byte [bx+di],byte 0xc1
+00008E51  00C5              add ch,al
+00008E53  00C6              add dh,al
+00008E55  0F                db 0x0f
+00008E56  C800C900          enter word 0xc900,byte 0x0
+00008E5A  CB                retf
+00008E5B  00CC              add ah,cl
+00008E5D  00CE              add dh,cl
+00008E5F  00CF              add bh,cl
+00008E61  00C0              add al,al
+00008E63  21C1              and cx,ax
+00008E65  00C5              add ch,al
+00008E67  0AC6              or al,dh
+00008E69  06                push es
+00008E6A  C80CC907          enter word 0xc90c,byte 0x7
+00008E6E  CB                retf
+00008E6F  00CC              add ah,cl
+00008E71  00CE              add dh,cl
+00008E73  00CF              add bh,cl
+00008E75  00C1              add cl,al
+00008E77  00C2              add dl,al
+00008E79  00C1              add cl,al
+00008E7B  10C2              adc dl,al
+00008E7D  00E9              add cl,ch
+00008E7F  BC5E80            mov sp,0x805e
+00008E82  FC                cld
+00008E83  F0                lock
+00008E84  7303              jnc 0x8e89
+00008E86  E95925            jmp 0xb3e2
+00008E89  1E                push ds
+00008E8A  56                push si
+00008E8B  6A40              push word 0x40
+00008E8D  1F                pop ds
+00008E8E  8BF0              mov si,ax
+00008E90  C1EE08            shr si,byte 0x8
+00008E93  83E60F            and si,0xf
+
+========== ALTERNATE ENTRY F000:8DDC ==========
+00008DDC  E622              out byte 0x22,al
+00008DDE  E300              jcxz 0x8de0
+00008DE0  E300              jcxz 0x8de2
+00008DE2  86C4              xchg al,ah
+00008DE4  E623              out byte 0x23,al
+00008DE6  E300              jcxz 0x8de8
+00008DE8  E300              jcxz 0x8dea
+00008DEA  86C4              xchg al,ah
+00008DEC  C3                ret
+00008DED  E622              out byte 0x22,al
+00008DEF  E300              jcxz 0x8df1
+00008DF1  E300              jcxz 0x8df3
+00008DF3  E423              in al,byte 0x23
+00008DF5  E300              jcxz 0x8df7
+00008DF7  E300              jcxz 0x8df9
+00008DF9  FF                db 0xff
+00008DFA  E7E6              out byte 0xe6,ax
+00008DFC  22E3              and ah,bl
+00008DFE  00E3              add bl,ah
+00008E00  0086C4E6          add [bp-0x193c],al
+00008E04  23E3              and sp,bx
+00008E06  00E3              add bl,ah
+00008E08  0086C4FF          add [bp-0x3c],al
+00008E0C  E716              out byte 0x16,ax
+00008E0E  16                push ss
+00008E0F  17                pop ss
+00008E10  1920              sbb [bx+si],sp
+00008E12  20161719          and [0x1917],dl
+00008E16  2025              and [di],ah
+00008E18  16                push ss
+00008E19  17                pop ss
+00008E1A  1920              sbb [bx+si],sp
+00008E1C  33161719          xor dx,[0x1917]
+00008E20  204016            and [bx+si+0x16],al
+00008E23  17                pop ss
+00008E24  1920              sbb [bx+si],sp
+00008E26  50                push ax
+00008E27  16                push ss
+00008E28  17                pop ss
+00008E29  1920              sbb [bx+si],sp
+00008E2B  6616              o32 push ss
+00008E2D  17                pop ss
+00008E2E  1920              sbb [bx+si],sp
+00008E30  2416              and al,0x16
+00008E32  17                pop ss
+00008E33  1920              sbb [bx+si],sp
+00008E35  251617            and ax,0x1716
+00008E38  1920              sbb [bx+si],sp
+00008E3A  33161719          xor dx,[0x1917]
+00008E3E  204016            and [bx+si+0x16],al
+00008E41  17                pop ss
+00008E42  1920              sbb [bx+si],sp
+00008E44  8D360D8E          lea si,[0x8e0d]
+00008E48  2C80              sub al,0x80
+00008E4A  03F0              add si,ax
+00008E4C  AC                lodsb
+00008E4D  C3                ret
+00008E4E  C021C1            shl byte [bx+di],byte 0xc1
+00008E51  00C5              add ch,al
+00008E53  00C6              add dh,al
+00008E55  0F                db 0x0f
+00008E56  C800C900          enter word 0xc900,byte 0x0
+00008E5A  CB                retf
+00008E5B  00CC              add ah,cl
+00008E5D  00CE              add dh,cl
+00008E5F  00CF              add bh,cl
+00008E61  00C0              add al,al
+00008E63  21C1              and cx,ax
+00008E65  00C5              add ch,al
+00008E67  0AC6              or al,dh
+00008E69  06                push es
+00008E6A  C80CC907          enter word 0xc90c,byte 0x7
+00008E6E  CB                retf
+00008E6F  00CC              add ah,cl
+00008E71  00CE              add dh,cl
+00008E73  00CF              add bh,cl
+00008E75  00C1              add cl,al
+00008E77  00C2              add dl,al
+00008E79  00C1              add cl,al
+00008E7B  10C2              adc dl,al
+00008E7D  00E9              add cl,ch
+00008E7F  BC5E80            mov sp,0x805e
+00008E82  FC                cld
+00008E83  F0                lock
+00008E84  7303              jnc 0x8e89
+00008E86  E95925            jmp 0xb3e2
+00008E89  1E                push ds
+00008E8A  56                push si
+00008E8B  6A40              push word 0x40
+00008E8D  1F                pop ds
+00008E8E  8BF0              mov si,ax
+00008E90  C1EE08            shr si,byte 0x8
+00008E93  83E60F            and si,0xf
+00008E96  81FE0500          cmp si,0x5
+00008E9A  7308              jnc 0x8ea4
+00008E9C  D1E6              shl si,0x0
+00008E9E  FA                cli
+00008E9F  2EFF94A78E        call word near [cs:si-0x7159]
+00008EA4  5E                pop si
+00008EA5  1F                pop ds

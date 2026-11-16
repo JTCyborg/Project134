@@ -1,0 +1,80 @@
+00001980  BA7001            mov dx,0x170
+00001983  EE                out dx,al
+00001984  EB00              jmp 0x1986
+00001986  EB00              jmp 0x1988
+00001988  42                inc dx
+00001989  EC                in al,dx
+0000198A  EB00              jmp 0x198c
+0000198C  EB00              jmp 0x198e
+0000198E  C3                ret
+0000198F  BA7001            mov dx,0x170
+00001992  EE                out dx,al
+00001993  EB00              jmp 0x1995
+00001995  EB00              jmp 0x1997
+00001997  42                inc dx
+00001998  86C4              xchg al,ah
+0000199A  EE                out dx,al
+0000199B  EB00              jmp 0x199d
+0000199D  EB00              jmp 0x199f
+0000199F  86C4              xchg al,ah
+000019A1  C3                ret
+000019A2  00AB19AD          add [bp+di-0x52e7],ch
+000019A6  19AE19AF          sbb [bp-0x50e7],bp
+000019AA  19FF              sbb di,di
+000019AC  E7C3              out byte 0xc3,ax
+000019AE  C3                ret
+000019AF  C3                ret
+000019B0  2000              and [bx+si],al
+000019B2  800000            add byte [bx+si],0x0
+000019B5  0100              add [bx+si],ax
+000019B7  024000            add al,[bx+si+0x0]
+000019BA  0001              add [bx+di],al
+000019BC  0002              add [bp+si],al
+000019BE  0004              add [si],al
+000019C0  0000              add [bx+si],al
+000019C2  1014              adc [si],dl
+000019C4  1921              sbb [bx+di],sp
+000019C6  2832              sub [bp+si],dh
+000019C8  42                inc dx
+000019C9  204B42            and [bp+di+0x42],cl
+000019CC  204341            and [bp+di+0x41],al
+000019CF  43                inc bx
+000019D0  48                dec ax
+000019D1  45                inc bp
+000019D2  204D45            and [di+0x45],cl
+000019D5  4D                dec bp
+000019D6  4F                dec di
+000019D7  52                push dx
+000019D8  59                pop cx
+000019D9  0D0A00            or ax,0xa
+000019DC  4D                dec bp
+000019DD  48                dec ax
+000019DE  7A20              jpe 0x1a00
+000019E0  43                inc bx
+000019E1  50                push ax
+000019E2  55                push bp
+000019E3  20436C            and [bp+di+0x6c],al
+000019E6  6F                outsw
+000019E7  636B0D            arpl [bp+di+0xd],bp
+000019EA  0A00              or al,[bx+si]
+000019EC  4D                dec bp
+000019ED  48                dec ax
+000019EE  7A20              jpe 0x1a10
+000019F0  44                inc sp
+000019F1  58                pop ax
+000019F2  3220              xor ah,[bx+si]
+000019F4  43                inc bx
+000019F5  50                push ax
+000019F6  55                push bp
+000019F7  200D              and [di],cl
+000019F9  0A00              or al,[bx+si]
+000019FB  B81818            mov ax,0x1818
+000019FE  E8CE73            call 0x8dcf
+00001A01  A802              test al,0x2
+00001A03  7418              jz 0x1a1d
+00001A05  2470              and al,0x70
+00001A07  C0E803            shr al,byte 0x3
+00001A0A  32E4              xor ah,ah
+00001A0C  BEB019            mov si,0x19b0
+00001A0F  03F0              add si,ax
+00001A11  2E8B04            mov ax,[cs:si]

@@ -1,0 +1,84 @@
+
+========== REFERENCES TO 82B0 ==========
+OFFSET 1145
+00001130  81E680B8          and si,0xb880
+00001134  AB                stosw
+00001135  00E8              add al,ch
+00001137  83E475            and sp,0x75
+0000113A  06                push es
+0000113B  81CD0002          or bp,0x200
+0000113F  EB04              jmp 0x1145
+00001141  81CD0004          or bp,0x400
+00001145  B082              mov al,0x82
+00001147  E680              out byte 0x80,al
+00001149  2EF606808210      test byte [cs:0x8280],0x10
+0000114F  B045              mov al,0x45
+OFFSET 85DE
+000085D0  88BE8088          mov [bp-0x7780],bh
+000085D4  EB28              jmp 0x85fe
+000085D6  56                push si
+000085D7  33DB              xor bx,bx
+000085D9  33C9              xor cx,cx
+000085DB  2E8A1EB082        mov bl,[cs:0x82b0]
+000085E0  FECB              dec bl
+000085E2  780A              js 0x85ee
+000085E4  D1E3              shl bx,0x0
+000085E6  2E8B36CA82        mov si,[cs:0x82ca]
+000085EB  2E8B08            mov cx,[cs:bx+si]
+000085EE  2E8B36C082        mov si,[cs:0x82c0]
+
+========== REFERENCES TO 82C0 ==========
+OFFSET 8385
+00008370  E471              in al,byte 0x71
+00008372  EB23              jmp 0x8397
+00008374  247F              and al,0x7f
+00008376  8AE3              mov ah,bl
+00008378  BB3C87            mov bx,0x873c
+0000837B  2E3A068888        cmp al,[cs:0x8888]
+00008380  7605              jna 0x8387
+00008382  2E8B1EC082        mov bx,[cs:0x82c0]
+00008387  2E3807            cmp [cs:bx],al
+0000838A  7405              jz 0x8391
+0000838C  83C304            add bx,0x4
+0000838F  EBF6              jmp 0x8387
+OFFSET 8488
+00008480  83C604            add si,0x4
+00008483  E2CF              loop 0x8454
+00008485  2E8B36C082        mov si,[cs:0x82c0]
+0000848A  2E3B36C282        cmp si,[cs:0x82c2]
+0000848F  7202              jc 0x8493
+00008491  EB35              jmp 0x84c8
+00008493  2E8A04            mov al,[cs:si]
+00008496  0C80              or al,0x80
+00008498  BC9E84            mov sp,0x849e
+0000849B  E9F669            jmp 0xee94
+0000849E  A0842E            mov al,[0x2e84]
+000084A1  8A6402            mov ah,[si+0x2]
+OFFSET 85F1
+000085E0  FECB              dec bl
+000085E2  780A              js 0x85ee
+000085E4  D1E3              shl bx,0x0
+000085E6  2E8B36CA82        mov si,[cs:0x82ca]
+000085EB  2E8B08            mov cx,[cs:bx+si]
+000085EE  2E8B36C082        mov si,[cs:0x82c0]
+000085F3  EB09              jmp 0x85fe
+000085F5  56                push si
+000085F6  2E8B0E8088        mov cx,[cs:0x8880]
+000085FB  BE3C87            mov si,0x873c
+000085FE  E32E              jcxz 0x862e
+00008600  32FF              xor bh,bh
+
+========== REFERENCES TO 82CA ==========
+OFFSET 85E9
+000085E0  FECB              dec bl
+000085E2  780A              js 0x85ee
+000085E4  D1E3              shl bx,0x0
+000085E6  2E8B36CA82        mov si,[cs:0x82ca]
+000085EB  2E8B08            mov cx,[cs:bx+si]
+000085EE  2E8B36C082        mov si,[cs:0x82c0]
+000085F3  EB09              jmp 0x85fe
+000085F5  56                push si
+000085F6  2E8B0E8088        mov cx,[cs:0x8880]
+000085FB  BE3C87            mov si,0x873c
+000085FE  E32E              jcxz 0x862e
+00008600  32FF              xor bh,bh

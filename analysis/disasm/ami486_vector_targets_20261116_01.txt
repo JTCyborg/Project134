@@ -1,0 +1,131 @@
+===== VECTOR TABLE REFERENCES =====
+82D8: MOV AX,[CS:82D8] refs: 
+82DA: MOV AX,[CS:82DA] refs: 8A78
+82DC: MOV AX,[CS:82DC] refs: 
+82DE: MOV AX,[CS:82DE] refs: 1C06
+82E0: MOV AX,[CS:82E0] refs: 
+82E2: MOV AX,[CS:82E2] refs: 1C5E
+82E4: MOV AX,[CS:82E4] refs: 
+82E6: MOV AX,[CS:82E6] refs: 
+
+===== VECTOR TARGET DISASSEMBLY =====
+
+----- TARGET 19A3 -----
+RAW: AB 19 AD 19 AE 19 AF 19 FF E7 C3 C3 C3 20 00 80
+000019A3  AB                stosw
+000019A4  19AD19AE          sbb [di-0x51e7],bp
+000019A8  19AF19FF          sbb [bx-0xe7],bp
+000019AC  E7C3              out byte 0xc3,ax
+000019AE  C3                ret
+000019AF  C3                ret
+000019B0  2000              and [bx+si],al
+000019B2  800000            add byte [bx+si],0x0
+000019B5  0100              add [bx+si],ax
+000019B7  024000            add al,[bx+si+0x0]
+000019BA  0001              add [bx+di],al
+000019BC  0002              add [bp+si],al
+
+----- TARGET 19A5 -----
+RAW: AD 19 AE 19 AF 19 FF E7 C3 C3 C3 20 00 80 00 00
+000019A5  AD                lodsw
+000019A6  19AE19AF          sbb [bp-0x50e7],bp
+000019AA  19FF              sbb di,di
+000019AC  E7C3              out byte 0xc3,ax
+000019AE  C3                ret
+000019AF  C3                ret
+000019B0  2000              and [bx+si],al
+000019B2  800000            add byte [bx+si],0x0
+000019B5  0100              add [bx+si],ax
+000019B7  024000            add al,[bx+si+0x0]
+000019BA  0001              add [bx+di],al
+000019BC  0002              add [bp+si],al
+
+----- TARGET 19A7 -----
+RAW: AE 19 AF 19 FF E7 C3 C3 C3 20 00 80 00 00 01 00
+000019A7  AE                scasb
+000019A8  19AF19FF          sbb [bx-0xe7],bp
+000019AC  E7C3              out byte 0xc3,ax
+000019AE  C3                ret
+000019AF  C3                ret
+000019B0  2000              and [bx+si],al
+000019B2  800000            add byte [bx+si],0x0
+000019B5  0100              add [bx+si],ax
+000019B7  024000            add al,[bx+si+0x0]
+000019BA  0001              add [bx+di],al
+000019BC  0002              add [bp+si],al
+000019BE  0004              add [si],al
+
+----- TARGET 19A9 -----
+RAW: AF 19 FF E7 C3 C3 C3 20 00 80 00 00 01 00 02 40
+000019A9  AF                scasw
+000019AA  19FF              sbb di,di
+000019AC  E7C3              out byte 0xc3,ax
+000019AE  C3                ret
+000019AF  C3                ret
+000019B0  2000              and [bx+si],al
+000019B2  800000            add byte [bx+si],0x0
+000019B5  0100              add [bx+si],ax
+000019B7  024000            add al,[bx+si+0x0]
+000019BA  0001              add [bx+di],al
+000019BC  0002              add [bp+si],al
+000019BE  0004              add [si],al
+
+----- TARGET 19AB -----
+RAW: FF E7 C3 C3 C3 20 00 80 00 00 01 00 02 40 00 00
+000019AB  FF                db 0xff
+000019AC  E7C3              out byte 0xc3,ax
+000019AE  C3                ret
+000019AF  C3                ret
+000019B0  2000              and [bx+si],al
+000019B2  800000            add byte [bx+si],0x0
+000019B5  0100              add [bx+si],ax
+000019B7  024000            add al,[bx+si+0x0]
+000019BA  0001              add [bx+di],al
+000019BC  0002              add [bp+si],al
+000019BE  0004              add [si],al
+000019C0  0000              add [bx+si],al
+
+----- TARGET 19AD -----
+RAW: C3 C3 C3 20 00 80 00 00 01 00 02 40 00 00 01 00
+000019AD  C3                ret
+000019AE  C3                ret
+000019AF  C3                ret
+000019B0  2000              and [bx+si],al
+000019B2  800000            add byte [bx+si],0x0
+000019B5  0100              add [bx+si],ax
+000019B7  024000            add al,[bx+si+0x0]
+000019BA  0001              add [bx+di],al
+000019BC  0002              add [bp+si],al
+000019BE  0004              add [si],al
+000019C0  0000              add [bx+si],al
+000019C2  1014              adc [si],dl
+
+----- TARGET 19AE -----
+RAW: C3 C3 20 00 80 00 00 01 00 02 40 00 00 01 00 02
+000019AE  C3                ret
+000019AF  C3                ret
+000019B0  2000              and [bx+si],al
+000019B2  800000            add byte [bx+si],0x0
+000019B5  0100              add [bx+si],ax
+000019B7  024000            add al,[bx+si+0x0]
+000019BA  0001              add [bx+di],al
+000019BC  0002              add [bp+si],al
+000019BE  0004              add [si],al
+000019C0  0000              add [bx+si],al
+000019C2  1014              adc [si],dl
+000019C4  1921              sbb [bx+di],sp
+
+----- TARGET 19AF -----
+RAW: C3 20 00 80 00 00 01 00 02 40 00 00 01 00 02 00
+000019AF  C3                ret
+000019B0  2000              and [bx+si],al
+000019B2  800000            add byte [bx+si],0x0
+000019B5  0100              add [bx+si],ax
+000019B7  024000            add al,[bx+si+0x0]
+000019BA  0001              add [bx+di],al
+000019BC  0002              add [bp+si],al
+000019BE  0004              add [si],al
+000019C0  0000              add [bx+si],al
+000019C2  1014              adc [si],dl
+000019C4  1921              sbb [bx+di],sp
+000019C6  2832              sub [bp+si],dh

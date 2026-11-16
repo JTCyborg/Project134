@@ -1,0 +1,26 @@
+
+===== OFFSET 26FA =====
+000026DA  B80007            mov ax,0x700
+000026DD  8ED8              mov ds,ax
+000026DF  BB0200            mov bx,0x2
+000026E2  33F6              xor si,si
+000026E4  B90080            mov cx,0x8000
+000026E7  F3AD              rep lodsw
+000026E9  8CD8              mov ax,ds
+000026EB  050010            add ax,0x1000
+000026EE  8ED8              mov ds,ax
+000026F0  4B                dec bx
+000026F1  80FB00            cmp bl,0x0
+000026F4  75EC              jnz 0x26e2
+000026F6  5E                pop si
+000026F7  1F                pop ds
+000026F8  C3                ret
+000026F9  FA                cli
+000026FA  2EA018B5          mov al,[cs:0xb518]
+000026FE  E8FF5B            call 0x8300
+00002701  7503              jnz 0x2706
+00002703  E94901            jmp 0x284f
+00002706  1E                push ds
+00002707  06                push es
+00002708  FF366700          push word [0x67]
+0000270C  FF366900          push word [0x69]

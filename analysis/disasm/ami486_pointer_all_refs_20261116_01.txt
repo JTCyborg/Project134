@@ -1,0 +1,43 @@
+C:\Temp\trdos\134\analysis\disasm\ami486_boot_cleanup_8300_20261116_01.txt:1: 000082C0  0000              add [bx+si],al
+C:\Temp\trdos\134\analysis\disasm\ami486_boot_cleanup_8300_20261116_01.txt:2: 000082C2  0000              add [bx+si],al
+C:\Temp\trdos\134\analysis\disasm\ami486_boot_cleanup_8300_20261116_01.txt:77: 00008382  2E8B1EC082        mov bx,[cs:0x82c0]
+C:\Temp\trdos\134\analysis\disasm\ami486_branches.disasm.txt:302: 00008AFF  E82B00            call 0x8b2d
+C:\Temp\trdos\134\analysis\disasm\ami486_branches.disasm.txt:370: 00008AFF  E82B00            call 0x8b2d
+C:\Temp\trdos\134\analysis\disasm\ami486_branches.disasm.txt:471: 00008AFF  E82B00            call 0x8b2d
+C:\Temp\trdos\134\analysis\disasm\ami486_cmos_table_callers_context_20261116_02.txt:177: 000085DB  2E8A1EB082        mov bl,[cs:0x82b0]
+C:\Temp\trdos\134\analysis\disasm\ami486_cmos_table_callers_context_20261116_02.txt:181: 000085E6  2E8B36CA82        mov si,[cs:0x82ca]
+C:\Temp\trdos\134\analysis\disasm\ami486_cmos_table_callers_context_20261116_02.txt:183: 000085EE  2E8B36C082        mov si,[cs:0x82c0]
+C:\Temp\trdos\134\analysis\disasm\ami486_cmos_table_routine_83AE_20261116_01.txt:82: 00008485  2E8B36C082        mov si,[cs:0x82c0]
+C:\Temp\trdos\134\analysis\disasm\ami486_cmos_table_routine_83AE_20261116_01.txt:83: 0000848A  2E3B36C282        cmp si,[cs:0x82c2]
+C:\Temp\trdos\134\analysis\disasm\ami486_cmos_table_routine_83AE_20261116_01.txt:104: 000084C2  3B36C282          cmp si,[0x82c2]
+C:\Temp\trdos\134\analysis\disasm\ami486_config_tables_8400_20261116_01.txt:52: 00008485  2E8B36C082        mov si,[cs:0x82c0]
+C:\Temp\trdos\134\analysis\disasm\ami486_config_tables_8400_20261116_01.txt:53: 0000848A  2E3B36C282        cmp si,[cs:0x82c2]
+C:\Temp\trdos\134\analysis\disasm\ami486_config_tables_8400_20261116_01.txt:74: 000084C2  3B36C282          cmp si,[0x82c2]
+C:\Temp\trdos\134\analysis\disasm\ami486_dynamic_table_pointer_refs_20261116_01.txt:2: ========== REFERENCES TO 82B0 ==========
+C:\Temp\trdos\134\analysis\disasm\ami486_dynamic_table_pointer_refs_20261116_01.txt:22: 000085DB  2E8A1EB082        mov bl,[cs:0x82b0]
+C:\Temp\trdos\134\analysis\disasm\ami486_dynamic_table_pointer_refs_20261116_01.txt:26: 000085E6  2E8B36CA82        mov si,[cs:0x82ca]
+C:\Temp\trdos\134\analysis\disasm\ami486_dynamic_table_pointer_refs_20261116_01.txt:28: 000085EE  2E8B36C082        mov si,[cs:0x82c0]
+C:\Temp\trdos\134\analysis\disasm\ami486_dynamic_table_pointer_refs_20261116_01.txt:30: ========== REFERENCES TO 82C0 ==========
+C:\Temp\trdos\134\analysis\disasm\ami486_dynamic_table_pointer_refs_20261116_01.txt:39: 00008382  2E8B1EC082        mov bx,[cs:0x82c0]
+C:\Temp\trdos\134\analysis\disasm\ami486_dynamic_table_pointer_refs_20261116_01.txt:47: 00008485  2E8B36C082        mov si,[cs:0x82c0]
+C:\Temp\trdos\134\analysis\disasm\ami486_dynamic_table_pointer_refs_20261116_01.txt:48: 0000848A  2E3B36C282        cmp si,[cs:0x82c2]
+C:\Temp\trdos\134\analysis\disasm\ami486_dynamic_table_pointer_refs_20261116_01.txt:61: 000085E6  2E8B36CA82        mov si,[cs:0x82ca]
+C:\Temp\trdos\134\analysis\disasm\ami486_dynamic_table_pointer_refs_20261116_01.txt:63: 000085EE  2E8B36C082        mov si,[cs:0x82c0]
+C:\Temp\trdos\134\analysis\disasm\ami486_dynamic_table_pointer_refs_20261116_01.txt:71: ========== REFERENCES TO 82CA ==========
+C:\Temp\trdos\134\analysis\disasm\ami486_dynamic_table_pointer_refs_20261116_01.txt:76: 000085E6  2E8B36CA82        mov si,[cs:0x82ca]
+C:\Temp\trdos\134\analysis\disasm\ami486_dynamic_table_pointer_refs_20261116_01.txt:78: 000085EE  2E8B36C082        mov si,[cs:0x82c0]
+C:\Temp\trdos\134\analysis\disasm\ami486_pointer_init_0C30_0C90_20261116_01.txt:8: 00000C4F  E82B00            call 0xc7d
+C:\Temp\trdos\134\analysis\disasm\ami486_pointer_init_0C30_0C90_20261116_01.txt:19: 00000C6F  A1D282            mov ax,[0x82d2]
+C:\Temp\trdos\134\analysis\disasm\ami486_pointer_init_85D0_8640_20261116_01.txt:6: 000085DB  2E8A1EB082        mov bl,[cs:0x82b0]
+C:\Temp\trdos\134\analysis\disasm\ami486_pointer_init_85D0_8640_20261116_01.txt:10: 000085E6  2E8B36CA82        mov si,[cs:0x82ca]
+C:\Temp\trdos\134\analysis\disasm\ami486_pointer_init_85D0_8640_20261116_01.txt:12: 000085EE  2E8B36C082        mov si,[cs:0x82c0]
+C:\Temp\trdos\134\analysis\disasm\ami486_pointer_refs_82C0_82C2_82C6_20261116_01.txt:2: ===== ADDRESS 82C0 =====
+C:\Temp\trdos\134\analysis\disasm\ami486_pointer_refs_82C0_82C2_82C6_20261116_01.txt:7: ===== ADDRESS 82C2 =====
+C:\Temp\trdos\134\analysis\disasm\ami486_pointer_setup_0C00_20261116_01.txt:22: 00000C4F  E82B00            call 0xc7d
+C:\Temp\trdos\134\analysis\disasm\ami486_pointer_setup_0C00_20261116_01.txt:33: 00000C6F  A1D282            mov ax,[0x82d2]
+C:\Temp\trdos\134\analysis\disasm\ami486_pointer_write_refs_20261116_01.txt:2: ===== MOV BYTE [82B0],imm8 =====
+C:\Temp\trdos\134\analysis\disasm\ami486_pointer_write_refs_20261116_01.txt:4: ===== MOV WORD [82C0],imm16 =====
+C:\Temp\trdos\134\analysis\disasm\ami486_pointer_write_refs_20261116_01.txt:6: ===== MOV [82C0],AX =====
+C:\Temp\trdos\134\analysis\disasm\ami486_pointer_write_refs_20261116_01.txt:8: ===== MOV [82CA],AX =====
+C:\Temp\trdos\134\analysis\disasm\ami486_pointer_write_refs_20261116_01.txt:10: ===== MOV [82C2],AX =====
+C:\Temp\trdos\134\analysis\disasm\ami486_pointer_write_refs_20261116_01.txt:12: ===== MOV [82B0],AL =====

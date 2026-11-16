@@ -1,0 +1,238 @@
+
+========== OFFSET 5713, TARGET 29B0 ==========
+RAW BYTES:
+5707: D8 03 EE 5A 58 8E 06 E8 55 C3 50 52 B0 29 BA D8
+5717: 03 EE 5A 58 C3 A1 9D E1 D3 E8 24 07 3C 04 74 2A
+5727: 77
+
+DISASSEMBLY FROM OFFSET -12:
+00005707  D803              fadd dword [bp+di]
+00005709  EE                out dx,al
+0000570A  5A                pop dx
+0000570B  58                pop ax
+0000570C  8E06E855          mov es,word [0x55e8]
+00005710  C3                ret
+00005711  50                push ax
+00005712  52                push dx
+00005713  B029              mov al,0x29
+00005715  BAD803            mov dx,0x3d8
+00005718  EE                out dx,al
+00005719  5A                pop dx
+0000571A  58                pop ax
+0000571B  C3                ret
+0000571C  A19DE1            mov ax,[0xe19d]
+0000571F  D3E8              shr ax,cl
+
+DISASSEMBLY FROM MATCH:
+00005713  B029              mov al,0x29
+00005715  BAD803            mov dx,0x3d8
+00005718  EE                out dx,al
+00005719  5A                pop dx
+0000571A  58                pop ax
+0000571B  C3                ret
+0000571C  A19DE1            mov ax,[0xe19d]
+0000571F  D3E8              shr ax,cl
+
+========== OFFSET 5DE2, TARGET 29B0 ==========
+RAW BYTES:
+5DD6: E8 DA 32 B0 28 E6 80 B8 07 00 CD 10 B0 29 E6 80
+5DE6: 80 26 10 00 CF B8 01 00 CD 10 B0 2A E6 80 E8 B2
+5DF6: 97
+
+DISASSEMBLY FROM OFFSET -12:
+00005DD6  E8DA32            call 0x90b3
+00005DD9  B028              mov al,0x28
+00005DDB  E680              out byte 0x80,al
+00005DDD  B80700            mov ax,0x7
+00005DE0  CD10              int byte 0x10
+00005DE2  B029              mov al,0x29
+00005DE4  E680              out byte 0x80,al
+00005DE6  80261000CF        and byte [0x10],0xcf
+00005DEB  B80100            mov ax,0x1
+00005DEE  CD10              int byte 0x10
+00005DF0  B02A              mov al,0x2a
+00005DF2  E680              out byte 0x80,al
+00005DF4  E8B297            call 0xf5a9
+00005DF7  0BED              or bp,bp
+00005DF9  7906              jns 0x5e01
+00005DFB  C70672003412      mov word [0x72],0x1234
+
+DISASSEMBLY FROM MATCH:
+00005DE2  B029              mov al,0x29
+00005DE4  E680              out byte 0x80,al
+00005DE6  80261000CF        and byte [0x10],0xcf
+00005DEB  B80100            mov ax,0x1
+00005DEE  CD10              int byte 0x10
+00005DF0  B02A              mov al,0x2a
+00005DF2  E680              out byte 0x80,al
+00005DF4  E8B297            call 0xf5a9
+
+========== OFFSET 6601, TARGET 29B0 ==========
+RAW BYTES:
+65F5: 02 C4 A8 03 74 06 B0 28 3A D0 EB 04 B0 29 3A D0
+6605: 76 08 0A ED 74 02 B0 01 8A D0 59 B4 05 CD 1A EB
+6615: 00
+
+DISASSEMBLY FROM OFFSET -12:
+000065F5  02C4              add al,ah
+000065F7  A803              test al,0x3
+000065F9  7406              jz 0x6601
+000065FB  B028              mov al,0x28
+000065FD  3AD0              cmp dl,al
+000065FF  EB04              jmp 0x6605
+00006601  B029              mov al,0x29
+00006603  3AD0              cmp dl,al
+00006605  7608              jna 0x660f
+00006607  0AED              or ch,ch
+00006609  7402              jz 0x660d
+0000660B  B001              mov al,0x1
+0000660D  8AD0              mov dl,al
+0000660F  59                pop cx
+00006610  B405              mov ah,0x5
+00006612  CD1A              int byte 0x1a
+
+DISASSEMBLY FROM MATCH:
+00006601  B029              mov al,0x29
+00006603  3AD0              cmp dl,al
+00006605  7608              jna 0x660f
+00006607  0AED              or ch,ch
+00006609  7402              jz 0x660d
+0000660B  B001              mov al,0x1
+0000660D  8AD0              mov dl,al
+0000660F  59                pop cx
+
+========== OFFSET EA0F, TARGET 29B0 ==========
+RAW BYTES:
+EA03: 15 00 B0 3A E8 32 0B 8B C7 E8 0B 00 B0 29 E8 28
+EA13: 0B BE 3F EA E9 F3 0A 50 8A C4 E8 05 00 58 E8 01
+EA23: 00
+
+DISASSEMBLY FROM OFFSET -12:
+0000EA03  1500B0            adc ax,0xb000
+0000EA06  3AE8              cmp ch,al
+0000EA08  320B              xor cl,[bp+di]
+0000EA0A  8BC7              mov ax,di
+0000EA0C  E80B00            call 0xea1a
+0000EA0F  B029              mov al,0x29
+0000EA11  E8280B            call 0xf53c
+0000EA14  BE3FEA            mov si,0xea3f
+0000EA17  E9F30A            jmp 0xf50d
+0000EA1A  50                push ax
+0000EA1B  8AC4              mov al,ah
+0000EA1D  E80500            call 0xea25
+0000EA20  58                pop ax
+0000EA21  E80100            call 0xea25
+0000EA24  C3                ret
+0000EA25  50                push ax
+
+DISASSEMBLY FROM MATCH:
+0000EA0F  B029              mov al,0x29
+0000EA11  E8280B            call 0xf53c
+0000EA14  BE3FEA            mov si,0xea3f
+0000EA17  E9F30A            jmp 0xf50d
+0000EA1A  50                push ax
+0000EA1B  8AC4              mov al,ah
+0000EA1D  E80500            call 0xea25
+0000EA20  58                pop ax
+
+========== OFFSET 2CBC, TARGET 29B7 ==========
+RAW BYTES:
+2CB0: B6 00 B7 08 B7 0F B7 17 B7 1C B7 24 B7 29 B7 31
+2CC0: B7 36 B7 3E B7 45 B7 4D B7 52 B7 5A B7 61 B7 56
+2CD0: 57
+
+DISASSEMBLY FROM OFFSET -12:
+00002CB0  B600              mov dh,0x0
+00002CB2  B708              mov bh,0x8
+00002CB4  B70F              mov bh,0xf
+00002CB6  B717              mov bh,0x17
+00002CB8  B71C              mov bh,0x1c
+00002CBA  B724              mov bh,0x24
+00002CBC  B729              mov bh,0x29
+00002CBE  B731              mov bh,0x31
+00002CC0  B736              mov bh,0x36
+00002CC2  B73E              mov bh,0x3e
+00002CC4  B745              mov bh,0x45
+00002CC6  B74D              mov bh,0x4d
+00002CC8  B752              mov bh,0x52
+00002CCA  B75A              mov bh,0x5a
+00002CCC  B761              mov bh,0x61
+00002CCE  B756              mov bh,0x56
+
+DISASSEMBLY FROM MATCH:
+00002CBC  B729              mov bh,0x29
+00002CBE  B731              mov bh,0x31
+00002CC0  B736              mov bh,0x36
+00002CC2  B73E              mov bh,0x3e
+00002CC4  B745              mov bh,0x45
+00002CC6  B74D              mov bh,0x4d
+00002CC8  B752              mov bh,0x52
+00002CCA  B75A              mov bh,0x5a
+
+========== OFFSET 4FDC, TARGET 29BA ==========
+RAW BYTES:
+4FD0: 8B EC 50 A0 A6 E1 A2 9F E1 B8 02 11 BA 29 16 BB
+4FE0: 03 00 E8 A8 07 8D 1E A0 3A B8 15 12 E8 B2 08 8A
+4FF0: 5E
+
+DISASSEMBLY FROM OFFSET -12:
+00004FD0  8BEC              mov bp,sp
+00004FD2  50                push ax
+00004FD3  A0A6E1            mov al,[0xe1a6]
+00004FD6  A29FE1            mov [0xe19f],al
+00004FD9  B80211            mov ax,0x1102
+00004FDC  BA2916            mov dx,0x1629
+00004FDF  BB0300            mov bx,0x3
+00004FE2  E8A807            call 0x578d
+00004FE5  8D1EA03A          lea bx,[0x3aa0]
+00004FE9  B81512            mov ax,0x1215
+00004FEC  E8B208            call 0x58a1
+00004FEF  8A5EFE            mov bl,[bp-0x2]
+00004FF2  2AFF              sub bh,bh
+00004FF4  D1E3              shl bx,0x0
+00004FF6  8B9FEC3B          mov bx,[bx+0x3bec]
+00004FFA  B81513            mov ax,0x1315
+
+DISASSEMBLY FROM MATCH:
+00004FDC  BA2916            mov dx,0x1629
+00004FDF  BB0300            mov bx,0x3
+00004FE2  E8A807            call 0x578d
+00004FE5  8D1EA03A          lea bx,[0x3aa0]
+00004FE9  B81512            mov ax,0x1215
+00004FEC  E8B208            call 0x58a1
+00004FEF  8A5EFE            mov bl,[bp-0x2]
+00004FF2  2AFF              sub bh,bh
+
+========== OFFSET 502B, TARGET 29BA ==========
+RAW BYTES:
+501F: 08 75 EB A0 A2 E1 A2 9F E1 B8 02 11 BA 29 16 E8
+502F: D1 07 A0 82 E1 8B E5 5D C3 8D 1E 28 31 8D 06 0F
+503F: 38
+
+DISASSEMBLY FROM OFFSET -12:
+0000501F  0875EB            or [di-0x15],dh
+00005022  A0A2E1            mov al,[0xe1a2]
+00005025  A29FE1            mov [0xe19f],al
+00005028  B80211            mov ax,0x1102
+0000502B  BA2916            mov dx,0x1629
+0000502E  E8D107            call 0x5802
+00005031  A082E1            mov al,[0xe182]
+00005034  8BE5              mov sp,bp
+00005036  5D                pop bp
+00005037  C3                ret
+00005038  8D1E2831          lea bx,[0x3128]
+0000503C  8D060F38          lea ax,[0x380f]
+00005040  E8FCED            call 0x3e3f
+00005043  C60689E100        mov byte [0xe189],0x0
+00005048  A0A2E1            mov al,[0xe1a2]
+0000504B  A29FE1            mov [0xe19f],al
+
+DISASSEMBLY FROM MATCH:
+0000502B  BA2916            mov dx,0x1629
+0000502E  E8D107            call 0x5802
+00005031  A082E1            mov al,[0xe182]
+00005034  8BE5              mov sp,bp
+00005036  5D                pop bp
+00005037  C3                ret
+00005038  8D1E2831          lea bx,[0x3128]
+0000503C  8D060F38          lea ax,[0x380f]

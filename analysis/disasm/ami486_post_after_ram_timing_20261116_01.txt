@@ -1,0 +1,404 @@
+
+===== CONTINUATION 1FBD-2065 =====
+00001FBD  E81C6E            call 0x8ddc
+00001FC0  B042              mov al,0x42
+00001FC2  E8CFCE            call 0xee94
+00001FC5  2418              and al,0x18
+00001FC7  8AD8              mov bl,al
+00001FC9  B81212            mov ax,0x1212
+00001FCC  E8006E            call 0x8dcf
+00001FCF  24E7              and al,0xe7
+00001FD1  0AC3              or al,bl
+00001FD3  86E0              xchg ah,al
+00001FD5  E8046E            call 0x8ddc
+00001FD8  B048              mov al,0x48
+00001FDA  E8B7CE            call 0xee94
+00001FDD  2488              and al,0x88
+00001FDF  8AD8              mov bl,al
+00001FE1  B81818            mov ax,0x1818
+00001FE4  E8E86D            call 0x8dcf
+00001FE7  2477              and al,0x77
+00001FE9  0AC3              or al,bl
+00001FEB  86E0              xchg ah,al
+00001FED  E8EC6D            call 0x8ddc
+00001FF0  B04A              mov al,0x4a
+00001FF2  E89FCE            call 0xee94
+00001FF5  24C0              and al,0xc0
+00001FF7  8AD8              mov bl,al
+00001FF9  B81A1A            mov ax,0x1a1a
+00001FFC  E8D06D            call 0x8dcf
+00001FFF  243F              and al,0x3f
+00002001  0AC3              or al,bl
+00002003  86E0              xchg ah,al
+00002005  E8D46D            call 0x8ddc
+00002008  B057              mov al,0x57
+0000200A  E887CE            call 0xee94
+0000200D  24C6              and al,0xc6
+0000200F  8AD8              mov bl,al
+00002011  B82727            mov ax,0x2727
+00002014  E8B86D            call 0x8dcf
+00002017  2439              and al,0x39
+00002019  0AC3              or al,bl
+0000201B  86E0              xchg ah,al
+0000201D  E8BC6D            call 0x8ddc
+00002020  B01A              mov al,0x1a
+00002022  E8AA6D            call 0x8dcf
+00002025  24F0              and al,0xf0
+00002027  8AD8              mov bl,al
+00002029  B04A              mov al,0x4a
+0000202B  E866CE            call 0xee94
+0000202E  A801              test al,0x1
+00002030  0F840300          jz 0x2037
+00002034  80CB0F            or bl,0xf
+00002037  B01A              mov al,0x1a
+00002039  8AE3              mov ah,bl
+0000203B  E89E6D            call 0x8ddc
+0000203E  C3                ret
+0000203F  0BE4              or sp,sp
+00002041  C3                ret
+00002042  B803C5            mov ax,0xc503
+00002045  E8946D            call 0x8ddc
+00002048  2EA025B5          mov al,[cs:0xb525]
+0000204C  E8B162            call 0x8300
+0000204F  0F840300          jz 0x2056
+00002053  E8EB03            call 0x2441
+00002056  2EA027B5          mov al,[cs:0xb527]
+0000205A  E8A362            call 0x8300
+0000205D  0F840300          jz 0x2064
+00002061  E8E803            call 0x244c
+00002064  C3                ret
+00002065  E9F3BF            jmp 0xe05b
+00002068  17                pop ss
+00002069  007020            add [bx+si+0x20],dh
+0000206C  0F9300            setnc byte [bx+si]
+0000206F  0000              add [bx+si],al
+00002071  0000              add [bx+si],al
+00002073  0000              add [bx+si],al
+00002075  0000              add [bx+si],al
+00002077  00FF              add bh,bh
+00002079  FF00              inc word [bx+si]
+0000207B  0000              add [bx+si],al
+0000207D  93                xchg ax,bx
+0000207E  8F00              pop word [bx+si]
+00002080  FF                db 0xff
+00002081  FF00              inc word [bx+si]
+00002083  0000              add [bx+si],al
+00002085  93                xchg ax,bx
+00002086  0000              add [bx+si],al
+00002088  0104              add [si],ax
+0000208A  0210              add dl,[bx+si]
+0000208C  40                inc ax
+0000208D  B803C5            mov ax,0xc503
+00002090  BC9620            mov sp,0x2096
+00002093  E9466D            jmp 0x8ddc
+00002096  98                cbw
+00002097  20BE5087          and [bp-0x78b0],bh
+0000209B  B9A487            mov cx,0x87a4
+0000209E  81E95087          sub cx,0x8750
+000020A2  C1E902            shr cx,byte 0x2
+000020A5  2EAD              cs lodsw
+000020A7  2C30              sub al,0x30
+000020A9  8AD8              mov bl,al
+000020AB  3C26              cmp al,0x26
+000020AD  0F850600          jnz 0x20b7
+000020B1  49                dec cx
+000020B2  83C602            add si,0x2
+000020B5  EBEE              jmp 0x20a5
+000020B7  2EAD              cs lodsw
+000020B9  8AC3              mov al,bl
+000020BB  90                nop
+000020BC  BCC220            mov sp,0x20c2
+000020BF  E91A6D            jmp 0x8ddc
+000020C2  C420              les sp,word [bx+si]
+000020C4  E2DF              loop 0x20a5
+000020C6  BCCC20            mov sp,0x20cc
+000020C9  E99ED5            jmp 0xf66a
+000020CC  CE                into
+000020CD  20BB0008          and [bp+di+0x800],bh
+000020D1  90                nop
+000020D2  BCD820            mov sp,0x20d8
+000020D5  E917CE            jmp 0xeeef
+000020D8  DA20              fisub dword [bx+si]
+000020DA  0F20C0            mov eax,cr0
+000020DD  0C01              or al,0x1
+000020DF  0F22C0            mov cr0,eax
+000020E2  FA                cli
+000020E3  2E0F01166820      lgdt word [cs:0x2068]
+000020E9  EB00              jmp 0x20eb
+000020EB  B80800            mov ax,0x8
+000020EE  8EC0              mov es,ax
+000020F0  B81044            mov ax,0x4410
+000020F3  90                nop
+000020F4  BCFA20            mov sp,0x20fa
+000020F7  E9E26C            jmp 0x8ddc
+000020FA  FC                cld
+000020FB  20B2FF26          and [bp+si+0x26ff],dh
+000020FF  66C70600005555AA  mov dword [0x0],0xaaaa5555
+         -AA
+00002108  2666C7060001FFFF  mov dword [es:0x100],0xffffffff
+         -FFFF
+00002112  2666813E00005555  cmp dword [es:0x0],0xaaaa5555
+         -AAAA
+0000211C  0F856700          jnz 0x2187
+00002120  2666C7060000AAAA  mov dword [es:0x0],0x5555aaaa
+         -5555
+0000212A  2666C7060001FFFF  mov dword [es:0x100],0xffffffff
+         -FFFF
+00002134  2666813E0000AAAA  cmp dword [es:0x0],0x5555aaaa
+         -5555
+0000213E  0F854500          jnz 0x2187
+00002142  B200              mov dl,0x0
+00002144  266766813D000080  cmp dword [es:dword 0x800000],0x5555aaaa
+         -00AAAA5555
+00002151  0F843200          jz 0x2187
+00002155  B202              mov dl,0x2
+00002157  2666813E0008AAAA  cmp dword [es:0x800],0x5555aaaa
+         -5555
+00002161  0F842200          jz 0x2187
+00002165  B201              mov dl,0x1
+00002167  2666813E0010AAAA  cmp dword [es:0x1000],0x5555aaaa
+         -5555
+00002171  0F841200          jz 0x2187
+00002175  B203              mov dl,0x3
+00002177  2666813E0020AAAA  cmp dword [es:0x2000],0x5555aaaa
+         -5555
+00002181  0F840200          jz 0x2187
+00002185  B204              mov dl,0x4
+00002187  B6FF              mov dh,0xff
+00002189  266766C705000000  mov dword [es:dword 0x4000000],0xaaaa5555
+         -045555AAAA
+00002196  266766C705000100  mov dword [es:dword 0x4000100],0xffffffff
+         -04FFFFFFFF
+000021A3  266766813D000000  cmp dword [es:dword 0x4000000],0xaaaa5555
+         -045555AAAA
+000021B0  0F857900          jnz 0x222d
+000021B4  266766C705000000  mov dword [es:dword 0x4000000],0x5555aaaa
+         -04AAAA5555
+000021C1  266766C705000100  mov dword [es:dword 0x4000100],0xffffffff
+         -04FFFFFFFF
+000021CE  266766813D000000  cmp dword [es:dword 0x4000000],0x5555aaaa
+         -04AAAA5555
+000021DB  0F854E00          jnz 0x222d
+000021DF  B600              mov dh,0x0
+000021E1  266766813D000080  cmp dword [es:dword 0x4800000],0x5555aaaa
+         -04AAAA5555
+000021EE  0F843B00          jz 0x222d
+000021F2  B602              mov dh,0x2
+000021F4  266766813D000800  cmp dword [es:dword 0x4000800],0x5555aaaa
+         -04AAAA5555
+00002201  0F842800          jz 0x222d
+00002205  B601              mov dh,0x1
+00002207  266766813D001000  cmp dword [es:dword 0x4001000],0x5555aaaa
+         -04AAAA5555
+00002214  0F841500          jz 0x222d
+00002218  B603              mov dh,0x3
+0000221A  266766813D002000  cmp dword [es:dword 0x4002000],0x5555aaaa
+         -04AAAA5555
+00002227  0F840200          jz 0x222d
+0000222B  B604              mov dh,0x4
+0000222D  B81616            mov ax,0x1616
+00002230  BC3622            mov sp,0x2236
+00002233  E9996B            jmp 0x8dcf
+00002236  3822              cmp [bp+si],ah
+00002238  0C30              or al,0x30
+0000223A  86E0              xchg ah,al
+0000223C  BC4222            mov sp,0x2242
+0000223F  E99A6B            jmp 0x8ddc
+00002242  44                inc sp
+00002243  22B81144          and bh,[bx+si+0x4411]
+00002247  90                nop
+00002248  BC4E22            mov sp,0x224e
+0000224B  E98E6B            jmp 0x8ddc
+0000224E  50                push ax
+0000224F  22B3FF26          and dh,[bp+di+0x26ff]
+00002253  66C70600005555AA  mov dword [0x0],0xaaaa5555
+         -AA
+0000225C  2666C7060001FFFF  mov dword [es:0x100],0xffffffff
+         -FFFF
+00002266  2666813E00005555  cmp dword [es:0x0],0xaaaa5555
+         -AAAA
+00002270  0F856700          jnz 0x22db
+00002274  2666C7060000AAAA  mov dword [es:0x0],0x5555aaaa
+         -5555
+0000227E  2666C7060001FFFF  mov dword [es:0x100],0xffffffff
+         -FFFF
+00002288  2666813E0000AAAA  cmp dword [es:0x0],0x5555aaaa
+         -5555
+00002292  0F854500          jnz 0x22db
+00002296  B300              mov bl,0x0
+00002298  266766813D000080  cmp dword [es:dword 0x800000],0x5555aaaa
+         -00AAAA5555
+000022A5  0F843200          jz 0x22db
+000022A9  B302              mov bl,0x2
+000022AB  2666813E0008AAAA  cmp dword [es:0x800],0x5555aaaa
+         -5555
+000022B5  0F842200          jz 0x22db
+000022B9  B301              mov bl,0x1
+000022BB  2666813E0010AAAA  cmp dword [es:0x1000],0x5555aaaa
+         -5555
+000022C5  0F841200          jz 0x22db
+000022C9  B303              mov bl,0x3
+000022CB  2666813E0020AAAA  cmp dword [es:0x2000],0x5555aaaa
+         -5555
+000022D5  0F840200          jz 0x22db
+000022D9  B304              mov bl,0x4
+000022DB  B7FF              mov bh,0xff
+000022DD  266766C705000000  mov dword [es:dword 0x4000000],0xaaaa5555
+         -045555AAAA
+000022EA  266766C705000100  mov dword [es:dword 0x4000100],0xffffffff
+         -04FFFFFFFF
+000022F7  266766813D000000  cmp dword [es:dword 0x4000000],0xaaaa5555
+         -045555AAAA
+00002304  0F857900          jnz 0x2381
+00002308  266766C705000000  mov dword [es:dword 0x4000000],0x5555aaaa
+         -04AAAA5555
+00002315  266766C705000100  mov dword [es:dword 0x4000100],0xffffffff
+         -04FFFFFFFF
+00002322  266766813D000000  cmp dword [es:dword 0x4000000],0x5555aaaa
+         -04AAAA5555
+0000232F  0F854E00          jnz 0x2381
+00002333  B700              mov bh,0x0
+00002335  266766813D000080  cmp dword [es:dword 0x4800000],0x5555aaaa
+         -04AAAA5555
+00002342  0F843B00          jz 0x2381
+00002346  B702              mov bh,0x2
+00002348  266766813D000800  cmp dword [es:dword 0x4000800],0x5555aaaa
+         -04AAAA5555
+00002355  0F842800          jz 0x2381
+00002359  B701              mov bh,0x1
+0000235B  266766813D001000  cmp dword [es:dword 0x4001000],0x5555aaaa
+         -04AAAA5555
+00002368  0F841500          jz 0x2381
+0000236C  B703              mov bh,0x3
+0000236E  266766813D002000  cmp dword [es:dword 0x4002000],0x5555aaaa
+         -04AAAA5555
+0000237B  0F840200          jz 0x2381
+0000237F  B704              mov bh,0x4
+00002381  81E20F0F          and dx,0xf0f
+00002385  8AE6              mov ah,dh
+00002387  C0E404            shl ah,byte 0x4
+0000238A  0AE2              or ah,dl
+0000238C  B010              mov al,0x10
+0000238E  BC9423            mov sp,0x2394
+00002391  E9486A            jmp 0x8ddc
+00002394  96                xchg ax,si
+00002395  2381E30F          and ax,[bx+di+0xfe3]
+00002399  0F8AE7C0          jpe 0xe484
+0000239D  E404              in al,byte 0x4
+0000239F  0AE3              or ah,bl
+000023A1  B011              mov al,0x11
+000023A3  90                nop
+000023A4  BCAA23            mov sp,0x23aa
+000023A7  E9326A            jmp 0x8ddc
+000023AA  AC                lodsb
+000023AB  23B81600          and di,[bx+si+0x16]
+000023AF  90                nop
+000023B0  BCB623            mov sp,0x23b6
+000023B3  E9266A            jmp 0x8ddc
+000023B6  B823B8            mov ax,0xb823
+000023B9  1000              adc [bx+si],al
+000023BB  8EC0              mov es,ax
+000023BD  0F20C0            mov eax,cr0
+000023C0  24FE              and al,0xfe
+000023C2  0F22C0            mov cr0,eax
+000023C5  EB00              jmp 0x23c7
+000023C7  90                nop
+000023C8  BCCE23            mov sp,0x23ce
+000023CB  E9A0D2            jmp 0xf66e
+000023CE  D023              shl byte [bp+di],0x0
+000023D0  BB0004            mov bx,0x400
+000023D3  90                nop
+000023D4  BCDA23            mov sp,0x23da
+000023D7  E95331            jmp 0x552d
+000023DA  DC23              fsub qword [bp+di]
+000023DC  7406              jz 0x23e4
+000023DE  BD0300            mov bp,0x3
+000023E1  E9C1D0            jmp 0xf4a5
+000023E4  B83000            mov ax,0x30
+000023E7  8ED0              mov ss,ax
+000023E9  BC0001            mov sp,0x100
+000023EC  E81B00            call 0x240a
+000023EF  E8A300            call 0x2495
+000023F2  E8F805            call 0x29ed
+000023F5  7406              jz 0x23fd
+000023F7  E8186B            call 0x8f12
+000023FA  E83A01            call 0x2537
+000023FD  2BC0              sub ax,ax
+000023FF  8ED8              mov ds,ax
+00002401  8EC0              mov es,ax
+00002403  8CC8              mov ax,cs
+00002405  8ED0              mov ss,ax
+00002407  E9D2B5            jmp 0xd9dc
+0000240A  BB00F0            mov bx,0xf000
+0000240D  B2C0              mov dl,0xc0
+0000240F  B90080            mov cx,0x8000
+00002412  EB43              jmp 0x2457
+00002414  90                nop
+00002415  BB00C0            mov bx,0xc000
+00002418  B90040            mov cx,0x4000
+0000241B  B201              mov dl,0x1
+0000241D  EB38              jmp 0x2457
+0000241F  90                nop
+00002420  BB00C8            mov bx,0xc800
+00002423  B90040            mov cx,0x4000
+00002426  B202              mov dl,0x2
+00002428  EB2D              jmp 0x2457
+0000242A  90                nop
+0000242B  BB00D0            mov bx,0xd000
+0000242E  B90040            mov cx,0x4000
+00002431  B204              mov dl,0x4
+00002433  EB22              jmp 0x2457
+00002435  90                nop
+00002436  BB00D8            mov bx,0xd800
+00002439  B90040            mov cx,0x4000
+0000243C  B208              mov dl,0x8
+0000243E  EB17              jmp 0x2457
+00002440  90                nop
+00002441  BB00E0            mov bx,0xe000
+00002444  B90040            mov cx,0x4000
+00002447  B210              mov dl,0x10
+00002449  EB0C              jmp 0x2457
+0000244B  90                nop
+0000244C  BB00C8            mov bx,0xc800
+0000244F  B90040            mov cx,0x4000
+00002452  B220              mov dl,0x20
+00002454  EB01              jmp 0x2457
+00002456  90                nop
+00002457  06                push es
+00002458  1E                push ds
+00002459  B81313            mov ax,0x1313
+0000245C  E87069            call 0x8dcf
+0000245F  0AC2              or al,dl
+00002461  86E0              xchg ah,al
+00002463  E87669            call 0x8ddc
+00002466  B81414            mov ax,0x1414
+00002469  E86369            call 0x8dcf
+0000246C  24FC              and al,0xfc
+0000246E  0C02              or al,0x2
+00002470  86E0              xchg ah,al
+00002472  E86769            call 0x8ddc
+00002475  8BC3              mov ax,bx
+00002477  8ED8              mov ds,ax
+00002479  8EC0              mov es,ax
+0000247B  33F6              xor si,si
+0000247D  33FF              xor di,di
+0000247F  F3A5              rep movsw
+00002481  B81414            mov ax,0x1414
+00002484  E84869            call 0x8dcf
+00002487  86C4              xchg al,ah
+00002489  80E4FD            and ah,0xfd
+0000248C  80CC01            or ah,0x1
+0000248F  E84A69            call 0x8ddc
+00002492  1F                pop ds
+00002493  07                pop es
+00002494  C3                ret
+00002495  B81212            mov ax,0x1212
+00002498  E83469            call 0x8dcf
+0000249B  24FB              and al,0xfb
+0000249D  86E0              xchg ah,al
+0000249F  E83A69            call 0x8ddc
+000024A2  B042              mov al,0x42
+000024A4  E8EDC9            call 0xee94
+000024A7  A804              test al,0x4
+
+===== REFERENCES TO 1500 =====

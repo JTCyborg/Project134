@@ -1,0 +1,96 @@
+00000C30  00741F            add [si+0x1f],dh
+00000C33  C70691E1F9C5      mov word [0xe191],0xc5f9
+00000C39  C70693E1F9C5      mov word [0xe193],0xc5f9
+00000C3F  A19282            mov ax,[0x8292]
+00000C42  A397E1            mov [0xe197],ax
+00000C45  C70695E1B2B7      mov word [0xe195],0xb7b2
+00000C4B  8D1E8A30          lea bx,[0x308a]
+00000C4F  E82B00            call 0xc7d
+00000C52  C3                ret
+00000C53  A1C682            mov ax,[0x82c6]
+00000C56  A391E1            mov [0xe191],ax
+00000C59  8B0EC882          mov cx,[0x82c8]
+00000C5D  890E93E1          mov [0xe193],cx
+00000C61  2BC8              sub cx,ax
+00000C63  F7C1E0FF          test cx,0xffe0
+00000C67  7413              jz 0xc7c
+00000C69  A1BC82            mov ax,[0x82bc]
+00000C6C  A397E1            mov [0xe197],ax
+00000C6F  A1D282            mov ax,[0x82d2]
+00000C72  A395E1            mov [0xe195],ax
+00000C75  8B1ECE82          mov bx,[0x82ce]
+00000C79  E80100            call 0xc7d
+00000C7C  C3                ret
+00000C7D  55                push bp
+00000C7E  8BEC              mov bp,sp
+00000C80  53                push bx
+00000C81  E8C954            call 0x614d
+00000C84  A08EE1            mov al,[0xe18e]
+00000C87  A28DE1            mov [0xe18d],al
+00000C8A  3C24              cmp al,0x24
+00000C8C  7605              jna 0xc93
+00000C8E  C6068DE124        mov byte [0xe18d],0x24
+00000C93  C6068CE100        mov byte [0xe18c],0x0
+00000C98  C60685E100        mov byte [0xe185],0x0
+00000C9D  8B5EFE            mov bx,[bp-0x2]
+00000CA0  8D066536          lea ax,[0x3665]
+00000CA4  E89831            call 0x3e3f
+00000CA7  B80016            mov ax,0x1600
+00000CAA  B250              mov dl,0x50
+00000CAC  BB1720            mov bx,0x2017
+00000CAF  E8B04B            call 0x5862
+00000CB2  B80017            mov ax,0x1700
+00000CB5  B250              mov dl,0x50
+00000CB7  BB1720            mov bx,0x2017
+00000CBA  E8A54B            call 0x5862
+00000CBD  8D1E2436          lea bx,[0x3624]
+00000CC1  B82817            mov ax,0x1728
+00000CC4  E8D231            call 0x3e99
+00000CC7  B80016            mov ax,0x1600
+00000CCA  BA4F18            mov dx,0x184f
+00000CCD  E8514B            call 0x5821
+00000CD0  B82703            mov ax,0x327
+00000CD3  B214              mov dl,0x14
+00000CD5  BB8B40            mov bx,0x408b
+00000CD8  E89F4B            call 0x587a
+00000CDB  C6068BE100        mov byte [0xe18b],0x0
+00000CE0  803E8BE102        cmp byte [0xe18b],0x2
+00000CE5  74B6              jz 0xc9d
+00000CE7  803E8BE100        cmp byte [0xe18b],0x0
+00000CEC  7546              jnz 0xd34
+00000CEE  A08CE1            mov al,[0xe18c]
+00000CF1  A28AE1            mov [0xe18a],al
+00000CF4  A085E1            mov al,[0xe185]
+00000CF7  A289E1            mov [0xe189],al
+00000CFA  28068CE1          sub [0xe18c],al
+00000CFE  C60685E100        mov byte [0xe185],0x0
+00000D03  E8E352            call 0x5fe9
+00000D06  EB0D              jmp 0xd15
+00000D08  A0A4E1            mov al,[0xe1a4]
+00000D0B  E86E01            call 0xe7c
+00000D0E  FE0685E1          inc byte [0xe185]
+00000D12  E8F352            call 0x6008
+00000D15  A085E1            mov al,[0xe185]
+00000D18  98                cbw
+00000D19  8A0E8DE1          mov cl,[0xe18d]
+00000D1D  2AED              sub ch,ch
+00000D1F  3BC1              cmp ax,cx
+00000D21  7CE5              jl 0xd08
+00000D23  A089E1            mov al,[0xe189]
+00000D26  A285E1            mov [0xe185],al
+00000D29  A08AE1            mov al,[0xe18a]
+00000D2C  A28CE1            mov [0xe18c],al
+00000D2F  C6068BE101        mov byte [0xe18b],0x1
+00000D34  E8B252            call 0x5fe9
+00000D37  A0A5E1            mov al,[0xe1a5]
+00000D3A  E83F01            call 0xe7c
+00000D3D  E8C24B            call 0x5902
+00000D40  A382E1            mov [0xe182],ax
+00000D43  A0A4E1            mov al,[0xe1a4]
+00000D46  E83301            call 0xe7c
+00000D49  A182E1            mov ax,[0xe182]
+00000D4C  2D1B00            sub ax,0x1b
+00000D4F  7503              jnz 0xd54
+00000D51  E9C100            jmp 0xe15
+00000D54  2D2001            sub ax,0x120
+00000D57  7503              jnz 0xd5c

@@ -1,0 +1,160 @@
+00008400  2EF606808240      test byte [cs:0x8280],0x40
+00008406  7503              jnz 0x840b
+00008408  E90255            jmp 0xd90d
+0000840B  B08E              mov al,0x8e
+0000840D  90                nop
+0000840E  BC1484            mov sp,0x8414
+00008411  E9806A            jmp 0xee94
+00008414  16                push ss
+00008415  84A8C074          test [bx+si+0x74c0],ch
+00008419  EE                out dx,al
+0000841A  83E5C7            and bp,0xffffffffffffffc7
+0000841D  B08E              mov al,0x8e
+0000841F  B97200            mov cx,0x72
+00008422  32E4              xor ah,ah
+00008424  BC2A84            mov sp,0x842a
+00008427  E9736A            jmp 0xee9d
+0000842A  2C84              sub al,0x84
+0000842C  FEC0              inc al
+0000842E  E2F4              loop 0x8424
+00008430  B08E              mov al,0x8e
+00008432  B93200            mov cx,0x32
+00008435  BE0E82            mov si,0x820e
+00008438  8AE0              mov ah,al
+0000843A  2EAC              cs lodsb
+0000843C  86E0              xchg ah,al
+0000843E  BC4484            mov sp,0x8444
+00008441  E9596A            jmp 0xee9d
+00008444  46                inc si
+00008445  84FE              test dh,bh
+00008447  C0E2EE            shl dl,byte 0xee
+0000844A  2E8B0E8688        mov cx,[cs:0x8886]
+0000844F  E334              jcxz 0x8485
+00008451  BE3C87            mov si,0x873c
+00008454  2E8A04            mov al,[cs:si]
+00008457  0C80              or al,0x80
+00008459  90                nop
+0000845A  BC6084            mov sp,0x8460
+0000845D  E9346A            jmp 0xee94
+00008460  62842E8A          bound ax,[si-0x75d2]
+00008464  64022E8A54        add ch,[fs:0x548a]
+00008469  0122              add [bp+si],sp
+0000846B  E2F6              loop 0x8463
+0000846D  D222              shl byte [bp+si],cl
+0000846F  C20AE0            ret word 0xe00a
+00008472  2E8A04            mov al,[cs:si]
+00008475  0C80              or al,0x80
+00008477  90                nop
+00008478  BC7E84            mov sp,0x847e
+0000847B  E91F6A            jmp 0xee9d
+0000847E  808483C604        add byte [si-0x397d],0x4
+00008483  E2CF              loop 0x8454
+00008485  2E8B36C082        mov si,[cs:0x82c0]
+0000848A  2E3B36C282        cmp si,[cs:0x82c2]
+0000848F  7202              jc 0x8493
+00008491  EB35              jmp 0x84c8
+00008493  2E8A04            mov al,[cs:si]
+00008496  0C80              or al,0x80
+00008498  BC9E84            mov sp,0x849e
+0000849B  E9F669            jmp 0xee94
+0000849E  A0842E            mov al,[0x2e84]
+000084A1  8A6402            mov ah,[si+0x2]
+000084A4  2E8A5401          mov dl,[cs:si+0x1]
+000084A8  22E2              and ah,dl
+000084AA  F6D2              not dl
+000084AC  22C2              and al,dl
+000084AE  0AE0              or ah,al
+000084B0  2E8A04            mov al,[cs:si]
+000084B3  0C80              or al,0x80
+000084B5  90                nop
+000084B6  BCBC84            mov sp,0x84bc
+000084B9  E9E169            jmp 0xee9d
+000084BC  BE8483            mov si,0x8384
+000084BF  C6042E            mov byte [si],0x2e
+000084C2  3B36C282          cmp si,[0x82c2]
+000084C6  72CB              jc 0x8493
+000084C8  E94254            jmp 0xd90d
+000084CB  FA                cli
+000084CC  56                push si
+000084CD  57                push di
+000084CE  1E                push ds
+000084CF  07                pop es
+000084D0  BF10E0            mov di,0xe010
+000084D3  B08E              mov al,0x8e
+000084D5  E8BC69            call 0xee94
+000084D8  A8C0              test al,0xc0
+000084DA  7517              jnz 0x84f3
+000084DC  2E8B0EB382        mov cx,[cs:0x82b3]
+000084E1  81E98F00          sub cx,0x8f
+000084E5  B090              mov al,0x90
+000084E7  50                push ax
+000084E8  E8A969            call 0xee94
+000084EB  AA                stosb
+000084EC  58                pop ax
+000084ED  FEC0              inc al
+000084EF  E2F6              loop 0x84e7
+000084F1  EB18              jmp 0x850b
+000084F3  B93000            mov cx,0x30
+000084F6  BE1082            mov si,0x8210
+000084F9  2EF3A4            cs rep movsb
+000084FC  B001              mov al,0x1
+000084FE  E8B200            call 0x85b3
+00008501  B001              mov al,0x1
+00008503  E8C500            call 0x85cb
+00008506  B001              mov al,0x1
+00008508  E8CB00            call 0x85d6
+0000850B  E82785            call 0xa35
+0000850E  E87E95            call 0x1a8f
+00008511  BE00E0            mov si,0xe000
+00008514  BF80E0            mov di,0xe080
+00008517  B98000            mov cx,0x80
+0000851A  F3A4              rep movsb
+0000851C  8026AAE1FE        and byte [0xe1aa],0xfe
+00008521  E8C462            call 0xe7e8
+00008524  7505              jnz 0x852b
+00008526  800EAAE101        or byte [0xe1aa],0x1
+0000852B  5F                pop di
+0000852C  5E                pop si
+0000852D  FB                sti
+0000852E  C3                ret
+0000852F  E85E95            call 0x1a90
+00008532  9C                pushf
+00008533  E81900            call 0x854f
+00008536  9D                popf
+00008537  740D              jz 0x8546
+00008539  33C0              xor ax,ax
+0000853B  8ED8              mov ds,ax
+0000853D  C70672040000      mov word [0x472],0x0
+00008543  E9155B            jmp 0xe05b
+00008546  C3                ret
+00008547  33C0              xor ax,ax
+00008549  AC                lodsb
+0000854A  03D8              add bx,ax
+0000854C  E2FB              loop 0x8549
+0000854E  C3                ret
+0000854F  56                push si
+00008550  33DB              xor bx,bx
+00008552  B91E00            mov cx,0x1e
+00008555  BE10E0            mov si,0xe010
+00008558  E8ECFF            call 0x8547
+0000855B  86DF              xchg bl,bh
+0000855D  891E2EE0          mov [0xe02e],bx
+00008561  33DB              xor bx,bx
+00008563  BE34E0            mov si,0xe034
+00008566  B90A00            mov cx,0xa
+00008569  E8DBFF            call 0x8547
+0000856C  BE40E0            mov si,0xe040
+0000856F  2E8B0EB382        mov cx,[cs:0x82b3]
+00008574  81E9BF00          sub cx,0xbf
+00008578  E303              jcxz 0x857d
+0000857A  E8CAFF            call 0x8547
+0000857D  86FB              xchg bh,bl
+0000857F  891E3EE0          mov [0xe03e],bx
+00008583  FA                cli
+00008584  BE0EE0            mov si,0xe00e
+00008587  C7040000          mov word [si],0x0
+0000858B  2E8B0EB382        mov cx,[cs:0x82b3]
+00008590  81E98D00          sub cx,0x8d
+00008594  B08E              mov al,0x8e
+00008596  81FE32E0          cmp si,0xe032
+0000859A  7508              jnz 0x85a4

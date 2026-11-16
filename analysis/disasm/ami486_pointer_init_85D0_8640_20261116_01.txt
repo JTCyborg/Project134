@@ -1,0 +1,112 @@
+000085D0  88BE8088          mov [bp-0x7780],bh
+000085D4  EB28              jmp 0x85fe
+000085D6  56                push si
+000085D7  33DB              xor bx,bx
+000085D9  33C9              xor cx,cx
+000085DB  2E8A1EB082        mov bl,[cs:0x82b0]
+000085E0  FECB              dec bl
+000085E2  780A              js 0x85ee
+000085E4  D1E3              shl bx,0x0
+000085E6  2E8B36CA82        mov si,[cs:0x82ca]
+000085EB  2E8B08            mov cx,[cs:bx+si]
+000085EE  2E8B36C082        mov si,[cs:0x82c0]
+000085F3  EB09              jmp 0x85fe
+000085F5  56                push si
+000085F6  2E8B0E8088        mov cx,[cs:0x8880]
+000085FB  BE3C87            mov si,0x873c
+000085FE  E32E              jcxz 0x862e
+00008600  32FF              xor bh,bh
+00008602  50                push ax
+00008603  2E8A1C            mov bl,[cs:si]
+00008606  FEC8              dec al
+00008608  8A8780E0          mov al,[bx-0x1f80]
+0000860C  780A              js 0x8618
+0000860E  2E8A4402          mov al,[cs:si+0x2]
+00008612  7404              jz 0x8618
+00008614  2E8A4403          mov al,[cs:si+0x3]
+00008618  2E8A5401          mov dl,[cs:si+0x1]
+0000861C  22C2              and al,dl
+0000861E  F6D2              not dl
+00008620  209700E0          and [bx-0x2000],dl
+00008624  088700E0          or [bx-0x2000],al
+00008628  83C604            add si,0x4
+0000862B  58                pop ax
+0000862C  E2D4              loop 0x8602
+0000862E  5E                pop si
+0000862F  C3                ret
+00008630  B08E              mov al,0x8e
+00008632  E85F68            call 0xee94
+00008635  A8C0              test al,0xc0
+00008637  7509              jnz 0x8642
+00008639  B090              mov al,0x90
+0000863B  E85668            call 0xee94
+0000863E  0AC0              or al,al
+00008640  7406              jz 0x8648
+00008642  2EF606808204      test byte [cs:0x8280],0x4
+00008648  C3                ret
+00008649  B08E              mov al,0x8e
+0000864B  E84668            call 0xee94
+0000864E  A8C0              test al,0xc0
+00008650  7509              jnz 0x865b
+00008652  B094              mov al,0x94
+00008654  E83D68            call 0xee94
+00008657  A808              test al,0x8
+00008659  7406              jz 0x8661
+0000865B  2EF606808202      test byte [cs:0x8280],0x2
+00008661  C3                ret
+00008662  B08E              mov al,0x8e
+00008664  E82D68            call 0xee94
+00008667  A8C0              test al,0xc0
+00008669  7509              jnz 0x8674
+0000866B  B094              mov al,0x94
+0000866D  E82468            call 0xee94
+00008670  A804              test al,0x4
+00008672  7406              jz 0x867a
+00008674  2EF606808201      test byte [cs:0x8280],0x1
+0000867A  C3                ret
+0000867B  2EF606808208      test byte [cs:0x8280],0x8
+00008681  7407              jz 0x868a
+00008683  2EA011B5          mov al,[cs:0xb511]
+00008687  E876FC            call 0x8300
+0000868A  C3                ret
+0000868B  8BD0              mov dx,ax
+0000868D  BF9386            mov di,0x8693
+00008690  E95F91            jmp 0x17f2
+00008693  0BDB              or bx,bx
+00008695  743D              jz 0x86d4
+00008697  B8AEAF            mov ax,0xafae
+0000869A  BCA086            mov sp,0x86a0
+0000869D  E9F467            jmp 0xee94
+000086A0  A28686            mov [0x8686],al
+000086A3  C4BCAA86          les di,word [si-0x7956]
+000086A7  E9EA67            jmp 0xee94
+000086AA  AC                lodsb
+000086AB  863B              xchg bh,[bp+di]
+000086AD  C3                ret
+000086AE  7524              jnz 0x86d4
+000086B0  BFB686            mov di,0x86b6
+000086B3  E95991            jmp 0x180f
+000086B6  0BDB              or bx,bx
+000086B8  741A              jz 0x86d4
+000086BA  B8BEBF            mov ax,0xbfbe
+000086BD  90                nop
+000086BE  BCC486            mov sp,0x86c4
+000086C1  E9D067            jmp 0xee94
+000086C4  C68686C4BC        mov byte [bp-0x3b7a],0xbc
+000086C9  CE                into
+000086CA  86E9              xchg ch,cl
+000086CC  C6                db 0xc6
+000086CD  67D0863BC37402    rol byte [esi+0x274c33b],0x0
+000086D4  0BE4              or sp,sp
+000086D6  8BC2              mov ax,dx
+000086D8  E90F52            jmp 0xd8ea
+000086DB  50                push ax
+000086DC  33FF              xor di,di
+000086DE  8CC8              mov ax,cs
+000086E0  3D00F0            cmp ax,0xf000
+000086E3  7509              jnz 0x86ee
+000086E5  F606AAE101        test byte [0xe1aa],0x1
+000086EA  7502              jnz 0x86ee
+000086EC  F7D7              not di
+000086EE  2EA02CB5          mov al,[cs:0xb52c]
+000086F2  E8B9FC            call 0x83ae

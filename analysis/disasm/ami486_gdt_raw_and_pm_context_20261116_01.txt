@@ -1,0 +1,242 @@
+
+===== GDT RAW F2646 (64 bytes) =====
+000F2646: 00 00 00 00 00 00 00 00
+000F264E: 40 00 46 26 0F 00 00 00
+000F2656: FF FF 00 00 00 93 00 00
+000F265E: FF FF 00 80 83 93 00 03
+000F2666: FF FF 00 00 A3 93 00 03
+000F266E: FF FF 00 00 82 93 00 03
+000F2676: FF FF 00 00 84 93 00 03
+000F267E: FF FF 00 00 00 93 8F 00
+
+===== PM CALLERS / RETURN REGION =====
+
+--- 2600 ---
+00002600  90                nop
+00002601  1E                push ds
+00002602  BB4000            mov bx,0x40
+00002605  8EDB              mov ds,bx
+00002607  A0E200            mov al,[0xe2]
+0000260A  1F                pop ds
+0000260B  80E400            and ah,0x0
+0000260E  B114              mov cl,0x14
+00002610  F6E9              imul cl
+00002612  EB14              jmp 0x2628
+00002614  90                nop
+00002615  1E                push ds
+00002616  BB4000            mov bx,0x40
+00002619  8EDB              mov ds,bx
+0000261B  A0E200            mov al,[0xe2]
+0000261E  1F                pop ds
+0000261F  80E400            and ah,0x0
+00002622  0406              add al,0x6
+00002624  B114              mov cl,0x14
+00002626  F6E9              imul cl
+00002628  C3                ret
+00002629  8CDA              mov dx,ds
+0000262B  33DB              xor bx,bx
+0000262D  2BF6              sub si,si
+0000262F  8EDB              mov ds,bx
+00002631  B90080            mov cx,0x8000
+00002634  F3AD              rep lodsw
+00002636  2BF6              sub si,si
+00002638  81FB0080          cmp bx,0x8000
+0000263C  81C30010          add bx,0x1000
+00002640  75ED              jnz 0x262f
+00002642  8EDA              mov ds,dx
+00002644  FF                db 0xff
+00002645  E700              out byte 0x0,ax
+00002647  0000              add [bx+si],al
+00002649  0000              add [bx+si],al
+0000264B  0000              add [bx+si],al
+0000264D  004000            add [bx+si+0x0],al
+00002650  46                inc si
+00002651  260F0000          sldt word [es:bx+si]
+00002655  00FF              add bh,bh
+00002657  FF00              inc word [bx+si]
+00002659  0000              add [bx+si],al
+0000265B  93                xchg ax,bx
+0000265C  0000              add [bx+si],al
+0000265E  FF                db 0xff
+0000265F  FF00              inc word [bx+si]
+00002661  8083930003        add byte [bp+di+0x93],0x3
+00002666  FF                db 0xff
+00002667  FF00              inc word [bx+si]
+00002669  00A39300          add [bp+di+0x93],ah
+0000266D  03FF              add di,di
+0000266F  FF00              inc word [bx+si]
+00002671  00829300          add [bp+si+0x93],al
+00002675  03FF              add di,di
+00002677  FF00              inc word [bx+si]
+00002679  00849300          add [si+0x93],al
+0000267D  03FF              add di,di
+0000267F  FF00              inc word [bx+si]
+00002681  0000              add [bx+si],al
+00002683  93                xchg ax,bx
+00002684  8F00              pop word [bx+si]
+00002686  66B900000400      mov ecx,0x40000
+0000268C  66BE00001000      mov esi,0x100000
+
+--- 26A0 ---
+000026A0  EB00              jmp 0x26a2
+000026A2  B83800            mov ax,0x38
+000026A5  8EC0              mov es,ax
+000026A7  FC                cld
+000026A8  F3676626AD        es a32 rep lodsd
+000026AD  B81000            mov ax,0x10
+000026B0  8EC0              mov es,ax
+000026B2  0F20C0            mov eax,cr0
+000026B5  24FE              and al,0xfe
+000026B7  0F22C0            mov cr0,eax
+000026BA  EB00              jmp 0x26bc
+000026BC  FF                db 0xff
+000026BD  E7B8              out byte 0xb8,ax
+000026BF  00408E            add [bx+si-0x72],al
+000026C2  D833              fdiv dword [bp+di]
+000026C4  F6B90080          idiv byte [bx+di-0x8000]
+000026C8  F3AD              rep lodsw
+000026CA  8CD8              mov ax,ds
+000026CC  80C408            add ah,0x8
+000026CF  80FCA0            cmp ah,0xa0
+000026D2  75ED              jnz 0x26c1
+000026D4  FF                db 0xff
+000026D5  E71E              out byte 0x1e,ax
+000026D7  56                push si
+000026D8  33C0              xor ax,ax
+000026DA  B80007            mov ax,0x700
+000026DD  8ED8              mov ds,ax
+000026DF  BB0200            mov bx,0x2
+000026E2  33F6              xor si,si
+000026E4  B90080            mov cx,0x8000
+000026E7  F3AD              rep lodsw
+000026E9  8CD8              mov ax,ds
+000026EB  050010            add ax,0x1000
+000026EE  8ED8              mov ds,ax
+000026F0  4B                dec bx
+000026F1  80FB00            cmp bl,0x0
+000026F4  75EC              jnz 0x26e2
+000026F6  5E                pop si
+000026F7  1F                pop ds
+000026F8  C3                ret
+000026F9  FA                cli
+000026FA  2EA018B5          mov al,[cs:0xb518]
+000026FE  E8FF5B            call 0x8300
+00002701  7503              jnz 0x2706
+00002703  E94901            jmp 0x284f
+00002706  1E                push ds
+00002707  06                push es
+00002708  FF366700          push word [0x67]
+0000270C  FF366900          push word [0x69]
+00002710  89266700          mov [0x67],sp
+00002714  8C166900          mov word [0x69],ss
+00002718  8CC8              mov ax,cs
+0000271A  8ED0              mov ss,ax
+0000271C  BF2227            mov di,0x2722
+0000271F  E99065            jmp 0x8cb2
+00002722  B81919            mov ax,0x1919
+00002725  BF2B27            mov di,0x272b
+00002728  E9C266            jmp 0x8ded
+0000272B  0C03              or al,0x3
+0000272D  86E0              xchg ah,al
+0000272F  BF3527            mov di,0x2735
+00002732  E9C666            jmp 0x8dfb
+00002735  B81818            mov ax,0x1818
+00002738  BF3E27            mov di,0x273e
+
+--- 2735 ---
+00002735  B81818            mov ax,0x1818
+00002738  BF3E27            mov di,0x273e
+0000273B  E9AF66            jmp 0x8ded
+0000273E  0C02              or al,0x2
+00002740  86E0              xchg ah,al
+00002742  BF4827            mov di,0x2748
+00002745  E9B366            jmp 0x8dfb
+00002748  BF4E27            mov di,0x274e
+0000274B  E938FF            jmp 0x2686
+0000274E  B81919            mov ax,0x1919
+00002751  BF5727            mov di,0x2757
+00002754  E99666            jmp 0x8ded
+00002757  24FC              and al,0xfc
+00002759  86E0              xchg ah,al
+0000275B  BF6127            mov di,0x2761
+0000275E  E99A66            jmp 0x8dfb
+00002761  B80010            mov ax,0x1000
+00002764  8ED8              mov ds,ax
+00002766  B90200            mov cx,0x2
+00002769  6633F6            xor esi,esi
+0000276C  66B8AA55AA55      mov eax,0x55aa55aa
+00002772  67668B1E          mov ebx,[esi]
+00002776  67668906          mov [esi],eax
+0000277A  EB00              jmp 0x277c
+0000277C  67668B5E04        mov ebx,[esi+0x4]
+00002781  6766894604        mov [esi+0x4],eax
+00002786  EB00              jmp 0x2788
+00002788  67668B9E00080000  mov ebx,[esi+0x800]
+00002790  67668B9E00100000  mov ebx,[esi+0x1000]
+00002798  67668B9E00180000  mov ebx,[esi+0x1800]
+000027A0  67668B9E00200000  mov ebx,[esi+0x2000]
+000027A8  67663B06          cmp eax,[esi]
+000027AC  0F850600          jnz 0x27b6
+000027B0  6683C604          add esi,0x4
+000027B4  E2BC              loop 0x2772
+000027B6  0BC9              or cx,cx
+000027B8  0F851400          jnz 0x27d0
+000027BC  B80010            mov ax,0x1000
+000027BF  8ED8              mov ds,ax
+000027C1  8EC0              mov es,ax
+000027C3  90                nop
+000027C4  BCCA27            mov sp,0x27ca
+000027C7  E9F101            jmp 0x29bb
+000027CA  CC                int3
+000027CB  27                daa
+000027CC  0F840E00          jz 0x27de
+000027D0  81CD0040          or bp,0x4000
+000027D4  BCDA27            mov sp,0x27da
+000027D7  E9A965            jmp 0x8d83
+000027DA  DC27              fsub qword [bx]
+000027DC  EB22              jmp 0x2800
+000027DE  8CD8              mov ax,ds
+000027E0  050004            add ax,0x400
+000027E3  3D0090            cmp ax,0x9000
+000027E6  75D7              jnz 0x27bf
+000027E8  B8B3B3            mov ax,0xb3b3
+000027EB  90                nop
+000027EC  BCF227            mov sp,0x27f2
+000027EF  E9A2C6            jmp 0xee94
+000027F2  F4                hlt
+000027F3  27                daa
+000027F4  0C01              or al,0x1
+000027F6  86C4              xchg al,ah
+000027F8  BCFE27            mov sp,0x27fe
+000027FB  E99FC6            jmp 0xee9d
+000027FE  0028              add [bx+si],ch
+00002800  B81919            mov ax,0x1919
+00002803  90                nop
+00002804  BC0A28            mov sp,0x280a
+00002807  E9C565            jmp 0x8dcf
+0000280A  0C28              or al,0x28
+0000280C  0C03              or al,0x3
+0000280E  86E0              xchg ah,al
+00002810  BC1628            mov sp,0x2816
+00002813  E9C665            jmp 0x8ddc
+00002816  1828              sbb [bx+si],ch
+00002818  BF1E28            mov di,0x281e
+0000281B  E968FE            jmp 0x2686
+0000281E  B81919            mov ax,0x1919
+00002821  90                nop
+00002822  BC2828            mov sp,0x2828
+00002825  E9A765            jmp 0x8dcf
+00002828  2A28              sub ch,[bx+si]
+0000282A  24FC              and al,0xfc
+0000282C  86E0              xchg ah,al
+0000282E  BC3428            mov sp,0x2834
+00002831  E9A865            jmp 0x8ddc
+00002834  3628B84000        sub [ss:bx+si+0x40],bh
+00002839  8ED8              mov ds,ax
+0000283B  E680              out byte 0x80,al
+0000283D  8E166900          mov ss,word [0x69]
+00002841  8B266700          mov sp,[0x67]
+00002845  8F066900          pop word [0x69]
+00002849  8F066700          pop word [0x67]
+0000284D  07                pop es
+0000284E  1F                pop ds

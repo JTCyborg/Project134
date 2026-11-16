@@ -1,0 +1,160 @@
+00001180  CD00              int byte 0x0
+00001182  01B88E8E          add [bx+si-0x7172],di
+00001186  E80BDD            call 0xee94
+00001189  A8C0              test al,0xc0
+0000118B  753A              jnz 0x11c7
+0000118D  50                push ax
+0000118E  B084              mov al,0x84
+00001190  E680              out byte 0x80,al
+00001192  E814E4            call 0xf5a9
+00001195  B89695            mov ax,0x9596
+00001198  E83605            call 0x16d1
+0000119B  3B061300          cmp ax,[0x13]
+0000119F  7408              jz 0x11a9
+000011A1  81CD0008          or bp,0x800
+000011A5  58                pop ax
+000011A6  0C10              or al,0x10
+000011A8  50                push ax
+000011A9  B8B1B0            mov ax,0xb0b1
+000011AC  E82205            call 0x16d1
+000011AF  8BC8              mov cx,ax
+000011B1  B89897            mov ax,0x9798
+000011B4  E81A05            call 0x16d1
+000011B7  3BC1              cmp ax,cx
+000011B9  58                pop ax
+000011BA  7406              jz 0x11c2
+000011BC  81CD0008          or bp,0x800
+000011C0  0C10              or al,0x10
+000011C2  86C4              xchg al,ah
+000011C4  E8D6DC            call 0xee9d
+000011C7  FB                sti
+000011C8  B8B3B3            mov ax,0xb3b3
+000011CB  E8C6DC            call 0xee94
+000011CE  247F              and al,0x7f
+000011D0  813E13000002      cmp word [0x13],0x200
+000011D6  7602              jna 0x11da
+000011D8  0C80              or al,0x80
+000011DA  86C4              xchg al,ah
+000011DC  E8BEDC            call 0xee9d
+000011DF  55                push bp
+000011E0  E87F74            call 0x8662
+000011E3  7504              jnz 0x11e9
+000011E5  81E5FFF8          and bp,0xf8ff
+000011E9  E85D74            call 0x8649
+000011EC  7504              jnz 0x11f2
+000011EE  81E53FFF          and bp,0xff3f
+000011F2  C70678001414      mov word [0x78],0x1414
+000011F8  E8DF04            call 0x16da
+000011FB  33C9              xor cx,cx
+000011FD  81E5FF7F          and bp,0x7fff
+00001201  7417              jz 0x121a
+00001203  B085              mov al,0x85
+00001205  E680              out byte 0x80,al
+00001207  BE7678            mov si,0x7876
+0000120A  BB7808            mov bx,0x878
+0000120D  E84604            call 0x1656
+00001210  FB                sti
+00001211  B9FFFF            mov cx,0xffff
+00001214  7504              jnz 0x121a
+00001216  85EB              test bx,bp
+00001218  7521              jnz 0x123b
+0000121A  B08E              mov al,0x8e
+0000121C  E875DC            call 0xee94
+0000121F  A801              test al,0x1
+00001221  7518              jnz 0x123b
+00001223  2EA01CB5          mov al,[cs:0xb51c]
+00001227  E8D670            call 0x8300
+0000122A  740D              jz 0x1239
+0000122C  A01200            mov al,[0x12]
+0000122F  A820              test al,0x20
+00001231  7406              jz 0x1239
+00001233  E8DE04            call 0x1714
+00001236  B9FFFF            mov cx,0xffff
+00001239  EB75              jmp 0x12b0
+0000123B  B086              mov al,0x86
+0000123D  E680              out byte 0x80,al
+0000123F  FA                cli
+00001240  E80B0A            call 0x1c4e
+00001243  FB                sti
+00001244  B087              mov al,0x87
+00001246  E680              out byte 0x80,al
+00001248  FF366700          push word [0x67]
+0000124C  FF366900          push word [0x69]
+00001250  1E                push ds
+00001251  06                push es
+00001252  A01200            mov al,[0x12]
+00001255  A820              test al,0x20
+00001257  7403              jz 0x125c
+00001259  E8A8DE            call 0xf104
+0000125C  FB                sti
+0000125D  33C0              xor ax,ax
+0000125F  8ED8              mov ds,ax
+00001261  8CC8              mov ax,cs
+00001263  3B064200          cmp ax,[0x42]
+00001267  7531              jnz 0x129a
+00001269  CD11              int byte 0x11
+0000126B  2430              and al,0x30
+0000126D  3C30              cmp al,0x30
+0000126F  7429              jz 0x129a
+00001271  B08E              mov al,0x8e
+00001273  E81EDC            call 0xee94
+00001276  A820              test al,0x20
+00001278  B80110            mov ax,0x1001
+0000127B  7510              jnz 0x128d
+0000127D  50                push ax
+0000127E  B094              mov al,0x94
+00001280  E811DC            call 0xee94
+00001283  2430              and al,0x30
+00001285  3C10              cmp al,0x10
+00001287  58                pop ax
+00001288  7403              jz 0x128d
+0000128A  B80320            mov ax,0x2003
+0000128D  80261004CF        and byte [0x410],0xcf
+00001292  08261004          or [0x410],ah
+00001296  32E4              xor ah,ah
+00001298  CD10              int byte 0x10
+0000129A  07                pop es
+0000129B  1F                pop ds
+0000129C  8F066900          pop word [0x69]
+000012A0  8F066700          pop word [0x67]
+000012A4  B088              mov al,0x88
+000012A6  E680              out byte 0x80,al
+000012A8  FA                cli
+000012A9  E8A309            call 0x1c4f
+000012AC  FB                sti
+000012AD  B9FFFF            mov cx,0xffff
+000012B0  B089              mov al,0x89
+000012B2  E680              out byte 0x80,al
+000012B4  E81F4D            call 0x5fd6
+000012B7  E31A              jcxz 0x12d3
+000012B9  E8FB03            call 0x16b7
+000012BC  E84F2E            call 0x410e
+000012BF  BE0081            mov si,0x8100
+000012C2  E869E2            call 0xf52e
+000012C5  FB                sti
+000012C6  E865E1            call 0xf42e
+000012C9  B08A              mov al,0x8a
+000012CB  E680              out byte 0x80,al
+000012CD  BEA07C            mov si,0x7ca0
+000012D0  E85BE2            call 0xf52e
+000012D3  5D                pop bp
+000012D4  81E500C0          and bp,0xc000
+000012D8  B08B              mov al,0x8b
+000012DA  E680              out byte 0x80,al
+000012DC  1E                push ds
+000012DD  06                push es
+000012DE  FA                cli
+000012DF  E86E09            call 0x1c50
+000012E2  07                pop es
+000012E3  1F                pop ds
+000012E4  B08C              mov al,0x8c
+000012E6  E680              out byte 0x80,al
+000012E8  FA                cli
+000012E9  E87209            call 0x1c5e
+000012EC  FB                sti
+000012ED  B08D              mov al,0x8d
+000012EF  E680              out byte 0x80,al
+000012F1  2EF606808210      test byte [cs:0x8280],0x10
+000012F7  7420              jz 0x1319
+000012F9  2EA00BB5          mov al,[cs:0xb50b]
+000012FD  E80070            call 0x8300

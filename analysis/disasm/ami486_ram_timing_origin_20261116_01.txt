@@ -1,0 +1,19 @@
+
+===== REFERENCES TO 2850 =====
+SOURCE 1ECB, OPCODE E8
+00001EB3  8403              test [bp+di],al
+00001EB5  00E8              add al,ch
+00001EB7  7205              jc 0x1ebe
+00001EB9  2EA023B5          mov al,[cs:0xb523]
+00001EBD  E84064            call 0x8300
+00001EC0  0F840300          jz 0x1ec7
+00001EC4  E86F05            call 0x2436
+00001EC7  C3                ret
+00001EC8  1E                push ds
+00001EC9  06                push es
+00001ECA  55                push bp
+00001ECB  E88209            call 0x2850
+00001ECE  5D                pop bp
+00001ECF  07                pop es
+
+===== REFERENCES TO 287E =====

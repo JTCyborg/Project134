@@ -1,0 +1,64 @@
+00001659  B90020            mov cx,0x2000
+0000165C  E8DDD2            call 0xe93c
+0000165F  E80FDF            call 0xf571
+00001662  55                push bp
+00001663  B91000            mov cx,0x10
+00001666  2EAD              cs lodsw
+00001668  D1CD              ror bp,0x0
+0000166A  7307              jnc 0x1673
+0000166C  56                push si
+0000166D  8BF0              mov si,ax
+0000166F  E84E00            call 0x16c0
+00001672  5E                pop si
+00001673  E2F1              loop 0x1666
+00001675  5D                pop bp
+00001676  85EB              test bx,bp
+00001678  7409              jz 0x1683
+0000167A  BE8B7A            mov si,0x7a8b
+0000167D  E88E2A            call 0x410e
+00001680  E83D00            call 0x16c0
+00001683  BE9D7A            mov si,0x7a9d
+00001686  E83700            call 0x16c0
+00001689  A01200            mov al,[0x12]
+0000168C  A820              test al,0x20
+0000168E  7418              jz 0x16a8
+00001690  E8E86F            call 0x867b
+00001693  740D              jz 0x16a2
+00001695  B400              mov ah,0x0
+00001697  CD16              int byte 0x16
+00001699  80FC3B            cmp ah,0x3b
+0000169C  75F7              jnz 0x1695
+0000169E  33C9              xor cx,cx
+000016A0  EB08              jmp 0x16aa
+000016A2  FB                sti
+000016A3  33C9              xor cx,cx
+000016A5  E894D2            call 0xe93c
+000016A8  B1FF              mov cl,0xff
+000016AA  51                push cx
+000016AB  E8C3DE            call 0xf571
+000016AE  53                push bx
+000016AF  E80500            call 0x16b7
+000016B2  5B                pop bx
+000016B3  59                pop cx
+000016B4  0BC9              or cx,cx
+000016B6  C3                ret
+000016B7  B40F              mov ah,0xf
+000016B9  CD10              int byte 0x10
+000016BB  B400              mov ah,0x0
+000016BD  CD10              int byte 0x10
+000016BF  C3                ret
+000016C0  E84B2A            call 0x410e
+000016C3  E868DE            call 0xf52e
+000016C6  C3                ret
+000016C7  8AE0              mov ah,al
+000016C9  C0EC04            shr ah,byte 0x4
+000016CC  240F              and al,0xf
+000016CE  D50A              aad
+000016D0  C3                ret
+000016D1  E8D6D7            call 0xeeaa
+000016D4  86C4              xchg al,ah
+000016D6  E8D1D7            call 0xeeaa
+000016D9  C3                ret
+000016DA  33DB              xor bx,bx
+000016DC  33FF              xor di,di
+000016DE  BE4882            mov si,0x8248

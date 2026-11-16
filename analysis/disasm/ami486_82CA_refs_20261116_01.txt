@@ -1,0 +1,2 @@
+000082CD  19A219A3          sbb [bp+si-0x5ce7],sp
+000085E6  2E8B36CA82        mov si,[cs:0x82ca]
