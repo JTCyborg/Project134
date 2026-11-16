@@ -2,8 +2,7 @@
 """Emit bounded Capstone decodes from raw-byte candidate offsets.
 
 These are inspection windows, NOT confirmed function entries or a CFG.
-Data ranges (the A125h prompt and AD00h-AE5Fh key maps) are excluded.
-Each stream is independently decoded to preserve alternate starts.
+Known tables/strings are emitted as data and excluded from code windows.
 """
 from pathlib import Path
 from capstone import Cs, CS_ARCH_X86, CS_MODE_16
@@ -14,6 +13,14 @@ ROM_PATH = ROOT / "ami486.bin"
 OUT_PATH = ROOT / "analysis" / "disasm" / "ami486_candidate_windows_20261116.txt"
 MANIFEST_PATH = ROOT / "analysis" / "disasm" / "ami486_candidate_windows_20261116.manifest.txt"
 WINDOW = 0x80
+LIMITS = {0xA08D: 0x64, 0xA0A0: 0x51, 0xA0BD: 0x34}
+
+DATA_RANGES = [
+    (0xA0F1, 0xA125, "INT 13h AH function table", "words"),
+    (0xA125, 0xA18E, "Format / BootSector Write / Possible VIRUS prompt", "ascii"),
+    (0xAD00, 0xAE60, "Keyboard translation data candidates", "hexascii"),
+    (0xF92A, 0xF936, "F9xx indirect-handler offset table", "words"),
+]
 
 SEEDS = [
     (0xA000, "code-dense raw window; entry not yet caller-verified"),
@@ -21,17 +28,17 @@ SEEDS = [
     (0xA08D, "INT 13h hard-disk handler entry; forwards DL<80h to INT 40h"),
     (0xA0A0, "INT 13h AH-function dispatcher prologue"),
     (0xA0BD, "indirect CALL through CS-relative 26-entry function table"),
-
+    (0xA0A0, "candidate routine prologue and local stack frame"),
     (0xA18E, "byte-aligned short helper immediately after embedded prompt"),
     (0xA197, "branch target from A19Ah; likely routine entry"),
     (0xA1A4, "independent routine entry"),
-    (0xA2F1, "direct CALL target; ATA geometry/parameter helper"),
     (0xA1B3, "branch target from A19Ch; ATA controller initialization path"),
     (0xA20B, "status-return helper after A20Ah RET"),
     (0xA216, "routine entry after A215h RET"),
     (0xA226, "routine entry after A225h RET"),
     (0xA23E, "routine entry after A23Dh RET"),
     (0xA25F, "routine entry after A25Eh RET"),
+    (0xA2F1, "direct CALL target; ATA geometry/parameter helper"),
     (0xA300, "geometry/parameter conversion candidate"),
     (0xA337, "direct CALL target"),
     (0xA372, "direct dispatch target"),
@@ -41,9 +48,6 @@ SEEDS = [
     (0xA5A9, "direct CALL target; ATA parameter helper"),
     (0xA5B6, "direct CALL target; ATA geometry helper"),
     (0xA5CA, "direct CALL target; ATA readiness/helper"),
-    (0xA694, "direct CALL target; ATA status wait"),
-    (0xA6BB, "direct CALL target; ATA transfer/status helper"),
-    (0xA6DC, "direct CALL target; ATA status completion helper"),
     (0xA52B, "routine entry after A52Ah RET"),
     (0xA552, "direct CALL target"),
     (0xA57B, "routine entry after A57Ah RET"),
@@ -52,18 +56,19 @@ SEEDS = [
     (0xA621, "direct CALL target; ATA feature/error register write"),
     (0xA62D, "direct CALL target; ATA status polling"),
     (0xA655, "direct CALL target; ATA drive/status check"),
+    (0xA694, "direct CALL target; ATA wait helper"),
+    (0xA6BB, "direct CALL target; ATA transfer/status helper"),
+    (0xA6DC, "direct CALL target; ATA status completion helper"),
     (0xA703, "ATA error/status decode candidate"),
     (0xA73E, "direct CALL target; ATA command register write"),
     (0xA76C, "direct CALL target; ES:BX buffer normalization"),
-    (0xA798, "direct CALL target; ATA transfer setup"),
-    (0xA7BA, "direct CALL target; ATA transfer helper"),
     (0xA798, "direct CALL target; ATA transfer setup"),
     (0xA7BA, "direct CALL target; ATA transfer helper"),
     (0xA808, "direct CALL target; mode/compatibility check"),
     (0xA80F, "direct CALL target; prompt decision path"),
     (0xA847, "direct CALL target; BIOS display/input prompt"),
     (0xA8C7, "prompt continuation / input decision candidate"),
-    (0xA95E, "candidate IVT hook installation stream"),
+    (0xA95E, "candidate INT 13h IVT hook installation stream"),
     (0xAA00, "INT 13h disk-service path candidate"),
     (0xAA6F, "direct CALL target; INT 13h drive parameter query"),
     (0xAB34, "routine entry after AB33h RET; disk metadata path"),
@@ -76,8 +81,8 @@ SEEDS = [
     (0xD200, "FDC I/O continuation candidate"),
     (0xD300, "FDC I/O continuation candidate"),
     (0xD400, "FDC I/O continuation candidate"),
-    (0xD294, "direct CALL target; FDC result/data read helper"),
     (0xD500, "FDC I/O continuation candidate"),
+    (0xD294, "direct CALL target; FDC result/data read helper"),
     (0xD580, "FDC command completion continuation"),
     (0xD5DB, "FDC routine continuation / return path"),
     (0xF900, "interrupt/dispatch wrapper candidate; indirect-call provenance unresolved"),
@@ -98,13 +103,31 @@ def main():
     lines = [
         "AMI486 RAW-BYTE CANDIDATE WINDOWS",
         "Decoder: Capstone x86 16-bit",
-        "Window length: 0x80 bytes per seed, clipped at ROM end",
+        "Window length: 0x80 bytes by default; selected handler windows stop at known data boundaries",
         "WARNING: independently seeded linear decodes; not a CFG and not proof of entry points.",
         "Relative near-branch targets are normalized to 16-bit IP wraparound.",
         "",
     ]
+    for start, end, label, kind in DATA_RANGES:
+        raw = rom[start:end]
+        lines += [f"===== DATA {start:04X}h-{end-1:04X}h =====", f"Reason: {label}"]
+        if kind == "words":
+            words = [int.from_bytes(raw[i:i+2], "little") for i in range(0, len(raw), 2)]
+            lines.append("Words: " + ", ".join(f"{w:04X}" for w in words))
+        elif kind == "ascii":
+            lines.append("ASCII: " + repr(raw.decode("ascii", errors="replace")))
+        else:
+            for pos in range(0, len(raw), 16):
+                chunk = raw[pos:pos+16]
+                asc = "".join(chr(b) if 32 <= b < 127 else "." for b in chunk)
+                lines.append(f"{start+pos:04X}  {chunk.hex(' ').upper():<47} {asc}")
+        lines.append("")
+    seen = set()
     for start, reason in SEEDS:
-        end = min(start + WINDOW, len(rom))
+        if start in seen:
+            continue
+        seen.add(start)
+        end = min(start + LIMITS.get(start, WINDOW), len(rom))
         lines += [f"===== {start:04X}h-{end-1:04X}h =====", f"Reason: {reason}"]
         off = start
         while off < end:
@@ -132,14 +155,15 @@ def main():
     MANIFEST_PATH.write_text(
         "Target: ami486.bin\n"
         "ROM size: 65536 bytes\n"
-        f"Candidate windows: {len(SEEDS)}\n"
-        f"Window bytes: 0x{WINDOW:X} each (clipped at ROM end)\n"
+        f"Candidate windows: {len(seen)}\n"
+        f"Window bytes: 0x{WINDOW:X} default; selected handler windows clipped at known data boundaries\n"
         "Decoder: Capstone x86 16-bit\n"
         "Relative near-branch targets normalized to 16-bit IP.\n"
+        "Known tables and strings are emitted separately as data.\n"
         "Interpretation: independently seeded linear windows only; no CFG or entry-point proof.\n",
         encoding="utf-8",
     )
-    print(f"Wrote {len(SEEDS)} candidate windows to {OUT_PATH}")
+    print(f"Wrote {len(seen)} candidate windows to {OUT_PATH}")
 
 if __name__ == "__main__":
     main()
