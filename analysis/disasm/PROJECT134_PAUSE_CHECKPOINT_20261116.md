@@ -137,3 +137,8 @@ A95Eh replaces INT 13h with F000:A08Dh and saves the old INT 13h vector at the I
 ## Legacy floppy INT13 path — 2026-11-16
 
 C610h is the matching in-ROM floppy INT 13h handler candidate. It accepts AH=00h–05h, 08h and 15h–18h through the 11-entry table at C5FAh. Its code directly reaches D156h DMA setup and the D100h–D5FFh FDC routines. A95Eh saves the old INT13 vector in INT40; A08Dh forwards DL<80h there. Runtime INT40 offset:segment still needs capture, but the code path strongly supports the floppy chain. See AMI486_FDC_DMA_SUBSYSTEM_20261116.md.
+
+
+## Memory/chipset initialization follow-up — 2026-11-16
+
+See AMI486_MEMORY_CHIPSET_INITIALIZATION_20261116.md. The memory probe compares patterns at 8 MiB, 64 MiB and 2/4/8 KiB offsets, then uses stack-threaded RET continuations into 8DCFh/8DDCh indexed I/O helpers for ports 22h/23h. Confirmed updates: register 16h OR 30h, register 11h = 44h; another path updates 10h/11h and clears CR0.PE before F66Eh. Do not infer RAM capacity or chipset vendor yet.
