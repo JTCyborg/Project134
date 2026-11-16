@@ -262,4 +262,9 @@ EE94h writes the CMOS register selector to port 70h and reads the byte from port
 
 ## A95Eh caller/ES trace — 2026-11-16
 
-A95Eh is called at 134Eh within the function entered at 131Fh; 131Fh is directly called from 1BAAh. The 1BAAh caller saves/restores DS around a C000h option-ROM signature check but does not initialize ES. The 131Fh function temporarily sets ES=0000h at 1303h, writes ES:01D0h, and restores the prior ES at 130Fh before calling A95Eh at 134Eh. Therefore ES=0000h at A95Eh is not proven by this local chain; the caller's inherited ES remains an open precondition. The candidate-window generator now includes 131Fh–1364h.
+A95Eh is called at 134Eh within the function entered at 131Fh; 131Fh is directly called from 1BAAh. The 1BAAh caller saves/restores DS around a C000h option-ROM signature check but does not initialize ES. The 131Fh alternate entry reads CMOS 0Eh and 92h and conditionally calls A95Eh at 134Eh. The 1303h sequence that temporarily sets ES=0000h belongs to a different linear instruction stream before 131Fh and is not executed by a call entering at 131Fh. The 1BAAh caller does not initialize ES; therefore ES=0000h at A95Eh remains unproven. The candidate-window generator now includes 131Fh–1364h.
+
+
+## 131Fh alternate-entry correction — 2026-11-16
+
+131Fh is a direct CALL target from 1BAAh, but it is an overlapping entry into bytes that are part of another linear stream. The alternate stream beginning at 131Fh reaches A95Eh at 134Eh after checking CMOS 0Eh and 92h. The apparent ES=0000h setup at 1303h is in the preceding linear stream and is bypassed by the call to 131Fh; it cannot establish ES for A95Eh. The 1BAAh caller does not set ES. Keep the IVT-write interpretation conditional on ES=0000h at runtime.
