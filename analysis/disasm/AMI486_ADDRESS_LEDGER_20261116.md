@@ -248,3 +248,8 @@ Normal CMOS type cases: type 1 stores 93h (rate code 2); type 2 probes rates 0 t
 ## INT 13h/INT 40h chain correction — 2026-11-16
 
 A95Eh does not install a fixed C610h pointer into INT 40h. It swaps the current INT 13h offset at ES:004Ch with A08Dh, stores the old offset at ES:0100h, swaps the current INT 13h segment at ES:004Eh with CS, and stores the old segment at ES:0102h. The caller is at 134Eh. The code therefore chains INT 40h to the previous INT 13h vector dynamically. A95Eh does not initialize ES, so the caller's ES=0000h precondition must be proven. EC59h has the only direct in-ROM near JMP to C610h; this supports C610h as a candidate but does not establish the runtime vector target.
+
+
+## D4EAh rate-field cross-check — 2026-11-16
+
+D4EAh independently confirms that the top two bits of the per-drive byte at 0090h+drive are the data-rate selector: it compares those bits with global [008Bh], updates [008Bh] when they differ, rotates the two rate bits down to bits 1:0 and writes the selector through D517h to port 03F7h. The per-drive bit-4 success flag and SPECIFY timing-token cases are recorded in the FDC subsystem report. The remaining low-nibble flags are still open.
