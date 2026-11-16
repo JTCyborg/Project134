@@ -1,3 +1,5 @@
+> **Erratum (phase 49):** The paragraph below describing `LES SI` at `5C6A` is superseded. Because the stack-crafted RET returns to `5C68`, the successful branch resumes at `5C6A` with a shifted instruction boundary: `MOV AL,23h; OUT 80h,AL; XOR byte [BP+DI],C0h; MOV ES,AX; MOV AL,40h; MOV DS,AX; MOV AL,30h; MOV SS,AX; MOV SP,0100h; CALL 1B5Eh; IN AL,60h`. The final zero-pattern scan in `552A` leaves AX=0000h, so the resulting segments are ES=`0023h`, DS=`0040h`, SS=`0030h`. No LES executes on this path. See [phase 49](AMI486_SEMANTIC_MAP_PHASE49_20261116.md) for the full corrected decode.
+
 # AMI486 semantic map — phase 48 (2026-11-16)
 
 ## Scope
