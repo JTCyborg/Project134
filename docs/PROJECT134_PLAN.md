@@ -18,6 +18,7 @@ The original Spectrum software accesses memory, ROM, I/O ports and timing direct
 - [x] Create the separate Project134 repository and record this plan without changing Project133.
 - [ ] Import/establish the PCem source baseline and create an isolated Project134 machine/profile.
 - [ ] Record a reproducible build and runtime baseline.
+- [x] Add a Visual Studio solution and NASM/MSBuild BIOS bootstrap target; local build verification is still pending.
 
 **Exit criteria:** Project134 builds and starts the selected AMI486 baseline reproducibly; the BIOS ROM and startup path are identified.
 
@@ -143,4 +144,4 @@ No Spectrum-specific implementation in this phase. First establish that the inhe
 - [ ] Phase 5 — Hardware expansion
 - [ ] Phase 6 — Stabilization and release
 
-**Current evidence:** the upstream PCem AMI486 model registration has been inspected and recorded in [docs/AMI486_REFERENCE.md](AMI486_REFERENCE.md). It identifies the AT initialization path and ALi 1429 chipset callback, but does not yet establish the exact Project133 source revision or runtime configuration. The AMI BIOS 6.27.10 collection under [docs/627.10](627.10) has also been inspected as an architectural reference only; it is not verified as the source of the target AMI486 ROM, and its platform-specific code is not assumed to match ALi 1429.\n\n**Next action:** obtain the exact `ami486.bin` again and record the Project133 source commit plus ROM-set 46 configuration; then disassemble the BIOS and trace its reset-vector/POST path. In parallel, inventory the remaining 6.27.10 reference modules without copying proprietary implementation code.
+**Current evidence:** the upstream PCem AMI486 model registration has been inspected and recorded in [docs/AMI486_REFERENCE.md](AMI486_REFERENCE.md). It identifies the AT initialization path and ALi 1429 chipset callback, but does not yet establish the exact Project133 source revision or runtime configuration. The AMI BIOS 6.27.10 collection under [docs/627.10](627.10) has also been inspected as an architectural reference only; it is not verified as the source of the target AMI486 ROM, and its platform-specific code is not assumed to match ALi 1429.\n\n**Next action:** build the new `Project134.sln` in the user's Visual Studio installation and resolve any environment/toolchain errors. Then obtain the exact `ami486.bin` again and record the Project133 source commit plus ROM-set 46 configuration; inspect the actual ROM loader/reset mapping before selecting the final image size or testing the bootstrap in PCem. The 64 KiB/F0000h bootstrap layout is provisional and is not yet a usable AMI486 BIOS.
