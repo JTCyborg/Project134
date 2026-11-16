@@ -17,43 +17,52 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Install NASM
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y nasm
-      - name: Verify ROM and generate complete linear listing
+      - name: Install Capstone
+        run: python3 -m pip install --break-system-packages capstone
+      - name: Generate and verify complete linear 16-bit listing
         shell: bash
         run: |
           set -euo pipefail
-          test "$(wc -c < ami486.bin)" -eq 65536
-          sha256sum ami486.bin | tee /tmp/ami486.sha256
-          ndisasm -b 16 -o 0x0000 ami486.bin > analysis/disasm/ami486_full_linear_16bit.disasm.txt
           python3 - <<'PY'
-          import re, pathlib
-          p = pathlib.Path("analysis/disasm/ami486_full_linear_16bit.disasm.txt")
-          lines = p.read_text().splitlines()
-          covered = 0
-          expected = 0
-          for line in lines:
-              m = re.match(r"^([0-9A-Fa-f]{8})[ ]+([0-9A-Fa-f]+)[ ]+", line)
-              if not m:
-                  raise SystemExit(f"Unparsed listing line: {line!r}")
-              off = int(m.group(1), 16)
-              n = len(m.group(2)) // 2
-              if off != expected:
-                  raise SystemExit(f"Coverage discontinuity: expected {expected:04X}, got {off:04X}")
-              expected += n
-              covered += n
-          if covered != 65536 or expected != 65536:
-              raise SystemExit(f"Bad coverage: {covered} bytes, end={expected:05X}")
-          print(f"Verified: {covered} bytes, {len(lines)} instructions/records")
+          from capstone import Cs, CS_ARCH_X86, CS_MODE_16
+          from pathlib import Path
+          import hashlib
+
+          rom = Path("ami486.bin").read_bytes()
+          if len(rom) != 65536:
+              raise SystemExit(f"Expected 65536 ROM bytes, got {len(rom)}")
+          sha = hashlib.sha256(rom).hexdigest()
+          md = Cs(CS_ARCH_X86, CS_MODE_16)
+          md.detail = False
+          out = []
+          off = 0
+          while off < len(rom):
+              ins = next(md.disasm(rom[off:], off, count=1), None)
+              if ins is None or ins.size < 1 or off + ins.size > len(rom):
+                  chunk = rom[off:off+1]
+                  out.append(f"{off:08X}  {chunk.hex().upper():<16} db 0x{chunk[0]:02X}")
+                  off += 1
+              else:
+                  chunk = rom[off:off+ins.size]
+                  out.append(f"{off:08X}  {chunk.hex().upper():<16} {ins.mnemonic} {ins.op_str}".rstrip())
+                  off += ins.size
+          if off != 65536:
+              raise SystemExit(f"Coverage failed at {off:05X}")
+          Path("analysis/disasm/ami486_full_linear_16bit.disasm.txt").write_text("\n".join(out)+"\n")
+          Path("analysis/disasm/ami486_full_linear_16bit.manifest.txt").write_text(
+              "Target: ami486.bin\nSize: 65536 bytes\n"
+              f"SHA-256: {sha}\nDecoder: Capstone x86 16-bit\n"
+              f"Linear decode records: {len(out)}\nByte coverage: 0000-FFFF (65536/65536)\n"
+              "Undecodable bytes are emitted as db; this is a linear decode, not code/data classification.\n"
+          )
+          print(f"Verified 65536/65536 bytes; {len(out)} records; SHA-256 {sha}")
           PY
       - name: Commit generated disassembly
         run: |
           set -euo pipefail
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add analysis/disasm/ami486_full_linear_16bit.disasm.txt
+          git add analysis/disasm/ami486_full_linear_16bit.disasm.txt analysis/disasm/ami486_full_linear_16bit.manifest.txt
           if git diff --cached --quiet; then
             echo "Disassembly is already current"
             exit 0
