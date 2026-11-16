@@ -140,7 +140,7 @@ D100h–D5FFh is the separate floppy-controller/DMA subsystem: FDC ports 03F2h/0
 
 F92Ah–F935h is a six-word little-endian dispatch table with targets F936h, F986h, F9C4h, F977h, F999h and F9D3h. F977h overlaps the F936h stream as an alternate entry. The F900h wrapper ends in IRET; its actual vector entry remains unknown.
 
-The seeded Capstone output now contains 109 unique bounded code windows plus separately emitted data ranges and normalizes near-branch targets to 16-bit IP wraparound.
+The seeded Capstone output now contains 111 unique bounded code windows plus separately emitted data ranges and normalizes near-branch targets to 16-bit IP wraparound.
 
 
 ## INT 13h dispatch correction
@@ -166,3 +166,8 @@ See [AMI486_FDC_DMA_SUBSYSTEM_20261116.md](AMI486_FDC_DMA_SUBSYSTEM_20261116.md)
 ## Keyboard subsystem map
 
 See [AMI486_KEYBOARD_SUBSYSTEM_20261116.md](AMI486_KEYBOARD_SUBSYSTEM_20261116.md). AD00h–AE5Fh is keyboard translation data; AE6Fh onward invokes INT 15h AH=4Fh and handles E0h/E1h prefixes and ACK/RESEND bytes. B242h/B253h map lock/modifier scan codes; B26Ah/B273h enable/disable the 8042 interface; B33Dh sends EDh/F4h LED/scanning commands; B3E2h is an INT 16h dispatcher; B399h/B4A9h manage the BIOS ring buffer.
+
+
+## INT 13h/40h/76h vector wiring and fixed-disk tables
+
+The A95Eh installer replaces INT 13h (0000:004Ch) with F000:A08Dh and saves the displaced INT 13h vector in the INT 40h slot (0000:0100h). A08Dh forwards DL<80h requests through INT 40h, thereby chaining floppy requests to the original BIOS handler. A95Eh also installs INT 76h/IRQ14 at F000:E845h and sets INT 41h/INT 46h parameter-table pointers to 16-byte records based at E401h, selected from CMOS 92h/99h/9Ah. The IRQ14 handler sends slave/master PIC EOIs and invokes INT 15h AX=9100h. Details: AMI486_STORAGE_AND_DISPATCH_REGIONS_20261116.md.
