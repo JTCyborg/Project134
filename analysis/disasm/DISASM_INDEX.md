@@ -847,3 +847,12 @@ This phase is semantic classification of selected regions, not a complete CFG. S
 - Verified the three CALLs at 183Fh, 1846h and 1853h all target EE9Dh, the complete CMOS write helper (including OUT 70h,AL). These are checksum write-back fields, not just read-only accumulators.
 - Corrected phase 77 byte alignment: 1834h is JMP DI; 1836h sets DI=183Bh; 1839h jumps to aligned 17F2h. The second setup at 184Ah jumps to aligned 1810h. Withdrawn phase 77's 17F3h alternate-entry claim and EE9Eh CALL-target claim.
 - Stored checksum fields are established; when/how they are validated and which callers refresh them remain open. BP.13 provenance and DA5Eh/DA61h dynamic entry remain unresolved.
+
+
+## Semantic map — phase 79 (2026-11-16)
+
+- [AMI486_SEMANTIC_MAP_PHASE79_20261116.md](AMI486_SEMANTIC_MAP_PHASE79_20261116.md)
+- Corrected the 5D81h..5DA0h interpretation: calls at 5D83h/5D88h target EE93h (RET-only stub), not CMOS read helper EE94h. The block forms a value from immediate BFBEh, swaps bytes to BEBFh, subtracts DI=CS, and writes the result to CMOS BEh:BFh through EE9Dh.
+- The update is gated by status bits from AL: bit 5 at 5D5Ah skips the larger initialization block; bits 6/7 at 5D7Eh skip the CMOS write.
+- CMOS BEh:BFh therefore has at least two distinct writers: the checksum sum routine (phase 78) and this CS-relative POST value writer. Withdraw the global claim that BEh:BFh is a dedicated checksum field; the checksum routine's local behavior remains confirmed.
+- E5DBh status provenance, BEh:BFh readers and writer ordering, BP.13 provenance, and DA5Eh/DA61h dynamic entry remain open.
