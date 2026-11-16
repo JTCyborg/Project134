@@ -220,7 +220,7 @@ The first-pass region descriptions above have been refined by raw-byte and calle
 | E845h–E864h | INT 76h / IRQ14 handler | AMI486_STORAGE_AND_DISPATCH_REGIONS_20261116.md |
 | F8E7h–F9FCh | BIOS INT 14h serial-service dispatcher and UART handlers | AMI486_INT14_SERIAL_BIOS_20261116.md |
 
-The current candidate-window artifact has 189 unique bounded code windows and 6 separately emitted data ranges (195 headers). Its union is 10,493 bytes across 54 pages: 9,837 code-candidate bytes, 671 data-candidate bytes and 15 bytes of code/data overlap. This is a sampling footprint only, not semantic coverage.
+The current candidate-window artifact has 168 unique bounded code windows and 18 separately emitted data ranges (186 headers). Its union is 10,700 bytes across 56 pages: 9,450 code-candidate bytes, 1,333 data-candidate bytes and 83 bytes of code/data overlap. This is a sampling footprint only, not semantic coverage.
 
 
 ## 9. F9xx dispatcher entry-boundary correction
