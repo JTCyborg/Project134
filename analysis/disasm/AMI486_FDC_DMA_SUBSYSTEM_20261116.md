@@ -60,7 +60,7 @@ The code writes:
 5. ES low byte to port 81h as the page.
 6. 02h to port 0Ah to unmask DMA channel 2.
 
-The sequence is bracketed by CLI/STI and preserves AX/DX. This directly confirms channel-2 DMA programming; the exact transfer direction/mode depends on the caller-supplied AH mode byte.
+The sequence is bracketed by CLI/STI and preserves AX/DX. Direct callers supply two concrete mode bytes: C8BBh supplies AH=46h, while C936h/C913h supply AH=4Ah. Under the 8237 DMA mode format, 46h selects channel 2, single-transfer mode, memory-to-device (FDC write); 4Ah selects channel 2, single-transfer mode, device-to-memory (FDC read). This resolves the transfer direction at these call sites.
 
 ### FDC command/result protocol
 
@@ -107,7 +107,16 @@ A95Eh saves the previous INT 13h vector into the INT 40h vector slot. A08Dh forw
 1. Identify the INT 40h vector target and prove whether it enters this FDC subsystem.
 2. Trace callers and parameter contracts for D104h, D156h, D1C0h, D216h, D2FDh, D3CFh and D520h.
 3. Decode the command bytes at D40Ah–D462h against the 8272/765 command format and the state at BP+0Eh / [BX+90h].
-4. Verify the DMA mode byte at D156h at every call site to determine read versus write direction.
+4. Capture the initialized INT 40h vector to confirm the exact runtime segment:offset of the legacy floppy handler (C610h is the strong in-ROM candidate).
 5. Determine whether D520h/D5DDh are media-change checks, drive-type probes or a separate controller diagnostic.
 
 No whole-ROM semantic percentage is inferred from this subsystem map.
+
+
+## 6. DMA transfer direction verified at callers
+
+The mode bytes passed to D156h are visible in the direct callers:
+- C8BBh loads AH=46h before calling D156h. With 8237 mode bits, 46h = channel 2, single mode, transfer type 01b (write: memory to FDC). This is the disk-write direction.
+- C936h and C913h load AH=4Ah before calling D156h. 4Ah = channel 2, single mode, transfer type 10b (read: FDC to memory). This is the disk-read direction.
+
+Thus the FDC DMA channel is channel 2, with direction selected by the caller's AH mode byte. The D156h helper itself writes the supplied mode byte unchanged to DMA port 0Bh.
