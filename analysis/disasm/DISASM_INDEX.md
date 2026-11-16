@@ -1168,3 +1168,6 @@ EEAAh is the protected CMOS read wrapper around EE94h (port 70h selector, port 7
 
 
 The A95Eh call-site chain is now mapped: 1BAAh CALL 131Fh; 131Fh CALL A95Eh at 134Eh. The local function temporarily sets ES=0000h at 1303h but restores it at 130Fh before A95Eh. No local instruction proves ES=0000h at the IVT hook; retain this as a caller-context requirement. The candidate generator now includes 131Fh–1364h.
+
+
+The 131Fh entry is overlapping: its direct caller is 1BAAh, and its alternate stream reaches A95Eh at 134Eh after CMOS 0Eh/92h checks. Do not transfer the ES=0000h setup from the separate linear stream at 1303h into this alternate path; that code is bypassed. ES remains an unproven precondition for the A95Eh IVT writes.
