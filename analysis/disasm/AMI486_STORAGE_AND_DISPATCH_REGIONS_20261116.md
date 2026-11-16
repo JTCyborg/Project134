@@ -145,7 +145,7 @@ F8F6  PUSH 40h
 F8F8  POP DS
 F8F9  MOV DI,DX
 F8FB  SHL DI,1
-F8FD  MOV DX,[BP+DI]
+F8FD  MOV DX,[DI+0000h]
 F901  AND DX,DX
 F903  JE F924h
 F905  SHR DI,1
@@ -166,7 +166,7 @@ F926  CALL 90B2h
 F929  IRET
 ```
 
-The initial guards reject DX>=4 or AH>=6 and branch to the common cleanup at F926h. On the valid path, PUSHA establishes a saved-register frame; DX selects a word in that frame, which is loaded into DX and tested. A zero selected value branches to the restore path at F924h. The handler selector AH indexes the six-word CS-relative table at F92Ah. The wrapper stores the handler's returned AX into the saved AX slot at [BP+0Eh], restores DS/registers, calls 90B2h and IRETs.
+The initial guards reject DX>=4 or AH>=6 and branch to the common cleanup at F926h. On the valid path, DX is the COM-port index (0..3). With DS=0040h, the wrapper reads the port base word from the standard BDA COM-base array at 0040:0000+2*DX. A zero base branches to the restore path at F924h. For a present port, it reads the per-port timeout byte from the BDA area beginning at 0040:007Ch, keeps the low byte and scales it by four into DI. The handler selector AH indexes the six-word CS-relative table at F92Ah. The wrapper stores the handler's returned AX into the saved AX slot at [BP+0Eh], restores DS/registers, calls 90B2h and IRETs.
 
 The native little-endian table at F92Ah–F935h is:
 
@@ -181,7 +181,7 @@ The native little-endian table at F92Ah–F935h is:
 
 F977h is an alternate entry inside the F936h sequential instruction stream (F936h–F985h); retain both the initialization stream and the table-selected status entry. F986h, F999h, F9C4h and F9D3h are additional table targets. The handlers use UART offsets +0 through +6, including DLAB/DLL/DLM/LCR/IER/THR/RBR/MCR/LSR/MSR. Detailed behavior and baud divisors are documented in [AMI486_INT14_SERIAL_BIOS_20261116.md](AMI486_INT14_SERIAL_BIOS_20261116.md).
 
-**Entry-alignment correction:** the earlier F900h seed began on the last displacement byte of `MOV DX,[BP+DI]` at F8FDh. The first replacement seed at F8E8h was also one byte late: F8E8h is inside the three-byte `CMP DX,04h` instruction beginning at F8E7h. The generator is now rooted at F8E7h and clipped after the IRET at F929h. The table begins at F92Ah. Do not treat F900h or F8E8h as function entries.
+**Entry-alignment correction:** the earlier F900h seed began on the last displacement byte of `MOV DX,[DI+0000h]` at F8FDh. The first replacement seed at F8E8h was also one byte late: F8E8h is inside the three-byte `CMP DX,04h` instruction beginning at F8E7h. The generator is now rooted at F8E7h and clipped after the IRET at F929h. The table begins at F92Ah. Do not treat F900h or F8E8h as function entries.
 
 ## 4. 2100h: memory-pattern probe candidate
 
@@ -331,46 +331,3 @@ Table targets:
 The C8BBh and C936h paths directly call D156h for DMA channel-2 setup; C913h calls the D4EAh/D381h/D197h/D156h/D216h/D270h/D2BDh FDC sequence. This establishes that the D100h–D5FFh FDC/DMA code is called by the legacy floppy INT 13h implementation.
 
 A95Eh saves the displaced INT 13h vector into the INT 40h slot; A08Dh forwards DL<80h requests to INT 40h. C610h is therefore the strong in-ROM candidate for that saved legacy floppy handler. The actual runtime segment:offset in the IVT still needs confirmation from an initialized IVT snapshot or execution trace.
-
-
-## 3.1 Corrected F9xx wrapper entry and alignment
-
-A raw-byte recheck shows that the seeded window previously beginning at F900h was misaligned: F900h is the final displacement byte of the four-byte instruction at F8FDh, not an instruction boundary. The wrapper's guarded candidate entry is F8E8h. Its exact entry-aligned stream through the IRET is:
-
-```asm
-F8E8  CMP DX,04h
-F8EA  JAE F926h
-F8EC  CMP AH,06h
-F8EF  NOP
-F8F0  JAE F926h
-F8F2  PUSHA
-F8F3  MOV BP,SP
-F8F5  PUSH DS
-F8F6  PUSH 40h
-F8F8  POP DS
-F8F9  MOV DI,DX
-F8FB  SHL DI,1
-F8FD  MOV DX,[BP+DI]
-F901  ADD [BP+DI],AH
-F903  SAL byte [SI+1Fh],CL
-F906  SHR DI,1
-F908  MOV DI,[DI+7Ch]
-F90C  AND DI,00FFh
-F910  SHL DI,2
-F913  MOV AL,AH
-F915  MOV AH,00h
-F917  SHL AX,1
-F918  XCHG DI,AX
-F919  MOV DI,[CS:DI-06D6h]
-F91E  XCHG DI,AX
-F91F  CALL AX
-F921  MOV [BP+0Eh],AX
-F924  POP DS
-F925  POPA
-F926  CALL 90B2h
-F929  IRET
-```
-
-The two range guards branch to F927h (the common CALL 90B2h cleanup) and then IRET. The six-word handler table begins at F92Ah immediately after the IRET, with targets F936h, F986h, F9C4h, F977h, F999h and F9D3h. AH is range-checked to 0..5 before the table dispatch. DX is range-checked to 0..3 and is used in the stack/BDA lookup sequence; the precise service contract and the interrupt vector that reaches F8E8h remain unresolved.
-
-**Correction:** remove the F900h candidate seed. It started on the last byte of the F8FDh instruction and shifted the decode by one byte. The generator now seeds F8E8h and clips the window at F929h, leaving F92Ah–F935h to the explicit data-table emitter. The F936h and other table-target windows remain separate. Do not describe F900h as a function entry.
