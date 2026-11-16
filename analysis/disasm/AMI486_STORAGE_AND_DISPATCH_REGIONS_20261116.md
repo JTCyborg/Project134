@@ -317,15 +317,15 @@ F910  SHL DI,2
 F913  MOV AL,AH
 F915  MOV AH,00h
 F917  SHL AX,1
-F919  XCHG DI,AX
-F91A  MOV DI,[CS:DI-06D6h]
-F91F  XCHG DI,AX
-F920  CALL AX
-F922  MOV [BP+0Eh],AX
-F925  POP DS
-F926  POPA
-F927  CALL 90B2h
-F92A  IRET
+F918  XCHG DI,AX
+F919  MOV DI,[CS:DI-06D6h]
+F91E  XCHG DI,AX
+F91F  CALL AX
+F921  MOV [BP+0Eh],AX
+F924  POP DS
+F925  POPA
+F926  CALL 90B2h
+F929  IRET
 ```
 
 The two range guards branch to F927h (the common CALL 90B2h cleanup) and then IRET. The six-word handler table begins at F92Ah immediately after the IRET, with targets F936h, F986h, F9C4h, F977h, F999h and F9D3h. AH is range-checked to 0..5 before the table dispatch. DX is range-checked to 0..3 and is used in the stack/BDA lookup sequence; the precise service contract and the interrupt vector that reaches F8E8h remain unresolved.
