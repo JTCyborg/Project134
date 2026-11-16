@@ -1107,3 +1107,8 @@ Detailed map: [AMI486_KEYBOARD_SUBSYSTEM_20261116.md](AMI486_KEYBOARD_SUBSYSTEM_
 ## INT 13h vector chain and IRQ14 handler — 2026-11-16
 
 A95Eh installs F000:A08Dh at INT 13h, saves the displaced vector in INT 40h, installs F000:E845h at INT 76h/IRQ14, and sets INT 41h/INT 46h fixed-disk parameter table pointers into 16-byte records at E401h selected from CMOS. A08Dh forwards floppy DL<80h requests through INT 40h to the old BIOS INT 13h handler. E845h sends PIC EOIs and calls INT 15h AX=9100h. Full wiring is in AMI486_STORAGE_AND_DISPATCH_REGIONS_20261116.md.
+
+
+## Legacy floppy INT13 and INT40 chain — 2026-11-16
+
+C610h is the in-ROM legacy floppy INT 13h handler candidate. Its 11-word dispatch table at C5FAh maps AH=00–05, 08 and 15–18 to C69Ah/C6CEh/C7E2h/C7E2h/C7E2h/C8E1h/C999h/C6D9h/C78Bh/C716h/CB09h. The C8BBh/C936h paths call DMA setup D156h; C913h enters the D100h FDC transaction chain. A95Eh saves the displaced INT13 vector into INT40, and A08Dh forwards floppy requests there. The runtime vector value still needs an IVT snapshot. Details: AMI486_FDC_DMA_SUBSYSTEM_20261116.md.
