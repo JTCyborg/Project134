@@ -13,7 +13,7 @@ ROM_PATH = ROOT / "ami486.bin"
 OUT_PATH = ROOT / "analysis" / "disasm" / "ami486_candidate_windows_20261116.txt"
 MANIFEST_PATH = ROOT / "analysis" / "disasm" / "ami486_candidate_windows_20261116.manifest.txt"
 WINDOW = 0x80
-LIMITS = {0xA08D: 0x64, 0xA0A0: 0x51, 0xA0BD: 0x34, 0xE845: 0x20, 0x2238: 0x0A, 0x2244: 0x0B, 0x2250: 0x03, 0xF8E7: 0x43, 0xD46D: 0x2D}
+LIMITS = {0xA08D: 0x64, 0xA0A0: 0x51, 0xA0BD: 0x34, 0xE845: 0x20, 0x2238: 0x0A, 0x2244: 0x0B, 0x2250: 0x03, 0xF8E7: 0x43, 0xD46D: 0x2D, 0x131F: 0x46}
 
 DATA_RANGES = [
     (0xA0F1, 0xA125, "INT 13h AH function table", "words"),
@@ -189,6 +189,7 @@ SEEDS = [
     (0xD3ED, "FDC command sequence entry candidate"),
     (0xD3FA, "FDC command sequence common path"),
     (0xD46D, "FDC alternate CMOS-configuration rate-probe path"),
+    (0x131F, "POST caller that invokes the INT13/INT40 hook installer at A95Eh"),
     (0xD400, "FDC I/O continuation candidate"),
     (0xD499, "FDC FIFO command helper"),
     (0xD500, "FDC I/O continuation candidate"),
