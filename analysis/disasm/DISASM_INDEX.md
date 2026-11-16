@@ -1052,7 +1052,7 @@ See [AMI486_ADDRESS_LEDGER_20261116.md](AMI486_ADDRESS_LEDGER_20261116.md).
 - Narrow token scan: 153 pages have explicit address references; 103 pages have none. This is not a coverage percentage.
 - Raw-byte checks uncovered substantial executable-looking content in pages without explicit phase references, including 2100h, 6800h, A000h–ACFFh, AE60h–AFFFh, D100h–D5FFh and F900h.
 - Confirmed data candidates include the Format/BootSector Write/Possible VIRUS message at A125h–A18Dh and keyboard translation tables at AD00h–AE5Fh.
-- A000h–AFFFh, D100h–D5FFh, 2100h and the F8E7h INT 14h serial dispatcher now have dedicated subsystem maps. Remaining questions include ES=0000h provenance at A95Eh's call site and the value of the displaced INT 13h vector copied into INT 40h, INT 14h vector provenance, the 2100h memory-test caller/ES setup, keyboard table boundaries, low-nibble [BX+90h] FDC state-token semantics and EEAAh configuration-byte provenance.
+- A000h–AFFFh, D100h–D5FFh, 2100h and the F8E7h INT 14h serial dispatcher now have dedicated subsystem maps. Remaining questions include ES=0000h provenance at A95Eh's call site and the value of the displaced INT 13h vector copied into INT 40h, INT 14h vector provenance, the 2100h memory-test caller/ES setup, keyboard table boundaries and low-nibble [BX+90h] FDC state-token semantics.
 
 
 ## ATA / floppy / keyboard region discoveries — 2026-11-16
@@ -1074,7 +1074,7 @@ Detailed report: [AMI486_STORAGE_AND_DISPATCH_REGIONS_20261116.md](AMI486_STORAG
 - D100h–D5FFh is the independent floppy controller/DMA subsystem using 03F2h/03F4h/03F5h/03F7h and DMA ports 0Ch/0Bh/05h/04h.
 - AD00h–AE5Fh is keyboard translation data candidate; AE60h onward includes INT 15h AH=4Fh keyboard intercept handling.
 - F92Ah–F935h is the six-entry INT 14h serial-service table; F977h is the AH=03h status entry overlapping the F936h initialization stream. F8E7h INT 14h vector installation remains unresolved.
-- The current Capstone candidate-window output has 189 unique bounded code windows plus 6 data windows (195 headers total); their union is 10,493 distinct bytes across 54 pages. This is a selected-window footprint, not semantic coverage.
+- The current Capstone candidate-window output has 168 unique bounded code windows plus 18 data windows (186 headers total); their union is 10,700 distinct bytes across 56 pages. This is a selected-window footprint, not semantic coverage.
 
 Do not merge ATA, FDC, keyboard and F9xx dispatch code into one subsystem.
 
