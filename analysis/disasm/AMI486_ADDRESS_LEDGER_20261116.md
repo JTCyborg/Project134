@@ -9,8 +9,8 @@ Prior phase corpus: 96 semantic reports.
 This is the first ROM-wide address ledger. It separates **document-reference coverage** from **semantic byte classification**. It is deliberately not a code/data map yet.
 
 The 96 phase reports were searched in batches for explicit hexadecimal address tokens ending in `h`. This produces:
-- 154 of 256 pages with at least one explicit phase address reference;
-- 102 pages with no matching explicit `hhhh h`-style token in those reports.
+- 153 of 256 pages with at least one explicit phase address reference;
+- 103 pages with no matching explicit `hhhh h`-style token in those reports.
 
 A page marked `R` only means that at least one address from that page is explicitly cited in a phase report. It does **not** mean the whole 256-byte page was inspected or classified. A page marked `—` is not proven unexamined: addresses may be written without an `h` suffix, and the phase may discuss a routine by behavior rather than by its address.
 
