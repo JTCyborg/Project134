@@ -183,3 +183,58 @@ The seeded code now supports the standard service interpretation for the princip
 - AH=15h returns hard-disk type and capacity; A552h returns AH=03h and total sector count in CX:DX.
 
 Entries 06h, 07h, 0Eh, 0Fh, 12h, 13h, 16h, 17h and 18h all select the shared A18Eh error stub. AH=19h is present but remains an OEM/extended path until its complete caller contract is established.
+
+
+## 9. A000h hard-disk INT 13h function map
+
+The following boundaries are supported by the direct table targets, direct CALL/JMP edges and local RET/IRET instructions. Ranges are approximate entry-to-return spans; shared helpers and overlapping entries are called out rather than forced into a single partition.
+
+| Entry | End / exit | Function |
+|---:|---:|---|
+| A08Dh | A0EEh / A0E1h | INT 13h hard-disk handler; floppy DL<80h forwarded to INT 40h |
+| A0A0h | A0E1h IRET | AH=00h–19h dispatcher; saves context, sets DS=0040h, calls table entry |
+| A0F1h | A124h | 26-word INT 13h handler table (data) |
+| A125h | A18Dh | Embedded format / boot-sector warning text (data) |
+| A18Eh | A196h | Shared error stub: AH=01h, [0074h]=01h, CF=1 |
+| A197h | A1A3h | AH=00h reset path / drive-number check |
+| A19Eh | A1A3h | AH=0Dh reset path after drive-present check |
+| A1A4h | A1B2h | AH=08h drive parameters; A1A9h is the AH=15h alternate entry |
+| A1B3h | A20Ah | ATA device reset/initialization and drive 80h/81h probe |
+| A20Bh | A215h | AH=01h return last status and clear stored status |
+| A216h | A225h | AH=02h read-sector setup; common read path A399h |
+| A226h | A23Dh | AH=03h write-sector setup; common write path A406h |
+| A23Eh | A25Eh | AH=04h verify sectors; ATA command 40h |
+| A25Fh | A2F0h | AH=05h format track; guarded and user-confirmed |
+| A2F1h | A336h | Geometry/CHS conversion helper |
+| A337h | A371h | AH=09h initialize device parameters; ATA command 91h |
+| A372h | A380h | AH=0Ah read-long setup; command 22h |
+| A381h | A398h | AH=0Bh write-long setup; command 32h |
+| A399h | A405h | Common ATA read data-in path; REP INSW at A3D9h |
+| A406h | A473h | Common ATA data-out path; REP OUTSW at A43Dh |
+| A474h | A4D2h | AH=0Ch seek; ATA command 70h |
+| A4D3h | A500h | AH=10h drive-ready/status path |
+| A501h | A52Ah | AH=11h recalibrate; ATA command 10h |
+| A52Bh | A551h | AH=14h controller diagnostic; ATA command 90h |
+| A552h | A57Ah | AH=15h get disk type/capacity; returns AH=03h and CX:DX sector count |
+| A57Bh | A5A8h | AH=19h extended/vendor drive-parameter path; full contract unresolved |
+| A5A9h | A5B5h | Validate drive number DL<=81h |
+| A5B6h | A5C9h | Select low-memory drive parameter table at 0000:0104h or 0000:0118h |
+| A5CAh | A619h | Validate installed-drive count and derive geometry fields |
+| A621h | A62Ch | Write ATA features/error register at 01F1h |
+| A62Dh | A654h | Bounded ATA status polling at 01F7h |
+| A655h | A693h | Select drive/head and wait for ready status |
+| A694h | A6BAh | BIOS wait service / timeout helper |
+| A6BBh | A6DBh | ATA busy/ready wait |
+| A6DCh | A73Dh | Decode ATA status/error bits into BIOS AH status |
+| A73Eh | A797h | Issue ATA command through 01F7h while masking/restoring interrupts |
+| A798h | A7B9h | Program device-control state at 03F6h and save drive flags |
+| A7BAh | A807h | Program sector count and CHS/LBA task-file registers |
+| A808h | A846h | Write/format guard; may invoke warning prompt |
+| A847h | A946h | Display warning and obtain Y/N confirmation |
+| A95Eh | continuing past A9DDh | INT 13h hook installation candidate; saves displaced vector through ES |
+
+The common read path at A399h uses command 20h and transfers 0100h words from port 01F0h with REP INSW. The common write path at A406h uses command 30h and transfers 0100h words to port 01F0h with REP OUTSW. The long variants use 204h-byte buffers and commands 22h/32h. This independently confirms the AH table mappings.
+
+The format/write guard is shared: AH=05h reaches A808h/A80Fh and A847h; the prompt routine selects the “Format !!!” string when AH=05h and the “BootSector Write !!! / Possible VIRUS” string for the other protected write path. A8F4h accepts only Y or N and loops on any other key.
+
+This map is specific to the INT 13h hard-disk handler. Do not merge it with the separate D100h floppy-controller routines.
