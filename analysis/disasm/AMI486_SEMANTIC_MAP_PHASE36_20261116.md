@@ -11,7 +11,7 @@ The underlying listing is the 64 KiB linear 16-bit decode. The byte-level table 
 25C4h reads CMOS B3h, then forms a row number from two sources:
 
 1. If CMOS B3h bit 2 is set, it takes the BDA byte 0040:E2h, masks it to three bits, adds 6, and converts that row number to a byte offset by multiplying by 14h.
-2. If CMOS B3h bit 2 is clear, it checks SMSW AX. A nonzero AH (PE set in CR0) selects the same BDA-derived row+6 path. Otherwise it uses the BDA byte 0040:E2h masked to 3 bits directly.
+2. If CMOS B3h bit 2 is clear, it checks SMSW AX. A nonzero AH from SMSW AX (that is, any set bit in CR0 bits 8–15) selects the same BDA-derived row+6 path. This test does not directly test CR0.PE, which is bit 0 of AL. Otherwise it uses the BDA byte 0040:E2h masked to 3 bits directly.
 3. In the non-offset path only, if the masked category is 5 and CMOS B3h bit 1 is set, it substitutes row 7.
 4. The selected row number is multiplied by 14h (20 decimal) and returned in AX.
 
