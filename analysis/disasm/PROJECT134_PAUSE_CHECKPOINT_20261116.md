@@ -202,3 +202,8 @@ D4EAh independently confirms [0090h+drive] bits 7:6 as the per-drive data-rate s
 ## CMOS perpendicular-mode source resolution — 2026-11-16
 
 EEAAh is a protected CMOS read wrapper around EE94h (port 70h selector, port 71h data). D5A1h reads CMOS 0Eh; bit 7 (RTC power lost) or bit 6 (checksum invalid) suppresses drive-specific perpendicular flags. Otherwise it reads CMOS 10h; drive A high nibble type 05h sets parameter bit 2, drive B low nibble type 05h sets bit 3. The resulting byte is sent with PERPENDICULAR MODE 12h. EEAAh source is no longer an open question; low-nibble [BX+90h] semantics and the exact CMOS 0Eh policy remain open.
+
+
+## A95Eh caller/ES provenance — 2026-11-16
+
+A95Eh is called at 134Eh inside function 131Fh, itself called from 1BAAh. The 1BAAh caller does not initialize ES. The 131Fh function temporarily sets ES=0000h at 1303h to write ES:01D0h, then restores the inherited ES at 130Fh before A95Eh. Therefore the IVT write is conditional on inherited ES=0000h; this has not yet been proven. Candidate windows now include 131Fh–1364h. INT 40h remains a dynamic copy of the previous INT 13h vector, not a hardcoded C610h target.
