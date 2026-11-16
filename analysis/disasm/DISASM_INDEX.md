@@ -713,3 +713,12 @@ This phase is semantic classification of selected regions, not a complete CFG. S
 - The 208Dh/20C6h/20D2h paths use further crafted stack returns; execution resumes at 2098h, 20CCh, and 20DAh.
 - 20DAh enters a temporary CR0.PE memory probe; CR0.PE is cleared at 23BDh. MOV BP,3 at 23DEh is error-only.
 - No direct decoded branch or static pointer word to plausible DAxx entry addresses was found; DA5Eh/DA61h runtime entry remains unresolved.
+
+
+## Repository code review — continued (2026-11-16)
+
+- [Project134 continued code/reference review](../PROJECT134_CODE_REVIEW_CONTINUED_20261116.md)
+- [Project134 initial code review](../PROJECT134_CODE_REVIEW_20261116.md)
+- Updated [project plan](../../docs/PROJECT134_PLAN.md) to separate byte-complete linear disassembly from unfinished semantic CFG/code-data classification and to clarify build evidence.
+- Additional 6.27.10 reference files reviewed: MBIOSEQU, DIM, DEVNODE, PCI, PNP, ESCD, DMI and SMB definitions. These describe BIOS data structures/interfaces; they do not establish the target AMI486 hardware inventory or ALi 1429 programming.
+- Flagged conflicting BIOS-stack layout notes in MBIOSEQU.EQU and DIM.EQU; treat them as subsystem-specific reference data, not a unified Project134 memory map.
