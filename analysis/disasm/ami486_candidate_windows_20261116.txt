@@ -8929,6 +8929,41 @@ D494  72 CE                   jb 0xd464
 D496  E9 61 FF                jmp 0xd3fa
 D499  53                      push bx
 
+===== 131Fh-1364h =====
+Reason: POST caller that invokes the INT13/INT40 hook installer at A95Eh
+131F  05 A0 12                add ax, 0x12a0
+1322  00 A8 20 74             add byte ptr [bx + si + 0x7420], ch
+1326  2F                      das
+1327  E8 06 73                call 0x8630
+132A  74 07                   je 0x1333
+132C  B0 8F                   mov al, 0x8f
+132E  E6 80                   out 0x80, al
+1330  E8 C5 B8                call 0xcbf8
+1333  FB                      sti
+1334  B0 90                   mov al, 0x90
+1336  E6 80                   out 0x80, al
+1338  B0 8E                   mov al, 0x8e
+133A  E8 57 DB                call 0xee94
+133D  A8 C0                   test al, 0xc0
+133F  75 15                   jne 0x1356
+1341  B0 92                   mov al, 0x92
+1343  E8 4E DB                call 0xee94
+1346  0A C0                   or al, al
+1348  74 0C                   je 0x1356
+134A  B0 91                   mov al, 0x91
+134C  E6 80                   out 0x80, al
+134E  E8 0D 96                call 0xa95e
+1351  FB                      sti
+1352  B0 92                   mov al, 0x92
+1354  E6 80                   out 0x80, al
+1356  E8 C0 E0                call 0xf419
+1359  B0 93                   mov al, 0x93
+135B  E6 80                   out 0x80, al
+135D  68 64 13                push 0x1364
+1360  68 4E FA                push 0xfa4e
+1363  C3                      ret
+1364  B0              db 0xB0
+
 ===== D400h-D47Fh =====
 Reason: FDC I/O continuation candidate
 D400  74 62                   je 0xd464
