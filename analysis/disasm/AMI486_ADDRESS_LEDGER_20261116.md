@@ -140,7 +140,7 @@ D100h–D5FFh is the separate floppy-controller/DMA subsystem: FDC ports 03F2h/0
 
 F92Ah–F935h is a six-word little-endian dispatch table with targets F936h, F986h, F9C4h, F977h, F999h and F9D3h. F977h overlaps the F936h stream as an alternate entry. The F8E7h wrapper ends in IRET at F929h; its actual vector entry remains unknown.
 
-The current seeded Capstone output contains 189 unique bounded code windows plus 6 separately emitted data ranges (195 window headers total). The windows cover 9,837 unique code-candidate bytes and 671 data-candidate bytes, with 15 bytes overlapping between code/data windows; the union is 10,493 distinct ROM bytes across 54 pages. This is only the union of selected seeded windows, not total semantic coverage. Near-branch targets are normalized to 16-bit IP wraparound.
+The current seeded Capstone output contains 167 unique bounded code windows plus 18 separately emitted data ranges (185 window headers total). The windows cover 9,380 unique code-candidate bytes and 1,333 data-candidate bytes, with 83 bytes overlapping between code/data windows; the union is 10,630 distinct ROM bytes across 55 pages. This is only the union of selected seeded windows, not total semantic coverage. Near-branch targets are normalized to 16-bit IP wraparound.
 
 
 ## INT 13h dispatch correction
@@ -236,3 +236,10 @@ D156h writes the caller-supplied mode byte unchanged to DMA port 0Bh. C8BBh supp
 ## FDC command/rate interpretation update — 2026-11-16
 
 The D40Ah–D462h bytes are not raw FDC command opcodes. D3EDh/D499h derive the data-rate selector from AL[7:6] and write it to 03F7h; D3FAh stores the full AL token in [BX+90h]. D499h sends a two-byte 4Ah/drive-head READ ID command through D1C0h and reads seven result bytes through D270h. D520h–D5D9h is the enhanced 765-compatible controller sequence: VERSION 10h (expects 90h), DUMPREG 0Eh (ten result bytes), UNLOCK 14h, CONFIGURE 13h with 00 08 00, PERPENDICULAR MODE 12h and LOCK 94h. The remaining unknowns are the low-bit semantics of [BX+90h] tokens, the source of EEAAh-derived perpendicular-mode bits, and the actual INT 40h vector.
+
+
+## FDC drive-type and state-token refinement — 2026-11-16
+
+The D3B5h helper checks CMOS 0Eh bits C0h first. If clear, it reads CMOS 10h and selects the high nibble for drive index 0 or the low nibble for nonzero index; CMP SP,SP deliberately returns ZF=1. If CMOS 0Eh bits C0h are set, D3CFh takes the alternate rate-probe path at D46Dh.
+
+Normal CMOS type cases: type 1 stores 93h (rate code 2); type 2 probes rates 0 then 1 (success tokens 15h/74h, failure 02h); type 3 probes 0 then 2 (17h/97h, failure 07h); type 4/default probes 3,0,2 (D7h/17h/97h, failure C7h). The alternate CMOS-0Eh path probes 0,1,2,3 and stores 15h/74h/97h/D7h on success. D3FAh confirms token bit 4 is the success flag; bits 7:6 are the rate selector. C84Bh calls D3CFh when the per-drive token bit 4 is clear. After success, C855h selects FDC SPECIFY parameters: D7h -> 03 AF 02, 17h -> 03 BF 02, other observed tokens -> 03 DF 02. Remaining unknowns are the low-nibble meanings beyond these observed cases and the precise meaning of the CMOS 0Eh C0h flag.
