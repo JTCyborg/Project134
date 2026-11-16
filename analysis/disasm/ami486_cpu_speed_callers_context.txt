@@ -1,0 +1,460 @@
+﻿
+  C:\Temp\trdos\134\analysis\disasm\ami486_dynamic_hook_1C5E_1DD3_20261116_01.txt:1:00001C5E  2EA1E282          mov ax,
+[cs:0x82e2]
+  C:\Temp\trdos\134\analysis\disasm\ami486_dynamic_hook_1C5E_1DD3_20261116_01.txt:2:00001C62  FF                db 0xff
+  C:\Temp\trdos\134\analysis\disasm\ami486_dynamic_hook_1C5E_1DD3_20261116_01.txt:3:00001C63  D0                db 0xd0
+  C:\Temp\trdos\134\analysis\disasm\ami486_dynamic_hook_1C5E_1DD3_20261116_01.txt:4:00001C64  B08E              mov al,
+0x8e
+  C:\Temp\trdos\134\analysis\disasm\ami486_dynamic_hook_1C5E_1DD3_20261116_01.txt:5:00001C66  E82BD2            call 0x
+ee94
+  C:\Temp\trdos\134\analysis\disasm\ami486_dynamic_hook_1C5E_1DD3_20261116_01.txt:6:00001C69  A8C0              test al
+,0xc0
+  C:\Temp\trdos\134\analysis\disasm\ami486_dynamic_hook_1C5E_1DD3_20261116_01.txt:7:00001C6B  0F840300          jz 0x1c
+72
+  C:\Temp\trdos\134\analysis\disasm\ami486_dynamic_hook_1C5E_1DD3_20261116_01.txt:8:00001C6F  E96101            jmp 0x1
+dd3
+  C:\Temp\trdos\134\analysis\disasm\ami486_dynamic_hook_1C5E_1DD3_20261116_01.txt:9:00001C72  E8780D            call 0x
+29ed
+  C:\Temp\trdos\134\analysis\disasm\ami486_dynamic_hook_1C5E_1DD3_20261116_01.txt:10:00001C75  0F840C00          jz 0x1
+c85
+> C:\Temp\trdos\134\analysis\disasm\ami486_dynamic_hook_1C5E_1DD3_20261116_01.txt:11:00001C79  E89672            call 0
+x8f12
+  C:\Temp\trdos\134\analysis\disasm\ami486_dynamic_hook_1C5E_1DD3_20261116_01.txt:12:00001C7C  E8B808            call 0
+x2537
+  C:\Temp\trdos\134\analysis\disasm\ami486_dynamic_hook_1C5E_1DD3_20261116_01.txt:13:00001C7F  E8E808            call 0
+x256a
+  C:\Temp\trdos\134\analysis\disasm\ami486_dynamic_hook_1C5E_1DD3_20261116_01.txt:14:00001C82  EB31              jmp 0x
+1cb5
+  C:\Temp\trdos\134\analysis\disasm\ami486_dynamic_hook_1C5E_1DD3_20261116_01.txt:15:00001C84  90                nop
+  C:\Temp\trdos\134\analysis\disasm\ami486_dynamic_hook_1C5E_1DD3_20261116_01.txt:16:00001C85  B050              mov al
+,0x50
+  C:\Temp\trdos\134\analysis\disasm\ami486_dynamic_hook_1C5E_1DD3_20261116_01.txt:17:00001C87  E80AD2            call 0
+xee94
+  C:\Temp\trdos\134\analysis\disasm\ami486_dynamic_hook_1C5E_1DD3_20261116_01.txt:18:00001C8A  2407              and al
+,0x7
+  C:\Temp\trdos\134\analysis\disasm\ami486_dynamic_hook_1C5E_1DD3_20261116_01.txt:19:00001C8C  8AD8              mov bl
+,al
+  C:\Temp\trdos\134\analysis\disasm\ami486_dynamic_hook_1C5E_1DD3_20261116_01.txt:20:00001C8E  B82020            mov ax
+,0x2020
+  C:\Temp\trdos\134\analysis\disasm\ami486_dynamic_hook_1C5E_1DD3_20261116_01.txt:21:00001C91  E83B71            call 0
+x8dcf
+  C:\Temp\trdos\134\analysis\disasm\ami486_dynamic_hook_1C5E_1DD3_20261116_01.txt:22:00001C94  24F8              and al
+,0xf8
+  C:\Temp\trdos\134\analysis\disasm\ami486_dynamic_hook_1C5E_1DD3_20261116_01.txt:23:00001C96  0AC3              or al,
+bl
+  C:\Temp\trdos\134\analysis\disasm\ami486_dynamic_hook_1C5E_1DD3_20261116_01.txt:24:00001C98  86E0              xchg a
+h,al
+  C:\Temp\trdos\134\analysis\disasm\ami486_dynamic_hook_1C5E_1DD3_20261116_01.txt:25:00001C9A  E83F71            call 0
+x8ddc
+  C:\Temp\trdos\134\analysis\disasm\ami486_dynamic_hook_1C5E_1DD3_20261116_01.txt:26:00001C9D  B047              mov al
+,0x47
+  C:\Temp\trdos\134\analysis\disasm\ami486_dynamic_hook_1C5E_1DD3_20261116_01.txt:27:00001C9F  E8F2D1            call 0
+xee94
+  C:\Temp\trdos\134\analysis\disasm\ami486_dynamic_hook_1C5E_1DD3_20261116_01.txt:28:00001CA2  2483              and al
+,0x83
+  C:\Temp\trdos\134\analysis\disasm\ami486_dynamic_hook_1C5E_1DD3_20261116_01.txt:29:00001CA4  8AD8              mov bl
+,al
+  C:\Temp\trdos\134\analysis\disasm\ami486_hook_entry_8A78_20261116_01.txt:200:00001C23  B096              mov al,0x96
+  C:\Temp\trdos\134\analysis\disasm\ami486_hook_entry_8A78_20261116_01.txt:201:00001C25  E875D2            call 0xee9d
+  C:\Temp\trdos\134\analysis\disasm\ami486_hook_entry_8A78_20261116_01.txt:202:00001C28  B8B097            mov ax,0x97b
+0
+  C:\Temp\trdos\134\analysis\disasm\ami486_hook_entry_8A78_20261116_01.txt:203:00001C2B  E866D2            call 0xee94
+  C:\Temp\trdos\134\analysis\disasm\ami486_hook_entry_8A78_20261116_01.txt:204:00001C2E  86C4              xchg al,ah
+  C:\Temp\trdos\134\analysis\disasm\ami486_hook_entry_8A78_20261116_01.txt:205:00001C30  E86AD2            call 0xee9d
+  C:\Temp\trdos\134\analysis\disasm\ami486_hook_entry_8A78_20261116_01.txt:206:00001C33  B8B198            mov ax,0x98b
+1
+  C:\Temp\trdos\134\analysis\disasm\ami486_hook_entry_8A78_20261116_01.txt:207:00001C36  E85BD2            call 0xee94
+  C:\Temp\trdos\134\analysis\disasm\ami486_hook_entry_8A78_20261116_01.txt:208:00001C39  86C4              xchg al,ah
+  C:\Temp\trdos\134\analysis\disasm\ami486_hook_entry_8A78_20261116_01.txt:209:00001C3B  E85FD2            call 0xee9d
+  C:\Temp\trdos\134\analysis\disasm\ami486_hook_entry_8A78_20261116_01.txt:210:00001C3E  E8F5FB            call 0x1836
+  C:\Temp\trdos\134\analysis\disasm\ami486_hook_entry_8A78_20261116_01.txt:211:00001C41  E806FC            call 0x184a
+> C:\Temp\trdos\134\analysis\disasm\ami486_hook_entry_8A78_20261116_01.txt:212:00001C44  E8CB72            call 0x8f12
+  C:\Temp\trdos\134\analysis\disasm\ami486_hook_entry_8A78_20261116_01.txt:213:00001C47  E87A09            call 0x25c4
+  C:\Temp\trdos\134\analysis\disasm\ami486_hook_entry_8A78_20261116_01.txt:214:00001C4A  A3E600            mov [0xe6],a
+x
+  C:\Temp\trdos\134\analysis\disasm\ami486_hook_entry_8A78_20261116_01.txt:215:00001C4D  C3                ret
+  C:\Temp\trdos\134\analysis\disasm\ami486_hook_entry_8A78_20261116_01.txt:216:00001C4E  C3                ret
+  C:\Temp\trdos\134\analysis\disasm\ami486_hook_entry_8A78_20261116_01.txt:217:00001C4F  C3                ret
+  C:\Temp\trdos\134\analysis\disasm\ami486_hook_entry_8A78_20261116_01.txt:218:00001C50  B81313            mov ax,0x131
+3
+  C:\Temp\trdos\134\analysis\disasm\ami486_hook_entry_8A78_20261116_01.txt:219:00001C53  E87971            call 0x8dcf
+  C:\Temp\trdos\134\analysis\disasm\ami486_hook_entry_8A78_20261116_01.txt:220:00001C56  24C1              and al,0xc1
+  C:\Temp\trdos\134\analysis\disasm\ami486_hook_entry_8A78_20261116_01.txt:221:00001C58  86E0              xchg ah,al
+  C:\Temp\trdos\134\analysis\disasm\ami486_hook_entry_8A78_20261116_01.txt:222:00001C5A  E87F71            call 0x8ddc
+  C:\Temp\trdos\134\analysis\disasm\ami486_hook_entry_8A78_20261116_01.txt:223:00001C5D  C3                ret
+  C:\Temp\trdos\134\analysis\disasm\ami486_hook_entry_8A78_20261116_01.txt:224:00001C5E  2EA1E282          mov ax,[cs:0
+x82e2]
+  C:\Temp\trdos\134\analysis\disasm\ami486_hook_entry_8A78_20261116_01.txt:225:00001C62  FF                db 0xff
+  C:\Temp\trdos\134\analysis\disasm\ami486_hook_entry_8A78_20261116_01.txt:226:00001C63  D0                db 0xd0
+  C:\Temp\trdos\134\analysis\disasm\ami486_hook_entry_8A78_20261116_01.txt:227:00001C64  B08E              mov al,0x8e
+  C:\Temp\trdos\134\analysis\disasm\ami486_hook_entry_8A78_20261116_01.txt:228:00001C66  E82BD2            call 0xee94
+  C:\Temp\trdos\134\analysis\disasm\ami486_hook_entry_8A78_20261116_01.txt:229:00001C69  A8C0              test al,0xc0
+  C:\Temp\trdos\134\analysis\disasm\ami486_hook_entry_8A78_20261116_01.txt:230:00001C6B  0F840300          jz 0x1c72
+  C:\Temp\trdos\134\analysis\disasm\ami486_hook_entry_8A78_20261116_01.txt:231:00001C6F  E96101            jmp 0x1dd3
+  C:\Temp\trdos\134\analysis\disasm\ami486_hook_entry_8A78_20261116_01.txt:232:00001C72  E8780D            call 0x29ed
+  C:\Temp\trdos\134\analysis\disasm\ami486_hook_entry_8A78_20261116_01.txt:233:00001C75  0F840C00          jz 0x1c85
+> C:\Temp\trdos\134\analysis\disasm\ami486_hook_entry_8A78_20261116_01.txt:234:00001C79  E89672            call 0x8f12
+  C:\Temp\trdos\134\analysis\disasm\ami486_hook_entry_8A78_20261116_01.txt:235:00001C7C  E8B808            call 0x2537
+  C:\Temp\trdos\134\analysis\disasm\ami486_hook_entry_8A78_20261116_01.txt:236:00001C7F  E8E808            call 0x256a
+  C:\Temp\trdos\134\analysis\disasm\ami486_hook_entry_8A78_20261116_01.txt:237:00001C82  EB31              jmp 0x1cb5
+  C:\Temp\trdos\134\analysis\disasm\ami486_hook_entry_8A78_20261116_01.txt:238:00001C84  90                nop
+  C:\Temp\trdos\134\analysis\disasm\ami486_hook_entry_8A78_20261116_01.txt:239:00001C85  B050              mov al,0x50
+  C:\Temp\trdos\134\analysis\disasm\ami486_hook_entry_8A78_20261116_01.txt:240:00001C87  E80AD2            call 0xee94
+  C:\Temp\trdos\134\analysis\disasm\ami486_hook_entry_8A78_20261116_01.txt:241:00001C8A  2407              and al,0x7
+  C:\Temp\trdos\134\analysis\disasm\ami486_hook_entry_8A78_20261116_01.txt:242:00001C8C  8AD8              mov bl,al
+  C:\Temp\trdos\134\analysis\disasm\ami486_hook_entry_8A78_20261116_01.txt:243:00001C8E  B82020            mov ax,0x202
+0
+  C:\Temp\trdos\134\analysis\disasm\ami486_hook_entry_8A78_20261116_01.txt:244:00001C91  E83B71            call 0x8dcf
+  C:\Temp\trdos\134\analysis\disasm\ami486_hook_entry_8A78_20261116_01.txt:245:00001C94  24F8              and al,0xf8
+  C:\Temp\trdos\134\analysis\disasm\ami486_hook_entry_8A78_20261116_01.txt:246:00001C96  0AC3              or al,bl
+  C:\Temp\trdos\134\analysis\disasm\ami486_hook_entry_8A78_20261116_01.txt:247:
+  C:\Temp\trdos\134\analysis\disasm\ami486_hook_entry_8A78_20261116_01.txt:248:===== 1C00 =====
+  C:\Temp\trdos\134\analysis\disasm\ami486_hook_entry_8A78_20261116_01.txt:249:00001C00  00E8              add al,ch
+  C:\Temp\trdos\134\analysis\disasm\ami486_hook_entry_8A78_20261116_01.txt:250:00001C02  1108              adc [bx+si],
+cx
+  C:\Temp\trdos\134\analysis\disasm\ami486_hook_entry_8A78_20261116_01.txt:251:00001C04  C3                ret
+  C:\Temp\trdos\134\analysis\disasm\ami486_hook_entry_8A78_20261116_01.txt:252:00001C05  C3                ret
+  C:\Temp\trdos\134\analysis\disasm\ami486_hook_entry_8A78_20261116_01.txt:261:00001C23  B096              mov al,0x96
+  C:\Temp\trdos\134\analysis\disasm\ami486_hook_entry_8A78_20261116_01.txt:262:00001C25  E875D2            call 0xee9d
+  C:\Temp\trdos\134\analysis\disasm\ami486_hook_entry_8A78_20261116_01.txt:263:00001C28  B8B097            mov ax,0x97b
+0
+  C:\Temp\trdos\134\analysis\disasm\ami486_hook_entry_8A78_20261116_01.txt:264:00001C2B  E866D2            call 0xee94
+  C:\Temp\trdos\134\analysis\disasm\ami486_hook_entry_8A78_20261116_01.txt:265:00001C2E  86C4              xchg al,ah
+  C:\Temp\trdos\134\analysis\disasm\ami486_hook_entry_8A78_20261116_01.txt:266:00001C30  E86AD2            call 0xee9d
+  C:\Temp\trdos\134\analysis\disasm\ami486_hook_entry_8A78_20261116_01.txt:267:00001C33  B8B198            mov ax,0x98b
+1
+  C:\Temp\trdos\134\analysis\disasm\ami486_hook_entry_8A78_20261116_01.txt:268:00001C36  E85BD2            call 0xee94
+  C:\Temp\trdos\134\analysis\disasm\ami486_hook_entry_8A78_20261116_01.txt:269:00001C39  86C4              xchg al,ah
+  C:\Temp\trdos\134\analysis\disasm\ami486_hook_entry_8A78_20261116_01.txt:270:00001C3B  E85FD2            call 0xee9d
+  C:\Temp\trdos\134\analysis\disasm\ami486_hook_entry_8A78_20261116_01.txt:271:00001C3E  E8F5FB            call 0x1836
+  C:\Temp\trdos\134\analysis\disasm\ami486_hook_entry_8A78_20261116_01.txt:272:00001C41  E806FC            call 0x184a
+> C:\Temp\trdos\134\analysis\disasm\ami486_hook_entry_8A78_20261116_01.txt:273:00001C44  E8CB72            call 0x8f12
+  C:\Temp\trdos\134\analysis\disasm\ami486_hook_entry_8A78_20261116_01.txt:274:00001C47  E87A09            call 0x25c4
+  C:\Temp\trdos\134\analysis\disasm\ami486_hook_entry_8A78_20261116_01.txt:275:00001C4A  A3E600            mov [0xe6],a
+x
+  C:\Temp\trdos\134\analysis\disasm\ami486_hook_entry_8A78_20261116_01.txt:276:00001C4D  C3                ret
+  C:\Temp\trdos\134\analysis\disasm\ami486_hook_entry_8A78_20261116_01.txt:277:00001C4E  C3                ret
+  C:\Temp\trdos\134\analysis\disasm\ami486_hook_entry_8A78_20261116_01.txt:278:00001C4F  C3                ret
+  C:\Temp\trdos\134\analysis\disasm\ami486_hook_entry_8A78_20261116_01.txt:279:00001C50  B81313            mov ax,0x131
+3
+  C:\Temp\trdos\134\analysis\disasm\ami486_hook_entry_8A78_20261116_01.txt:280:00001C53  E87971            call 0x8dcf
+  C:\Temp\trdos\134\analysis\disasm\ami486_hook_entry_8A78_20261116_01.txt:281:00001C56  24C1              and al,0xc1
+  C:\Temp\trdos\134\analysis\disasm\ami486_hook_entry_8A78_20261116_01.txt:282:00001C58  86E0              xchg ah,al
+  C:\Temp\trdos\134\analysis\disasm\ami486_hook_entry_8A78_20261116_01.txt:283:00001C5A  E87F71            call 0x8ddc
+  C:\Temp\trdos\134\analysis\disasm\ami486_hook_entry_8A78_20261116_01.txt:284:00001C5D  C3                ret
+  C:\Temp\trdos\134\analysis\disasm\ami486_hook_entry_8A78_20261116_01.txt:285:00001C5E  2EA1E282          mov ax,[cs:0
+x82e2]
+  C:\Temp\trdos\134\analysis\disasm\ami486_hook_entry_8A78_20261116_01.txt:286:00001C62  FF                db 0xff
+  C:\Temp\trdos\134\analysis\disasm\ami486_hook_entry_8A78_20261116_01.txt:287:00001C63  D0                db 0xd0
+  C:\Temp\trdos\134\analysis\disasm\ami486_hook_entry_8A78_20261116_01.txt:288:00001C64  B08E              mov al,0x8e
+  C:\Temp\trdos\134\analysis\disasm\ami486_hook_entry_8A78_20261116_01.txt:289:00001C66  E82BD2            call 0xee94
+  C:\Temp\trdos\134\analysis\disasm\ami486_hook_entry_8A78_20261116_01.txt:290:00001C69  A8C0              test al,0xc0
+  C:\Temp\trdos\134\analysis\disasm\ami486_hook_entry_8A78_20261116_01.txt:291:00001C6B  0F840300          jz 0x1c72
+  C:\Temp\trdos\134\analysis\disasm\ami486_hook_entry_8A78_20261116_01.txt:292:00001C6F  E96101            jmp 0x1dd3
+  C:\Temp\trdos\134\analysis\disasm\ami486_hook_entry_8A78_20261116_01.txt:293:00001C72  E8780D            call 0x29ed
+  C:\Temp\trdos\134\analysis\disasm\ami486_hook_entry_8A78_20261116_01.txt:294:00001C75  0F840C00          jz 0x1c85
+> C:\Temp\trdos\134\analysis\disasm\ami486_hook_entry_8A78_20261116_01.txt:295:00001C79  E89672            call 0x8f12
+  C:\Temp\trdos\134\analysis\disasm\ami486_hook_entry_8A78_20261116_01.txt:296:00001C7C  E8B808            call 0x2537
+  C:\Temp\trdos\134\analysis\disasm\ami486_post_after_ram_timing_20261116_01.txt:312:000023D7  E95331            jmp 0x
+552d
+  C:\Temp\trdos\134\analysis\disasm\ami486_post_after_ram_timing_20261116_01.txt:313:000023DA  DC23              fsub q
+word [bp+di]
+  C:\Temp\trdos\134\analysis\disasm\ami486_post_after_ram_timing_20261116_01.txt:314:000023DC  7406              jz 0x2
+3e4
+  C:\Temp\trdos\134\analysis\disasm\ami486_post_after_ram_timing_20261116_01.txt:315:000023DE  BD0300            mov bp
+,0x3
+  C:\Temp\trdos\134\analysis\disasm\ami486_post_after_ram_timing_20261116_01.txt:316:000023E1  E9C1D0            jmp 0x
+f4a5
+  C:\Temp\trdos\134\analysis\disasm\ami486_post_after_ram_timing_20261116_01.txt:317:000023E4  B83000            mov ax
+,0x30
+  C:\Temp\trdos\134\analysis\disasm\ami486_post_after_ram_timing_20261116_01.txt:318:000023E7  8ED0              mov ss
+,ax
+  C:\Temp\trdos\134\analysis\disasm\ami486_post_after_ram_timing_20261116_01.txt:319:000023E9  BC0001            mov sp
+,0x100
+  C:\Temp\trdos\134\analysis\disasm\ami486_post_after_ram_timing_20261116_01.txt:320:000023EC  E81B00            call 0
+x240a
+  C:\Temp\trdos\134\analysis\disasm\ami486_post_after_ram_timing_20261116_01.txt:321:000023EF  E8A300            call 0
+x2495
+  C:\Temp\trdos\134\analysis\disasm\ami486_post_after_ram_timing_20261116_01.txt:322:000023F2  E8F805            call 0
+x29ed
+  C:\Temp\trdos\134\analysis\disasm\ami486_post_after_ram_timing_20261116_01.txt:323:000023F5  7406              jz 0x2
+3fd
+> C:\Temp\trdos\134\analysis\disasm\ami486_post_after_ram_timing_20261116_01.txt:324:000023F7  E8186B            call 0
+x8f12
+  C:\Temp\trdos\134\analysis\disasm\ami486_post_after_ram_timing_20261116_01.txt:325:000023FA  E83A01            call 0
+x2537
+  C:\Temp\trdos\134\analysis\disasm\ami486_post_after_ram_timing_20261116_01.txt:326:000023FD  2BC0              sub ax
+,ax
+  C:\Temp\trdos\134\analysis\disasm\ami486_post_after_ram_timing_20261116_01.txt:327:000023FF  8ED8              mov ds
+,ax
+  C:\Temp\trdos\134\analysis\disasm\ami486_post_after_ram_timing_20261116_01.txt:328:00002401  8EC0              mov es
+,ax
+  C:\Temp\trdos\134\analysis\disasm\ami486_post_after_ram_timing_20261116_01.txt:329:00002403  8CC8              mov ax
+,cs
+  C:\Temp\trdos\134\analysis\disasm\ami486_post_after_ram_timing_20261116_01.txt:330:00002405  8ED0              mov ss
+,ax
+  C:\Temp\trdos\134\analysis\disasm\ami486_post_after_ram_timing_20261116_01.txt:331:00002407  E9D2B5            jmp 0x
+d9dc
+  C:\Temp\trdos\134\analysis\disasm\ami486_post_after_ram_timing_20261116_01.txt:332:0000240A  BB00F0            mov bx
+,0xf000
+  C:\Temp\trdos\134\analysis\disasm\ami486_post_after_ram_timing_20261116_01.txt:333:0000240D  B2C0              mov dl
+,0xc0
+  C:\Temp\trdos\134\analysis\disasm\ami486_post_after_ram_timing_20261116_01.txt:334:0000240F  B90080            mov cx
+,0x8000
+  C:\Temp\trdos\134\analysis\disasm\ami486_post_after_ram_timing_20261116_01.txt:335:00002412  EB43              jmp 0x
+2457
+  C:\Temp\trdos\134\analysis\disasm\ami486_post_after_ram_timing_20261116_01.txt:336:00002414  90                nop
+  C:\Temp\trdos\134\analysis\disasm\ami486_post_after_ram_timing_20261116_01.txt:337:00002415  BB00C0            mov bx
+,0xc000
+  C:\Temp\trdos\134\analysis\disasm\ami486_post_after_ram_timing_20261116_01.txt:338:00002418  B90040            mov cx
+,0x4000
+  C:\Temp\trdos\134\analysis\disasm\ami486_post_after_ram_timing_20261116_01.txt:339:0000241B  B201              mov dl
+,0x1
+  C:\Temp\trdos\134\analysis\disasm\ami486_post_after_ram_timing_20261116_01.txt:340:0000241D  EB38              jmp 0x
+2457
+  C:\Temp\trdos\134\analysis\disasm\ami486_post_after_ram_timing_20261116_01.txt:341:0000241F  90                nop
+  C:\Temp\trdos\134\analysis\disasm\ami486_post_after_ram_timing_20261116_01.txt:342:00002420  BB00C8            mov bx
+,0xc800
+  C:\Temp\trdos\134\analysis\disasm\ami486_post_routines_1C40_1C80_20261116_01.txt:1:00001C40  FB                sti
+  C:\Temp\trdos\134\analysis\disasm\ami486_post_routines_1C40_1C80_20261116_01.txt:2:00001C41  E806FC            call 0
+x184a
+> C:\Temp\trdos\134\analysis\disasm\ami486_post_routines_1C40_1C80_20261116_01.txt:3:00001C44  E8CB72            call 0
+x8f12
+  C:\Temp\trdos\134\analysis\disasm\ami486_post_routines_1C40_1C80_20261116_01.txt:4:00001C47  E87A09            call 0
+x25c4
+  C:\Temp\trdos\134\analysis\disasm\ami486_post_routines_1C40_1C80_20261116_01.txt:5:00001C4A  A3E600            mov [0
+xe6],ax
+  C:\Temp\trdos\134\analysis\disasm\ami486_post_routines_1C40_1C80_20261116_01.txt:6:00001C4D  C3                ret
+  C:\Temp\trdos\134\analysis\disasm\ami486_post_routines_1C40_1C80_20261116_01.txt:7:00001C4E  C3                ret
+  C:\Temp\trdos\134\analysis\disasm\ami486_post_routines_1C40_1C80_20261116_01.txt:8:00001C4F  C3                ret
+  C:\Temp\trdos\134\analysis\disasm\ami486_post_routines_1C40_1C80_20261116_01.txt:9:00001C50  B81313            mov ax
+,0x1313
+  C:\Temp\trdos\134\analysis\disasm\ami486_post_routines_1C40_1C80_20261116_01.txt:10:00001C53  E87971            call 
+0x8dcf
+  C:\Temp\trdos\134\analysis\disasm\ami486_post_routines_1C40_1C80_20261116_01.txt:11:00001C56  24C1              and a
+l,0xc1
+  C:\Temp\trdos\134\analysis\disasm\ami486_post_routines_1C40_1C80_20261116_01.txt:12:00001C58  86E0              xchg 
+ah,al
+  C:\Temp\trdos\134\analysis\disasm\ami486_post_routines_1C40_1C80_20261116_01.txt:13:00001C5A  E87F71            call 
+0x8ddc
+  C:\Temp\trdos\134\analysis\disasm\ami486_post_routines_1C40_1C80_20261116_01.txt:14:00001C5D  C3                ret
+  C:\Temp\trdos\134\analysis\disasm\ami486_post_routines_1C40_1C80_20261116_01.txt:15:00001C5E  2EA1E282          mov a
+x,[cs:0x82e2]
+  C:\Temp\trdos\134\analysis\disasm\ami486_post_routines_1C40_1C80_20261116_01.txt:16:00001C62  FF                db 0x
+ff
+  C:\Temp\trdos\134\analysis\disasm\ami486_post_routines_1C40_1C80_20261116_01.txt:17:00001C63  D0                db 0x
+d0
+  C:\Temp\trdos\134\analysis\disasm\ami486_post_routines_1C40_1C80_20261116_01.txt:18:00001C64  B08E              mov a
+l,0x8e
+  C:\Temp\trdos\134\analysis\disasm\ami486_post_routines_1C40_1C80_20261116_01.txt:19:00001C66  E82BD2            call 
+0xee94
+  C:\Temp\trdos\134\analysis\disasm\ami486_post_routines_1C40_1C80_20261116_01.txt:20:00001C69  A8C0              test 
+al,0xc0
+  C:\Temp\trdos\134\analysis\disasm\ami486_post_routines_1C40_1C80_20261116_01.txt:21:00001C6B  0F840300          jz 0x
+1c72
+  C:\Temp\trdos\134\analysis\disasm\ami486_post_routines_1C40_1C80_20261116_01.txt:22:00001C6F  E96101            jmp 0
+x1dd3
+  C:\Temp\trdos\134\analysis\disasm\ami486_post_routines_1C40_1C80_20261116_01.txt:23:00001C72  E8780D            call 
+0x29ed
+  C:\Temp\trdos\134\analysis\disasm\ami486_post_routines_1C40_1C80_20261116_01.txt:24:00001C75  0F840C00          jz 0x
+1c85
+> C:\Temp\trdos\134\analysis\disasm\ami486_post_routines_1C40_1C80_20261116_01.txt:25:00001C79  E89672            call 
+0x8f12
+  C:\Temp\trdos\134\analysis\disasm\ami486_post_routines_1C40_1C80_20261116_01.txt:26:00001C7C  E8B808            call 
+0x2537
+  C:\Temp\trdos\134\analysis\disasm\ami486_post_routines_1C40_1C80_20261116_01.txt:27:00001C7F  E8E808            call 
+0x256a
+  C:\Temp\trdos\134\analysis\disasm\ami486_post_routines_1C40_1C80_20261116_01.txt:28:00001C82  EB31              jmp 0
+x1cb5
+  C:\Temp\trdos\134\analysis\disasm\ami486_post_routines_1C40_1C80_20261116_01.txt:29:00001C84  90                nop
+  C:\Temp\trdos\134\analysis\disasm\ami486_post_routines_1C40_1C80_20261116_01.txt:30:00001C85  B050              mov a
+l,0x50
+  C:\Temp\trdos\134\analysis\disasm\ami486_post_routines_1C40_1C80_20261116_01.txt:31:00001C87  E80AD2            call 
+0xee94
+  C:\Temp\trdos\134\analysis\disasm\ami486_post_routines_1C40_1C80_20261116_01.txt:32:00001C8A  2407              and a
+l,0x7
+  C:\Temp\trdos\134\analysis\disasm\ami486_post_routines_1C40_1C80_20261116_01.txt:33:00001C8C  8AD8              mov b
+l,al
+  C:\Temp\trdos\134\analysis\disasm\ami486_post_routines_1C40_1C80_20261116_01.txt:34:00001C8E  B82020            mov a
+x,0x2020
+  C:\Temp\trdos\134\analysis\disasm\ami486_post_routines_1C40_1C80_20261116_01.txt:35:00001C91  E83B71            call 
+0x8dcf
+  C:\Temp\trdos\134\analysis\disasm\ami486_post_routines_1C40_1C80_20261116_01.txt:36:00001C94  24F8              and a
+l,0xf8
+  C:\Temp\trdos\134\analysis\disasm\ami486_post_routines_1C40_1C80_20261116_01.txt:37:00001C96  0AC3              or al
+,bl
+  C:\Temp\trdos\134\analysis\disasm\ami486_post_routines_1C40_1C80_20261116_01.txt:38:00001C98  86E0              xchg 
+ah,al
+  C:\Temp\trdos\134\analysis\disasm\ami486_post_routines_1C40_1C80_20261116_01.txt:39:00001C9A  E83F71            call 
+0x8ddc
+  C:\Temp\trdos\134\analysis\disasm\ami486_post_routines_1C40_1C80_20261116_01.txt:40:00001C9D  B047              mov a
+l,0x47
+  C:\Temp\trdos\134\analysis\disasm\ami486_post_routines_1C40_1C80_20261116_01.txt:41:00001C9F  E8F2D1            call 
+0xee94
+  C:\Temp\trdos\134\analysis\disasm\ami486_post_routines_1C40_1C80_20261116_01.txt:42:00001CA2  2483              and a
+l,0x83
+  C:\Temp\trdos\134\analysis\disasm\ami486_post_routines_1C40_1C80_20261116_01.txt:43:00001CA4  8AD8              mov b
+l,al
+  C:\Temp\trdos\134\analysis\disasm\ami486_ram_timing_origin_156A_20261116_01.txt:204:00001F32  EB06              jmp 0
+x1f3a
+  C:\Temp\trdos\134\analysis\disasm\ami486_ram_timing_origin_156A_20261116_01.txt:205:00001F34  BF3A1F            mov d
+i,0x1f3a
+  C:\Temp\trdos\134\analysis\disasm\ami486_ram_timing_origin_156A_20261116_01.txt:206:00001F37  E9936D            jmp 0
+x8ccd
+  C:\Temp\trdos\134\analysis\disasm\ami486_ram_timing_origin_156A_20261116_01.txt:207:00001F3A  58                pop a
+x
+  C:\Temp\trdos\134\analysis\disasm\ami486_ram_timing_origin_156A_20261116_01.txt:208:00001F3B  A801              test 
+al,0x1
+  C:\Temp\trdos\134\analysis\disasm\ami486_ram_timing_origin_156A_20261116_01.txt:209:00001F3D  0F840500          jz 0x
+1f46
+  C:\Temp\trdos\134\analysis\disasm\ami486_ram_timing_origin_156A_20261116_01.txt:210:00001F41  800E160010        or by
+te [0x16],0x10
+  C:\Temp\trdos\134\analysis\disasm\ami486_ram_timing_origin_156A_20261116_01.txt:211:00001F46  C3                ret
+  C:\Temp\trdos\134\analysis\disasm\ami486_ram_timing_origin_156A_20261116_01.txt:212:00001F47  B803C5            mov a
+x,0xc503
+  C:\Temp\trdos\134\analysis\disasm\ami486_ram_timing_origin_156A_20261116_01.txt:213:00001F4A  E88F6E            call 
+0x8ddc
+  C:\Temp\trdos\134\analysis\disasm\ami486_ram_timing_origin_156A_20261116_01.txt:214:00001F4D  E89D0A            call 
+0x29ed
+  C:\Temp\trdos\134\analysis\disasm\ami486_ram_timing_origin_156A_20261116_01.txt:215:00001F50  0F840C00          jz 0x
+1f60
+> C:\Temp\trdos\134\analysis\disasm\ami486_ram_timing_origin_156A_20261116_01.txt:216:00001F54  E8BB6F            call 
+0x8f12
+  C:\Temp\trdos\134\analysis\disasm\ami486_ram_timing_origin_156A_20261116_01.txt:217:00001F57  E82E06            call 
+0x2588
+  C:\Temp\trdos\134\analysis\disasm\ami486_ram_timing_origin_156A_20261116_01.txt:218:00001F5A  E84906            call 
+0x25a6
+  C:\Temp\trdos\134\analysis\disasm\ami486_ram_timing_origin_156A_20261116_01.txt:219:00001F5D  EB31              jmp 0
+x1f90
+  C:\Temp\trdos\134\analysis\disasm\ami486_ram_timing_origin_156A_20261116_01.txt:220:00001F5F  90                nop
+  C:\Temp\trdos\134\analysis\disasm\ami486_ram_timing_origin_156A_20261116_01.txt:221:00001F60  B046              mov a
+l,0x46
+  C:\Temp\trdos\134\analysis\disasm\ami486_ram_timing_origin_156A_20261116_01.txt:222:00001F62  E82FCF            call 
+0xee94
+  C:\Temp\trdos\134\analysis\disasm\ami486_ram_timing_origin_156A_20261116_01.txt:223:00001F65  240F              and a
+l,0xf
+  C:\Temp\trdos\134\analysis\disasm\ami486_ram_timing_origin_156A_20261116_01.txt:224:00001F67  8AD8              mov b
+l,al
+  C:\Temp\trdos\134\analysis\disasm\ami486_ram_timing_origin_156A_20261116_01.txt:225:00001F69  B81616            mov a
+x,0x1616
+  C:\Temp\trdos\134\analysis\disasm\ami486_ram_timing_origin_156A_20261116_01.txt:226:00001F6C  E8606E            call 
+0x8dcf
+  C:\Temp\trdos\134\analysis\disasm\ami486_ram_timing_origin_156A_20261116_01.txt:227:00001F6F  24F0              and a
+l,0xf0
+  C:\Temp\trdos\134\analysis\disasm\ami486_ram_timing_origin_156A_20261116_01.txt:228:00001F71  0AC3              or al
+,bl
+  C:\Temp\trdos\134\analysis\disasm\ami486_ram_timing_origin_156A_20261116_01.txt:229:00001F73  86E0              xchg 
+ah,al
+  C:\Temp\trdos\134\analysis\disasm\ami486_ram_timing_origin_156A_20261116_01.txt:230:00001F75  E8646E            call 
+0x8ddc
+  C:\Temp\trdos\134\analysis\disasm\ami486_ram_timing_origin_156A_20261116_01.txt:231:00001F78  B049              mov a
+l,0x49
+  C:\Temp\trdos\134\analysis\disasm\ami486_ram_timing_origin_156A_20261116_01.txt:232:00001F7A  E817CF            call 
+0xee94
+  C:\Temp\trdos\134\analysis\disasm\ami486_ram_timing_origin_156A_20261116_01.txt:233:00001F7D  2460              and a
+l,0x60
+  C:\Temp\trdos\134\analysis\disasm\ami486_ram_timing_origin_156A_20261116_01.txt:234:00001F7F  8AD8              mov b
+l,al
+  C:\Temp\trdos\134\analysis\disasm\ami486_vector_dispatch_callers_20261116_02.txt:41:00001C23  B096              mov a
+l,0x96
+  C:\Temp\trdos\134\analysis\disasm\ami486_vector_dispatch_callers_20261116_02.txt:42:00001C25  E875D2            call 
+0xee9d
+  C:\Temp\trdos\134\analysis\disasm\ami486_vector_dispatch_callers_20261116_02.txt:43:00001C28  B8B097            mov a
+x,0x97b0
+  C:\Temp\trdos\134\analysis\disasm\ami486_vector_dispatch_callers_20261116_02.txt:44:00001C2B  E866D2            call 
+0xee94
+  C:\Temp\trdos\134\analysis\disasm\ami486_vector_dispatch_callers_20261116_02.txt:45:00001C2E  86C4              xchg 
+al,ah
+  C:\Temp\trdos\134\analysis\disasm\ami486_vector_dispatch_callers_20261116_02.txt:46:00001C30  E86AD2            call 
+0xee9d
+  C:\Temp\trdos\134\analysis\disasm\ami486_vector_dispatch_callers_20261116_02.txt:47:00001C33  B8B198            mov a
+x,0x98b1
+  C:\Temp\trdos\134\analysis\disasm\ami486_vector_dispatch_callers_20261116_02.txt:48:00001C36  E85BD2            call 
+0xee94
+  C:\Temp\trdos\134\analysis\disasm\ami486_vector_dispatch_callers_20261116_02.txt:49:00001C39  86C4              xchg 
+al,ah
+  C:\Temp\trdos\134\analysis\disasm\ami486_vector_dispatch_callers_20261116_02.txt:50:00001C3B  E85FD2            call 
+0xee9d
+  C:\Temp\trdos\134\analysis\disasm\ami486_vector_dispatch_callers_20261116_02.txt:51:00001C3E  E8F5FB            call 
+0x1836
+  C:\Temp\trdos\134\analysis\disasm\ami486_vector_dispatch_callers_20261116_02.txt:52:00001C41  E806FC            call 
+0x184a
+> C:\Temp\trdos\134\analysis\disasm\ami486_vector_dispatch_callers_20261116_02.txt:53:00001C44  E8CB72            call 
+0x8f12
+  C:\Temp\trdos\134\analysis\disasm\ami486_vector_dispatch_callers_20261116_02.txt:54:00001C47  E87A09            call 
+0x25c4
+  C:\Temp\trdos\134\analysis\disasm\ami486_vector_dispatch_callers_20261116_02.txt:55:00001C4A  A3E600            mov [
+0xe6],ax
+  C:\Temp\trdos\134\analysis\disasm\ami486_vector_dispatch_callers_20261116_02.txt:56:00001C4D  C3                ret
+  C:\Temp\trdos\134\analysis\disasm\ami486_vector_dispatch_callers_20261116_02.txt:57:00001C4E  C3                ret
+  C:\Temp\trdos\134\analysis\disasm\ami486_vector_dispatch_callers_20261116_02.txt:58:00001C4F  C3                ret
+  C:\Temp\trdos\134\analysis\disasm\ami486_vector_dispatch_callers_20261116_02.txt:59:00001C50  B81313            mov a
+x,0x1313
+  C:\Temp\trdos\134\analysis\disasm\ami486_vector_dispatch_callers_20261116_02.txt:60:00001C53  E87971            call 
+0x8dcf
+  C:\Temp\trdos\134\analysis\disasm\ami486_vector_dispatch_callers_20261116_02.txt:61:00001C56  24C1              and a
+l,0xc1
+  C:\Temp\trdos\134\analysis\disasm\ami486_vector_dispatch_callers_20261116_02.txt:62:00001C58  86E0              xchg 
+ah,al
+  C:\Temp\trdos\134\analysis\disasm\ami486_vector_dispatch_callers_20261116_02.txt:63:00001C5A  E87F71            call 
+0x8ddc
+  C:\Temp\trdos\134\analysis\disasm\ami486_vector_dispatch_callers_20261116_02.txt:64:00001C5D  C3                ret
+  C:\Temp\trdos\134\analysis\disasm\ami486_vector_dispatch_callers_20261116_02.txt:65:00001C5E  2EA1E282          mov a
+x,[cs:0x82e2]
+  C:\Temp\trdos\134\analysis\disasm\ami486_vector_dispatch_callers_20261116_02.txt:66:00001C62  FF                db 0x
+ff
+  C:\Temp\trdos\134\analysis\disasm\ami486_vector_dispatch_callers_20261116_02.txt:67:00001C63  D0                db 0x
+d0
+  C:\Temp\trdos\134\analysis\disasm\ami486_vector_dispatch_callers_20261116_02.txt:68:00001C64  B08E              mov a
+l,0x8e
+  C:\Temp\trdos\134\analysis\disasm\ami486_vector_dispatch_callers_20261116_02.txt:69:00001C66  E82BD2            call 
+0xee94
+  C:\Temp\trdos\134\analysis\disasm\ami486_vector_dispatch_callers_20261116_02.txt:70:00001C69  A8C0              test 
+al,0xc0
+  C:\Temp\trdos\134\analysis\disasm\ami486_vector_dispatch_callers_20261116_02.txt:71:00001C6B  0F840300          jz 0x
+1c72
+  C:\Temp\trdos\134\analysis\disasm\ami486_vector_dispatch_callers_20261116_02.txt:72:00001C6F  E96101            jmp 0
+x1dd3
+  C:\Temp\trdos\134\analysis\disasm\ami486_vector_dispatch_callers_20261116_02.txt:73:00001C72  E8780D            call 
+0x29ed
+  C:\Temp\trdos\134\analysis\disasm\ami486_vector_dispatch_callers_20261116_02.txt:74:00001C75  0F840C00          jz 0x
+1c85
+> C:\Temp\trdos\134\analysis\disasm\ami486_vector_dispatch_callers_20261116_02.txt:75:00001C79  E89672            call 
+0x8f12
+  C:\Temp\trdos\134\analysis\disasm\ami486_vector_dispatch_callers_20261116_02.txt:76:00001C7C  E8B808            call 
+0x2537
+  C:\Temp\trdos\134\analysis\disasm\ami486_vector_dispatch_callers_20261116_02.txt:77:00001C7F  E8E808            call 
+0x256a
+  C:\Temp\trdos\134\analysis\disasm\ami486_vector_dispatch_callers_20261116_02.txt:78:00001C82  EB31              jmp 0
+x1cb5
+  C:\Temp\trdos\134\analysis\disasm\ami486_vector_dispatch_callers_20261116_02.txt:79:00001C84  90                nop
+  C:\Temp\trdos\134\analysis\disasm\ami486_vector_dispatch_callers_20261116_02.txt:80:00001C85  B050              mov a
+l,0x50
+  C:\Temp\trdos\134\analysis\disasm\ami486_vector_dispatch_callers_20261116_02.txt:81:00001C87  E80AD2            call 
+0xee94
+  C:\Temp\trdos\134\analysis\disasm\ami486_vector_dispatch_callers_20261116_02.txt:82:00001C8A  2407              and a
+l,0x7
+  C:\Temp\trdos\134\analysis\disasm\ami486_vector_dispatch_callers_20261116_02.txt:83:00001C8C  8AD8              mov b
+l,al
+  C:\Temp\trdos\134\analysis\disasm\ami486_vector_dispatch_callers_20261116_02.txt:84:00001C8E  B82020            mov a
+x,0x2020
+  C:\Temp\trdos\134\analysis\disasm\ami486_vector_dispatch_callers_20261116_02.txt:85:00001C91  E83B71            call 
+0x8dcf
+  C:\Temp\trdos\134\analysis\disasm\ami486_vector_dispatch_callers_20261116_02.txt:86:00001C94  24F8              and a
+l,0xf8
+  C:\Temp\trdos\134\analysis\disasm\ami486_vector_dispatch_callers_20261116_02.txt:87:00001C96  0AC3              or al
+,bl
+  C:\Temp\trdos\134\analysis\disasm\ami486_vector_dispatch_callers_20261116_02.txt:88:00001C98  86E0              xchg 
+ah,al
+  C:\Temp\trdos\134\analysis\disasm\ami486_vector_dispatch_callers_20261116_02.txt:89:00001C9A  E83F71            call 
+0x8ddc
+  C:\Temp\trdos\134\analysis\disasm\ami486_vector_dispatch_callers_20261116_02.txt:90:00001C9D  B047              mov a
+l,0x47
+  C:\Temp\trdos\134\analysis\disasm\ami486_vector_dispatch_callers_20261116_02.txt:91:00001C9F  E8F2D1            call 
+0xee94
+  C:\Temp\trdos\134\analysis\disasm\ami486_vector_dispatch_callers_20261116_02.txt:92:00001CA2  2483              and a
+l,0x83
+  C:\Temp\trdos\134\analysis\disasm\ami486_vector_dispatch_callers_20261116_02.txt:93:00001CA4  8AD8              mov b
+l,al
+
+
