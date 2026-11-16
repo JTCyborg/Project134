@@ -212,3 +212,8 @@ A95Eh is called at 134Eh inside function 131Fh, itself called from 1BAAh. The 1B
 ## 131Fh alternate-entry/ES correction — 2026-11-16
 
 The call at 1BAAh enters 131Fh, an overlapping stream that reaches A95Eh at 134Eh after CMOS checks. It does not execute the separate linear stream's ES=0000h setup at 1303h. Therefore ES=0000h remains unproven at A95Eh; the vector copy is conditional until a runtime IVT/ES trace confirms it.
+
+
+## Candidate-window / CMOS status refresh — 2026-11-16
+
+Generated candidate listing: 168 code windows + 18 data ranges; 10,700-byte union across 56 pages. The direct-call alternate entry at 131Fh is included through 1364h. CMOS 0Eh bit 7/6 gating and EEAAh CMOS reads are mapped; remaining FDC token uncertainty is the low nibble of [BX+90h].
