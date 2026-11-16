@@ -790,3 +790,13 @@ This phase is semantic classification of selected regions, not a complete CFG. S
 - The crafted stack makes RET at 29EAh pop 01F1h, an overlapping-code continuation inside the short-JMP displacement at 01F0h.
 - 29EDh is directly called from 1A1Dh, 1C72h, 1F4Dh and 23F2h; it calls EE94h with DH=B6h and returns AL bit 0.
 - BP.13 provenance and DA5Eh/DA61h dynamic entry remain unresolved.
+
+
+## Semantic map — phase 73 (2026-11-16)
+
+- [AMI486_SEMANTIC_MAP_PHASE73_20261116.md](AMI486_SEMANTIC_MAP_PHASE73_20261116.md)
+- Corrected phase 72: the crafted stack at SP=27CAh makes RET from 29EAh return to 27CCh, not 01F1h; the overlapping-code claim at 01F1h is withdrawn.
+- Decoded 29BBh as a two-pass 55AAh/AA55h memory-pattern test. Successful verification returns with ZF=1; mismatch returns with ZF=0. The continuation at 27CCh branches on ZF and sets BP bit 14 (OR BP,4000h) only on failure.
+- Corrected 29EDh: MOV AX,B6B6h; CALL EE94h; TEST AL,1; RET. EE94h writes AL to CMOS index port 70h and reads data port 71h. The tested value is CMOS byte B6h bit 0.
+- Four direct callers of 29EDh: 1A1Dh, 1C72h, 1F4Dh, 23F2h.
+- BP.13 provenance and DA5Eh/DA61h dynamic entry remain unresolved.
