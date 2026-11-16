@@ -759,3 +759,13 @@ This phase is semantic classification of selected regions, not a complete CFG. S
 - The unprefixed read at F06Ah still requires DS-state tracing before equating it with the CS-qualified ROM read.
 - The bit-6-set route to the keyboard-controller reset routine is not a stock path through the CS-qualified tests.
 - BP.13 provenance and dynamic entry to DA5Eh/DA61h remain unresolved.
+
+
+## Semantic map — phase 70 (2026-11-16)
+
+- [AMI486_SEMANTIC_MAP_PHASE70_20261116.md](AMI486_SEMANTIC_MAP_PHASE70_20261116.md)
+- Re-decoded the alternate entry at F000:F068: CLI; CS-qualified TEST of CS:8281h bit 6; stock value 00h takes JZ to F074.
+- F074–F096 is a protected-mode exit trampoline: load CS-relative GDTR/IDTR, set DS/ES/SS=0040h, clear CR0.PE, far-transfer to F000:F090, then jump to reset/POST entry E05Bh.
+- This resolves the phase 69 DS question: the read at F068/F06Ah is CS-overridden, not DS-relative.
+- Candidate raw relative-branch byte patterns targeting near F068h are not yet confirmed incoming edges because source instruction boundaries have not been established.
+- BP.13 provenance and dynamic entry to DA5Eh/DA61h remain unresolved.
