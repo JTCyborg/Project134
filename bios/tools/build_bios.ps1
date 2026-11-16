@@ -23,8 +23,70 @@ if (-not (Test-Path -LiteralPath $validatorPath -PathType Leaf)) {
     throw "ROM validator not found: $validatorPath"
 }
 
-$nasm = Get-Command -Name $NasmExe -CommandType Application -ErrorAction Stop
-$nasmPath = $nasm.Source
+function Resolve-NasmExecutable {
+    param([string]$RequestedPath)
+
+    # An explicit path always takes priority.
+    if ([System.IO.Path]::IsPathRooted($RequestedPath) -or $RequestedPath.Contains('\')) {
+        if (Test-Path -LiteralPath $RequestedPath -PathType Leaf) {
+            return (Get-Item -LiteralPath $RequestedPath).FullName
+        }
+        throw "NASM executable not found at the configured path: $RequestedPath"
+    }
+
+    # First use a normal PATH installation.
+    $command = Get-Command -Name $RequestedPath -CommandType Application -ErrorAction SilentlyContinue
+    if ($command) {
+        return $command.Source
+    }
+
+    # Then search common Windows installation locations and vcpkg tool caches.
+    $roots = [System.Collections.Generic.List[string]]::new()
+    if ($env:VCPKG_ROOT) {
+        $roots.Add((Join-Path $env:VCPKG_ROOT "downloads\tools\nasm"))
+    }
+    foreach ($root in @("C:\vcpkg\downloads\tools\nasm", "C:\Program Files\NASM", "C:\Program Files (x86)\NASM")) {
+        if (-not $roots.Contains($root)) {
+            $roots.Add($root)
+        }
+    }
+
+    $candidates = [System.Collections.Generic.List[object]]::new()
+    foreach ($root in $roots) {
+        if (-not (Test-Path -LiteralPath $root -PathType Container)) {
+            continue
+        }
+
+        if ((Split-Path -Leaf $root) -eq "nasm") {
+            Get-ChildItem -LiteralPath $root -Directory -ErrorAction SilentlyContinue | ForEach-Object {
+                $versionMatch = [regex]::Match($_.Name, '(\d+(?:\.\d+)+)')
+                $version = [version]"0.0"
+                if ($versionMatch.Success) {
+                    try { $version = [version]$versionMatch.Groups[1].Value } catch {}
+                }
+                $exe = Join-Path $_.FullName "nasm.exe"
+                if (Test-Path -LiteralPath $exe -PathType Leaf) {
+                    $candidates.Add([pscustomobject]@{ Version = $version; Path = $exe })
+                }
+            }
+        }
+        else {
+            $exe = Join-Path $root "nasm.exe"
+            if (Test-Path -LiteralPath $exe -PathType Leaf) {
+                $candidates.Add([pscustomobject]@{ Version = [version]"0.0"; Path = $exe })
+            }
+        }
+    }
+
+    $best = $candidates | Sort-Object Version -Descending | Select-Object -First 1
+    if ($best) {
+        return (Get-Item -LiteralPath $best.Path).FullName
+    }
+
+    throw "NASM was not found. Install NASM, add nasm.exe to PATH, set VCPKG_ROOT, or pass -NasmExe with its full path."
+}
+
+$nasmPath = Resolve-NasmExecutable -RequestedPath $NasmExe
 
 Write-Host "Project134 BIOS build"
 Write-Host "NASM:   $nasmPath"
