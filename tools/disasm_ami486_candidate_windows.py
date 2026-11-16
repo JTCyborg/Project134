@@ -13,7 +13,7 @@ ROM_PATH = ROOT / "ami486.bin"
 OUT_PATH = ROOT / "analysis" / "disasm" / "ami486_candidate_windows_20261116.txt"
 MANIFEST_PATH = ROOT / "analysis" / "disasm" / "ami486_candidate_windows_20261116.manifest.txt"
 WINDOW = 0x80
-LIMITS = {0xA08D: 0x64, 0xA0A0: 0x51, 0xA0BD: 0x34, 0xE845: 0x20}
+LIMITS = {0xA08D: 0x64, 0xA0A0: 0x51, 0xA0BD: 0x34, 0xE845: 0x20, 0x2238: 0x0A, 0x2244: 0x0B, 0x2250: 0x03}
 
 DATA_RANGES = [
     (0xA0F1, 0xA125, "INT 13h AH function table", "words"),
@@ -22,7 +22,6 @@ DATA_RANGES = [
     (0xF92A, 0xF936, "F9xx indirect-handler offset table", "words"),
     (0xE401, 0xE481, "First eight 16-byte fixed-disk parameter records", "hexascii"),
     (0xC5FA, 0xC610, "Legacy floppy INT 13h AH dispatch table", "words"),
-    (0x2236, 0x2253, "Memory-probe crafted stack-frame templates", "hexascii"),
 ]
 
 SEEDS = [
@@ -103,10 +102,17 @@ SEEDS = [
     (0xAF00, "keyboard/BIOS event handling code candidate"),
     (0x2100, "5555h/AAAAh pattern-write and compare stream candidate"),
     (0x2187, "memory-pattern test failure/return target"),
-    (0x222D, "memory-pattern failure trampoline with crafted stack frame"),
-    (0x2381, "second memory-probe failure trampoline"),
-    (0x8DCF, "memory-probe common failure/report handler"),
-    (0x8DDC, "memory-probe alternate failure/report handler"),
+    (0x222D, "memory-alias result path that launches a stack-threaded chipset I/O sequence"),
+    (0x2238, "return-to-stack code: read-modify-write chipset register 16h"),
+    (0x2244, "return-to-stack code: write chipset register 11h"),
+    (0x2250, "return-to-stack code continuation"),
+    (0x2381, "second memory-alias result path; chipset register 10h write trampoline"),
+    (0x2396, "return-to-stack code: mask and write chipset register 10h"),
+    (0x23AA, "return-to-stack code: chipset register 11h update"),
+    (0x23B6, "return-to-stack code: CR0 transition sequence"),
+    (0x23CE, "return-to-stack continuation after CR0 transition"),
+    (0x8DCF, "indexed chipset-register read helper using ports 22h/23h"),
+    (0x8DDC, "indexed chipset-register write helper using ports 22h/23h"),
     (0x2253, "second memory-pattern probe stream"),
     (0x22DB, "second memory-pattern probe failure trampoline"),
     (0x6800, "code-dense raw window without phase address token"),
