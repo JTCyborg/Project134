@@ -60,3 +60,38 @@ Mode: 16-bit
 | F000:8DED | ALi1429 register read sequence | Strongly supported |
 
 Detailed report: AMI486_POST_FLOW_20261116_01.md
+
+## Full-ROM coverage audit — 2026-11-16
+
+Target image: `ami486.bin` (65,536 bytes; Git blob SHA `480c7520c93e6c7ed437cf3ad214da7503f82ec6`).
+
+### Existing listing coverage
+
+| Listing | First offset | Last offset | Lines | Meaning |
+|---|---:|---:|---:|---|
+| `ami486_reset.disasm.txt` | `E05B` | `FFFF` | 3,993 | Linear 16-bit listing from reset entry |
+| `ami486_post_entry.disasm.txt` | `D604` | `FFFF` | 5,252 | Linear 16-bit listing from POST entry |
+| `ami486_branches.disasm.txt` | multiple | multiple | 919 | Selected branch/alternate-entry excerpts |
+
+The reset and POST listings overlap heavily: both continue linearly to `FFFF`. They are not independent contiguous ROM partitions and must not be concatenated as if they cover the complete image.
+
+### Missing full-ROM range
+
+The existing two linear listings do not cover offsets `0000-D603` (54,788 bytes). The branch listing and focused analysis files contain selected excerpts from that region, not a byte-complete disassembly.
+
+### Status and required method
+
+- **Full 64-KiB disassembly: NOT COMPLETE.**
+- Existing listings are preserved as historical entry-point listings.
+- Do not label a listing as complete based only on reaching `FFFF`; its starting offset matters.
+- To finish, run NASM `ndisasm -b 16` against the exact `ami486.bin` for the missing range `0000-D603`, then reconcile code/data and alternate-entry regions against the existing listings.
+- The GitHub file connector can retrieve text files and base64-encode binary files, but cannot provide a local binary file to the disassembler in this execution environment. No synthetic or guessed bytes are to be substituted.
+- Verify the input image SHA-256 and byte length before generating the final master listing. Preserve the existing reset/POST listings unchanged.
+
+### Next deliverables
+
+1. A byte-complete linear listing covering `0000-FFFF`.
+2. A separate control-flow/alternate-entry map so overlapping instruction streams remain explicit.
+3. A code/data classification map for tables, strings, padding, option-ROM payloads and embedded structures.
+4. A revised index with verified coverage and source-image hash.
+
