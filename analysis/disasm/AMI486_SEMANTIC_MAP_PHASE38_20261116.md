@@ -57,8 +57,8 @@ The SMSW condition is a test of CR0's high byte, not a direct test of CR0.PE (bi
 
 When the display routine takes the AUTO Config-disabled branch, it reaches 1A60h:
 - Reads CMOS B3h and tests bits 2–3 (mask 0Ch).
-- If either bit is set, executes SMSW and tests AH.
-- If that CR0-high-byte test is also nonzero, reads ALi register 12h, clears bit 4, writes it back, then writes 88h to ALi register 24h.
+- If either bit is set, it skips the conditional ALi 12h/24h updates and proceeds to the unconditional ALi 03h write.
+- Only when both bits are clear does it execute SMSW and test AH; if that CR0-high-byte test is nonzero, it reads ALi register 12h, clears bit 4, writes it back, then writes 88h to ALi register 24h.
 - Regardless of those conditions, writes 55h to ALi register 03h and returns.
 
 This is a separate chipset mode/setup path. The instruction flow proves the register writes and gates but not the hardware meanings of ALi registers 12h, 24h or 03h.
