@@ -72,7 +72,7 @@ The sequence is bracketed by CLI/STI and preserves AX/DX. Direct callers supply 
 
 ### Drive type and rate
 
-D3B5h reads CMOS register 10h and selects one of its two nibbles based on DL. This is the standard CMOS floppy-drive-type field. D3CFh uses the returned type to choose a controller setup sequence. D517h writes the derived rate/control value to port 03F7h. The exact meaning of each byte sequence at D40Ah–D462h remains open; the raw command bytes are preserved in the candidate decode and are not assigned speculative names.
+D3B5h first reads CMOS register 0Eh and tests bits C0h. If clear, it reads CMOS register 10h and selects the drive-type nibble based on DL (DL=0 selects the high nibble; nonzero selects the low nibble), then deliberately returns ZF=1. If 0Eh bits C0h are set, it returns ZF=0 without reading 10h; D3CFh then takes the alternate probe path at D46Dh. CMOS register 10h is the standard floppy-drive-type field. D517h writes the derived rate code to port 03F7h. The exact meaning of each byte sequence at D40Ah–D462h remains open; the raw command bytes are preserved in the candidate decode and are not assigned speculative names.
 
 ## 4. Legacy floppy INT 13h handler and INT 40h chain
 
@@ -159,3 +159,40 @@ D5DDh is a generic lock-state verifier. It computes expected result CL=AL>>3, co
 
 The VERSION response 90h, DUMPREG, LOCK/UNLOCK, CONFIGURE and PERPENDICULAR MODE sequence is consistent with an 82077AA-or-later enhanced 765-compatible controller. It does not by itself distinguish an 82077AA from later compatible variants. The actual controller model fitted to the board is not established by the ROM bytes alone.
 
+
+
+## 9. D3B5h/D3CFh: CMOS drive-type dispatch and data-rate fallback
+
+D3B5h and D3CFh together explain the selection logic that feeds D40Ah–D462h:
+
+1. D3CFh reads the drive selector from [BP+0Eh], places it in DL and calls D3B5h.
+2. D3B5h reads CMOS 0Eh. If bits C0h are set, it returns with ZF=0; D3CFh jumps to the alternate path at D46Dh.
+3. If CMOS 0Eh bits C0h are clear, D3B5h reads CMOS 10h, selects the high nibble for DL=0 or the low nibble for DL!=0, masks to 4 bits, executes CMP SP,SP to return ZF=1, and returns the drive-type value in AL.
+4. D3CFh uses the returned ZF to select the normal CMOS type-dispatch path. It clears [BX+90h], then decrements AX through the type cases.
+
+### Normal CMOS type path
+
+| CMOS type nibble | Probe order (data-rate code written to 03F7h) | Stored [BX+90h] result token |
+|---:|---|---|
+| 1 | No READ ID probe; select rate 2 | 93h |
+| 2 | 0, then 1 | 15h on code 0 success; 74h on code 1 success; 02h if both fail |
+| 3 | 0, then 2 | 17h on code 0 success; 97h on code 2 success; 07h if both fail |
+| 4 | 3, then 0, then 2 | D7h, 17h or 97h on first successful probe; C7h if all fail |
+| 0 or other | Same fallback as type 4 | D7h, 17h, 97h or C7h |
+
+The rate code is AL[7:6], shifted down and written to 03F7h by D517h. The common D3FAh path stores the full token and tests bit 4: bit 4 set clears CF and returns success; bit 4 clear sets CF and returns failure. Thus bit 4 is a confirmed success flag and bits 7:6 are the data-rate selector. The exact meaning of bits 3:0 beyond the observed per-type values remains unresolved.
+
+### CMOS 0Eh alternate path at D46Dh
+
+When CMOS 0Eh bits C0h are set, the code bypasses the normal type-nibble switch and probes in this order:
+
+| Probe order | Rate code | Success token |
+|---:|---:|---:|
+| 1 | 0 | 15h |
+| 2 | 1 | 74h |
+| 3 | 2 | 97h |
+| 4 | 3 | D7h |
+
+Each successful READ ID exits through D3FAh. If all four probes fail, the routine returns with CF set. The new candidate window D46Dh–D496h records this previously clipped alternate path.
+
+This maps the high-bit rate and success fields of [BX+90h], but it does not assign meanings to every low nibble bit or identify the exact CMOS 0Eh board-specific flag semantics.
