@@ -50,3 +50,8 @@ If work is resumed, start from these items rather than repeating the completed C
 - Preserve alternate-entry and overlapping-instruction annotations.
 - Do not infer hardware meanings from port numbers or CMOS indices without caller/context evidence.
 - Keep the user's project architecture constraints in mind where relevant; this task concerns BIOS ROM analysis, not implementation on real hardware.
+
+
+## Post-resumption raw-offset correction (phases 89–91)
+
+The pause checkpoint's note that 02F1h was inside an instruction beginning at 02F0h was off by one byte. The short jump is at 02EFh (`EB 0E`), its displacement is at 02F0h, and 02F1h is an aligned low-nibble callback entry (`8A 46 10`). The 02DBh high-nibble path jumps to shared code at 02FFh. Both paths call 05A3h and share a balanced `PUSH AX` / `POP AX; POPF; RET` sequence. See corrected phase-88 and phase-89 reports and phase-90/91 reports for the resumed analysis.
