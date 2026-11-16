@@ -441,3 +441,11 @@ This phase is semantic classification of selected regions, not a complete CFG. S
 - Traced BDA 0040:E2h to the 8F12h measurement-category routine and documented its eight threshold buckets without assigning unsupported MHz values.
 - Mapped four table fields to masked ALi register updates: 2588h→16h, 256Ah→17h, 25A6h→19h, and 2537h→20h.
 - Confirmed ALi register 20h bit 3 selects an alternate byte within its table field; hardware meanings of these registers remain unresolved.
+
+
+## Semantic map — phase 37 (2026-11-16)
+
+- [AMI486_SEMANTIC_MAP_PHASE37_20261116.md](AMI486_SEMANTIC_MAP_PHASE37_20261116.md)
+- Recovered the PIT channel-2 measurement: 9096h programs mode 2 with reload 0000h (65536), and 9033h times two generated DIV-instruction stubs.
+- Identified the stubs as repeated DIV BX (F7 F3) and DIV BL (F6 F3), each 1000 instructions, and traced the modular elapsed-count difference returned by 8F50h.
+- Connected that score to 8F12h's eight BDA performance categories and subsequent ALi table-row selection; left MHz calibration and emulator timing fidelity explicitly unresolved.
