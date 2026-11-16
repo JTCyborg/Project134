@@ -197,3 +197,8 @@ A95Eh installs CS:A08Dh at INT 13h and copies the displaced INT 13h offset:segme
 ## D4EAh rate-field confirmation — 2026-11-16
 
 D4EAh independently confirms [0090h+drive] bits 7:6 as the per-drive data-rate selector. It compares them with global [008Bh], updates the global rate cache when changed, converts the selector to bits 1:0 and writes it to port 03F7h through D517h. Remaining [BX+90h] low-nibble meanings are still open.
+
+
+## CMOS perpendicular-mode source resolution — 2026-11-16
+
+EEAAh is a protected CMOS read wrapper around EE94h (port 70h selector, port 71h data). D5A1h reads CMOS 0Eh; bit 7 (RTC power lost) or bit 6 (checksum invalid) suppresses drive-specific perpendicular flags. Otherwise it reads CMOS 10h; drive A high nibble type 05h sets parameter bit 2, drive B low nibble type 05h sets bit 3. The resulting byte is sent with PERPENDICULAR MODE 12h. EEAAh source is no longer an open question; low-nibble [BX+90h] semantics and the exact CMOS 0Eh policy remain open.
