@@ -22,6 +22,7 @@ DATA_RANGES = [
     (0xF92A, 0xF936, "F9xx indirect-handler offset table", "words"),
     (0xE401, 0xE481, "First eight 16-byte fixed-disk parameter records", "hexascii"),
     (0xC5FA, 0xC610, "Legacy floppy INT 13h AH dispatch table", "words"),
+    (0x2236, 0x2253, "Memory-probe crafted stack-frame templates", "hexascii"),
 ]
 
 SEEDS = [
@@ -103,6 +104,9 @@ SEEDS = [
     (0x2100, "5555h/AAAAh pattern-write and compare stream candidate"),
     (0x2187, "memory-pattern test failure/return target"),
     (0x222D, "memory-pattern failure trampoline with crafted stack frame"),
+    (0x2381, "second memory-probe failure trampoline"),
+    (0x8DCF, "memory-probe common failure/report handler"),
+    (0x8DDC, "memory-probe alternate failure/report handler"),
     (0x2253, "second memory-pattern probe stream"),
     (0x22DB, "second memory-pattern probe failure trampoline"),
     (0x6800, "code-dense raw window without phase address token"),
