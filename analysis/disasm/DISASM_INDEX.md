@@ -952,13 +952,13 @@ This phase is semantic classification of selected regions, not a complete CFG. S
 - 02DBh and 026Fh remain only partially classified; BP+10h/BP+14h semantics are unresolved.
 
 
-## Project status — paused (2026-11-16)
+## Project status — resumed (2026-11-16)
 
 - User-requested pause recorded in [PROJECT134_PAUSE_CHECKPOINT_20261116.md](PROJECT134_PAUSE_CHECKPOINT_20261116.md).
-- Last completed semantic reports: phases 84–88. Latest work resolved the Setup date/time callback family and the two BP+12h hexadecimal-nibble editor callbacks.
-- Immediate resume targets: 026Fh, 02DBh, and the overlapping alternate entry 02F1h; then continue the ROM-wide coverage ledger.
+- Pause checkpoint: phases 84–88. Resumed analysis has since added phases 89–91, covering the remaining Setup callbacks, secondary option table, and numeric list editor.
+- Current next targets: resolve the callback-specific AH/CF contracts in the 05B4h linked dispatcher, trace alternate entries 0745h/0747h and the 082Ch→083Eh parser path, then continue the ROM-wide coverage ledger.
 - The full 64 KiB BIOS is not yet completely semantically disassembled. BP.13 provenance and dynamic/indirect entry into DA5Eh/DA61h remain open.
-- No further work is to be performed until the user explicitly requests resumption.
+- Work resumed at the user's explicit request; the pause checkpoint is retained as a historical snapshot.
 
 
 ## Semantic map — phase 89 (2026-11-16)
