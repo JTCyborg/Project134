@@ -525,3 +525,10 @@ This phase is semantic classification of selected regions, not a complete CFG. S
 - Confirmed direct entries 8408h→D90Dh and 84C8h→D90Dh, plus 86D8h→D8EAh.
 - D8EAh path can OR BP bits 3, 4, or 5, but not bit 13. D90Dh is a live CMOS/POST path; it restores DX with POP DX from its crafted stack at D958h and exits through D9D9h→1AFBh, not into DAxx.
 - Corrects phase45's overly broad statement about no external entry into D8xx–DAxx; no entry into DA9Fh/D9E0h has been established.
+
+
+## Semantic map — phase 47 (2026-11-16)
+
+- [AMI486_SEMANTIC_MAP_PHASE47_20261116.md](AMI486_SEMANTIC_MAP_PHASE47_20261116.md)
+- Reconstructed DH=4 stack continuation: SP=88EEh; RET at 8930h pops 88F0h and resumes at JNE 88FAh. The branch depends on LAHF after DIV BL, whose flags are undefined, so outcome is CPU/emulator-specific and must not be assumed.
+- 8400h has no direct CALL/JMP entry in the linear listing; 84C8h is internal to the 8400h routine. BP bit13 remains unresolved.
