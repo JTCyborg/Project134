@@ -222,3 +222,8 @@ Generated candidate listing: 168 code windows + 18 data ranges; 10,700-byte unio
 ## INT 14h vector-reference scan — 2026-11-16
 
 No direct near CALL/JMP xref, literal F8E7h word reference or far pointer F000:F8E7h was found in the 64-KiB ROM. The F8E7h UART dispatcher remains an INT 14h-style candidate, not a proven installed IVT target; runtime IVT slot 0000:0054h/0056h capture is required.
+
+
+## 2100h memory-alias entry correction — 2026-11-16
+
+The 2100h code is a memory-alias probe with stack-threaded chipset register updates (see AMI486_MEMORY_CHIPSET_INITIALIZATION_20261116.md). The exact initial bytes include STOSB at 2106h and 2107h; the earlier address-ledger byte excerpt omitted them and is corrected. No direct near CALL/JMP target or literal F000:2100h far pointer exists; caller and initial DS/ES/DI/AL remain open.
