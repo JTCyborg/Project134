@@ -28,6 +28,12 @@ DATA_RANGES = [
     (0x2C15, 0x2C1D, "Four Setup mode-label string pointers", "words"),
     (0x2CAF, 0x2CCF, "Sixteen Setup timing-label string pointers", "words"),
     (0xB55F, 0xB7B1, "Setup option labels: clock, speed, cache, wait states and timing", "ascii"),
+    (0x2AB3, 0x2AC3, "Eight Setup clock-label string pointers", "words"),
+    (0x2B0B, 0x2B13, "Four Setup speed-label string pointers", "words"),
+    (0x2B8D, 0x2B91, "Two Setup wait-state label string pointers", "words"),
+    (0x2C15, 0x2C1D, "Four Setup mode-label string pointers", "words"),
+    (0x2CAF, 0x2CCF, "Sixteen Setup timing-label string pointers", "words"),
+    (0xB55F, 0xB7B1, "Setup option labels: clock, speed, cache, wait states and timing", "ascii"),
 ]
 
 SEEDS = [
