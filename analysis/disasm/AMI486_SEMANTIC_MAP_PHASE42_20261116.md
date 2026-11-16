@@ -60,7 +60,7 @@ Therefore, on this local path the operation is strictly OR-only: it can set B3h 
 
 ### 8931h continuation
 
-8931h clears CL, loads AX=C2C2h, and transfers through the indexed ALi read helper at 8DC Fh using a stack continuation at 893Ch. This is a separate chipset-read continuation, not a direct CMOS B3h operation. The surrounding continuation bytes are intentionally not treated as ordinary sequential instructions because the code changes SP to land on embedded return/continuation sequences.
+8931h clears CL, loads AX=C2C2h, and transfers through the indexed ALi read helper at 8DCFh using a stack continuation at 893Ch. This is a separate chipset-read continuation, not a direct CMOS B3h operation. The surrounding continuation bytes are intentionally not treated as ordinary sequential instructions because the code changes SP to land on embedded return/continuation sequences.
 
 ## 3. Confirmed versus unresolved
 
