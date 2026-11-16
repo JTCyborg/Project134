@@ -1136,7 +1136,7 @@ The F8E7h wrapper's AH=00h–05h table is confirmed as the BIOS serial-service f
 
 ## FDC DMA direction verified — 2026-11-16
 
-D156h receives mode 46h from C8BBh (8237 channel 2, single, memory-to-FDC write) and mode 4Ah from C936h/C913h (channel 2, single, FDC-to-memory read). The DMA direction is now resolved at these callers; D40Ah–D462h command-byte semantics remain open.
+D156h receives mode 46h from C8BBh (8237 channel 2, single, memory-to-FDC write) and mode 4Ah from C936h/C913h (channel 2, single, FDC-to-memory read). The DMA direction is now resolved at these callers; D40Ah–D462h is mapped as rate/state-token selection feeding D499h READ ID; only low-nibble token semantics remain open.
 
 
 ## INT 14h wrapper entry and BDA lookup correction — 2026-11-16
@@ -1146,7 +1146,7 @@ The initial F900h candidate seed was misaligned; the first replacement at F8E8h 
 
 ## FDC command analysis update — 2026-11-16
 
-D40Ah–D462h is a drive data-rate/state-selection sequence, not a list of FDC command opcodes. D499h sets the rate via 03F7h and sends the two-byte MFM READ ID command 4Ah + drive/head, then reads the seven-byte result. D520h–D5D9h identifies/configures an enhanced 765-compatible controller: VERSION 10h expects 90h, DUMPREG 0Eh returns ten bytes, D5DDh sends UNLOCK 14h or LOCK 94h and verifies the one-byte result, CONFIGURE 13h sends 00 08 00, and PERPENDICULAR MODE 12h uses a computed parameter. Remaining FDC unknowns are the low-bit [BX+90h] token meanings and the EEAAh parameter source. See AMI486_FDC_DMA_SUBSYSTEM_20261116.md.
+D40Ah–D462h is a drive data-rate/state-selection sequence, not a list of FDC command opcodes. D499h sets the rate via 03F7h and sends the two-byte MFM READ ID command 4Ah + drive/head, then reads the seven-byte result. D520h–D5D9h identifies/configures an enhanced 765-compatible controller: VERSION 10h expects 90h, DUMPREG 0Eh returns ten bytes, D5DDh sends UNLOCK 14h or LOCK 94h and verifies the one-byte result, CONFIGURE 13h sends 00 08 00, and PERPENDICULAR MODE 12h uses a computed parameter. Remaining FDC unknown is the low-nibble [BX+90h] token meaning; EEAAh is a protected CMOS read wrapper. See AMI486_FDC_DMA_SUBSYSTEM_20261116.md.
 
 
 ## FDC drive-state refinement — 2026-11-16
@@ -1167,7 +1167,7 @@ D4EAh independently validates the per-drive rate field: it compares [0090h+drive
 EEAAh is the protected CMOS read wrapper around EE94h (port 70h selector, port 71h data). D5A1h checks CMOS 0Eh bits 7/6 (RTC power-loss / checksum-invalid); if clear, it reads CMOS 10h and sets PERPENDICULAR MODE 12h parameter bit 2 for drive A type 05h or bit 3 for drive B type 05h. CMOS type 05h is 2.88-MB 3.5-inch. The previous EEAAh parameter-source unknown is resolved; see AMI486_FDC_DMA_SUBSYSTEM_20261116.md.
 
 
-The A95Eh call-site chain is now mapped: 1BAAh CALL 131Fh; 131Fh CALL A95Eh at 134Eh. The local function temporarily sets ES=0000h at 1303h but restores it at 130Fh before A95Eh. No local instruction proves ES=0000h at the IVT hook; retain this as a caller-context requirement. The candidate generator now includes 131Fh–1364h.
+The A95Eh call-site chain is now mapped: 1BAAh CALL 131Fh; 131Fh CALL A95Eh at 134Eh. The 131Fh alternate entry checks CMOS 0Eh/92h and reaches A95Eh at 134Eh. The ES=0000h setup at 1303h belongs to a separate linear stream and is bypassed by the 131Fh entry; ES remains unproven at the hook. The candidate generator now includes 131Fh–1364h.
 
 
 The 131Fh entry is overlapping: its direct caller is 1BAAh, and its alternate stream reaches A95Eh at 134Eh after CMOS 0Eh/92h checks. Do not transfer the ES=0000h setup from the separate linear stream at 1303h into this alternate path; that code is bypassed. ES remains an unproven precondition for the A95Eh IVT writes.
