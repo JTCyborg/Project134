@@ -182,3 +182,8 @@ The generated candidate listing now contains 189 code windows plus 6 data window
 ## FDC command-sequence update — 2026-11-16
 
 D499h is now identified as a three-attempt MFM READ ID transaction: command 4Ah plus drive/head, followed by seven result bytes. D40Ah–D462h supplies data-rate tokens for 03F7h and per-drive state values, not command opcodes. D520h–D5D9h probes an enhanced 765-compatible FDC (VERSION 10h returns 90h), reads DUMPREG, unlocks FIFO config, sends CONFIGURE 13h with 00 08 00, sets PERPENDICULAR MODE 12h, then locks the configuration. Still open: low-bit [BX+90h] meanings, EEAAh config-source semantics, and the runtime INT 40h vector.
+
+
+## FDC drive-type state-machine refinement — 2026-11-16
+
+D3B5h checks CMOS 0Eh bits C0h and, when clear, extracts the selected nibble from CMOS 10h. D3CFh maps normal drive types to READ ID data-rate probes: type 1 selects 250-kbps code 2; type 2 tries 0/1; type 3 tries 0/2; type 4/default tries 3/0/2. The CMOS 0Eh alternate path D46Dh tries 0/1/2/3. D3FAh establishes [BX+90h] bit 4 as success and bits 7:6 as rate code. Caller C84Bh invokes D3CFh when bit 4 is clear; C855h maps D7h/17h/other tokens to SPECIFY command bytes 03 AF 02 / 03 BF 02 / 03 DF 02. Remaining low-nibble semantics and the meaning of CMOS 0Eh C0h remain open.
