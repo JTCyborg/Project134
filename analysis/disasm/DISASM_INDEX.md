@@ -432,3 +432,12 @@ This phase is semantic classification of selected regions, not a complete CFG. S
 - Recovered the CMOS-to-ALi masked read/modify/write mapping in the manual POST configuration path at 1C85h–1DD0h.
 - Separated AUTO Config derived-table paths from manual CMOS programming and the later POST A4 stage.
 - Documented ALi register 13h/14h shadow-control operations and the CMOS 8Eh C0h configuration gate.
+
+
+## Semantic map — phase 36 (2026-11-16)
+
+- [AMI486_SEMANTIC_MAP_PHASE36_20261116.md](AMI486_SEMANTIC_MAP_PHASE36_20261116.md)
+- Recovered the shared 20-byte row selector at 25C4h, including CMOS B3h bit 2 bank selection, the PE-state condition, and the special category-5 substitution.
+- Traced BDA 0040:E2h to the 8F12h measurement-category routine and documented its eight threshold buckets without assigning unsupported MHz values.
+- Mapped four table fields to masked ALi register updates: 2588h→16h, 256Ah→17h, 25A6h→19h, and 2537h→20h.
+- Confirmed ALi register 20h bit 3 selects an alternate byte within its table field; hardware meanings of these registers remain unresolved.
