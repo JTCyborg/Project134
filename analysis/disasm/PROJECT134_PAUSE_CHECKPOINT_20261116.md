@@ -176,7 +176,7 @@ The F9xx serial dispatcher entry was byte-aligned again against the generated Ca
 
 ## Candidate-window refresh — 2026-11-16
 
-The generated candidate listing now contains 189 code windows plus 6 data windows (195 headers total). Their distinct union is 10,493 bytes across 54 pages; this is not a semantic coverage percentage. The F9xx serial window is aligned at F8E7h–F929h, with F92Ah–F935h emitted as the handler table. The INT 14h vector source remains open.
+The generated candidate listing now contains 168 code windows plus 18 data windows (186 headers total). Their distinct union is 10,700 bytes across 56 pages; this is not a semantic coverage percentage. The F9xx serial window is aligned at F8E7h–F929h, with F92Ah–F935h emitted as the handler table. The INT 14h vector source remains open.
 
 
 ## FDC command-sequence update — 2026-11-16
