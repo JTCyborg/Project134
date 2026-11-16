@@ -39,9 +39,7 @@ The 0319h/0351h callers use this helper for the high and low nibbles of the same
 
 ## 3. Important overlap at callback 02F1h
 
-The callback table contains an entry at 02F1h, but this address is the second byte of the instruction beginning at 02F0h in the linear stream. A decode starting at 02F0h sees MOV AL,[BP+10h]; an entry starting at 02F1h sees a different instruction stream.
-
-Therefore 02F1h must remain an explicit alternate-entry/overlap case. It must not be described as the continuation of the 02DBh stream without proving how the callback enters and what state it expects. The adjacent 02DBh code manipulates BP+10h and BP+14h, but its exact callback semantics are still open.
+The callback table entry at 02F1h is an aligned instruction boundary immediately after a short jump beginning at 02EFh (EB 0E). The jump from the 02DBh high-nibble path skips the independent 02F1h low-nibble path and lands at the shared merge code at 02FFh. Thus 02DBh and 02F1h are two distinct callback entries that converge at 02FFh; 02F1h is not inside the jump instruction and is not a PUSH CS entry.
 
 ## 4. Remaining callback targets
 
@@ -52,3 +50,8 @@ Therefore 02F1h must remain an explicit alternate-entry/overlap case. It must no
 ## 5. Coverage update
 
 This phase closes the common hexadecimal input helper and the two BP+12h nibble callbacks. It does not assign a semantic name to BP+12h or the BP+10h/BP+14h pair. Next work is to resolve the overlapping 02F1h entry and the 026Fh callback/table, then return to the broader low-ROM coverage ledger.
+
+
+## Raw-offset correction — 02DBh/02F1h entry alignment
+
+The prior overlap description was off by one byte. Raw offsets are: short JMP at 02EFh (`EB 0E`), displacement at 02F0h, and the aligned low-nibble callback entry at 02F1h (`8A 46 10`). The high-nibble path jumps from 02EFh to 02FFh. Both paths converge at 02FFh (`PUSH AX`) and share the balanced epilogue `POP AX; POPF; RET` at 0316h..0318h. The earlier claim that 02F1h begins with PUSH CS is withdrawn.
