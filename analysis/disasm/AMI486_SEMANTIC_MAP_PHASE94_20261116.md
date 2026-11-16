@@ -5,9 +5,9 @@
 05B4 CALL 05E0h; 05B7 ADD BX,04h; 05BA MOV AX,[CS:BX]; 05BD MOV [BP+02h],AX; 05C0 MOV AX,[CS:BX+02h]; 05C4 CALL AX.
 05C6 PUSHF; 05C7 JNC 05DBh; 05C9 JZ 05DBh; 05CB CMP AH,01h; 05CE JZ 05DBh.
 05D0 POPF; 05D1 MOV BX,[BP+02h]; 05D4 CMP AH,51h; 05D7 JZ 05B7h; 05D9 JMP 05BAh.
-05DB CALL 05EBh; 05DE POPF; 05DF RET; 05E0 RET.
+05DB CALL 05EBh; 05DE POPF; 05DF RET. At 05E0h the next routine begins with `PUSH AX; PUSH DX; MOV DX,1203h; CALL 0845h; POP DX; POP AX; RET`.
 
-The call at 05B4h to 05E0h is a no-op stub (RET), not the prompt renderer. The renderer begins at 05EBh and is called only on the dispatcher exit path at 05DBh. This corrects the earlier phase-92 description.
+The call at 05B4h to 05E0h is not a no-op: it preserves AX/DX and calls 0845h with DX=1203h, using the current SI text pointer. It is the pre-dispatch display/helper call described correctly in phase 92. The separate entry at 05EBh is called on the dispatcher exit path at 05DBh. The claim that 05E0h is a RET stub is withdrawn.
 
 ## 2. Linked-record traversal and callback result contract
 
@@ -17,7 +17,7 @@ After callback return, PUSHF preserves callback flags. CF=0, ZF=1, or AH=01h exi
 
 ## 3. Initial records and unresolved 0B5Dh target mismatch
 
-05A3h sets BX=0AE1h and calls 05B4h. After the RET stub and ADD BX,4h, record 0AE5h is selected:
+05A3h sets BX=0AE1h and calls 05B4h. After the display helper returns and ADD BX,4h executes, record 0AE5h is selected:
 
 | Record | Next cursor | Callback target |
 |---:|---:|---:|
@@ -45,3 +45,8 @@ This is an unresolved contradiction: the dispatcher performs CALL AX to 0B5Dh/0B
 ## Phase 95 correction — selected chain base was omitted
 
 The exact 05B4h dispatcher decode remains valid, but the phase-94 assumption that the first record is always at 0AE5h was wrong. 05A3h calls 0AADh, which indexes the 16-word pointer array at 0AE1h using AL and returns the selected chain base in SI; this is copied to BX before 05B4h is called. The dispatcher then adds four and reads the first record at selected_base+4. For AL=3, selected_base=0B5Dh and the first callback record is at 0B61h (next=0B65h, callback=061Ah); for AL=5, selected_base=0B6Dh and the first record is at 0B71h (next=0B75h, callback=0626h). Therefore the supposed 0B5Dh/0B6Dh callback-target mismatch does not exist. See phase 95 for all first-record mappings and the exact 0AADh helper.
+
+
+## Audit correction — 05E0h raw bytes (2026-11-16)
+
+The `05E0 RET` annotation in the original instruction line above is invalid. The RET at `05EAh` terminates the helper beginning at `05E0h`; `05E0h` itself is `PUSH AX`. See the audit correction in phase 92 and the byte-verified correction in phase 95.
