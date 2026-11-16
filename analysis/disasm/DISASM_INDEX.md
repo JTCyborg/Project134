@@ -671,3 +671,15 @@ This phase is semantic classification of selected regions, not a complete CFG. S
 - No direct static near CALL/JMP targets into 509Eh, 50E1h, 5189h, 5190h, 5194h, 51F3h, 525Fh, 5280h, or 52C1h were found; simple literal near-offset table words were also absent.
 - BP preservation across F3DB, helper calls, and INT 15h/AH=89h remains unproven. The caller and first BP.13 producer remain unresolved.
 
+
+
+## Semantic map — phase 62 (2026-11-16)
+
+- [AMI486_SEMANTIC_MAP_PHASE62_20261116.md](AMI486_SEMANTIC_MAP_PHASE62_20261116.md)
+- INT 15h/AH=89h dispatches to 933Ah; dispatcher temporarily saves/restores BP as its table index.
+- Handler 933Ah, helper F66Ah, and PIC initializer EEEFh do not write BP.
+- F3DBh and F419h preserve all general registers through PUSHAW/POPAW.
+- Audited memory helpers 5305h, 534Ch, 5371h and 53A6h do not write BP.
+- On the successful path, the temporary BP=1 at 51F4h is restored at 5239h. PUSHAW at 525Fh therefore captures the incoming BP value to this block.
+- BP.13 was already present at the runtime entry into 509Eh/50A0h; the actual entry/caller and first producer remain unresolved.
+
