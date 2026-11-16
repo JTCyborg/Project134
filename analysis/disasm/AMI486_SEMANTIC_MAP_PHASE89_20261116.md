@@ -47,9 +47,14 @@ The dispatcher body is:
 05DF  RET
 ```
 
-The cursor values selected by 026Fh are advanced by four before the next record is read. For the two observed starting values, the first records are at 0BA9h and 0BB1h; both contain next-cursor 0644h and callback target 0BA5h. Thus 0BA5h is an indirect target reached through this table path.
+The cursor values selected by 026Fh are advanced by four before the next record is read. The relevant records are:
 
-Important unresolved overlap: the bytes beginning at 0BA5h also form a dense sequence of four-byte-looking values (for example 0BA5h: 44 06 AD 0B 44 06 A5 0B ...). A linear decode at 0BA5h produces plausible individual 8086 instructions but does not by itself prove executable code. The indirect CALL target and the apparent record/data layout conflict; 0BA5h must remain an alternate-entry/code-data overlap candidate until its full execution and return path are traced. Do not label the table entries as ordinary callbacks yet.
+| Record | Next cursor | Indirect target | Entry meaning established so far |
+|---:|---:|---:|---|
+| 0BA9h | 0BADh | 064Ah | Selects the " Not Installed" string at 74E5h, then enters the common prompt/input path at 02BAh |
+| 0BB1h | 0BD5h | 06AEh | Field callback that may update BP+23h through the shared input helper |
+
+The table bytes are therefore records, not a code entry at 0BA5h. The earlier interpretation of 0BA5h as the indirect target is withdrawn. The complete threaded traversal and all record outcomes remain to be traced.
 
 ## 3. Prompt/input subroutine entries around 0288h
 
@@ -137,3 +142,8 @@ Still unresolved:
 - The semantic label for BP+10h and the exact meaning of BP+14h bits 2 and 6.
 
 Next: trace the nested 05A4h/05A3h input path and 05B4h's 0BA5h target from real entry boundaries, then reconcile the stack behavior against the outer 01EDh dispatcher before assigning callback return semantics.
+
+
+## Phase 89 correction — secondary callback table (raw-offset recheck)
+
+The first read of the 0BA5h region was misaligned by two bytes. Revalidation against the 65,536-byte ROM gives the four-byte records at 0BA5h, 0BA9h, 0BADh, 0BB1h, etc. In particular, the 026Fh-selected cursors lead to record 0BA9h (target 064Ah) or 0BB1h (target 06AEh), not to a CALL of 0BA5h. The apparent 0BA5h code/data conflict described above is withdrawn. The record table is now confirmed as a linked callback table; its full traversal still requires analysis.
