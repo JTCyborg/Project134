@@ -893,3 +893,12 @@ This phase is semantic classification of selected regions, not a complete CFG. S
 - Several callers use C0h as a gate, but their subsequent branches and helpers differ; this is not evidence that bits 6/7 have one global semantic meaning.
 - EEAAh pattern matches at CC87h, CD8Bh and F10Dh are excluded from the EE94h CMOS-read group.
 - CMOS[8Eh] writers, indirect B8h/8Eh accesses, BEh:BFh update order, BP.13 producer and DA5Eh/DA61h dynamic entry remain open.
+
+
+## Semantic map — phase 83 (2026-11-16)
+
+- [AMI486_SEMANTIC_MAP_PHASE83_20261116.md](AMI486_SEMANTIC_MAP_PHASE83_20261116.md)
+- Added a direct CMOS[8Eh] read at 834Fh: OUT 70h selects 8Eh, IN 71h returns the byte, and mask C0h gates a table-selected secondary CMOS read.
+- CMOS[8Eh] now has at least fourteen confirmed read sites: thirteen through EE94h plus the direct 834Fh access.
+- No immediate EE9Dh write-helper call or direct immediate OUT70h/OUT71h write sequence for index 8Eh was found. Register-indexed and data-driven writes remain possible; this is not proof that 8Eh is immutable.
+- The CS-relative table walker around 8324h..83F0h and the CMOS[8Eh] writer search remain open.
