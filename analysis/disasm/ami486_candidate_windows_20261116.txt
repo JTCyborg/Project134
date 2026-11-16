@@ -56,11 +56,6 @@ E471  DD 02 05 00 00 FF FF 00 00 00 00 00 DD 02 11 00 ................
 Reason: Legacy floppy INT 13h AH dispatch table
 Words: C69A, C6CE, C7E2, C7E2, C7E2, C8E1, C999, C6D9, C78B, C716, CB09
 
-===== DATA 2236h-2252h =====
-Reason: Memory-probe crafted stack-frame templates
-2236  38 22 0C 30 86 E0 BC 42 22 E9 9A 6B 44 22 B8 11 8".0...B"..kD"..
-2246  44 90 BC 4E 22 E9 8E 6B 50 22 B3 FF 26          D..N"..kP"..&
-
 ===== A000h-A07Fh =====
 Reason: code-dense raw window; entry not yet caller-verified
 A000  04 B4                   add al, 0xb4
@@ -4631,7 +4626,7 @@ Reason: memory-pattern test failure/return target
 2205  B6 01                   mov dh, 1
 
 ===== 222Dh-22ACh =====
-Reason: memory-pattern failure trampoline with crafted stack frame
+Reason: memory-alias result path that launches a stack-threaded chipset I/O sequence
 222D  B8 16 16                mov ax, 0x1616
 2230  BC 36 22                mov sp, 0x2236
 2233  E9 99 6B                jmp 0x8dcf
@@ -4662,8 +4657,28 @@ Reason: memory-pattern failure trampoline with crafted stack frame
 22AB  26              db 0x26
 22AC  66              db 0x66
 
+===== 2238h-2241h =====
+Reason: return-to-stack code: read-modify-write chipset register 16h
+2238  0C 30                   or al, 0x30
+223A  86 E0                   xchg al, ah
+223C  BC 42 22                mov sp, 0x2242
+223F  E9 9A 6B                jmp 0x8ddc
+
+===== 2244h-224Eh =====
+Reason: return-to-stack code: write chipset register 11h
+2244  B8 11 44                mov ax, 0x4411
+2247  90                      nop
+2248  BC 4E 22                mov sp, 0x224e
+224B  E9 8E 6B                jmp 0x8ddc
+224E  50                      push ax
+
+===== 2250h-2252h =====
+Reason: return-to-stack code continuation
+2250  B3 FF                   mov bl, 0xff
+2252  26              db 0x26
+
 ===== 2381h-2400h =====
-Reason: second memory-probe failure trampoline
+Reason: second memory-alias result path; chipset register 10h write trampoline
 2381  81 E2 0F 0F             and dx, 0xf0f
 2385  8A E6                   mov ah, dh
 2387  C0 E4 04                shl ah, 4
@@ -4716,8 +4731,236 @@ Reason: second memory-probe failure trampoline
 23FD  2B C0                   sub ax, ax
 23FF  8E D8                   mov ds, ax
 
+===== 2396h-2415h =====
+Reason: return-to-stack code: mask and write chipset register 10h
+2396  81 E3 0F 0F             and bx, 0xf0f
+239A  8A E7                   mov ah, bh
+239C  C0 E4 04                shl ah, 4
+239F  0A E3                   or ah, bl
+23A1  B0 11                   mov al, 0x11
+23A3  90                      nop
+23A4  BC AA 23                mov sp, 0x23aa
+23A7  E9 32 6A                jmp 0x8ddc
+23AA  AC                      lodsb al, byte ptr [si]
+23AB  23 B8 16 00             and di, word ptr [bx + si + 0x16]
+23AF  90                      nop
+23B0  BC B6 23                mov sp, 0x23b6
+23B3  E9 26 6A                jmp 0x8ddc
+23B6  B8 23 B8                mov ax, 0xb823
+23B9  10 00                   adc byte ptr [bx + si], al
+23BB  8E C0                   mov es, ax
+23BD  0F 20 C0                mov eax, cr0
+23C0  24 FE                   and al, 0xfe
+23C2  0F 22 C0                mov cr0, eax
+23C5  EB 00                   jmp 0x23c7
+23C7  90                      nop
+23C8  BC CE 23                mov sp, 0x23ce
+23CB  E9 A0 D2                jmp 0xf66e
+23CE  D0 23                   shl byte ptr [bp + di], 1
+23D0  BB 00 04                mov bx, 0x400
+23D3  90                      nop
+23D4  BC DA 23                mov sp, 0x23da
+23D7  E9 53 31                jmp 0x552d
+23DA  DC 23                   fsub qword ptr [bp + di]
+23DC  74 06                   je 0x23e4
+23DE  BD 03 00                mov bp, 3
+23E1  E9 C1 D0                jmp 0xf4a5
+23E4  B8 30 00                mov ax, 0x30
+23E7  8E D0                   mov ss, ax
+23E9  BC 00 01                mov sp, 0x100
+23EC  E8 1B 00                call 0x240a
+23EF  E8 A3 00                call 0x2495
+23F2  E8 F8 05                call 0x29ed
+23F5  74 06                   je 0x23fd
+23F7  E8 18 6B                call 0x8f12
+23FA  E8 3A 01                call 0x2537
+23FD  2B C0                   sub ax, ax
+23FF  8E D8                   mov ds, ax
+2401  8E C0                   mov es, ax
+2403  8C C8                   mov ax, cs
+2405  8E D0                   mov ss, ax
+2407  E9 D2 B5                jmp 0xd9dc
+240A  BB 00 F0                mov bx, 0xf000
+240D  B2 C0                   mov dl, 0xc0
+240F  B9 00 80                mov cx, 0x8000
+2412  EB 43                   jmp 0x2457
+2414  90                      nop
+2415  BB              db 0xBB
+
+===== 23AAh-2429h =====
+Reason: return-to-stack code: chipset register 11h update
+23AA  AC                      lodsb al, byte ptr [si]
+23AB  23 B8 16 00             and di, word ptr [bx + si + 0x16]
+23AF  90                      nop
+23B0  BC B6 23                mov sp, 0x23b6
+23B3  E9 26 6A                jmp 0x8ddc
+23B6  B8 23 B8                mov ax, 0xb823
+23B9  10 00                   adc byte ptr [bx + si], al
+23BB  8E C0                   mov es, ax
+23BD  0F 20 C0                mov eax, cr0
+23C0  24 FE                   and al, 0xfe
+23C2  0F 22 C0                mov cr0, eax
+23C5  EB 00                   jmp 0x23c7
+23C7  90                      nop
+23C8  BC CE 23                mov sp, 0x23ce
+23CB  E9 A0 D2                jmp 0xf66e
+23CE  D0 23                   shl byte ptr [bp + di], 1
+23D0  BB 00 04                mov bx, 0x400
+23D3  90                      nop
+23D4  BC DA 23                mov sp, 0x23da
+23D7  E9 53 31                jmp 0x552d
+23DA  DC 23                   fsub qword ptr [bp + di]
+23DC  74 06                   je 0x23e4
+23DE  BD 03 00                mov bp, 3
+23E1  E9 C1 D0                jmp 0xf4a5
+23E4  B8 30 00                mov ax, 0x30
+23E7  8E D0                   mov ss, ax
+23E9  BC 00 01                mov sp, 0x100
+23EC  E8 1B 00                call 0x240a
+23EF  E8 A3 00                call 0x2495
+23F2  E8 F8 05                call 0x29ed
+23F5  74 06                   je 0x23fd
+23F7  E8 18 6B                call 0x8f12
+23FA  E8 3A 01                call 0x2537
+23FD  2B C0                   sub ax, ax
+23FF  8E D8                   mov ds, ax
+2401  8E C0                   mov es, ax
+2403  8C C8                   mov ax, cs
+2405  8E D0                   mov ss, ax
+2407  E9 D2 B5                jmp 0xd9dc
+240A  BB 00 F0                mov bx, 0xf000
+240D  B2 C0                   mov dl, 0xc0
+240F  B9 00 80                mov cx, 0x8000
+2412  EB 43                   jmp 0x2457
+2414  90                      nop
+2415  BB 00 C0                mov bx, 0xc000
+2418  B9 00 40                mov cx, 0x4000
+241B  B2 01                   mov dl, 1
+241D  EB 38                   jmp 0x2457
+241F  90                      nop
+2420  BB 00 C8                mov bx, 0xc800
+2423  B9 00 40                mov cx, 0x4000
+2426  B2 02                   mov dl, 2
+2428  EB 2D                   jmp 0x2457
+
+===== 23B6h-2435h =====
+Reason: return-to-stack code: CR0 transition sequence
+23B6  B8 23 B8                mov ax, 0xb823
+23B9  10 00                   adc byte ptr [bx + si], al
+23BB  8E C0                   mov es, ax
+23BD  0F 20 C0                mov eax, cr0
+23C0  24 FE                   and al, 0xfe
+23C2  0F 22 C0                mov cr0, eax
+23C5  EB 00                   jmp 0x23c7
+23C7  90                      nop
+23C8  BC CE 23                mov sp, 0x23ce
+23CB  E9 A0 D2                jmp 0xf66e
+23CE  D0 23                   shl byte ptr [bp + di], 1
+23D0  BB 00 04                mov bx, 0x400
+23D3  90                      nop
+23D4  BC DA 23                mov sp, 0x23da
+23D7  E9 53 31                jmp 0x552d
+23DA  DC 23                   fsub qword ptr [bp + di]
+23DC  74 06                   je 0x23e4
+23DE  BD 03 00                mov bp, 3
+23E1  E9 C1 D0                jmp 0xf4a5
+23E4  B8 30 00                mov ax, 0x30
+23E7  8E D0                   mov ss, ax
+23E9  BC 00 01                mov sp, 0x100
+23EC  E8 1B 00                call 0x240a
+23EF  E8 A3 00                call 0x2495
+23F2  E8 F8 05                call 0x29ed
+23F5  74 06                   je 0x23fd
+23F7  E8 18 6B                call 0x8f12
+23FA  E8 3A 01                call 0x2537
+23FD  2B C0                   sub ax, ax
+23FF  8E D8                   mov ds, ax
+2401  8E C0                   mov es, ax
+2403  8C C8                   mov ax, cs
+2405  8E D0                   mov ss, ax
+2407  E9 D2 B5                jmp 0xd9dc
+240A  BB 00 F0                mov bx, 0xf000
+240D  B2 C0                   mov dl, 0xc0
+240F  B9 00 80                mov cx, 0x8000
+2412  EB 43                   jmp 0x2457
+2414  90                      nop
+2415  BB 00 C0                mov bx, 0xc000
+2418  B9 00 40                mov cx, 0x4000
+241B  B2 01                   mov dl, 1
+241D  EB 38                   jmp 0x2457
+241F  90                      nop
+2420  BB 00 C8                mov bx, 0xc800
+2423  B9 00 40                mov cx, 0x4000
+2426  B2 02                   mov dl, 2
+2428  EB 2D                   jmp 0x2457
+242A  90                      nop
+242B  BB 00 D0                mov bx, 0xd000
+242E  B9 00 40                mov cx, 0x4000
+2431  B2 04                   mov dl, 4
+2433  EB 22                   jmp 0x2457
+2435  90                      nop
+
+===== 23CEh-244Dh =====
+Reason: return-to-stack continuation after CR0 transition
+23CE  D0 23                   shl byte ptr [bp + di], 1
+23D0  BB 00 04                mov bx, 0x400
+23D3  90                      nop
+23D4  BC DA 23                mov sp, 0x23da
+23D7  E9 53 31                jmp 0x552d
+23DA  DC 23                   fsub qword ptr [bp + di]
+23DC  74 06                   je 0x23e4
+23DE  BD 03 00                mov bp, 3
+23E1  E9 C1 D0                jmp 0xf4a5
+23E4  B8 30 00                mov ax, 0x30
+23E7  8E D0                   mov ss, ax
+23E9  BC 00 01                mov sp, 0x100
+23EC  E8 1B 00                call 0x240a
+23EF  E8 A3 00                call 0x2495
+23F2  E8 F8 05                call 0x29ed
+23F5  74 06                   je 0x23fd
+23F7  E8 18 6B                call 0x8f12
+23FA  E8 3A 01                call 0x2537
+23FD  2B C0                   sub ax, ax
+23FF  8E D8                   mov ds, ax
+2401  8E C0                   mov es, ax
+2403  8C C8                   mov ax, cs
+2405  8E D0                   mov ss, ax
+2407  E9 D2 B5                jmp 0xd9dc
+240A  BB 00 F0                mov bx, 0xf000
+240D  B2 C0                   mov dl, 0xc0
+240F  B9 00 80                mov cx, 0x8000
+2412  EB 43                   jmp 0x2457
+2414  90                      nop
+2415  BB 00 C0                mov bx, 0xc000
+2418  B9 00 40                mov cx, 0x4000
+241B  B2 01                   mov dl, 1
+241D  EB 38                   jmp 0x2457
+241F  90                      nop
+2420  BB 00 C8                mov bx, 0xc800
+2423  B9 00 40                mov cx, 0x4000
+2426  B2 02                   mov dl, 2
+2428  EB 2D                   jmp 0x2457
+242A  90                      nop
+242B  BB 00 D0                mov bx, 0xd000
+242E  B9 00 40                mov cx, 0x4000
+2431  B2 04                   mov dl, 4
+2433  EB 22                   jmp 0x2457
+2435  90                      nop
+2436  BB 00 D8                mov bx, 0xd800
+2439  B9 00 40                mov cx, 0x4000
+243C  B2 08                   mov dl, 8
+243E  EB 17                   jmp 0x2457
+2440  90                      nop
+2441  BB 00 E0                mov bx, 0xe000
+2444  B9 00 40                mov cx, 0x4000
+2447  B2 10                   mov dl, 0x10
+2449  EB 0C                   jmp 0x2457
+244B  90                      nop
+244C  BB              db 0xBB
+244D  00              db 0x00
+
 ===== 8DCFh-8E4Eh =====
-Reason: memory-probe common failure/report handler
+Reason: indexed chipset-register read helper using ports 22h/23h
 8DCF  E6 22                   out 0x22, al
 8DD1  E3 00                   jcxz 0x8dd3
 8DD3  E3 00                   jcxz 0x8dd5
@@ -4787,7 +5030,7 @@ Reason: memory-probe common failure/report handler
 8E4E  C0              db 0xC0
 
 ===== 8DDCh-8E5Bh =====
-Reason: memory-probe alternate failure/report handler
+Reason: indexed chipset-register write helper using ports 22h/23h
 8DDC  E6 22                   out 0x22, al
 8DDE  E3 00                   jcxz 0x8de0
 8DE0  E3 00                   jcxz 0x8de2
