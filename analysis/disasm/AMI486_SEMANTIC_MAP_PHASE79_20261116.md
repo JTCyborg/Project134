@@ -74,3 +74,8 @@ The separate checksum routine from phase 78 still computes the sum of CMOS B4h..
 - Find the readers of CMOS BEh:BFh and establish which writer runs last on each boot path.
 - Trace the caller/entry into the 17F0h/1810h checksum writer.
 - Continue BP.13 provenance and dynamic entry into DA5Eh/DA61h.
+
+
+## Superseded findings — phase 80/81 raw-offset correction
+
+The interpretation of `5D81h–5D9Ch` as arithmetic on immediate `BFBEh` minus CS is withdrawn. The corrected stream at `5D5Ch` reads CMOS `B8h` into DI, clears CMOS `B8h`, reads CMOS `8Eh`, and—if bits 6/7 are clear—reads CMOS `BEh:BFh`, subtracts the saved old `B8h` byte, and writes the adjusted word back. The aligned CALL targets and exact instruction boundaries are in phase 80. The preceding controller-status call is `5D52h CALL F5D9h`, as corrected in phase 81. Treat this phase as superseded for the 5D block.
