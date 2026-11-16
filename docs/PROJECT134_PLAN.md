@@ -194,3 +194,14 @@ Before implementing or changing any BIOS subsystem:
 - [ ] Trace the defining implementation of `at_ali1429_init` and the full AT initialization sequence.
 - [ ] Confirm reset-vector fetch at physical `FFFF0h` and first instruction execution in runtime trace.
 
+
+
+### AT/ALi 1429 model callback review — 2026-11-16
+
+- [x] Trace `at_ali1429_init()`: calls `at_init()`, then `ali1429_init()`.
+- [x] Trace common AT initialization order: AT flag, common devices, BIOS mapping, PIT refresh output, DMA16, AT keyboard, NVR, secondary PIC, gameport, NMI mask.
+- [x] Inspect emulator ALi 1429 register behavior and I/O decode at `22h/23h`.
+- [ ] Correlate the ALi 1429 emulated register subset with the hardware documentation in `docs/627.10` and an authoritative ALi chipset reference; no register programming values are to be invented.
+- [ ] Compare the target BIOS's actual writes to ports `22h/23h` with the emulator implementation using an execution trace.
+- [ ] Confirm whether the actual launch config is stored outside the Project133 checkout (for example, application user-data/config directory); repository scan found no `.cfg` or `.ini` files containing AMI486 configuration keys.
+
