@@ -34,7 +34,7 @@ This region is the hard-disk half of a hooked BIOS INT 13h implementation, not a
 | A76Ch | Converts ES:BX into a normalized ES:offset buffer address. | High |
 | A847h | Renders one of the embedded prompts through BIOS INT 10h. | High |
 | A8F4h | Reads a key with BIOS INT 16h and accepts Y/N; other keys repeat the prompt. | High |
-| A95Eh | Writes handler offset A08Dh to ES:[004Ch] and CS to ES:[004Eh], saving the displaced words at ES:[0100h]/ES:[0102h]. Because 004Ch is the INT 13h vector slot, this is the INT 13h hook installer when ES=0; the caller's ES provenance is still to be checked. It also writes a second vector-like pair at ES:[01D8h]. | High for INT 13h slot and handler target; ES base/caller context still to verify |
+| A95Eh | With ES=0, replaces INT 13h vector 0000:004Ch with F000:A08Dh and saves the old INT 13h vector into the INT 40h slot at 0000:0100h. Installs INT 76h (IRQ14) at F000:E845h via 0000:01D8h. It also initializes BDA disk state and sets INT 41h/INT 46h fixed-disk parameter-table pointers from CMOS-selected records at E401h. | High: exact IVT offsets and targets; ES=0 is strongly supported by the IVT/BDA offsets, but caller setup remains to be traced |
 | AA00h | Calls BIOS INT 13h services including AH=14h, AH=08h, AH=04h, AH=09h and AH=11h while probing drive 80h/81h. | High |
 | AABFh | Keyboard abort/poll helper using INT 16h AH=01h/AH=00h; checks Escape and uses a timed retry path. | High |
 | AB34h | Reads and compares disk metadata against a CS-resident record array beginning E401h; full record semantics remain open. | Medium |
@@ -238,3 +238,37 @@ The common read path at A399h uses command 20h and transfers 0100h words from po
 The format/write guard is shared: AH=05h reaches A808h/A80Fh and A847h; the prompt routine selects the “Format !!!” string when AH=05h and the “BootSector Write !!! / Possible VIRUS” string for the other protected write path. A8F4h accepts only Y or N and loops on any other key.
 
 This map is specific to the INT 13h hard-disk handler. Do not merge it with the separate D100h floppy-controller routines.
+
+
+## 10. INT 13h / INT 40h / INT 76h / fixed-disk parameter-table wiring
+
+The A95Eh installation sequence establishes a coherent interrupt layout (assuming ES=0000h, which is strongly supported by the IVT/BDA offsets):
+
+| Vector / BDA location | Installed value or role |
+|---|---|
+| INT 13h vector 0000:004Ch | F000:A08Dh — custom hard-disk INT 13h handler |
+| INT 40h vector 0000:0100h | Displaced original INT 13h offset/segment, saved by A95Eh |
+| INT 76h vector 0000:01D8h | F000:E845h — IRQ14 / primary ATA interrupt handler |
+| INT 41h vector 0000:0104h | F000:(E401h + selected index × 10h) — fixed-disk parameter table for first drive |
+| INT 46h vector 0000:0118h | F000:(E401h + selected index × 10h) — fixed-disk parameter table for second drive |
+| BDA 0040:0075h | Incremented as configured hard-disk entries are installed |
+| BDA 0040:0442h / 0474h / 048Ch | Cleared during installation |
+
+This explains the A08Dh forwarding path: when DL<80h, the hooked INT 13h executes INT 40h. INT 40h has been repurposed to hold the displaced/original INT 13h vector, so floppy requests are chained to the original BIOS INT 13h implementation rather than to the new hard-disk handler.
+
+### CMOS-selected parameter records
+
+A95Eh sets SI=E401h as the fixed-disk parameter-table base. It reads CMOS register 92h, uses the high nibble to select the first drive's record, and uses the low nibble for the second drive. The selected record offset is computed by shifting the type index left four bits (16-byte record stride). Special type values cause additional CMOS reads from 99h/9Ah or a call to 1763h; those override paths remain to be fully characterized.
+
+The first eight 16-byte records at E401h–E480h were read directly from the ROM and are emitted as data in the generated candidate listing. The record format is consistent with a fixed-disk parameter table, but individual field names should be assigned only after tracing the consumer at A2F1h/A5B6h and matching the BIOS table layout.
+
+### IRQ14 handler at E845h
+
+The installed handler at E845h:
+- sets DS=0040h;
+- writes FFh to BDA byte 008Eh;
+- sends EOI 20h to the slave PIC command port A0h and master PIC command port 20h;
+- invokes INT 15h with AX=9100h (device-interrupt-complete notification);
+- restores AX/DS and executes IRET.
+
+This confirms E845h as the hard-disk IRQ14 handler installed by A95Eh. The IRQ14 path and the ATA task-file polling/transfer helpers should be analyzed as one subsystem.
