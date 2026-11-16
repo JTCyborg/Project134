@@ -4969,8 +4969,82 @@ D1D0  FE CD                   dec ch
 D1D2  76 41                   jbe 0xd215
 D1D4  8B C7                   mov ax, di
 
+===== C600h-C67Fh =====
+Reason: candidate INT13/INT40 diskette service entry region
+C600  E2 C7                   loop 0xc5c9
+C602  E2 C7                   loop 0xc5cb
+C604  E1 C8                   loope 0xc5ce
+C606  99                      cdq
+C607  C9                      leave
+C608  D9 C6                   fld st(6)
+C60A  8B C7                   mov ax, di
+C60C  16                      push ss
+C60D  C7              db 0xC7
+C60E  09 CB                   or bx, cx
+C610  FB                      sti
+C611  FC                      cld
+C612  E8 9D CA                call 0x90b2
+C615  50                      push ax
+C616  51                      push cx
+C617  52                      push dx
+C618  53                      push bx
+C619  55                      push bp
+C61A  56                      push si
+C61B  57                      push di
+C61C  1E                      push ds
+C61D  06                      push es
+C61E  55                      push bp
+C61F  8B EC                   mov bp, sp
+C621  6A 40                   push 0x40
+C623  1F                      pop ds
+C624  50                      push ax
+C625  8A C4                   mov al, ah
+C627  3C 18                   cmp al, 0x18
+C629  77 65                   ja 0xc690
+C62B  3C 05                   cmp al, 5
+C62D  76 0E                   jbe 0xc63d
+C62F  3C 08                   cmp al, 8
+C631  75 04                   jne 0xc637
+C633  B0 06                   mov al, 6
+C635  EB 06                   jmp 0xc63d
+C637  3C 15                   cmp al, 0x15
+C639  72 55                   jb 0xc690
+C63B  2C 0E                   sub al, 0xe
+C63D  98                      cwde
+C63E  8B F8                   mov di, ax
+C640  58                      pop ax
+C641  D1 E7                   shl di, 1
+C643  2E FF A5 FA C5          jmp word ptr cs:[di - 0x3a06]
+C648  8A C4                   mov al, ah
+C64A  9F                      lahf
+C64B  50                      push ax
+C64C  6A 40                   push 0x40
+C64E  1F                      pop ds
+C64F  8A 46 0E                mov al, byte ptr [bp + 0xe]
+C652  3C 01                   cmp al, 1
+C654  77 18                   ja 0xc66e
+C656  32 E4                   xor ah, ah
+C658  BB 90 00                mov bx, 0x90
+C65B  03 D8                   add bx, ax
+C65D  F6 07 10                test byte ptr [bx], 0x10
+C660  74 0C                   je 0xc66e
+C662  B2 04                   mov dl, 4
+C664  F6 E2                   mul dl
+C666  8A C8                   mov cl, al
+C668  D2 E2                   shl dl, cl
+C66A  08 16 8F 00             or byte ptr [0x8f], dl
+C66E  58                      pop ax
+C66F  9E                      sahf
+C670  8A E0                   mov ah, al
+C672  88 66 13                mov byte ptr [bp + 0x13], ah
+C675  B8 01 02                mov ax, 0x201
+C678  72 05                   jb 0xc67f
+C67A  80 66 18 FE             and byte ptr [bp + 0x18], 0xfe
+C67E  48                      dec ax
+C67F  09              db 0x09
+
 ===== C648h-C6C7h =====
-Reason: candidate main diskette BIOS dispatcher before FDC helper calls
+Reason: shared FDC/INT13 status epilogue
 C648  8A C4                   mov al, ah
 C64A  9F                      lahf
 C64B  50                      push ax
@@ -5037,6 +5111,241 @@ C6C4  72 07                   jb 0xc6cd
 C6C6  E9              db 0xE9
 C6C7  B8              db 0xB8
 
+===== C6BCh-C73Bh =====
+Reason: FDC sense-interrupt status call bridge
+C6BC  80 26 3E 00 F0          and byte ptr [0x3e], 0xf0
+C6C1  E9 39 0C                jmp 0xd2fd
+C6C4  72 07                   jb 0xc6cd
+C6C6  E9 B8 0C                jmp 0xd381
+C6C9  72 02                   jb 0xc6cd
+C6CB  32 E4                   xor ah, ah
+C6CD  C3                      ret
+C6CE  8A 26 41 00             mov ah, byte ptr [0x41]
+C6D2  0A E4                   or ah, ah
+C6D4  74 01                   je 0xc6d7
+C6D6  F9                      stc
+C6D7  EB 99                   jmp 0xc672
+C6D9  80 FA 01                cmp dl, 1
+C6DC  76 09                   jbe 0xc6e7
+C6DE  B4 01                   mov ah, 1
+C6E0  F9                      stc
+C6E1  88 26 41 00             mov byte ptr [0x41], ah
+C6E5  EB 2C                   jmp 0xc713
+C6E7  BB 90 00                mov bx, 0x90
+C6EA  32 F6                   xor dh, dh
+C6EC  03 DA                   add bx, dx
+C6EE  8A 1F                   mov bl, byte ptr [bx]
+C6F0  0A DB                   or bl, bl
+C6F2  75 04                   jne 0xc6f8
+C6F4  32 E4                   xor ah, ah
+C6F6  EB 15                   jmp 0xc70d
+C6F8  80 E3 07                and bl, 7
+C6FB  74 0E                   je 0xc70b
+C6FD  80 FB 03                cmp bl, 3
+C700  74 09                   je 0xc70b
+C702  E8 9E 0C                call 0xd3a3
+C705  73 04                   jae 0xc70b
+C707  B4 02                   mov ah, 2
+C709  EB 02                   jmp 0xc70d
+C70B  B4 01                   mov ah, 1
+C70D  F8                      clc
+C70E  C6 06 41 00 00          mov byte ptr [0x41], 0
+C713  E9 32 FF                jmp 0xc648
+C716  32 E4                   xor ah, ah
+C718  80 FA 01                cmp dl, 1
+C71B  76 09                   jbe 0xc726
+C71D  B4 01                   mov ah, 1
+C71F  88 26 41 00             mov byte ptr [0x41], ah
+C723  F9                      stc
+C724  EB 62                   jmp 0xc788
+C726  3C 00                   cmp al, 0
+C728  74 F3                   je 0xc71d
+C72A  3C 04                   cmp al, 4
+C72C  77 EF                   ja 0xc71d
+C72E  BB 90 00                mov bx, 0x90
+C731  32 F6                   xor dh, dh
+C733  03 DA                   add bx, dx
+C735  3C 01                   cmp al, 1
+C737  75 0A                   jne 0xc743
+C739  C6 07 93                mov byte ptr [bx], 0x93
+
+===== C700h-C77Fh =====
+Reason: diskette BIOS dispatch continuation
+C700  74 09                   je 0xc70b
+C702  E8 9E 0C                call 0xd3a3
+C705  73 04                   jae 0xc70b
+C707  B4 02                   mov ah, 2
+C709  EB 02                   jmp 0xc70d
+C70B  B4 01                   mov ah, 1
+C70D  F8                      clc
+C70E  C6 06 41 00 00          mov byte ptr [0x41], 0
+C713  E9 32 FF                jmp 0xc648
+C716  32 E4                   xor ah, ah
+C718  80 FA 01                cmp dl, 1
+C71B  76 09                   jbe 0xc726
+C71D  B4 01                   mov ah, 1
+C71F  88 26 41 00             mov byte ptr [0x41], ah
+C723  F9                      stc
+C724  EB 62                   jmp 0xc788
+C726  3C 00                   cmp al, 0
+C728  74 F3                   je 0xc71d
+C72A  3C 04                   cmp al, 4
+C72C  77 EF                   ja 0xc71d
+C72E  BB 90 00                mov bx, 0x90
+C731  32 F6                   xor dh, dh
+C733  03 DA                   add bx, dx
+C735  3C 01                   cmp al, 1
+C737  75 0A                   jne 0xc743
+C739  C6 07 93                mov byte ptr [bx], 0x93
+C73C  C6 06 41 00 00          mov byte ptr [0x41], 0
+C741  EB 3C                   jmp 0xc77f
+C743  8B C8                   mov cx, ax
+C745  E8 5B 0C                call 0xd3a3
+C748  73 1E                   jae 0xc768
+C74A  53                      push bx
+C74B  E8 0A 09                call 0xd058
+C74E  5E                      pop si
+C74F  56                      push si
+C750  E8 B1 09                call 0xd104
+C753  5B                      pop bx
+C754  80 FC 06                cmp ah, 6
+C757  76 0F                   jbe 0xc768
+C759  80 FC 80                cmp ah, 0x80
+C75C  75 0A                   jne 0xc768
+C75E  80 3F 97                cmp byte ptr [bx], 0x97
+C761  74 BC                   je 0xc71f
+C763  C6 07 61                mov byte ptr [bx], 0x61
+C766  EB B7                   jmp 0xc71f
+C768  80 F9 04                cmp cl, 4
+C76B  75 05                   jne 0xc772
+C76D  C6 07 97                mov byte ptr [bx], 0x97
+C770  EB 0D                   jmp 0xc77f
+C772  80 F9 02                cmp cl, 2
+C775  75 05                   jne 0xc77c
+C777  C6 07 74                mov byte ptr [bx], 0x74
+C77A  EB 03                   jmp 0xc77f
+C77C  C6 07 15                mov byte ptr [bx], 0x15
+C77F  0A              db 0x0A
+
+===== C780h-C7FFh =====
+Reason: diskette BIOS dispatch continuation
+C780  E4 75                   in al, 0x75
+C782  9C                      pushf
+C783  C6 06 41 00 00          mov byte ptr [0x41], 0
+C788  E9 BD FE                jmp 0xc648
+C78B  80 FA 01                cmp dl, 1
+C78E  76 05                   jbe 0xc795
+C790  B4 01                   mov ah, 1
+C792  F9                      stc
+C793  EB 31                   jmp 0xc7c6
+C795  32 F6                   xor dh, dh
+C797  BB 90 00                mov bx, 0x90
+C79A  03 DA                   add bx, dx
+C79C  80 3F 00                cmp byte ptr [bx], 0
+C79F  B4 80                   mov ah, 0x80
+C7A1  74 EF                   je 0xc792
+C7A3  8A 27                   mov ah, byte ptr [bx]
+C7A5  80 E4 07                and ah, 7
+C7A8  74 05                   je 0xc7af
+C7AA  80 FC 03                cmp ah, 3
+C7AD  75 05                   jne 0xc7b4
+C7AF  B4 06                   mov ah, 6
+C7B1  F9                      stc
+C7B2  EB 12                   jmp 0xc7c6
+C7B4  E8 EC 0B                call 0xd3a3
+C7B7  73 F6                   jae 0xc7af
+C7B9  E8 9C 08                call 0xd058
+C7BC  BA F7 03                mov dx, 0x3f7
+C7BF  EC                      in al, dx
+C7C0  D0 E0                   shl al, 1
+C7C2  72 EB                   jb 0xc7af
+C7C4  32 E4                   xor ah, ah
+C7C6  88 26 41 00             mov byte ptr [0x41], ah
+C7CA  50                      push ax
+C7CB  56                      push si
+C7CC  1E                      push ds
+C7CD  BE 00 00                mov si, 0
+C7D0  8E DE                   mov ds, si
+C7D2  C5 36 78 00             lds si, ptr [0x78]
+C7D6  8A 44 02                mov al, byte ptr [si + 2]
+C7D9  1F                      pop ds
+C7DA  A2 40 00                mov byte ptr [0x40], al
+C7DD  5E                      pop si
+C7DE  58                      pop ax
+C7DF  E9 66 FE                jmp 0xc648
+C7E2  80 FA 01                cmp dl, 1
+C7E5  76 0C                   jbe 0xc7f3
+C7E7  B4 01                   mov ah, 1
+C7E9  88 26 41 00             mov byte ptr [0x41], ah
+C7ED  32 C0                   xor al, al
+C7EF  F9                      stc
+C7F0  E9 E8 00                jmp 0xc8db
+C7F3  BE 90 00                mov si, 0x90
+C7F6  52                      push dx
+C7F7  32 F6                   xor dh, dh
+C7F9  03 F2                   add si, dx
+C7FB  80 3C 00                cmp byte ptr [si], 0
+C7FE  5A                      pop dx
+C7FF  75              db 0x75
+
+===== C8B0h-C92Fh =====
+Reason: diskette DMA transfer dispatch path
+C8B0  EB 09                   jmp 0xc8bb
+C8B2  80 FC 03                cmp ah, 3
+C8B5  B4 4A                   mov ah, 0x4a
+C8B7  74 02                   je 0xc8bb
+C8B9  B4 42                   mov ah, 0x42
+C8BB  E8 98 08                call 0xd156
+C8BE  8B 46 12                mov ax, word ptr [bp + 0x12]
+C8C1  8B 4E 10                mov cx, word ptr [bp + 0x10]
+C8C4  E9 E0 06                jmp 0xcfa7
+C8C7  E8 0F 08                call 0xd0d9
+C8CA  0A C0                   or al, al
+C8CC  74 04                   je 0xc8d2
+C8CE  2A D9                   sub bl, cl
+C8D0  8A C3                   mov al, bl
+C8D2  8A 26 41 00             mov ah, byte ptr [0x41]
+C8D6  0A E4                   or ah, ah
+C8D8  74 01                   je 0xc8db
+C8DA  F9                      stc
+C8DB  88 46 12                mov byte ptr [bp + 0x12], al
+C8DE  E9 67 FD                jmp 0xc648
+C8E1  80 FA 01                cmp dl, 1
+C8E4  76 0A                   jbe 0xc8f0
+C8E6  B4 01                   mov ah, 1
+C8E8  88 26 41 00             mov byte ptr [0x41], ah
+C8EC  F9                      stc
+C8ED  E9 58 FD                jmp 0xc648
+C8F0  BE 90 00                mov si, 0x90
+C8F3  52                      push dx
+C8F4  32 F6                   xor dh, dh
+C8F6  03 F2                   add si, dx
+C8F8  5A                      pop dx
+C8F9  80 3C 00                cmp byte ptr [si], 0
+C8FC  B4 80                   mov ah, 0x80
+C8FE  74 E8                   je 0xc8e8
+C900  BF 3F 00                mov di, 0x3f
+C903  80 0D 80                or byte ptr [di], 0x80
+C906  E8 4F 07                call 0xd058
+C909  E8 F8 07                call 0xd104
+C90C  73 05                   jae 0xc913
+C90E  E8 C8 07                call 0xd0d9
+C911  EB D5                   jmp 0xc8e8
+C913  E8 D4 0B                call 0xd4ea
+C916  E8 68 0A                call 0xd381
+C919  1E                      push ds
+C91A  33 F6                   xor si, si
+C91C  8E DE                   mov ds, si
+C91E  C5 36 78 00             lds si, ptr [0x78]
+C922  8A 44 04                mov al, byte ptr [si + 4]
+C925  1F                      pop ds
+C926  32 E4                   xor ah, ah
+C928  B1 04                   mov cl, 4
+C92A  F6 E1                   mul cl
+C92C  8B C8                   mov cx, ax
+C92E  49                      dec cx
+C92F  E8              db 0xE8
+
 ===== C8BBh-C93Ah =====
 Reason: direct caller of DMA channel-2 setup D156h
 C8BB  E8 98 08                call 0xd156
@@ -5095,6 +5404,62 @@ C936  E8 1D 08                call 0xd156
 C939  8B              db 0x8B
 C93A  4E                      dec si
 
+===== C913h-C992h =====
+Reason: diskette FDC DMA/result sequence
+C913  E8 D4 0B                call 0xd4ea
+C916  E8 68 0A                call 0xd381
+C919  1E                      push ds
+C91A  33 F6                   xor si, si
+C91C  8E DE                   mov ds, si
+C91E  C5 36 78 00             lds si, ptr [0x78]
+C922  8A 44 04                mov al, byte ptr [si + 4]
+C925  1F                      pop ds
+C926  32 E4                   xor ah, ah
+C928  B1 04                   mov cl, 4
+C92A  F6 E1                   mul cl
+C92C  8B C8                   mov cx, ax
+C92E  49                      dec cx
+C92F  E8 65 08                call 0xd197
+C932  72 DA                   jb 0xc90e
+C934  B4 4A                   mov ah, 0x4a
+C936  E8 1D 08                call 0xd156
+C939  8B 4E 10                mov cx, word ptr [bp + 0x10]
+C93C  E8 6B 05                call 0xceaa
+C93F  73 0D                   jae 0xc94e
+C941  BB 42 00                mov bx, 0x42
+C944  B9 07 00                mov cx, 7
+C947  50                      push ax
+C948  E8 25 09                call 0xd270
+C94B  58                      pop ax
+C94C  EB 38                   jmp 0xc986
+C94E  C0 E6 02                shl dh, 2
+C951  0A F2                   or dh, dl
+C953  B2 CD                   mov dl, 0xcd
+C955  1E                      push ds
+C956  33 F6                   xor si, si
+C958  8E DE                   mov ds, si
+C95A  C5 36 78 00             lds si, ptr [0x78]
+C95E  50                      push ax
+C95F  8B 44 07                mov ax, word ptr [si + 7]
+C962  89 46 00                mov word ptr [bp], ax
+C965  58                      pop ax
+C966  8B 7C 03                mov di, word ptr [si + 3]
+C969  1F                      pop ds
+C96A  8B F2                   mov si, dx
+C96C  B5 06                   mov ch, 6
+C96E  80 26 3E 00 7F          and byte ptr [0x3e], 0x7f
+C973  E8 A0 08                call 0xd216
+C976  72 C9                   jb 0xc941
+C978  BB 42 00                mov bx, 0x42
+C97B  B9 07 00                mov cx, 7
+C97E  E8 EF 08                call 0xd270
+C981  72 03                   jb 0xc986
+C983  E8 37 09                call 0xd2bd
+C986  88 26 41 00             mov byte ptr [0x41], ah
+C98A  E8 4C 07                call 0xd0d9
+C98D  8A 26 41 00             mov ah, byte ptr [0x41]
+C991  0A E4                   or ah, ah
+
 ===== C936h-C9B5h =====
 Reason: direct caller of DMA channel-2 setup D156h
 C936  E8 1D 08                call 0xd156
@@ -5149,6 +5514,66 @@ C9AC  32 F6                   xor dh, dh
 C9AE  A0 10 00                mov al, byte ptr [0x10]
 C9B1  24 C1                   and al, 0xc1
 C9B3  BF 02 00                mov di, 2
+
+===== C996h-CA15h =====
+Reason: diskette BIOS status/return continuation
+C996  E9 AF FC                jmp 0xc648
+C999  80 FA 80                cmp dl, 0x80
+C99C  72 0A                   jb 0xc9a8
+C99E  B4 01                   mov ah, 1
+C9A0  88 26 41 00             mov byte ptr [0x41], ah
+C9A4  F9                      stc
+C9A5  E9 A0 FC                jmp 0xc648
+C9A8  33 FF                   xor di, di
+C9AA  33 F6                   xor si, si
+C9AC  32 F6                   xor dh, dh
+C9AE  A0 10 00                mov al, byte ptr [0x10]
+C9B1  24 C1                   and al, 0xc1
+C9B3  BF 02 00                mov di, 2
+C9B6  3C 41                   cmp al, 0x41
+C9B8  74 08                   je 0xc9c2
+C9BA  4F                      dec di
+C9BB  3C 01                   cmp al, 1
+C9BD  74 03                   je 0xc9c2
+C9BF  E9 BB 00                jmp 0xca7d
+C9C2  80 FA 01                cmp dl, 1
+C9C5  76 03                   jbe 0xc9ca
+C9C7  E9 B5 00                jmp 0xca7f
+C9CA  B0 0E                   mov al, 0xe
+C9CC  E8 DB 24                call 0xeeaa
+C9CF  A8 C0                   test al, 0xc0
+C9D1  75 48                   jne 0xca1b
+C9D3  B0 10                   mov al, 0x10
+C9D5  E8 D2 24                call 0xeeaa
+C9D8  0A D2                   or dl, dl
+C9DA  75 04                   jne 0xc9e0
+C9DC  B1 04                   mov cl, 4
+C9DE  D2 E8                   shr al, cl
+C9E0  24 0F                   and al, 0xf
+C9E2  74 37                   je 0xca1b
+C9E4  3C 05                   cmp al, 5
+C9E6  77 33                   ja 0xca1b
+C9E8  32 E4                   xor ah, ah
+C9EA  8B F0                   mov si, ax
+C9EC  8A F0                   mov dh, al
+C9EE  BB 90 00                mov bx, 0x90
+C9F1  02 DA                   add bl, dl
+C9F3  8A 07                   mov al, byte ptr [bx]
+C9F5  A8 10                   test al, 0x10
+C9F7  75 4B                   jne 0xca44
+C9F9  83 FE 01                cmp si, 1
+C9FC  B0 93                   mov al, 0x93
+C9FE  74 17                   je 0xca17
+CA00  83 FE 02                cmp si, 2
+CA03  B0 02                   mov al, 2
+CA05  74 10                   je 0xca17
+CA07  83 FE 03                cmp si, 3
+CA0A  B0 97                   mov al, 0x97
+CA0C  74 09                   je 0xca17
+CA0E  83 FE 04                cmp si, 4
+CA11  B0 07                   mov al, 7
+CA13  74 02                   je 0xca17
+CA15  B0              db 0xB0
 
 ===== D1C0h-D23Fh =====
 Reason: direct FDC state/reset helper
