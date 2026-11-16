@@ -639,3 +639,14 @@ This phase is semantic classification of selected regions, not a complete CFG. S
 - Early POST writes bits 8–11 only; 11FDh AND BP,7FFFh clears bit15 but preserves bit13. Thus BP.13 is already present at entry 10E0h or was set by an unlocated predecessor.
 - 12D3h POP BP / 12D4h AND BP,C000h is cleanup after the bitmap consumer on the 120Dh path, not a pre-consumer clear.
 - Upstream BP source before E3ACh and the relation to the later DAxx/5Cxx path remain unresolved.
+
+
+## Semantic map — phase 59 (2026-11-16)
+
+- [AMI486_SEMANTIC_MAP_PHASE59_20261116.md](AMI486_SEMANTIC_MAP_PHASE59_20261116.md)
+- Reset vector E000h far-jumps to F000:E005; E005h jumps F73Bh. F73Ch sets BP=SP as a stack-frame pointer, not a bitmap initializer.
+- Protected-mode return F096h jumps E05Bh; E05Bh is an alternate code entry whose actual instruction jumps to D604h.
+- D604h checks 8042 port64 bit2 and branches to 88CEh or 8A04h; the latter reads/clears CMOS8F and dispatches a saved selector.
+- D724h path executes XOR BP,BP at D743h. Its D74Ch continuation may set BP.12 and BP.15, not BP.13. This path is not yet proven to connect to E380h/E3ACh.
+- Local E3ACh→10E0h→120Dh→1656h→1662h bitmap chain remains valid, but its upstream relation to the reset/selector dispatch is unresolved.
+- BP.13 producer remains unresolved; do not conflate the reset path, D724h selector path, and E3xx stack-crafted path without a proven transfer edge.
