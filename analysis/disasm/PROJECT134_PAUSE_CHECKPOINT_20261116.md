@@ -167,3 +167,8 @@ F900h implements the BIOS INT 14h serial service family. AH=00h initializes the 
 ## FDC DMA direction — 2026-11-16
 
 The caller mode bytes resolve DMA direction: C8BBh passes 46h (memory-to-FDC write), while C936h/C913h pass 4Ah (FDC-to-memory read). Both use 8237 DMA channel 2 in single-transfer mode. Remaining FDC work is the command sequence at D40Ah–D462h and runtime INT40 vector capture.
+
+
+## INT 14h wrapper correction — 2026-11-16
+
+The F9xx serial dispatcher entry was byte-aligned again against the generated Capstone window. Correct candidate entry: F8E7h (83 FA 04), not F900h or F8E8h. DX is the COM-port index 0..3; the wrapper reads the COM base word from BDA 0040:0000+2*DX and the timeout byte from 0040:007Ch+DX. The valid path begins at F8F2h; AH selects one of six UART handlers via F92Ah. The common cleanup CALL is F926h, IRET F929h, and table F92Ah–F935h. F900h is the last displacement byte of MOV DX,[DI+0000h], not a function entry. The generator output now verifies F8E7h–F929h. The INT 14h vector installation/caller remains unresolved.
