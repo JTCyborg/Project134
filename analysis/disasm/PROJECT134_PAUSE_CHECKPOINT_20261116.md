@@ -147,3 +147,8 @@ See AMI486_MEMORY_CHIPSET_INITIALIZATION_20261116.md. The memory probe compares 
 ## RTC and text-rendering follow-up — 2026-11-16
 
 See AMI486_CLOCK_AND_TEXT_RENDERING_20261116.md. The 6774h and 67AEh routines call INT 1Ah AH=04h/AH=02h for RTC date/time. 6700h calls the 6805h numeric grid renderer; 6841h prints decimal, 68B0h prints hexadecimal bytes, and 6860h/68C8h use INT 10h character/attribute services. Exact UI entry and field contracts remain open.
+
+
+## Address-ledger reconciliation — 2026-11-16
+
+The address ledger is present as a first-pass reference map; it is not yet the complete per-byte semantic classification. Corrected its gap count to 103 pages (153 referenced + 103 without explicit phase-address tokens = 256). The candidate listing now contains 146 code windows and 6 data windows; their distinct union is 8,618 bytes across 46 pages, not a semantic-coverage percentage. The master linear listing already covers the entire 64-KiB ROM, so do not regenerate a duplicate linear decode. Continue with CFG, data/code boundaries and unresolved caller/vector contracts.
