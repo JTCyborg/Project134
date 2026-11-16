@@ -5,7 +5,7 @@ Decode: Capstone x86-16 seeded windows. See ami486_candidate_windows_20261116.tx
 
 ## 1. Dispatcher
 
-F900h–F929h is an interrupt-style wrapper:
+F8E7h–F929h is the guarded interrupt-style wrapper candidate (the previous F900h seed was misaligned):
 - obtains a selector from the saved register frame;
 - indexes the six-word table at F92Ah;
 - loads the selected handler offset from CS-relative memory;
@@ -25,7 +25,7 @@ The table is native little-endian:
 | 04h | F999h |
 | 05h | F9D3h |
 
-The AH function selector, DX port-base convention, and exact AH=00h–03h operation set identify this as the BIOS INT 14h serial communications service. The IVT installation/caller for the F900h entry has not yet been found, so the vector target itself remains to be verified.
+The AH function selector and the handlers' direct UART register access identify this as the BIOS INT 14h serial communications service. The wrapper validates DX<4 and AH<6; the valid path begins at F8F2h. The IVT installation/caller for the F8E7h candidate has not yet been found, so the vector target itself remains to be verified.
 
 ## 2. UART register evidence
 
@@ -130,3 +130,8 @@ The AH=00h initializer splits AL into baud selector AL[7:5] and line-control bit
 | 7 | 000Ch | 9600 |
 
 The divisor sequence is generated as 0600h shifted right by the selector value, except selector zero which uses 0417h. The low five bits are written to LCR after setting DLAB, matching the standard 8250/16450/16550 line-control layout.
+
+
+## 7. Wrapper entry alignment correction
+
+Raw bytes establish the guarded entry at F8E7h, not F900h or F8E8h. F8E7h begins `83 FA 04` (CMP DX,04h); the guards at F8EAh and F8F0h branch to the cleanup CALL at F926h. The valid path begins with PUSHA at F8F2h. F900h is the final displacement byte of `MOV DX,[BP+DI]` at F8FDh, and F8E8h is an interior byte of the CMP instruction. IRET is at F929h; the six-word table begins at F92Ah. The candidate-window generator is now seeded at F8E7h and clipped after F929h. The INT 14h IVT target remains unverified.
