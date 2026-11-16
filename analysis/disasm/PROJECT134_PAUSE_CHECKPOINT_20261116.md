@@ -206,4 +206,9 @@ EEAAh is a protected CMOS read wrapper around EE94h (port 70h selector, port 71h
 
 ## A95Eh caller/ES provenance — 2026-11-16
 
-A95Eh is called at 134Eh inside function 131Fh, itself called from 1BAAh. The 1BAAh caller does not initialize ES. The 131Fh function temporarily sets ES=0000h at 1303h to write ES:01D0h, then restores the inherited ES at 130Fh before A95Eh. Therefore the IVT write is conditional on inherited ES=0000h; this has not yet been proven. Candidate windows now include 131Fh–1364h. INT 40h remains a dynamic copy of the previous INT 13h vector, not a hardcoded C610h target.
+A95Eh is called at 134Eh inside function 131Fh, itself called from 1BAAh. The 1BAAh caller does not initialize ES. 131Fh is an alternate entry into a separate instruction stream; it checks CMOS 0Eh/92h and calls A95Eh at 134Eh. The ES=0000h setup at 1303h belongs to a different preceding linear stream and is bypassed by the 131Fh entry. The 1BAAh caller does not initialize ES, so the IVT write remains conditional on inherited ES=0000h, which is not yet proven. Candidate windows now include 131Fh–1364h. INT 40h remains a dynamic copy of the previous INT 13h vector, not a hardcoded C610h target.
+
+
+## 131Fh alternate-entry/ES correction — 2026-11-16
+
+The call at 1BAAh enters 131Fh, an overlapping stream that reaches A95Eh at 134Eh after CMOS checks. It does not execute the separate linear stream's ES=0000h setup at 1303h. Therefore ES=0000h remains unproven at A95Eh; the vector copy is conditional until a runtime IVT/ES trace confirms it.
