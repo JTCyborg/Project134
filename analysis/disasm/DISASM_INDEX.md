@@ -1052,7 +1052,7 @@ See [AMI486_ADDRESS_LEDGER_20261116.md](AMI486_ADDRESS_LEDGER_20261116.md).
 - Narrow token scan: 153 pages have explicit address references; 103 pages have none. This is not a coverage percentage.
 - Raw-byte checks uncovered substantial executable-looking content in pages without explicit phase references, including 2100h, 6800h, A000h–ACFFh, AE60h–AFFFh, D100h–D5FFh and F900h.
 - Confirmed data candidates include the Format/BootSector Write/Possible VIRUS message at A125h–A18Dh and keyboard translation tables at AD00h–AE5Fh.
-- A000h–AFFFh, D100h–D5FFh, 2100h and the F8E7h INT 14h serial dispatcher now have dedicated subsystem maps. Remaining questions include runtime INT 40h target, INT 14h vector provenance, the 2100h memory-test caller/ES setup, keyboard table boundaries, low-bit [BX+90h] FDC state-token semantics and EEAAh configuration-byte provenance.
+- A000h–AFFFh, D100h–D5FFh, 2100h and the F8E7h INT 14h serial dispatcher now have dedicated subsystem maps. Remaining questions include ES=0000h provenance at A95Eh's call site and the value of the displaced INT 13h vector copied into INT 40h, INT 14h vector provenance, the 2100h memory-test caller/ES setup, keyboard table boundaries, low-nibble [BX+90h] FDC state-token semantics and EEAAh configuration-byte provenance.
 
 
 ## ATA / floppy / keyboard region discoveries — 2026-11-16
@@ -1096,7 +1096,7 @@ The INT 13h hard-disk handler now has an entry-to-return map in AMI486_STORAGE_A
 
 ## FDC/DMA subsystem map — 2026-11-16
 
-Detailed report: [AMI486_FDC_DMA_SUBSYSTEM_20261116.md](AMI486_FDC_DMA_SUBSYSTEM_20261116.md). The D100h–D5FFh code programs DMA channel 2, writes/reads FDC FIFO 03F5h under MSR 03F4h control, resets the FDC via DOR 03F2h, uses CMOS register 10h for floppy drive type, and maps FDC result bits into BIOS status. D2FDh issues Sense Interrupt Status (08h). The legacy floppy INT 13h handler candidate at C610h calls these routines; A95Eh saves the previous INT 13h vector into INT 40h and A08Dh forwards DL<80h requests there. Runtime INT 40h segment:offset still needs capture.
+Detailed report: [AMI486_FDC_DMA_SUBSYSTEM_20261116.md](AMI486_FDC_DMA_SUBSYSTEM_20261116.md). The D100h–D5FFh code programs DMA channel 2, writes/reads FDC FIFO 03F5h under MSR 03F4h control, resets the FDC via DOR 03F2h, uses CMOS register 10h for floppy drive type, and maps FDC result bits into BIOS status. D2FDh issues Sense Interrupt Status (08h). The legacy floppy INT 13h handler candidate at C610h calls these routines; A95Eh replaces INT 13h with CS:A08Dh and copies the displaced INT 13h vector into INT 40h; A08Dh forwards DL<80h requests there. INT 40h is dynamically inherited, not hardcoded; ES=0000h at A95Eh's caller 134Eh still needs verification. Runtime INT 40h segment:offset still needs capture.
 
 
 ## Keyboard BIOS subsystem — 2026-11-16
@@ -1111,7 +1111,7 @@ A95Eh installs F000:A08Dh at INT 13h, saves the displaced vector in INT 40h, ins
 
 ## Legacy floppy INT13 and INT40 chain — 2026-11-16
 
-C610h is the in-ROM legacy floppy INT 13h handler candidate. Its 11-word dispatch table at C5FAh maps AH=00–05, 08 and 15–18 to C69Ah/C6CEh/C7E2h/C7E2h/C7E2h/C8E1h/C999h/C6D9h/C78Bh/C716h/CB09h. The C8BBh/C936h paths call DMA setup D156h; C913h enters the D100h FDC transaction chain. A95Eh saves the displaced INT13 vector into INT40, and A08Dh forwards floppy requests there. The runtime vector value still needs an IVT snapshot. Details: AMI486_FDC_DMA_SUBSYSTEM_20261116.md.
+C610h is the in-ROM legacy floppy INT 13h handler candidate. Its 11-word dispatch table at C5FAh maps AH=00–05, 08 and 15–18 to C69Ah/C6CEh/C7E2h/C7E2h/C7E2h/C8E1h/C999h/C6D9h/C78Bh/C716h/CB09h. The C8BBh/C936h paths call DMA setup D156h; C913h enters the D100h FDC transaction chain. A95Eh copies the displaced INT13 vector into INT40, and A08Dh forwards floppy requests there; A95Eh does not set ES=0, so its caller's ES precondition remains open. The runtime vector value still needs an IVT snapshot. Details: AMI486_FDC_DMA_SUBSYSTEM_20261116.md.
 
 
 ## Memory alias and chipset-init sequence — 2026-11-16
@@ -1152,3 +1152,8 @@ D40Ah–D462h is a drive data-rate/state-selection sequence, not a list of FDC c
 ## FDC drive-state refinement — 2026-11-16
 
 The CMOS floppy-type helper D3B5h checks CMOS 0Eh bits C0h; when clear, it reads CMOS 10h and extracts the drive-type nibble (high nibble for drive 0, low nibble for nonzero). D3CFh dispatches normal type values to rate probes: type 1 selects token 93h; type 2 tries rate codes 0/1; type 3 tries 0/2; type 4/default tries 3/0/2. If CMOS 0Eh C0h is set, D46Dh tries 0/1/2/3. D3FAh proves bit 4 is the success flag and bits 7:6 are the rate selector. C84Bh is a direct caller of D3CFh; C855h maps D7h to SPECIFY 03 AF 02, 17h to 03 BF 02, and other observed tokens to 03 DF 02. The D46Dh alternate candidate window now extends through D498h so its final JMP is included. See AMI486_FDC_DMA_SUBSYSTEM_20261116.md.
+
+
+## INT 40h dynamic chain clarification — 2026-11-16
+
+A95Eh installs CS:A08Dh as INT 13h and copies the prior INT 13h offset:segment into INT 40h at ES:0100h/0102h. A08Dh forwards floppy DL<80h requests through INT 40h. Therefore INT 40h is not hardcoded to C610h; it is the previous INT 13h handler. A95Eh's caller is 134Eh, but A95Eh does not set ES=0000h, so the ES precondition and the actual displaced vector value remain open. C610h is a strong in-ROM candidate because EC59h JMPs to it, but it is not proven as the runtime INT 40h target.
