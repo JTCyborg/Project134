@@ -79,3 +79,8 @@ Next: reconstruct the control-flow and stack state from each entry (0B5Dh and 0B
 ## Phase 94 correction — do not treat the table bytes as proven code
 
 The 05B4h dispatcher does issue near CALL AX to the values 0B5Dh and 0B6Dh, but the raw bytes at those offsets are embedded in a regular four-byte record region and linear 8086 decoding yields implausible operations. Therefore these are confirmed raw-image indirect CALL targets, not confirmed semantically valid code entries. The claimed linear control-flow path through 0BE5h is withdrawn as an established code path; branches at 0B71h/0B85h/0BA1h are only speculative alternate decoding of record bytes. See phase 94 for the corrected dispatcher contract and unresolved CS mapping.
+
+
+## Phase 95 correction — 0B5Dh/0B6Dh are chain bases, not callback targets
+
+The apparent contradiction is resolved by the preceding helper at 0AADh. 05A3h indexes the 16-word pointer array at 0AE1h with AL and loads a selected chain base into SI/BX. For AL=3 the base is 0B5Dh; 05B4h adds four and reads the first record at 0B61h, whose callback target is 061Ah. For AL=5 the base is 0B6Dh; the first record at 0B71h calls 0626h. Thus the four-byte region at 0B45h..0B9Dh is genuine callback-list data; 0B5Dh/0B6Dh are not executed as code in these paths. The previous linear-code interpretation and its branch claims remain withdrawn. See phase 95.
