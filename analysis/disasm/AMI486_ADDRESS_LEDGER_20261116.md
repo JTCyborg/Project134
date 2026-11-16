@@ -80,7 +80,7 @@ The A100h words must not be mistaken for a fully understood native little-endian
 
 ### 4.3 D100h–D5FFh — floppy-controller/DMA subsystem
 
-The FDC/DMA routines are called from the legacy floppy INT 13h handler at C610h (notably C8BBh/C936h -> D156h and C913h -> D4EAh/D381h/D197h/D156h/D216h/D270h/D2BDh). A95Eh saves the displaced INT 13h vector at INT 40h; A08Dh forwards DL<80h requests through INT 40h. C610h is the strong matching in-ROM floppy handler candidate; the actual runtime pointer stored at 0000:0100h still needs an IVT snapshot. See AMI486_FDC_DMA_SUBSYSTEM_20261116.md.
+The FDC/DMA routines are called from the legacy floppy INT 13h handler at C610h (notably C8BBh/C936h -> D156h and C913h -> D4EAh/D381h/D197h/D156h/D216h/D270h/D2BDh). A95Eh replaces INT 13h with CS:A08Dh and copies the displaced INT 13h offset:segment into the INT 40h slot at ES:0100h/0102h; A08Dh forwards DL<80h requests through INT 40h. Thus INT 40h is dynamically inherited from the previous INT 13h vector, not hardcoded. A95Eh does not set ES=0; the caller's ES precondition remains open. C610h is a strong matching in-ROM floppy-handler candidate (EC59h near-JMPs to C610h), but it is not proven as the saved runtime target. See AMI486_FDC_DMA_SUBSYSTEM_20261116.md.
 
 ### 4.4 6800h — executable code candidate
 
@@ -92,7 +92,7 @@ F8E7h–F929h is the guarded IRET-terminated six-function dispatcher candidate. 
 
 ## 5. Immediate priority order
 
-1. **INT 40h runtime target**: capture the initialized IVT value at 0000:0100h and confirm the legacy floppy handler segment:offset (C610h is the strong in-ROM candidate).
+1. **INT 40h chain value**: verify ES=0000h at A95Eh's caller 134Eh and capture the displaced INT 13h offset:segment copied to 0000:0100h/0102h. C610h is a strong in-ROM candidate but not proven.
 2. **FDC command semantics**: decode D40Ah–D462h and D520h–D5DCh against the 8272/765 command format; verify DMA mode at every D156h call.
 3. **INT 14h vector provenance**: locate the IVT installation/caller for the now-mapped F8E7h serial service.
 4. **Chipset register semantics**: identify the chipset family and map registers 10h/11h/16h used by the 2100h–23E1h memory-alias/configuration path.
@@ -243,3 +243,8 @@ The D40Ah–D462h bytes are not raw FDC command opcodes. D3EDh/D499h derive the 
 The D3B5h helper checks CMOS 0Eh bits C0h first. If clear, it reads CMOS 10h and selects the high nibble for drive index 0 or the low nibble for nonzero index; CMP SP,SP deliberately returns ZF=1. If CMOS 0Eh bits C0h are set, D3CFh takes the alternate rate-probe path at D46Dh.
 
 Normal CMOS type cases: type 1 stores 93h (rate code 2); type 2 probes rates 0 then 1 (success tokens 15h/74h, failure 02h); type 3 probes 0 then 2 (17h/97h, failure 07h); type 4/default probes 3,0,2 (D7h/17h/97h, failure C7h). The alternate CMOS-0Eh path probes 0,1,2,3 and stores 15h/74h/97h/D7h on success. D3FAh confirms token bit 4 is the success flag; bits 7:6 are the rate selector. C84Bh calls D3CFh when the per-drive token bit 4 is clear. After success, C855h selects FDC SPECIFY parameters: D7h -> 03 AF 02, 17h -> 03 BF 02, other observed tokens -> 03 DF 02. Remaining unknowns are the low-nibble meanings beyond these observed cases and the precise meaning of the CMOS 0Eh C0h flag.
+
+
+## INT 13h/INT 40h chain correction — 2026-11-16
+
+A95Eh does not install a fixed C610h pointer into INT 40h. It swaps the current INT 13h offset at ES:004Ch with A08Dh, stores the old offset at ES:0100h, swaps the current INT 13h segment at ES:004Eh with CS, and stores the old segment at ES:0102h. The caller is at 134Eh. The code therefore chains INT 40h to the previous INT 13h vector dynamically. A95Eh does not initialize ES, so the caller's ES=0000h precondition must be proven. EC59h has the only direct in-ROM near JMP to C610h; this supports C610h as a candidate but does not establish the runtime vector target.
