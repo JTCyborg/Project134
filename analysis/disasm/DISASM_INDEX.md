@@ -314,3 +314,12 @@ This phase is semantic classification of selected regions, not a complete CFG. S
 - Added two further CMOS-option-gated ROM-shadow windows (E000h and alternate C800h) to the three already mapped in Phase 17/19.
 - Documented additional ALi1429 register read/modify/write masks in the POST A4 path; kept hardware bit names unresolved.
 - Explicitly separated 100% mechanical byte decoding from semantic recognition; a reliable semantic percentage requires a per-byte code/data/reachability ledger and is not yet available.
+
+
+## Semantic map — phase 22 (2026-11-16)
+
+- [AMI486_SEMANTIC_MAP_PHASE22_20261116.md](AMI486_SEMANTIC_MAP_PHASE22_20261116.md)
+- Decoded shared CR0 cache-control continuations: 8CB2h clears CD/NW; 8CCDh sets CD/NW and executes WBINVD.
+- Traced the 8042 command/response helper 8CEAh and fixed descriptor-driven I/O handlers 8B5Eh/8BA3h.
+- Documented ALi1429 mode helpers 8D09h/8D39h and related protected-mode memory paths 8D56h/8D83h.
+- Kept fixed descriptor blocks (8250h–826Eh) distinct from B51x Setup lookup keys; peripheral and chipset bit names remain unresolved.
