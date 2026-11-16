@@ -107,3 +107,8 @@ Next: validate the actual incoming vector/caller for F900h, confirm ES provenanc
 ## INT 13h table correction — 2026-11-16
 
 A100h–A123h is not a separate byte-swapped pointer table. The actual 26-entry native little-endian function table begins at A0F1h and ends at A124h; A100h is inside it. A08Dh is the INT 13h hard-disk handler and forwards DL<80h to INT 40h. See AMI486_STORAGE_AND_DISPATCH_REGIONS_20261116.md.
+
+
+## INT 13h function-map progress — 2026-11-16
+
+The A0F1h–A124h table is now resolved for the principal standard INT 13h services. Confirmed: AH=02 read sectors (ATA command 20h), AH=03 write sectors (30h), AH=04 verify (40h), AH=05 format track (50h with user prompt), AH=08 drive parameters, AH=09 initialize parameters (91h), AH=0Ah/0Bh read/write long (22h/32h), AH=0Ch seek (70h), AH=0Dh reset, AH=10 ready/status, AH=11 recalibrate (10h), AH=14 diagnostic (90h), AH=15 disk type/capacity (AH=03h and total sectors CX:DX). Unsupported selectors route to A18Eh; AH=19h remains unresolved. See AMI486_STORAGE_AND_DISPATCH_REGIONS_20261116.md.
