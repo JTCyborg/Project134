@@ -69,14 +69,14 @@ This is clearly an executable-looking pattern-write/compare stream with 16-/32-b
 Raw samples show several distinct content types inside this 4 KiB area:
 
 - `A000h–A0FFh`: instruction-dense bytes, including BIOS interrupt and register-save/restore sequences.
-- `A100h–A123h`: 18 little-endian words. Raw words, in order: `A4A1, 37A1, 72A3, 81A3, 74A3, 9EA4, 8EA1, 8EA1, D3A1, 01A4, 8EA5, 8EA1, 2BA1, A9A5, 8EA1, 8EA1, 8EA1, 7BA1`. These are candidate offsets/pointers, not yet validated as a homogeneous near-pointer table; several values need segment/context resolution.
+- `A100h–A123h`: 18 little-endian words. Raw words, in order: `A4A1, 37A1, 72A3, 81A3, 74A3, 9EA4, 8EA1, 8EA1, D3A1, 01A4, 8EA5, 8EA1, 2BA1, A9A5, 8EA1, 8EA1, 8EA1, 7BA1`. Interpreting the byte pairs as x86-native little-endian words gives the values listed above; reversing each pair gives candidate code offsets A1A4, A137, A372, A381, A374, A49E, A18E, A18E, A1D3, A401, A58E, A18E, A12B, A5A9, A18E, A18E, A18E and A17B. Several are aligned code entries seen in the seeded decode. This strongly suggests a byte-swapped dispatch/offset table, but its consumer and exact encoding still require caller verification.
 - `A125h–A18Dh`: padded message text including **“Format !!!”**, **“BootSector Write !!!”**, and **“Possible VIRUS: Continue (Y/N)?”**. This is confirmed embedded text/data, not executable code.
 - `A18Eh`: aligned bytes `B8 00 01 88 26 74 00 F9 C3`; a short executable helper candidate. Its side effect and caller contract remain to be established.
 - `A200h–ACFFh`: instruction-dense routines; raw samples include repeated I/O and conditional control flow. Treat as code candidates with embedded data not yet excluded.
 - `AD00h–AE5Fh`: keyboard translation data candidates. The bytes contain scan-code-like values and recognizable QWERTY/ASDF/Z/X/C/V/B/N/M and numeric-key sequences.
 - `AE60h–AFFFh`: returns to instruction-dense code, including BIOS interrupt calls and control-flow branches.
 
-The A100h words must not be mistaken for a fully understood pointer table. In particular, byte order is little-endian; a word `A1 37` is `37A1h`, not `A137h`.
+The A100h words must not be mistaken for a fully understood native little-endian pointer table. The raw pairs, when byte-reversed, match plausible code entries such as A1A4h, A137h, A372h, A381h, A49Eh, A18Eh, A1D3h, A401h and A5A9h. This is a strong byte-swapped-table hypothesis, not yet a proven table contract.
 
 ### 4.3 D100h–D5FFh — floppy-controller I/O code candidate
 
@@ -92,7 +92,7 @@ At F900h the stream begins `00 23 D2 74 1F D1 EF 8B BD 7C 00 ...` and contains i
 
 ## 5. Immediate priority order
 
-1. **A000h–AFFFh**: map the mixed diskette/format/boot-sector path, separate the pointer-like words and keyboard tables, and trace the message callers.
+1. **A000h–AFFFh**: map the mixed IDE/ATA hard-disk format/boot-sector path, separate the pointer-like words and keyboard tables, and trace the message callers.
 2. **D100h–D5FFh**: identify all FDC routines and connect their callers to the A000h subsystem.
 3. **2100h onward**: verify the memory-test alternate stream and caller.
 4. **F900h–F9FFh** and **6800h–68FFh**: establish entry points and callers.
@@ -110,3 +110,21 @@ For each interval record:
 - confidence and evidence source.
 
 Do not infer that an entire 256-byte page is code because one function starts there. Do not infer data from linear-decoder output alone. No whole-ROM semantic percentage is currently defensible.
+
+
+## 7. Seeded Capstone decode — first executable evidence
+
+The GitHub Actions workflow now generates `ami486_candidate_windows_20261116.txt` from independently seeded 16-bit windows. The first successful run produced 24 windows; the expanded run adds entry candidates and normalizes relative near-branch targets with 16-bit IP wraparound. This remains a bounded linear inspection aid, not a CFG.
+
+Confirmed from the decoded bytes:
+- A1B3h resets the ATA device through control port 01F6h, waits, reads error/features port 01F1h, and then probes device selectors 80h/81h.
+- A337h writes sector-count/device parameters to 01F2h/01F6h and issues ATA command 91h through the command path.
+- A406h transfers a 512-byte sector using `REP OUTSW` to port 01F0h; the optional trailing path writes four additional bytes.
+- A501h and A52Bh issue ATA commands and inspect status/error state; A52Bh uses command 90h and reads 01F1h.
+- A621h writes the feature/error register at 01F1h; A62Dh polls status at 01F7h; A655h selects a drive and checks status.
+- A847h renders the embedded A125h/A148h prompt via BIOS INT 10h. This ties the “Possible VIRUS” message to the ATA/boot-sector protection path.
+- A95Eh writes the INT 13h vector at 0000:004Ch and stores the displaced vector in low memory; full hook semantics still require the rest of the routine and caller path.
+- D100h–D5FFh accesses ports 03F4h/03F7h and is a separate floppy-controller candidate. Do not merge it with the ATA routines at A000h–AFFFh.
+- AE60h onward enters a keyboard/INT 15h related handler path; AD00h–AE5Fh remains translation-table data candidate.
+
+The first A000h seed decodes the initial bytes as unusual but syntactically valid instructions. Its true entry boundary remains unconfirmed; prefer the aligned entries established by direct calls/branches in the seeded listing.
