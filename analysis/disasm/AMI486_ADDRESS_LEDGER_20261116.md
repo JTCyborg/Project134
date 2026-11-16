@@ -42,7 +42,7 @@ Legend:
 
 ## 3. Pages without explicit phase-address references
 
-The following 102 pages are the current *reference-scan gaps*, not proven analysis gaps:
+The following 103 pages are the current *reference-scan gaps*, not proven analysis gaps:
 
 0e00h–0eFFh, 2100h–22FFh, 2a00h–2dFFh, 3100h–32FFh, 3500h–3bFFh, 3d00h–3dFFh, 3f00h–3fFFh, 4200h–43FFh, 4500h–45FFh, 4a00h–4aFFh, 4e00h–4eFFh, 5900h–59FFh, 6000h–61FFh, 6800h–70FFh, 7200h–72FFh, 7800h–79FFh, 7b00h–7eFFh, 8100h–81FFh, 9500h–97FFh, 9900h–9bFFh, 9d00h–9eFFh, a000h–a9FFh, ab00h–afFFh, b100h–b2FFh, b400h–b4FFh, b800h–b9FFh, bb00h–bcFFh, c100h–c4FFh, c600h–c7FFh, c900h–cbFFh, ce00h–cfFFh, d100h–d5FFh, db00h–deFFh, e400h–e4FFh, e600h–e7FFh, eb00h–ecFFh, f200h–f2FFh, f900h–f9FFh, fb00h–fbFFh, fd00h–feFFh
 
@@ -109,7 +109,7 @@ For each interval record:
 - unresolved bytes and alternate-entry candidates;
 - confidence and evidence source.
 
-Do not infer that an entire 256-byte page is code because one function starts there. Do not infer data from linear-decoder output alone. No whole-ROM semantic percentage is currently defensible.
+Do not infer that an entire 256-byte page is code because one function starts there. Do not infer data from linear-decoder output alone. No whole-ROM semantic percentage is currently defensible. The seeded-window union is 8,618/65,536 bytes (13.15%) but this is a sampling footprint, not a ROM semantic-coverage percentage.
 
 
 ## 7. Seeded Capstone decode — first executable evidence
@@ -140,7 +140,7 @@ D100h–D5FFh is the separate floppy-controller/DMA subsystem: FDC ports 03F2h/0
 
 F92Ah–F935h is a six-word little-endian dispatch table with targets F936h, F986h, F9C4h, F977h, F999h and F9D3h. F977h overlaps the F936h stream as an alternate entry. The F900h wrapper ends in IRET; its actual vector entry remains unknown.
 
-The seeded Capstone output now contains 111 unique bounded code windows plus separately emitted data ranges and normalizes near-branch targets to 16-bit IP wraparound.
+The current seeded Capstone output contains 146 unique bounded code windows plus 6 separately emitted data ranges (152 window headers total). The windows cover 7,974 unique code-candidate bytes and 671 data-candidate bytes, with 27 bytes overlapping between code/data windows; the union is 8,618 distinct ROM bytes across 46 pages. This is only the union of selected seeded windows, not total semantic coverage. Near-branch targets are normalized to 16-bit IP wraparound.
 
 
 ## INT 13h dispatch correction
