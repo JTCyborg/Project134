@@ -72,7 +72,7 @@ The sequence is bracketed by CLI/STI and preserves AX/DX. Direct callers supply 
 
 ### Drive type and rate
 
-D3B5h reads CMOS register 0Eh and tests bits C0h (RTC power-loss / CMOS-checksum status). If both are clear, it reads CMOS register 10h and selects the drive-type nibble based on DL (DL=0 selects the high nibble; nonzero selects the low nibble), then deliberately returns ZF=1. If either 0Eh bit 7 or bit 6 is set, it returns ZF=0 without reading 10h; D3CFh then takes the conservative alternate rate-probe path at D46Dh. CMOS register 10h is the standard floppy-drive-type field; type 05h is 2.88-MB 3.5-inch drive. D517h writes the derived rate code to port 03F7h. The exact meaning of each byte sequence at D40Ah–D462h remains open; the raw command bytes are preserved in the candidate decode and are not assigned speculative names.
+D3B5h reads CMOS register 0Eh and tests bits C0h (RTC power-loss / CMOS-checksum status). If both are clear, it reads CMOS register 10h and selects the drive-type nibble based on DL (DL=0 selects the high nibble; nonzero selects the low nibble), then deliberately returns ZF=1. If either 0Eh bit 7 or bit 6 is set, it returns ZF=0 without reading 10h; D3CFh then takes the conservative alternate rate-probe path at D46Dh. CMOS register 10h is the standard floppy-drive-type field; type 05h is 2.88-MB 3.5-inch drive. D517h writes the derived rate code to port 03F7h. The D40Ah–D462h values are now classified as data-rate/state tokens passed to the D499h READ ID probe; they are not raw FDC command bytes. Their branch-by-drive-type mapping is in section 9.
 
 ## 4. Legacy floppy INT 13h handler and INT 40h chain
 
