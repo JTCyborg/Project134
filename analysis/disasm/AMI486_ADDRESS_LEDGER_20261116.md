@@ -109,7 +109,7 @@ For each interval record:
 - unresolved bytes and alternate-entry candidates;
 - confidence and evidence source.
 
-Do not infer that an entire 256-byte page is code because one function starts there. Do not infer data from linear-decoder output alone. No whole-ROM semantic percentage is currently defensible. The seeded-window union is 10,493/65,536 bytes (16.01%) but this is a sampling footprint, not a ROM semantic-coverage percentage.
+Do not infer that an entire 256-byte page is code because one function starts there. Do not infer data from linear-decoder output alone. No whole-ROM semantic percentage is currently defensible. The seeded-window union is 10,700/65,536 bytes (16.33%) but this is a sampling footprint, not a ROM semantic-coverage percentage.
 
 
 ## 7. Seeded Capstone decode — first executable evidence
