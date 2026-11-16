@@ -74,7 +74,7 @@ The indirect call at A0BDh uses CS:[DI-5F0Fh]. Before the call, DI is set to twi
 | 09h | A337h | Initialize device parameters; sends ATA command 91h |
 | 0Ah | A372h | Long-sector path candidate |
 | 0Bh | A381h | Long-sector path candidate |
-| 0Ch | A374h | Seek/related path candidate |
+| 0Ch | A474h | Seek/related path candidate |
 | 0Dh | A19Eh | Secondary drive-detection path |
 | 0Eh | A18Eh | Unsupported/error stub |
 | 0Fh | A18Eh | Unsupported/error stub |
