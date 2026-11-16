@@ -41,3 +41,7 @@ This is an unresolved contradiction: the dispatcher performs CALL AX to 0B5Dh/0B
 2. Find references to source/destination ranges covering 0A00h..0C80h.
 3. Reconstruct the full four-byte record chain at 0B45h..0BDD h using the exact 05B4h cursor/AH rules.
 4. Identify valid callback code targets only after confirming active CS mapping or independent entry evidence.
+
+## Phase 95 correction — selected chain base was omitted
+
+The exact 05B4h dispatcher decode remains valid, but the phase-94 assumption that the first record is always at 0AE5h was wrong. 05A3h calls 0AADh, which indexes the 16-word pointer array at 0AE1h using AL and returns the selected chain base in SI; this is copied to BX before 05B4h is called. The dispatcher then adds four and reads the first record at selected_base+4. For AL=3, selected_base=0B5Dh and the first callback record is at 0B61h (next=0B65h, callback=061Ah); for AL=5, selected_base=0B6Dh and the first record is at 0B71h (next=0B75h, callback=0626h). Therefore the supposed 0B5Dh/0B6Dh callback-target mismatch does not exist. See phase 95 for all first-record mappings and the exact 0AADh helper.
