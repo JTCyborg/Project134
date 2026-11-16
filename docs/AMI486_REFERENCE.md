@@ -94,6 +94,26 @@ The next useful source-review targets are the shared `INCLUDE` definitions and t
 
 This inventory is a directory-level classification only. It does not establish that any module is compatible with the Project134 target or licensed for reuse.
 
+
+### Follow-up inspection: shared interfaces and peripheral setup
+
+Additional files inspected:
+
+- `INCLUDE/CPUDATA.ASM` — CPU/FPU information data structures and frequency-related fields. Useful for understanding what CPU-detection code records, not as a drop-in implementation.
+- `INCLUDE/IO.EQU` — generic peripheral table structure and callback slots (device-node access, register initialization, auto-status, IDE mode, ISR installation and related hooks). This is useful architectural documentation for how the BIOS separates device policy from device-specific handlers.
+- `INCLUDE/RT.EQU` — runtime service entry macros and function identifiers. Useful as a reference when defining firmware/runtime interfaces.
+- `INCLUDE/PCI.EQU` — PCI configuration-space constants and register definitions. Useful as a standards-level reference; actual bus/chipset access still depends on the target platform.
+- `IO.112/IO.SSP` and `IO1.SSP`–`IO3.SSP` — AMI Setup Script Processor descriptions for peripheral setup menus. These describe configuration UI/options for many supported controllers; they are not the low-level hardware drivers themselves.
+
+The `IO.112/SYSTEM` directory seen in the inventory contains prebuilt `.OBJ` modules for generic services such as DMA, interrupt controller, keyboard controller, memory, RTC and timer. Since those are object files rather than readable assembly sources, they cannot currently serve as source-level implementation references.
+
+Practical priority for further study:
+
+1. Use the readable CPU/CMOS/POST sources to derive independent diagnostic requirements.
+2. Use generic structures and constants to understand BIOS subsystem boundaries and standard interfaces.
+3. Treat SSP files as evidence of setup/configuration concepts only.
+4. Use PCem's ALi 1429 implementation and the exact AMI486 ROM/runtime trace—not unrelated chipset code—to determine hardware register programming.
+
 ### Research status
 
 - [x] Confirm that the collection is available in Project134 under `docs/627.10`.
