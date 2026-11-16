@@ -121,7 +121,7 @@ A08Dh/A0A0h is now mapped as the hard-disk INT 13h handler and AH dispatcher. Th
 
 ## FDC/DMA follow-up — 2026-11-16
 
-See AMI486_FDC_DMA_SUBSYSTEM_20261116.md. D156h programs DMA channel 2; D243h and D294h implement FDC FIFO command/result byte exchange; D270h collects result blocks; D2FDh issues Sense Interrupt Status 08h; D348h resets the controller; D3B5h reads CMOS floppy type register 10h; D499h performs a three-attempt FDC command/result transaction. D40Ah–D462h is now understood as data-rate/state-token selection feeding a D499h MFM READ ID transaction; D520h–D5D9h performs VERSION/DUMPREG/UNLOCK/CONFIGURE/PERPENDICULAR/LOCK setup. Remaining gaps are low-bit state-token semantics, EEAAh configuration-byte provenance and the runtime INT 40h segment:offset (it is copied dynamically from the previous INT 13h vector by A95Eh); C610h remains a strong in-ROM candidate but is not proven as that runtime target.
+See AMI486_FDC_DMA_SUBSYSTEM_20261116.md. D156h programs DMA channel 2; D243h and D294h implement FDC FIFO command/result byte exchange; D270h collects result blocks; D2FDh issues Sense Interrupt Status 08h; D348h resets the controller; D3B5h reads CMOS floppy type register 10h; D499h performs a three-attempt FDC command/result transaction. D40Ah–D462h is now understood as data-rate/state-token selection feeding a D499h MFM READ ID transaction; D520h–D5D9h performs VERSION/DUMPREG/UNLOCK/CONFIGURE/PERPENDICULAR/LOCK setup. Remaining gaps are low-nibble state-token semantics and the runtime INT 40h segment:offset (it is copied dynamically from the previous INT 13h vector by A95Eh); C610h remains a strong in-ROM candidate but is not proven as that runtime target.
 
 
 ## Keyboard subsystem follow-up — 2026-11-16
@@ -161,7 +161,7 @@ See AMI486_INT14_SERIAL_BIOS_20261116.md. F900h is a six-function IRET dispatch 
 
 ## INT 14h service mapping confirmed — 2026-11-16
 
-F900h implements the BIOS INT 14h serial service family. AH=00h initializes the UART with baud divisors 0417/0300/0180/00C0/0060/0030/0018/000C for 110–9600 baud; AH=01h transmits; AH=02h receives; AH=03h reads LSR/MSR; AH=04h/05h control modem outputs. The IVT entry/caller remains open. Full report: AMI486_INT14_SERIAL_BIOS_20261116.md.
+F8E7h is the guarded BIOS INT 14h serial-dispatch candidate. AH=00h initializes the UART with baud divisors 0417/0300/0180/00C0/0060/0030/0018/000C for 110–9600 baud; AH=01h transmits; AH=02h receives; AH=03h reads LSR/MSR; AH=04h/05h control modem outputs. The IVT entry/caller remains open. Full report: AMI486_INT14_SERIAL_BIOS_20261116.md.
 
 
 ## FDC DMA direction — 2026-11-16
@@ -181,7 +181,7 @@ The generated candidate listing now contains 189 code windows plus 6 data window
 
 ## FDC command-sequence update — 2026-11-16
 
-D499h is now identified as a three-attempt MFM READ ID transaction: command 4Ah plus drive/head, followed by seven result bytes. D40Ah–D462h supplies data-rate tokens for 03F7h and per-drive state values, not command opcodes. D520h–D5D9h probes an enhanced 765-compatible FDC (VERSION 10h returns 90h), reads DUMPREG, unlocks FIFO config, sends CONFIGURE 13h with 00 08 00, sets PERPENDICULAR MODE 12h, then locks the configuration. Still open: low-bit [BX+90h] meanings, EEAAh config-source semantics, and the runtime INT 40h vector.
+D499h is now identified as a three-attempt MFM READ ID transaction: command 4Ah plus drive/head, followed by seven result bytes. D40Ah–D462h supplies data-rate tokens for 03F7h and per-drive state values, not command opcodes. D520h–D5D9h probes an enhanced 765-compatible FDC (VERSION 10h returns 90h), reads DUMPREG, unlocks FIFO config, sends CONFIGURE 13h with 00 08 00, sets PERPENDICULAR MODE 12h, then locks the configuration. Still open: low-bit [BX+90h] meanings, the runtime INT 40h vector.
 
 
 ## FDC drive-type state-machine refinement — 2026-11-16
