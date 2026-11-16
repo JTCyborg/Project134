@@ -192,3 +192,8 @@ D3B5h checks CMOS 0Eh bits C0h and, when clear, extracts the selected nibble fro
 ## INT 40h dynamic vector chain — 2026-11-16
 
 A95Eh installs CS:A08Dh at INT 13h and copies the displaced INT 13h offset:segment to INT 40h at ES:0100h/0102h. A08Dh forwards floppy DL<80h requests through INT 40h. Thus INT 40h is the prior INT 13h handler, not a hardcoded C610h address. A95Eh's direct caller is 134Eh; the routine does not set ES=0000h itself, so the caller's ES precondition must be proven. EC59h JMPs to C610h, making C610h a strong candidate, but the runtime vector remains unverified.
+
+
+## D4EAh rate-field confirmation — 2026-11-16
+
+D4EAh independently confirms [0090h+drive] bits 7:6 as the per-drive data-rate selector. It compares them with global [008Bh], updates the global rate cache when changed, converts the selector to bits 1:0 and writes it to port 03F7h through D517h. Remaining [BX+90h] low-nibble meanings are still open.
