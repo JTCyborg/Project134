@@ -4610,6 +4610,38 @@ Reason: memory-pattern test failure/return target
 2201  0F 84 28 00             je 0x222d
 2205  B6 01                   mov dh, 1
 
+===== 222Dh-22ACh =====
+Reason: memory-pattern test final branch/return target
+222D  B8 16 16                mov ax, 0x1616
+2230  BC 36 22                mov sp, 0x2236
+2233  E9 99 6B                jmp 0x8dcf
+2236  38 22                   cmp byte ptr [bp + si], ah
+2238  0C 30                   or al, 0x30
+223A  86 E0                   xchg al, ah
+223C  BC 42 22                mov sp, 0x2242
+223F  E9 9A 6B                jmp 0x8ddc
+2242  44                      inc sp
+2243  22 B8 11 44             and bh, byte ptr [bx + si + 0x4411]
+2247  90                      nop
+2248  BC 4E 22                mov sp, 0x224e
+224B  E9 8E 6B                jmp 0x8ddc
+224E  50                      push ax
+224F  22 B3 FF 26             and dh, byte ptr [bp + di + 0x26ff]
+2253  66 C7 06 00 00 55 55 AA AA mov dword ptr [0], 0xaaaa5555
+225C  26 66 C7 06 00 01 FF FF FF FF mov dword ptr es:[0x100], 0xffffffff
+2266  26 66 81 3E 00 00 55 55 AA AA cmp dword ptr es:[0], 0xaaaa5555
+2270  0F 85 67 00             jne 0x22db
+2274  26 66 C7 06 00 00 AA AA 55 55 mov dword ptr es:[0], 0x5555aaaa
+227E  26 66 C7 06 00 01 FF FF FF FF mov dword ptr es:[0x100], 0xffffffff
+2288  26 66 81 3E 00 00 AA AA 55 55 cmp dword ptr es:[0], 0x5555aaaa
+2292  0F 85 45 00             jne 0x22db
+2296  B3 00                   mov bl, 0
+2298  26 67 66 81 3D 00 00 80 00 AA AA 55 55 cmp dword ptr es:[0x800000], 0x5555aaaa
+22A5  0F 84 32 00             je 0x22db
+22A9  B3 02                   mov bl, 2
+22AB  26              db 0x26
+22AC  66              db 0x66
+
 ===== 6800h-687Fh =====
 Reason: code-dense raw window without phase address token
 6800  86 C4                   xchg ah, al
