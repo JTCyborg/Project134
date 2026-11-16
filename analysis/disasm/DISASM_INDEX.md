@@ -1116,7 +1116,7 @@ C610h is the in-ROM legacy floppy INT 13h handler candidate. Its 11-word dispatc
 
 ## Memory alias and chipset-init sequence — 2026-11-16
 
-Detailed report: [AMI486_MEMORY_CHIPSET_INITIALIZATION_20261116.md](AMI486_MEMORY_CHIPSET_INITIALIZATION_20261116.md). The 2100h/2187h/2253h/22DBh streams test aliasing at 8 MiB, 64 MiB and 2/4/8 KiB offsets. Stack-threaded code uses 8DCFh/8DDCh to read/write indexed registers through ports 22h/23h. Confirmed operations include register 16h |= 30h and register 11h = 44h; the 2381h path updates registers 10h/11h and clears CR0.PE before F66Eh. Exact chipset identity and register semantics remain open.
+Detailed report: [AMI486_MEMORY_CHIPSET_INITIALIZATION_20261116.md](AMI486_MEMORY_CHIPSET_INITIALIZATION_20261116.md). The 2100h/2187h/2253h/22DBh streams test aliasing at 8 MiB, 64 MiB and 2/4/8 KiB offsets. The exact 2100h start includes STOSB at 2106h/2107h (AA AA), followed by the ES:[0100h] sentinel; an earlier ledger excerpt omitted those bytes and has been corrected. No direct near CALL/JMP or literal F000:2100h pointer was found, so caller/entry and DS/ES/DI/AL remain open. Stack-threaded code uses 8DCFh/8DDCh to read/write indexed registers through ports 22h/23h. Confirmed operations include register 16h |= 30h and register 11h = 44h; the 2381h path updates registers 10h/11h and clears CR0.PE before F66Eh. Exact chipset identity and register semantics remain open.
 
 
 ## RTC and numeric display helpers — 2026-11-16
@@ -1181,3 +1181,6 @@ The candidate artifact now contains 168 code windows and 18 data ranges; union 1
 ## INT 14h vector scan — 2026-11-16
 
 No direct near CALL/JMP xref to F8E7h, literal F8E7h word reference or far pointer F000:F8E7h exists in the ROM image. Treat the F8E7h UART dispatcher as an INT 14h-style candidate until the runtime IVT slot 0000:0054h/0056h is captured.
+
+
+The 2100h raw-byte correction is recorded in AMI486_ADDRESS_LEDGER_20261116.md: bytes AA AA at 2106h–2107h are STOSB instructions and were omitted in the earlier excerpt. The memory/chipset report now preserves the correct instruction boundary and the unresolved caller-provided AL/DI values.
