@@ -829,3 +829,12 @@ This phase is semantic classification of selected regions, not a complete CFG. S
 - Corrected phase 75: 14D0h..1518h mixes POST writes to port 80h with CMOS reads. The shown helper calls target EE94h (read), not EE9Dh (write); no CMOS write is proven in this snippet.
 - BP.13 at 5CF8h is tested, not produced. 5D08h AND BP,EFFFh clears bit 12. No BP.13 producer found here.
 - BP.13 provenance and DA5Eh/DA61h dynamic entry remain unresolved.
+
+
+## Semantic map — phase 77 (2026-11-16)
+
+- [AMI486_SEMANTIC_MAP_PHASE77_20261116.md](AMI486_SEMANTIC_MAP_PHASE77_20261116.md)
+- Identified overlapping alternate entry: 183Ah jumps to 17F3h, the middle byte of aligned `XOR BX,BX` at 17F2h. Keep this decode separate; do not assume it is the CMOS sum loop.
+- Identified explicit DI setup and indirect-dispatch candidates around 1837h–1859h. The 184Eh short jump targets the aligned second sum loop at 1810h.
+- Correction: calls at 1840h/1847h resolve to EE9Eh, an alternate entry into the CMOS write helper (one byte after EE9Dh). They skip index-select OUT 70h and write the data byte through OUT 71h to the already-selected CMOS index.
+- CMOS index-selection state and actual runtime reachability of the overlapping dispatcher remain under investigation.
