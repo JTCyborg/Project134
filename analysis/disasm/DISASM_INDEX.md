@@ -992,6 +992,6 @@ This phase is semantic classification of selected regions, not a complete CFG. S
 ## Semantic map — phase 92 (2026-11-16)
 
 - [AMI486_SEMANTIC_MAP_PHASE92_20261116.md](AMI486_SEMANTIC_MAP_PHASE92_20261116.md)
-- Traced the common nibble-option helper at 05A3h: it displays the current digit through INT 10h and the "Options:-" prompt, then enters the linked dispatcher at 05B4h.
+- Traced the common nibble-option helper at 05A3h: it emits '6' from DL=16h, displays the "Options:-" prompt, then enters the linked dispatcher at 05B4h; the masked AL nibble is overwritten and its purpose remains unresolved.
 - Identified the first 0AE1h-table targets as 0B5Dh and 0B6Dh, with a later edge to 026Fh. 05E0h/0845h preserve BX, ruling out cursor corruption by prompt rendering.
 - Marked 0B5Dh/0B6Dh execution as unresolved because the target offsets overlap a dense record-like region in the ROM image; runtime CS/shadow mapping and alternate entries must be verified before assigning semantics.
