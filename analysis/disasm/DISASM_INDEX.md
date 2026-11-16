@@ -173,3 +173,12 @@ This phase is semantic classification of selected regions, not a complete CFG. S
 - Count fields: `8880=5`, `8882=76`, `8884=0`, `8886=81`; threshold `8888=E0h`.
 - Identified table slices: first five records at `873C`, remaining 76 at `8750`; 8400 consumes all 81 for CMOS application.
 - Preserved the distinction between the CMOS register/mask/value consumer and the generic two-profile configuration worker.
+
+
+## Semantic map — phase 6 (2026-11-16)
+
+- [AMI486_SEMANTIC_MAP_PHASE6_20261116.md](AMI486_SEMANTIC_MAP_PHASE6_20261116.md)
+- Resolved `E187` dispatch values: 0–1 → 5-entry prefix; 2 → 76-entry suffix; 3 → empty set; 4 → optional dynamic table; other values above 4 → empty set.
+- Confirmed common worker semantics at `85FE–862F`: masked merge into DS-relative destination window, with AL=0 copying masked source-window bits and AL=1/2 selecting record +2/+3.
+- Traced wrapper `85B3`: applies the five-entry prefix and then the optional table; called from `84FE` with AL=1 after copying the 8210h block.
+- Meaning/producer of E187 and hardware mapping of the two DS-relative windows remain unresolved.
