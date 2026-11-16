@@ -1157,3 +1157,6 @@ The CMOS floppy-type helper D3B5h checks CMOS 0Eh bits C0h; when clear, it reads
 ## INT 40h dynamic chain clarification — 2026-11-16
 
 A95Eh installs CS:A08Dh as INT 13h and copies the prior INT 13h offset:segment into INT 40h at ES:0100h/0102h. A08Dh forwards floppy DL<80h requests through INT 40h. Therefore INT 40h is not hardcoded to C610h; it is the previous INT 13h handler. A95Eh's caller is 134Eh, but A95Eh does not set ES=0000h, so the ES precondition and the actual displaced vector value remain open. C610h is a strong in-ROM candidate because EC59h JMPs to it, but it is not proven as the runtime INT 40h target.
+
+
+D4EAh independently validates the per-drive rate field: it compares [0090h+drive] bits 7:6 with global [008Bh], updates the global rate cache when different, converts the selector to bits 1:0 and writes it to 03F7h. See AMI486_FDC_DMA_SUBSYSTEM_20261116.md.
