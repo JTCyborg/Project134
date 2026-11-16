@@ -1,8 +1,45 @@
 AMI486 RAW-BYTE CANDIDATE WINDOWS
 Decoder: Capstone x86 16-bit
-Window length: 0x80 bytes per seed, clipped at ROM end
+Window length: 0x80 bytes by default; selected handler windows stop at known data boundaries
 WARNING: independently seeded linear decodes; not a CFG and not proof of entry points.
 Relative near-branch targets are normalized to 16-bit IP wraparound.
+
+===== DATA A0F1h-A124h =====
+Reason: INT 13h AH function table
+Words: A197, A20B, A216, A226, A23E, A25F, A18E, A18E, A1A4, A337, A372, A381, A474, A19E, A18E, A18E, A4D3, A501, A18E, A18E, A52B, A1A9, A18E, A18E, A18E, A57B
+
+===== DATA A125h-A18Dh =====
+Reason: Format / BootSector Write / Possible VIRUS prompt
+ASCII: '            Format !!!                    BootSector Write !!!         Possible VIRUS: Continue (Y/N)?   '
+
+===== DATA AD00h-AE5Fh =====
+Reason: Keyboard translation data candidates
+AD00  06 07 08 0A 0B 0C FF FF FF FF 1C 1A 18 03 16 02 ................
+AD10  0E 0D FF FF 95 FF 96 FF 20 FF 5E 5F 60 61 62 63 ........ .^_`abc
+AD20  64 65 66 67 45 46 77 8D 84 8E 73 8F 74 90 75 91 defgEFw...s.t.u.
+AD30  76 92 93 FF FF FF 89 8A 5F F2 5B 7F CA CA F2 7F v......._.[.....
+AD40  EE 5A 62 5A 2E 7A 4E 7F B2 1A 32 2E 6A 4A 32 4F .ZbZ.zN...2.jJ2O
+AD50  7F DA C6 EE DA FA 4F 7F 3B 3B 4B 3B 33 4B 1F 2B ......O.;;K;3K.+
+AD60  1B 21 40 23 24 25 5E 26 2A 28 29 5F 2B 08 00 51 .!@#$%^&*()_+..Q
+AD70  57 45 52 54 59 55 49 4F 50 7B 7D 0D FF 41 53 44 WERTYUIOP{}..ASD
+AD80  46 47 48 4A 4B 4C 3A 22 7E FF 7C 5A 58 43 56 42 FGHJKL:"~.|ZXCVB
+AD90  4E 4D 3C 3E 3F FF 2A FF 20 FF 54 55 56 57 58 59 NM<>?.*. .TUVWXY
+ADA0  5A 5B 5C 5D FF FF 37 38 39 2D 34 35 36 2B 31 32 Z[\]..789-456+12
+ADB0  33 30 2E FF FF 7C 87 88 2A 35 36 37 38 39 3F 2F 30...|..*56789?/
+ADC0  BB E2 B3 E2 81 79 31 69 B1 C1 B9 59 FB F2 E1 E1 .....y1i...Y....
+ADD0  D1 61 61 FB 92 D1 59 B9 81 D9 61 FB B2 89 E1 8B .aa...Y...a.....
+ADE0  1B 31 32 33 34 35 36 37 38 39 30 2D 3D 08 09 71 .1234567890-=..q
+ADF0  77 65 72 74 79 75 69 6F 70 5B 5D 0D FF 61 73 64 wertyuiop[]..asd
+AE00  66 67 68 6A 6B 6C 3B 27 60 FF 5C 7A 78 63 76 62 fghjkl;'`.\zxcvb
+AE10  6E 6D 2C 2E 2F FF 2A FF 20 FF 3B 3C 3D 3E 3F 40 nm,./.*. .;<=>?@
+AE20  41 42 43 44 FF FF 47 48 49 2D 4B F0 4D 2B 4F 50 ABCD..GHI-K.M+OP
+AE30  51 52 53 FF FF 5C 85 86 5F F2 5B 7F CA CA F2 7F QRS..\.._.[.....
+AE40  EE 5A 62 5A 2E 7A 4E 7F B2 1A 32 2E 6A 4A 32 4F .ZbZ.zN...2.jJ2O
+AE50  7F DA C6 EE DA FA 4F 7F 3B 3B 4B 3B 33 4B 1F 2B ......O.;;K;3K.+
+
+===== DATA F92Ah-F935h =====
+Reason: F9xx indirect-handler offset table
+Words: F936, F986, F9C4, F977, F999, F9D3
 
 ===== A000h-A07Fh =====
 Reason: code-dense raw window; entry not yet caller-verified
@@ -143,7 +180,7 @@ A0FD  8E              db 0x8E
 A0FE  A1              db 0xA1
 A0FF  8E              db 0x8E
 
-===== A08Dh-A10Ch =====
+===== A08Dh-A0F0h =====
 Reason: INT 13h hard-disk handler entry; forwards DL<80h to INT 40h
 A08D  80 FA 80                cmp dl, 0x80
 A090  FB                      sti
@@ -200,18 +237,8 @@ A0E9  F9                      stc
 A0EA  EB D6                   jmp 0xa0c2
 A0EC  CD 40                   int 0x40
 A0EE  CA 02 00                retf 2
-A0F1  97                      xchg di, ax
-A0F2  A1 0B A2                mov ax, word ptr [0xa20b]
-A0F5  16                      push ss
-A0F6  A2 26 A2                mov byte ptr [0xa226], al
-A0F9  3E A2 5F A2             mov byte ptr ds:[0xa25f], al
-A0FD  8E A1 8E A1             mov fs, word ptr [bx + di - 0x5e72]
-A101  A4                      movsb byte ptr es:[di], byte ptr [si]
-A102  A1 37 A3                mov ax, word ptr [0xa337]
-A105  72 A3                   jb 0xa0aa
-A107  81 A3 74 A4 9E A1       and word ptr [bp + di - 0x5b8c], 0xa19e
 
-===== A0A0h-A11Fh =====
+===== A0A0h-A0F0h =====
 Reason: INT 13h AH-function dispatcher prologue
 A0A0  51                      push cx
 A0A1  52                      push dx
@@ -258,25 +285,8 @@ A0E9  F9                      stc
 A0EA  EB D6                   jmp 0xa0c2
 A0EC  CD 40                   int 0x40
 A0EE  CA 02 00                retf 2
-A0F1  97                      xchg di, ax
-A0F2  A1 0B A2                mov ax, word ptr [0xa20b]
-A0F5  16                      push ss
-A0F6  A2 26 A2                mov byte ptr [0xa226], al
-A0F9  3E A2 5F A2             mov byte ptr ds:[0xa25f], al
-A0FD  8E A1 8E A1             mov fs, word ptr [bx + di - 0x5e72]
-A101  A4                      movsb byte ptr es:[di], byte ptr [si]
-A102  A1 37 A3                mov ax, word ptr [0xa337]
-A105  72 A3                   jb 0xa0aa
-A107  81 A3 74 A4 9E A1       and word ptr [bp + di - 0x5b8c], 0xa19e
-A10D  8E A1 8E A1             mov fs, word ptr [bx + di - 0x5e72]
-A111  D3 A4 01 A5             shl word ptr [si - 0x5aff], cl
-A115  8E A1 8E A1             mov fs, word ptr [bx + di - 0x5e72]
-A119  2B A5 A9 A1             sub sp, word ptr [di - 0x5e57]
-A11D  8E              db 0x8E
-A11E  A1              db 0xA1
-A11F  8E              db 0x8E
 
-===== A0BDh-A13Ch =====
+===== A0BDh-A0F0h =====
 Reason: indirect CALL through CS-relative 26-entry function table
 A0BD  2E FF 95 F1 A0          call word ptr cs:[di - 0x5f0f]
 A0C2  89 46 18                mov word ptr [bp + 0x18], ax
@@ -303,36 +313,6 @@ A0E9  F9                      stc
 A0EA  EB D6                   jmp 0xa0c2
 A0EC  CD 40                   int 0x40
 A0EE  CA 02 00                retf 2
-A0F1  97                      xchg di, ax
-A0F2  A1 0B A2                mov ax, word ptr [0xa20b]
-A0F5  16                      push ss
-A0F6  A2 26 A2                mov byte ptr [0xa226], al
-A0F9  3E A2 5F A2             mov byte ptr ds:[0xa25f], al
-A0FD  8E A1 8E A1             mov fs, word ptr [bx + di - 0x5e72]
-A101  A4                      movsb byte ptr es:[di], byte ptr [si]
-A102  A1 37 A3                mov ax, word ptr [0xa337]
-A105  72 A3                   jb 0xa0aa
-A107  81 A3 74 A4 9E A1       and word ptr [bp + di - 0x5b8c], 0xa19e
-A10D  8E A1 8E A1             mov fs, word ptr [bx + di - 0x5e72]
-A111  D3 A4 01 A5             shl word ptr [si - 0x5aff], cl
-A115  8E A1 8E A1             mov fs, word ptr [bx + di - 0x5e72]
-A119  2B A5 A9 A1             sub sp, word ptr [di - 0x5e57]
-A11D  8E A1 8E A1             mov fs, word ptr [bx + di - 0x5e72]
-A121  8E A1 7B A5             mov fs, word ptr [bx + di - 0x5a85]
-A125  20 20                   and byte ptr [bx + si], ah
-A127  20 20                   and byte ptr [bx + si], ah
-A129  20 20                   and byte ptr [bx + si], ah
-A12B  20 20                   and byte ptr [bx + si], ah
-A12D  20 20                   and byte ptr [bx + si], ah
-A12F  20 20                   and byte ptr [bx + si], ah
-A131  46                      inc si
-A132  6F                      outsw dx, word ptr [si]
-A133  72 6D                   jb 0xa1a2
-A135  61                      popaw
-A136  74 20                   je 0xa158
-A138  21 21                   and word ptr [bx + di], sp
-A13A  21 20                   and word ptr [bx + si], sp
-A13C  20              db 0x20
 
 ===== A18Eh-A20Dh =====
 Reason: byte-aligned short helper immediately after embedded prompt
@@ -499,60 +479,6 @@ A21E  72 05                   jb 0xa225
 A220  B4 20                   mov ah, 0x20
 A222  E9              db 0xE9
 A223  74              db 0x74
-
-===== A2F1h-A370h =====
-Reason: direct CALL target; ATA geometry/parameter helper
-A2F1  E8 B5 02                call 0xa5a9
-A2F4  73 09                   jae 0xa2ff
-A2F6  B4 07                   mov ah, 7
-A2F8  33 C9                   xor cx, cx
-A2FA  33 D2                   xor dx, dx
-A2FC  F9                      stc
-A2FD  EB 33                   jmp 0xa332
-A2FF  26 8A 77 02             mov dh, byte ptr es:[bx + 2]
-A303  FE CE                   dec dh
-A305  26 8B 07                mov ax, word ptr es:[bx]
-A308  2D 02 00                sub ax, 2
-A30B  3D FF 03                cmp ax, 0x3ff
-A30E  76 03                   jbe 0xa313
-A310  B8 FF 03                mov ax, 0x3ff
-A313  8A D4                   mov dl, ah
-A315  8A E8                   mov ch, al
-A317  C0 E4 06                shl ah, 6
-A31A  8A CC                   mov cl, ah
-A31C  8A E2                   mov ah, dl
-A31E  C0 E4 04                shl ah, 4
-A321  80 E4 C0                and ah, 0xc0
-A324  0A F4                   or dh, ah
-A326  26 8A 47 0E             mov al, byte ptr es:[bx + 0xe]
-A32A  0A C8                   or cl, al
-A32C  8A 16 75 00             mov dl, byte ptr [0x75]
-A330  B4 00                   mov ah, 0
-A332  88 26 74 00             mov byte ptr [0x74], ah
-A336  C3                      ret
-A337  E8 90 02                call 0xa5ca
-A33A  72 35                   jb 0xa371
-A33C  E8 6A 02                call 0xa5a9
-A33F  72 30                   jb 0xa371
-A341  E8 11 03                call 0xa655
-A344  72 2B                   jb 0xa371
-A346  E8 4F 04                call 0xa798
-A349  26 8A 47 0E             mov al, byte ptr es:[bx + 0xe]
-A34D  8A E2                   mov ah, dl
-A34F  BA F2 01                mov dx, 0x1f2
-A352  88 46 03                mov byte ptr [bp + 3], al
-A355  EE                      out dx, al
-A356  E3 00                   jcxz 0xa358
-A358  E3 00                   jcxz 0xa35a
-A35A  BA F6 01                mov dx, 0x1f6
-A35D  8A 46 07                mov al, byte ptr [bp + 7]
-A360  EE                      out dx, al
-A361  B0 91                   mov al, 0x91
-A363  E8 BB 02                call 0xa621
-A366  E8 D5 03                call 0xa73e
-A369  E8 28 03                call 0xa694
-A36C  72 03                   jb 0xa371
-A36E  E8 6B 03                call 0xa6dc
 
 ===== A1B3h-A232h =====
 Reason: branch target from A19Ch; ATA controller initialization path
@@ -886,6 +812,60 @@ A2D8  97                      xchg di, ax
 A2D9  8E D8                   mov ds, ax
 A2DB  B9 00 01                mov cx, 0x100
 A2DE  BA              db 0xBA
+
+===== A2F1h-A370h =====
+Reason: direct CALL target; ATA geometry/parameter helper
+A2F1  E8 B5 02                call 0xa5a9
+A2F4  73 09                   jae 0xa2ff
+A2F6  B4 07                   mov ah, 7
+A2F8  33 C9                   xor cx, cx
+A2FA  33 D2                   xor dx, dx
+A2FC  F9                      stc
+A2FD  EB 33                   jmp 0xa332
+A2FF  26 8A 77 02             mov dh, byte ptr es:[bx + 2]
+A303  FE CE                   dec dh
+A305  26 8B 07                mov ax, word ptr es:[bx]
+A308  2D 02 00                sub ax, 2
+A30B  3D FF 03                cmp ax, 0x3ff
+A30E  76 03                   jbe 0xa313
+A310  B8 FF 03                mov ax, 0x3ff
+A313  8A D4                   mov dl, ah
+A315  8A E8                   mov ch, al
+A317  C0 E4 06                shl ah, 6
+A31A  8A CC                   mov cl, ah
+A31C  8A E2                   mov ah, dl
+A31E  C0 E4 04                shl ah, 4
+A321  80 E4 C0                and ah, 0xc0
+A324  0A F4                   or dh, ah
+A326  26 8A 47 0E             mov al, byte ptr es:[bx + 0xe]
+A32A  0A C8                   or cl, al
+A32C  8A 16 75 00             mov dl, byte ptr [0x75]
+A330  B4 00                   mov ah, 0
+A332  88 26 74 00             mov byte ptr [0x74], ah
+A336  C3                      ret
+A337  E8 90 02                call 0xa5ca
+A33A  72 35                   jb 0xa371
+A33C  E8 6A 02                call 0xa5a9
+A33F  72 30                   jb 0xa371
+A341  E8 11 03                call 0xa655
+A344  72 2B                   jb 0xa371
+A346  E8 4F 04                call 0xa798
+A349  26 8A 47 0E             mov al, byte ptr es:[bx + 0xe]
+A34D  8A E2                   mov ah, dl
+A34F  BA F2 01                mov dx, 0x1f2
+A352  88 46 03                mov byte ptr [bp + 3], al
+A355  EE                      out dx, al
+A356  E3 00                   jcxz 0xa358
+A358  E3 00                   jcxz 0xa35a
+A35A  BA F6 01                mov dx, 0x1f6
+A35D  8A 46 07                mov al, byte ptr [bp + 7]
+A360  EE                      out dx, al
+A361  B0 91                   mov al, 0x91
+A363  E8 BB 02                call 0xa621
+A366  E8 D5 03                call 0xa73e
+A369  E8 28 03                call 0xa694
+A36C  72 03                   jb 0xa371
+A36E  E8 6B 03                call 0xa6dc
 
 ===== A300h-A37Fh =====
 Reason: geometry/parameter conversion candidate
@@ -1426,208 +1406,6 @@ A644  EC                      in al, dx
 A645  A2 8C 00                mov byte ptr [0x8c], al
 A648  58                      pop ax
 A649  B4              db 0xB4
-
-===== A694h-A713h =====
-Reason: direct CALL target; ATA status wait
-A694  F8                      clc
-A695  B8 00 90                mov ax, 0x9000
-A698  CD 15                   int 0x15
-A69A  FB                      sti
-A69B  72 10                   jb 0xa6ad
-A69D  BB 8E 00                mov bx, 0x8e
-A6A0  BA 10 00                mov dx, 0x10
-A6A3  33 C9                   xor cx, cx
-A6A5  E8 5A 42                call 0xe902
-A6A8  73 0B                   jae 0xa6b5
-A6AA  4A                      dec dx
-A6AB  75 F6                   jne 0xa6a3
-A6AD  B4 80                   mov ah, 0x80
-A6AF  88 26 74 00             mov byte ptr [0x74], ah
-A6B3  EB 05                   jmp 0xa6ba
-A6B5  C6 06 8E 00 00          mov byte ptr [0x8e], 0
-A6BA  C3                      ret
-A6BB  51                      push cx
-A6BC  52                      push dx
-A6BD  50                      push ax
-A6BE  B9 C8 00                mov cx, 0xc8
-A6C1  BA F7 01                mov dx, 0x1f7
-A6C4  B4 08                   mov ah, 8
-A6C6  E8 FF 41                call 0xe8c8
-A6C9  73 0D                   jae 0xa6d8
-A6CB  EC                      in al, dx
-A6CC  A2 8C 00                mov byte ptr [0x8c], al
-A6CF  58                      pop ax
-A6D0  B4 80                   mov ah, 0x80
-A6D2  88 26 74 00             mov byte ptr [0x74], ah
-A6D6  EB 01                   jmp 0xa6d9
-A6D8  58                      pop ax
-A6D9  5A                      pop dx
-A6DA  59                      pop cx
-A6DB  C3                      ret
-A6DC  52                      push dx
-A6DD  50                      push ax
-A6DE  BA F7 01                mov dx, 0x1f7
-A6E1  EC                      in al, dx
-A6E2  A2 8C 00                mov byte ptr [0x8c], al
-A6E5  B4 11                   mov ah, 0x11
-A6E7  A8 04                   test al, 4
-A6E9  75 45                   jne 0xa730
-A6EB  B4 CC                   mov ah, 0xcc
-A6ED  A8 20                   test al, 0x20
-A6EF  75 3F                   jne 0xa730
-A6F1  B4 AA                   mov ah, 0xaa
-A6F3  A8 40                   test al, 0x40
-A6F5  74 39                   je 0xa730
-A6F7  B4 40                   mov ah, 0x40
-A6F9  A8 10                   test al, 0x10
-A6FB  74 33                   je 0xa730
-A6FD  B4 00                   mov ah, 0
-A6FF  A8 01                   test al, 1
-A701  74 2D                   je 0xa730
-A703  BA F1 01                mov dx, 0x1f1
-A706  EC                      in al, dx
-A707  A2 8D 00                mov byte ptr [0x8d], al
-A70A  B4 02                   mov ah, 2
-A70C  A8 01                   test al, 1
-A70E  75 20                   jne 0xa730
-A710  B4 01                   mov ah, 1
-A712  A8 04                   test al, 4
-
-===== A6BBh-A73Ah =====
-Reason: direct CALL target; ATA transfer/status helper
-A6BB  51                      push cx
-A6BC  52                      push dx
-A6BD  50                      push ax
-A6BE  B9 C8 00                mov cx, 0xc8
-A6C1  BA F7 01                mov dx, 0x1f7
-A6C4  B4 08                   mov ah, 8
-A6C6  E8 FF 41                call 0xe8c8
-A6C9  73 0D                   jae 0xa6d8
-A6CB  EC                      in al, dx
-A6CC  A2 8C 00                mov byte ptr [0x8c], al
-A6CF  58                      pop ax
-A6D0  B4 80                   mov ah, 0x80
-A6D2  88 26 74 00             mov byte ptr [0x74], ah
-A6D6  EB 01                   jmp 0xa6d9
-A6D8  58                      pop ax
-A6D9  5A                      pop dx
-A6DA  59                      pop cx
-A6DB  C3                      ret
-A6DC  52                      push dx
-A6DD  50                      push ax
-A6DE  BA F7 01                mov dx, 0x1f7
-A6E1  EC                      in al, dx
-A6E2  A2 8C 00                mov byte ptr [0x8c], al
-A6E5  B4 11                   mov ah, 0x11
-A6E7  A8 04                   test al, 4
-A6E9  75 45                   jne 0xa730
-A6EB  B4 CC                   mov ah, 0xcc
-A6ED  A8 20                   test al, 0x20
-A6EF  75 3F                   jne 0xa730
-A6F1  B4 AA                   mov ah, 0xaa
-A6F3  A8 40                   test al, 0x40
-A6F5  74 39                   je 0xa730
-A6F7  B4 40                   mov ah, 0x40
-A6F9  A8 10                   test al, 0x10
-A6FB  74 33                   je 0xa730
-A6FD  B4 00                   mov ah, 0
-A6FF  A8 01                   test al, 1
-A701  74 2D                   je 0xa730
-A703  BA F1 01                mov dx, 0x1f1
-A706  EC                      in al, dx
-A707  A2 8D 00                mov byte ptr [0x8d], al
-A70A  B4 02                   mov ah, 2
-A70C  A8 01                   test al, 1
-A70E  75 20                   jne 0xa730
-A710  B4 01                   mov ah, 1
-A712  A8 04                   test al, 4
-A714  75 1A                   jne 0xa730
-A716  B4 04                   mov ah, 4
-A718  A8 10                   test al, 0x10
-A71A  75 14                   jne 0xa730
-A71C  B4 10                   mov ah, 0x10
-A71E  A8 40                   test al, 0x40
-A720  75 0E                   jne 0xa730
-A722  B4 40                   mov ah, 0x40
-A724  A8 02                   test al, 2
-A726  75 08                   jne 0xa730
-A728  B4 0A                   mov ah, 0xa
-A72A  A8 80                   test al, 0x80
-A72C  75 02                   jne 0xa730
-A72E  B4 BB                   mov ah, 0xbb
-A730  88 26 74 00             mov byte ptr [0x74], ah
-A734  5A                      pop dx
-A735  8A C2                   mov al, dl
-A737  5A                      pop dx
-A738  0A E4                   or ah, ah
-A73A  74              db 0x74
-
-===== A6DCh-A75Bh =====
-Reason: direct CALL target; ATA status completion helper
-A6DC  52                      push dx
-A6DD  50                      push ax
-A6DE  BA F7 01                mov dx, 0x1f7
-A6E1  EC                      in al, dx
-A6E2  A2 8C 00                mov byte ptr [0x8c], al
-A6E5  B4 11                   mov ah, 0x11
-A6E7  A8 04                   test al, 4
-A6E9  75 45                   jne 0xa730
-A6EB  B4 CC                   mov ah, 0xcc
-A6ED  A8 20                   test al, 0x20
-A6EF  75 3F                   jne 0xa730
-A6F1  B4 AA                   mov ah, 0xaa
-A6F3  A8 40                   test al, 0x40
-A6F5  74 39                   je 0xa730
-A6F7  B4 40                   mov ah, 0x40
-A6F9  A8 10                   test al, 0x10
-A6FB  74 33                   je 0xa730
-A6FD  B4 00                   mov ah, 0
-A6FF  A8 01                   test al, 1
-A701  74 2D                   je 0xa730
-A703  BA F1 01                mov dx, 0x1f1
-A706  EC                      in al, dx
-A707  A2 8D 00                mov byte ptr [0x8d], al
-A70A  B4 02                   mov ah, 2
-A70C  A8 01                   test al, 1
-A70E  75 20                   jne 0xa730
-A710  B4 01                   mov ah, 1
-A712  A8 04                   test al, 4
-A714  75 1A                   jne 0xa730
-A716  B4 04                   mov ah, 4
-A718  A8 10                   test al, 0x10
-A71A  75 14                   jne 0xa730
-A71C  B4 10                   mov ah, 0x10
-A71E  A8 40                   test al, 0x40
-A720  75 0E                   jne 0xa730
-A722  B4 40                   mov ah, 0x40
-A724  A8 02                   test al, 2
-A726  75 08                   jne 0xa730
-A728  B4 0A                   mov ah, 0xa
-A72A  A8 80                   test al, 0x80
-A72C  75 02                   jne 0xa730
-A72E  B4 BB                   mov ah, 0xbb
-A730  88 26 74 00             mov byte ptr [0x74], ah
-A734  5A                      pop dx
-A735  8A C2                   mov al, dl
-A737  5A                      pop dx
-A738  0A E4                   or ah, ah
-A73A  74 01                   je 0xa73d
-A73C  F9                      stc
-A73D  C3                      ret
-A73E  E8 EC FE                call 0xa62d
-A741  FA                      cli
-A742  50                      push ax
-A743  C6 06 8E 00 00          mov byte ptr [0x8e], 0
-A748  E4 A1                   in al, 0xa1
-A74A  E3 00                   jcxz 0xa74c
-A74C  E3 00                   jcxz 0xa74e
-A74E  24 BF                   and al, 0xbf
-A750  E6 A1                   out 0xa1, al
-A752  E4 21                   in al, 0x21
-A754  E3 00                   jcxz 0xa756
-A756  E3 00                   jcxz 0xa758
-A758  24 FB                   and al, 0xfb
-A75A  E6 21                   out 0x21, al
 
 ===== A52Bh-A5AAh =====
 Reason: routine entry after A52Ah RET
@@ -2181,6 +1959,208 @@ A6D2  88              db 0x88
 A6D3  26              db 0x26
 A6D4  74              db 0x74
 
+===== A694h-A713h =====
+Reason: direct CALL target; ATA wait helper
+A694  F8                      clc
+A695  B8 00 90                mov ax, 0x9000
+A698  CD 15                   int 0x15
+A69A  FB                      sti
+A69B  72 10                   jb 0xa6ad
+A69D  BB 8E 00                mov bx, 0x8e
+A6A0  BA 10 00                mov dx, 0x10
+A6A3  33 C9                   xor cx, cx
+A6A5  E8 5A 42                call 0xe902
+A6A8  73 0B                   jae 0xa6b5
+A6AA  4A                      dec dx
+A6AB  75 F6                   jne 0xa6a3
+A6AD  B4 80                   mov ah, 0x80
+A6AF  88 26 74 00             mov byte ptr [0x74], ah
+A6B3  EB 05                   jmp 0xa6ba
+A6B5  C6 06 8E 00 00          mov byte ptr [0x8e], 0
+A6BA  C3                      ret
+A6BB  51                      push cx
+A6BC  52                      push dx
+A6BD  50                      push ax
+A6BE  B9 C8 00                mov cx, 0xc8
+A6C1  BA F7 01                mov dx, 0x1f7
+A6C4  B4 08                   mov ah, 8
+A6C6  E8 FF 41                call 0xe8c8
+A6C9  73 0D                   jae 0xa6d8
+A6CB  EC                      in al, dx
+A6CC  A2 8C 00                mov byte ptr [0x8c], al
+A6CF  58                      pop ax
+A6D0  B4 80                   mov ah, 0x80
+A6D2  88 26 74 00             mov byte ptr [0x74], ah
+A6D6  EB 01                   jmp 0xa6d9
+A6D8  58                      pop ax
+A6D9  5A                      pop dx
+A6DA  59                      pop cx
+A6DB  C3                      ret
+A6DC  52                      push dx
+A6DD  50                      push ax
+A6DE  BA F7 01                mov dx, 0x1f7
+A6E1  EC                      in al, dx
+A6E2  A2 8C 00                mov byte ptr [0x8c], al
+A6E5  B4 11                   mov ah, 0x11
+A6E7  A8 04                   test al, 4
+A6E9  75 45                   jne 0xa730
+A6EB  B4 CC                   mov ah, 0xcc
+A6ED  A8 20                   test al, 0x20
+A6EF  75 3F                   jne 0xa730
+A6F1  B4 AA                   mov ah, 0xaa
+A6F3  A8 40                   test al, 0x40
+A6F5  74 39                   je 0xa730
+A6F7  B4 40                   mov ah, 0x40
+A6F9  A8 10                   test al, 0x10
+A6FB  74 33                   je 0xa730
+A6FD  B4 00                   mov ah, 0
+A6FF  A8 01                   test al, 1
+A701  74 2D                   je 0xa730
+A703  BA F1 01                mov dx, 0x1f1
+A706  EC                      in al, dx
+A707  A2 8D 00                mov byte ptr [0x8d], al
+A70A  B4 02                   mov ah, 2
+A70C  A8 01                   test al, 1
+A70E  75 20                   jne 0xa730
+A710  B4 01                   mov ah, 1
+A712  A8 04                   test al, 4
+
+===== A6BBh-A73Ah =====
+Reason: direct CALL target; ATA transfer/status helper
+A6BB  51                      push cx
+A6BC  52                      push dx
+A6BD  50                      push ax
+A6BE  B9 C8 00                mov cx, 0xc8
+A6C1  BA F7 01                mov dx, 0x1f7
+A6C4  B4 08                   mov ah, 8
+A6C6  E8 FF 41                call 0xe8c8
+A6C9  73 0D                   jae 0xa6d8
+A6CB  EC                      in al, dx
+A6CC  A2 8C 00                mov byte ptr [0x8c], al
+A6CF  58                      pop ax
+A6D0  B4 80                   mov ah, 0x80
+A6D2  88 26 74 00             mov byte ptr [0x74], ah
+A6D6  EB 01                   jmp 0xa6d9
+A6D8  58                      pop ax
+A6D9  5A                      pop dx
+A6DA  59                      pop cx
+A6DB  C3                      ret
+A6DC  52                      push dx
+A6DD  50                      push ax
+A6DE  BA F7 01                mov dx, 0x1f7
+A6E1  EC                      in al, dx
+A6E2  A2 8C 00                mov byte ptr [0x8c], al
+A6E5  B4 11                   mov ah, 0x11
+A6E7  A8 04                   test al, 4
+A6E9  75 45                   jne 0xa730
+A6EB  B4 CC                   mov ah, 0xcc
+A6ED  A8 20                   test al, 0x20
+A6EF  75 3F                   jne 0xa730
+A6F1  B4 AA                   mov ah, 0xaa
+A6F3  A8 40                   test al, 0x40
+A6F5  74 39                   je 0xa730
+A6F7  B4 40                   mov ah, 0x40
+A6F9  A8 10                   test al, 0x10
+A6FB  74 33                   je 0xa730
+A6FD  B4 00                   mov ah, 0
+A6FF  A8 01                   test al, 1
+A701  74 2D                   je 0xa730
+A703  BA F1 01                mov dx, 0x1f1
+A706  EC                      in al, dx
+A707  A2 8D 00                mov byte ptr [0x8d], al
+A70A  B4 02                   mov ah, 2
+A70C  A8 01                   test al, 1
+A70E  75 20                   jne 0xa730
+A710  B4 01                   mov ah, 1
+A712  A8 04                   test al, 4
+A714  75 1A                   jne 0xa730
+A716  B4 04                   mov ah, 4
+A718  A8 10                   test al, 0x10
+A71A  75 14                   jne 0xa730
+A71C  B4 10                   mov ah, 0x10
+A71E  A8 40                   test al, 0x40
+A720  75 0E                   jne 0xa730
+A722  B4 40                   mov ah, 0x40
+A724  A8 02                   test al, 2
+A726  75 08                   jne 0xa730
+A728  B4 0A                   mov ah, 0xa
+A72A  A8 80                   test al, 0x80
+A72C  75 02                   jne 0xa730
+A72E  B4 BB                   mov ah, 0xbb
+A730  88 26 74 00             mov byte ptr [0x74], ah
+A734  5A                      pop dx
+A735  8A C2                   mov al, dl
+A737  5A                      pop dx
+A738  0A E4                   or ah, ah
+A73A  74              db 0x74
+
+===== A6DCh-A75Bh =====
+Reason: direct CALL target; ATA status completion helper
+A6DC  52                      push dx
+A6DD  50                      push ax
+A6DE  BA F7 01                mov dx, 0x1f7
+A6E1  EC                      in al, dx
+A6E2  A2 8C 00                mov byte ptr [0x8c], al
+A6E5  B4 11                   mov ah, 0x11
+A6E7  A8 04                   test al, 4
+A6E9  75 45                   jne 0xa730
+A6EB  B4 CC                   mov ah, 0xcc
+A6ED  A8 20                   test al, 0x20
+A6EF  75 3F                   jne 0xa730
+A6F1  B4 AA                   mov ah, 0xaa
+A6F3  A8 40                   test al, 0x40
+A6F5  74 39                   je 0xa730
+A6F7  B4 40                   mov ah, 0x40
+A6F9  A8 10                   test al, 0x10
+A6FB  74 33                   je 0xa730
+A6FD  B4 00                   mov ah, 0
+A6FF  A8 01                   test al, 1
+A701  74 2D                   je 0xa730
+A703  BA F1 01                mov dx, 0x1f1
+A706  EC                      in al, dx
+A707  A2 8D 00                mov byte ptr [0x8d], al
+A70A  B4 02                   mov ah, 2
+A70C  A8 01                   test al, 1
+A70E  75 20                   jne 0xa730
+A710  B4 01                   mov ah, 1
+A712  A8 04                   test al, 4
+A714  75 1A                   jne 0xa730
+A716  B4 04                   mov ah, 4
+A718  A8 10                   test al, 0x10
+A71A  75 14                   jne 0xa730
+A71C  B4 10                   mov ah, 0x10
+A71E  A8 40                   test al, 0x40
+A720  75 0E                   jne 0xa730
+A722  B4 40                   mov ah, 0x40
+A724  A8 02                   test al, 2
+A726  75 08                   jne 0xa730
+A728  B4 0A                   mov ah, 0xa
+A72A  A8 80                   test al, 0x80
+A72C  75 02                   jne 0xa730
+A72E  B4 BB                   mov ah, 0xbb
+A730  88 26 74 00             mov byte ptr [0x74], ah
+A734  5A                      pop dx
+A735  8A C2                   mov al, dl
+A737  5A                      pop dx
+A738  0A E4                   or ah, ah
+A73A  74 01                   je 0xa73d
+A73C  F9                      stc
+A73D  C3                      ret
+A73E  E8 EC FE                call 0xa62d
+A741  FA                      cli
+A742  50                      push ax
+A743  C6 06 8E 00 00          mov byte ptr [0x8e], 0
+A748  E4 A1                   in al, 0xa1
+A74A  E3 00                   jcxz 0xa74c
+A74C  E3 00                   jcxz 0xa74e
+A74E  24 BF                   and al, 0xbf
+A750  E6 A1                   out 0xa1, al
+A752  E4 21                   in al, 0x21
+A754  E3 00                   jcxz 0xa756
+A756  E3 00                   jcxz 0xa758
+A758  24 FB                   and al, 0xfb
+A75A  E6 21                   out 0x21, al
+
 ===== A703h-A782h =====
 Reason: ATA error/status decode candidate
 A703  BA F1 01                mov dx, 0x1f1
@@ -2386,135 +2366,6 @@ A7E3  8A C1                   mov al, cl
 A7E5  C0 E8 06                shr al, 6
 A7E8  8A 56 15                mov dl, byte ptr [bp + 0x15]
 A7EB  C0              db 0xC0
-
-===== A798h-A817h =====
-Reason: direct CALL target; ATA transfer setup
-A798  06                      push es
-A799  53                      push bx
-A79A  52                      push dx
-A79B  50                      push ax
-A79C  E8 17 FE                call 0xa5b6
-A79F  26 8A 47 08             mov al, byte ptr es:[bx + 8]
-A7A3  8A E0                   mov ah, al
-A7A5  24 08                   and al, 8
-A7A7  BA F6 03                mov dx, 0x3f6
-A7AA  EE                      out dx, al
-A7AB  A0 76 00                mov al, byte ptr [0x76]
-A7AE  24 C0                   and al, 0xc0
-A7B0  0A C4                   or al, ah
-A7B2  A2 76 00                mov byte ptr [0x76], al
-A7B5  58                      pop ax
-A7B6  5A                      pop dx
-A7B7  5B                      pop bx
-A7B8  07                      pop es
-A7B9  C3                      ret
-A7BA  50                      push ax
-A7BB  52                      push dx
-A7BC  BA F2 01                mov dx, 0x1f2
-A7BF  88 46 03                mov byte ptr [bp + 3], al
-A7C2  EE                      out dx, al
-A7C3  E3 00                   jcxz 0xa7c5
-A7C5  E3 00                   jcxz 0xa7c7
-A7C7  8A C1                   mov al, cl
-A7C9  24 3F                   and al, 0x3f
-A7CB  BA F3 01                mov dx, 0x1f3
-A7CE  88 46 04                mov byte ptr [bp + 4], al
-A7D1  EE                      out dx, al
-A7D2  E3 00                   jcxz 0xa7d4
-A7D4  E3 00                   jcxz 0xa7d6
-A7D6  8A C5                   mov al, ch
-A7D8  BA F4 01                mov dx, 0x1f4
-A7DB  88 46 05                mov byte ptr [bp + 5], al
-A7DE  EE                      out dx, al
-A7DF  E3 00                   jcxz 0xa7e1
-A7E1  E3 00                   jcxz 0xa7e3
-A7E3  8A C1                   mov al, cl
-A7E5  C0 E8 06                shr al, 6
-A7E8  8A 56 15                mov dl, byte ptr [bp + 0x15]
-A7EB  C0 EA 04                shr dl, 4
-A7EE  80 E2 0C                and dl, 0xc
-A7F1  0A C2                   or al, dl
-A7F3  BA F5 01                mov dx, 0x1f5
-A7F6  88 46 06                mov byte ptr [bp + 6], al
-A7F9  EE                      out dx, al
-A7FA  E3 00                   jcxz 0xa7fc
-A7FC  E3 00                   jcxz 0xa7fe
-A7FE  BA F6 01                mov dx, 0x1f6
-A801  8A 46 07                mov al, byte ptr [bp + 7]
-A804  EE                      out dx, al
-A805  5A                      pop dx
-A806  58                      pop ax
-A807  C3                      ret
-A808  51                      push cx
-A809  0A EE                   or ch, dh
-A80B  49                      dec cx
-A80C  59                      pop cx
-A80D  75 36                   jne 0xa845
-A80F  50                      push ax
-A810  2E A0 2C B5             mov al, byte ptr cs:[0xb52c]
-A814  E8 E9 DA                call 0x8300
-A817  74              db 0x74
-
-===== A7BAh-A839h =====
-Reason: direct CALL target; ATA transfer helper
-A7BA  50                      push ax
-A7BB  52                      push dx
-A7BC  BA F2 01                mov dx, 0x1f2
-A7BF  88 46 03                mov byte ptr [bp + 3], al
-A7C2  EE                      out dx, al
-A7C3  E3 00                   jcxz 0xa7c5
-A7C5  E3 00                   jcxz 0xa7c7
-A7C7  8A C1                   mov al, cl
-A7C9  24 3F                   and al, 0x3f
-A7CB  BA F3 01                mov dx, 0x1f3
-A7CE  88 46 04                mov byte ptr [bp + 4], al
-A7D1  EE                      out dx, al
-A7D2  E3 00                   jcxz 0xa7d4
-A7D4  E3 00                   jcxz 0xa7d6
-A7D6  8A C5                   mov al, ch
-A7D8  BA F4 01                mov dx, 0x1f4
-A7DB  88 46 05                mov byte ptr [bp + 5], al
-A7DE  EE                      out dx, al
-A7DF  E3 00                   jcxz 0xa7e1
-A7E1  E3 00                   jcxz 0xa7e3
-A7E3  8A C1                   mov al, cl
-A7E5  C0 E8 06                shr al, 6
-A7E8  8A 56 15                mov dl, byte ptr [bp + 0x15]
-A7EB  C0 EA 04                shr dl, 4
-A7EE  80 E2 0C                and dl, 0xc
-A7F1  0A C2                   or al, dl
-A7F3  BA F5 01                mov dx, 0x1f5
-A7F6  88 46 06                mov byte ptr [bp + 6], al
-A7F9  EE                      out dx, al
-A7FA  E3 00                   jcxz 0xa7fc
-A7FC  E3 00                   jcxz 0xa7fe
-A7FE  BA F6 01                mov dx, 0x1f6
-A801  8A 46 07                mov al, byte ptr [bp + 7]
-A804  EE                      out dx, al
-A805  5A                      pop dx
-A806  58                      pop ax
-A807  C3                      ret
-A808  51                      push cx
-A809  0A EE                   or ch, dh
-A80B  49                      dec cx
-A80C  59                      pop cx
-A80D  75 36                   jne 0xa845
-A80F  50                      push ax
-A810  2E A0 2C B5             mov al, byte ptr cs:[0xb52c]
-A814  E8 E9 DA                call 0x8300
-A817  74 2B                   je 0xa844
-A819  0F 01 E0                smsw ax
-A81C  A8 01                   test al, 1
-A81E  75 13                   jne 0xa833
-A820  51                      push cx
-A821  80 26 16 00 F7          and byte ptr [0x16], 0xf7
-A826  E8 BF 3F                call 0xe7e8
-A829  59                      pop cx
-A82A  75 18                   jne 0xa844
-A82C  80 0E 16 00 08          or byte ptr [0x16], 8
-A831  EB 07                   jmp 0xa83a
-A833  F6 06 16 00 08          test byte ptr [0x16], 8
-A838  74 0A                   je 0xa844
 
 ===== A798h-A817h =====
 Reason: direct CALL target; ATA transfer setup
@@ -2892,7 +2743,7 @@ A943  E2 E3                   loop 0xa928
 A945  8B C7                   mov ax, di
 
 ===== A95Eh-A9DDh =====
-Reason: candidate IVT hook installation stream
+Reason: candidate INT 13h IVT hook installation stream
 A95E  FA                      cli
 A95F  FC                      cld
 A960  BE 4C 00                mov si, 0x4c
@@ -3664,6 +3515,65 @@ D476  B0 40                   mov al, 0x40
 D478  C6 87 90 00 02          mov byte ptr [bx + 0x90], 2
 D47D  E8 19 00                call 0xd499
 
+===== D500h-D57Fh =====
+Reason: FDC I/O continuation candidate
+D500  80 26 8B 00 3F          and byte ptr [0x8b], 0x3f
+D505  08 36 8B 00             or byte ptr [0x8b], dh
+D509  80 E6 C0                and dh, 0xc0
+D50C  C0 C6 02                rol dh, 2
+D50F  E8 05 00                call 0xd517
+D512  5E                      pop si
+D513  8B 56 0E                mov dx, word ptr [bp + 0xe]
+D516  C3                      ret
+D517  50                      push ax
+D518  8A C6                   mov al, dh
+D51A  BA F7 03                mov dx, 0x3f7
+D51D  EE                      out dx, al
+D51E  58                      pop ax
+D51F  C3                      ret
+D520  B5 01                   mov ch, 1
+D522  BE 10 00                mov si, 0x10
+D525  80 0E 3E 00 80          or byte ptr [0x3e], 0x80
+D52A  E8 E9 FC                call 0xd216
+D52D  72 4A                   jb 0xd579
+D52F  E8 62 FD                call 0xd294
+D532  72 45                   jb 0xd579
+D534  3C 90                   cmp al, 0x90
+D536  74 03                   je 0xd53b
+D538  E9 A0 00                jmp 0xd5db
+D53B  B5 01                   mov ch, 1
+D53D  BE 0E 00                mov si, 0xe
+D540  80 0E 3E 00 80          or byte ptr [0x3e], 0x80
+D545  E8 CE FC                call 0xd216
+D548  72 2F                   jb 0xd579
+D54A  B9 07 00                mov cx, 7
+D54D  51                      push cx
+D54E  E8 43 FD                call 0xd294
+D551  59                      pop cx
+D552  72 25                   jb 0xd579
+D554  E2 F7                   loop 0xd54d
+D556  E8 3B FD                call 0xd294
+D559  72 1E                   jb 0xd579
+D55B  B9 02 00                mov cx, 2
+D55E  50                      push ax
+D55F  51                      push cx
+D560  E8 31 FD                call 0xd294
+D563  59                      pop cx
+D564  58                      pop ax
+D565  72 12                   jb 0xd579
+D567  E2 F5                   loop 0xd55e
+D569  50                      push ax
+D56A  B9 04 00                mov cx, 4
+D56D  E8 CC 13                call 0xe93c
+D570  BA F4 03                mov dx, 0x3f4
+D573  EC                      in al, dx
+D574  A8 10                   test al, 0x10
+D576  58                      pop ax
+D577  74 07                   je 0xd580
+D579  F9                      stc
+D57A  88 26 41 00             mov byte ptr [0x41], ah
+D57E  EB 5C                   jmp 0xd5dc
+
 ===== D294h-D313h =====
 Reason: direct CALL target; FDC result/data read helper
 D294  52                      push dx
@@ -3725,65 +3635,6 @@ D30A  A8 40                   test al, 0x40
 D30C  74 14                   je 0xd322
 D30E  E8 37 00                call 0xd348
 D311  BA F4 03                mov dx, 0x3f4
-
-===== D500h-D57Fh =====
-Reason: FDC I/O continuation candidate
-D500  80 26 8B 00 3F          and byte ptr [0x8b], 0x3f
-D505  08 36 8B 00             or byte ptr [0x8b], dh
-D509  80 E6 C0                and dh, 0xc0
-D50C  C0 C6 02                rol dh, 2
-D50F  E8 05 00                call 0xd517
-D512  5E                      pop si
-D513  8B 56 0E                mov dx, word ptr [bp + 0xe]
-D516  C3                      ret
-D517  50                      push ax
-D518  8A C6                   mov al, dh
-D51A  BA F7 03                mov dx, 0x3f7
-D51D  EE                      out dx, al
-D51E  58                      pop ax
-D51F  C3                      ret
-D520  B5 01                   mov ch, 1
-D522  BE 10 00                mov si, 0x10
-D525  80 0E 3E 00 80          or byte ptr [0x3e], 0x80
-D52A  E8 E9 FC                call 0xd216
-D52D  72 4A                   jb 0xd579
-D52F  E8 62 FD                call 0xd294
-D532  72 45                   jb 0xd579
-D534  3C 90                   cmp al, 0x90
-D536  74 03                   je 0xd53b
-D538  E9 A0 00                jmp 0xd5db
-D53B  B5 01                   mov ch, 1
-D53D  BE 0E 00                mov si, 0xe
-D540  80 0E 3E 00 80          or byte ptr [0x3e], 0x80
-D545  E8 CE FC                call 0xd216
-D548  72 2F                   jb 0xd579
-D54A  B9 07 00                mov cx, 7
-D54D  51                      push cx
-D54E  E8 43 FD                call 0xd294
-D551  59                      pop cx
-D552  72 25                   jb 0xd579
-D554  E2 F7                   loop 0xd54d
-D556  E8 3B FD                call 0xd294
-D559  72 1E                   jb 0xd579
-D55B  B9 02 00                mov cx, 2
-D55E  50                      push ax
-D55F  51                      push cx
-D560  E8 31 FD                call 0xd294
-D563  59                      pop cx
-D564  58                      pop ax
-D565  72 12                   jb 0xd579
-D567  E2 F5                   loop 0xd55e
-D569  50                      push ax
-D56A  B9 04 00                mov cx, 4
-D56D  E8 CC 13                call 0xe93c
-D570  BA F4 03                mov dx, 0x3f4
-D573  EC                      in al, dx
-D574  A8 10                   test al, 0x10
-D576  58                      pop ax
-D577  74 07                   je 0xd580
-D579  F9                      stc
-D57A  88 26 41 00             mov byte ptr [0x41], ah
-D57E  EB 5C                   jmp 0xd5dc
 
 ===== D580h-D5FFh =====
 Reason: FDC command completion continuation
