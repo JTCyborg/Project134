@@ -1074,7 +1074,7 @@ Detailed report: [AMI486_STORAGE_AND_DISPATCH_REGIONS_20261116.md](AMI486_STORAG
 - D100h–D5FFh is the independent floppy controller/DMA subsystem using 03F2h/03F4h/03F5h/03F7h and DMA ports 0Ch/0Bh/05h/04h.
 - AD00h–AE5Fh is keyboard translation data candidate; AE60h onward includes INT 15h AH=4Fh keyboard intercept handling.
 - F92Ah–F935h is a six-entry handler-offset table; F977h is an overlapping alternate entry inside the F936h stream. F900h wrapper returns with IRET; vector provenance remains unresolved.
-- The Capstone candidate-window output is now 85 unique bounded code windows plus separately emitted data ranges, with 16-bit near-target wraparound.
+- The Capstone candidate-window output is now 109 unique bounded code windows plus separately emitted data ranges, with 16-bit near-target wraparound.
 
 Do not merge ATA, FDC, keyboard and F9xx dispatch code into one subsystem.
 
@@ -1097,3 +1097,8 @@ The INT 13h hard-disk handler now has an entry-to-return map in AMI486_STORAGE_A
 ## FDC/DMA subsystem map — 2026-11-16
 
 Detailed report: [AMI486_FDC_DMA_SUBSYSTEM_20261116.md](AMI486_FDC_DMA_SUBSYSTEM_20261116.md). The D100h–D5FFh code programs DMA channel 2, writes/reads FDC FIFO 03F5h under MSR 03F4h control, resets the FDC via DOR 03F2h, uses CMOS register 10h for floppy drive type, and maps FDC result bits into BIOS status. D2FDh issues Sense Interrupt Status (08h). The INT 40h vector target is not yet proven to enter this subsystem.
+
+
+## Keyboard BIOS subsystem — 2026-11-16
+
+Detailed map: [AMI486_KEYBOARD_SUBSYSTEM_20261116.md](AMI486_KEYBOARD_SUBSYSTEM_20261116.md). AD00h–AE5Fh contains translation data; AE6Fh invokes INT 15h AH=4Fh; B242h/B253h map lock/modifier scan codes; B26Ah/B273h control the 8042 interface; B33Dh sends keyboard LED/scanning commands; B3E2h dispatches INT 16h services; B399h/B4A9h maintain the BIOS ring buffer.
