@@ -779,3 +779,14 @@ This phase is semantic classification of selected regions, not a complete CFG. S
 - 296Bh–2996h samples PIT channel 0 through ports 43h/40h around a REP LODSW delay loop.
 - This confirmed live routine is distinct from DA5Eh/DA61h; it does not explain persistent BP.13 or establish a DAxx entry.
 - Next: classify 299Bh–29EAh RAM helpers and continue independent BP.13 / DAxx entry analysis.
+
+
+## Semantic map — phase 72 (2026-11-16)
+
+- [AMI486_SEMANTIC_MAP_PHASE72_20261116.md](AMI486_SEMANTIC_MAP_PHASE72_20261116.md)
+- Corrected instruction alignment at 2998h: bytes FF E7 are `JMP DI`, dispatching the PIT sampler back to the continuation selected in DI (2911h or 291Bh).
+- 299Ah begins a separate DS:SI segment-read routine; no direct near CALL/JMP or literal pointer to 299Ah was found in the raw-image scan.
+- 27C7h directly jumps to 29BBh after setting DS=ES=1000h and SP=27CAh. 29BBh is a 55AAh fill/scan/clear test; the all-matching scan loops, mismatch clears and returns.
+- The crafted stack makes RET at 29EAh pop 01F1h, an overlapping-code continuation inside the short-JMP displacement at 01F0h.
+- 29EDh is directly called from 1A1Dh, 1C72h, 1F4Dh and 23F2h; it calls EE94h with DH=B6h and returns AL bit 0.
+- BP.13 provenance and DA5Eh/DA61h dynamic entry remain unresolved.
