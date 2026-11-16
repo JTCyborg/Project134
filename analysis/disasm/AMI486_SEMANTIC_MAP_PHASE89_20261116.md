@@ -98,7 +98,7 @@ The data path edits the high nibble of BP+10h using the input/display path at 05
 
 The high-nibble path jumps over the independent low-nibble entry at 02F1h and lands at 02FFh. Both paths execute PUSH AX at 02FFh, then share POP AX; POPF; RET at 0316h..0318h. The stack is balanced on the visible paths. Both input calls target 05A3h, which in turn enters the secondary dispatcher at 05B4h.
 
-## 5. Callback 02F1h: overlapping low-nibble entry
+## 5. Callback 02F1h: aligned low-nibble entry
 
 02F1h is the aligned start of the low-nibble callback. It follows the short jump at 02EFh (EB 0E), whose displacement byte is at 02F0h. The high-nibble path jumps to 02FFh, skipping this low-nibble stream:
 
@@ -131,17 +131,16 @@ The low-nibble path also reaches the shared PUSH AX at 02FFh and the common bala
 Confirmed:
 - 026Fh is an "Options:" callback path that tests and updates BP+14h bit 2.
 - 02DBh edits the high nibble of BP+10h.
-- 02F1h is a distinct overlapping entry that edits the low nibble of BP+10h.
+- 02F1h is an aligned independent entry that edits the low nibble of BP+10h.
 - Both nibble paths clear BP+14h bits 6–7 and set bit 6 only when both nibbles are nonzero.
 
 Still unresolved:
 - The indirect target 0BA5h and the apparent table/code overlap around 0BA5h..0BDFh.
-- The full nested callback contract of 05A4h/05A3h -> 05B4h.
-- The unusual stack/return behavior of 02DBh and 02F1h.
+- The full nested callback contract of 05A3h -> 05B4h.
 - The actual runtime outcomes through the main callback dispatcher at 01EDh..020Dh.
 - The semantic label for BP+10h and the exact meaning of BP+14h bits 2 and 6.
 
-Next: trace the nested 05A4h/05A3h input path and 05B4h's 0BA5h target from real entry boundaries, then reconcile the stack behavior against the outer 01EDh dispatcher before assigning callback return semantics.
+Next: trace the nested 05A3h -> 05B4h path and its linked callback targets from real entry boundaries, then reconcile callback return flags against the outer 01EDh dispatcher.
 
 
 ## Phase 89 correction — secondary callback table (raw-offset recheck)
