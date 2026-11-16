@@ -332,3 +332,11 @@ This phase is semantic classification of selected regions, not a complete CFG. S
 - Traced the CS:[8281h].6 bypass and recorded its static cross-reference set; its initialization source is unresolved.
 - Traced the 9400h–949Fh 8042 controller transaction and the 8B2Dh selector dispatch.
 - Kept peripheral identities and board-specific command semantics explicitly unresolved.
+
+
+## Semantic map — phase 24 (2026-11-16)
+
+- [AMI486_SEMANTIC_MAP_PHASE24_20261116.md](AMI486_SEMANTIC_MAP_PHASE24_20261116.md)
+- Corrected the stock descriptor interpretation: 8250h and 8260h groups are active; 8258h and 8268h groups are zero-filled. Recorded the actual stock selector bytes 4Eh and 4Ah and the zero stock value at 8281h.
+- Traced the INT 15h AH=4Fh keyboard intercept and its keypad +/- scan-code dispatch to the active descriptor handlers.
+- Distinguished the POST-time Setup-key decision at 1E1Ch from the separate keyboard scan-code intercept.
