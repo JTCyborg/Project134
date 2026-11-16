@@ -7,14 +7,14 @@ Both nibble callbacks (02DBh and 02F1h) call 05A3h, with different cursor coordi
 ```asm
 05A3  AND AL,0Fh
 05A5  MOV SI,0AE1h
-05A8  CALL 0A0Dh
+05A8  CALL 0AADh
 05AB  MOV BX,SI
 05AD  MOV SI,76F1h
 05B0  CALL 05B4h
 05B3  RET
 ```
 
-The called helper at 0A0Dh is MOV AX,DX; OR AX,0E30h; INT 10h; RET. Since the callers set DX=0A16h or 0B16h, this emits character '6' (DL=16h OR 30h), not the nibble in AL. The preceding AND AL,0Fh is overwritten by MOV AX,DX before any visible use; its purpose is unresolved. The subsequent string at 76F1h begins " Options:-". Thus 05A3h enters a secondary option/callback menu; it is not the generic 0383h editor used by the BP+12h callbacks.
+The helper at 0AADh indexes the 16-word pointer array at 0AE1h using AL (after AND AL,0Fh): it zero-extends AL into AX, doubles it, adds it to SI, and loads the selected word from CS:[SI]. The selected chain base is copied to BX; SI is then set to the " Options:-" string at 76F1h for the dispatcher exit renderer. Thus the nibble in AL selects a callback chain.
 
 ## 2. Secondary table at 0AE1h
 
@@ -71,3 +71,8 @@ The 0B5Dh/0B6Dh region is not merely a table-like byte block. Both offsets are i
 ## Phase 94 correction — 05B4h entry behavior
 
 The initial CALL at 05B4h targets 05E0h, which is a single RET stub. It does not render the prompt. The renderer at 05EBh is called only on the dispatcher exit path at 05DBh. The dispatcher reads [CS:BX] as the next cursor, calls [CS:BX+2], then uses CF/ZF/AH to decide whether to exit, skip one record, or continue at the returned cursor. See phase 94 for the exact instruction and branch map.
+
+
+## Phase 95 correction — nibble lookup
+
+The 05A3h call is to 0AADh, not 0A0Dh. 0AADh performs a 16-entry word-pointer lookup from 0AE1h indexed by AL. The returned SI is the selected callback-chain base and is copied to BX. The previous claim that this path prints a fixed '6' is withdrawn. See phase 95 for the pointer array and first-record map.
