@@ -79,7 +79,7 @@ First-pass page ledger created at `analysis/disasm/AMI486_ADDRESS_LEDGER_2026111
 
 Raw-byte sampling shows that several pages with no phase-address tokens contain code candidates, especially 2100h, 6800h, A000h–ACFFh, AE60h–AFFFh, D100h–D5FFh and F900h. A000h–AFFFh is mixed: the Format/BootSector Write/Possible VIRUS message is embedded at A125h–A18Dh; the INT 13h handler at A08Dh dispatches AH through a 26-entry little-endian table at A0F1h–A124h; AD00h–AE5Fh contains keyboard translation data candidates. D100h–D5FFh contains I/O code candidates referencing ports 03F4h/03F7h.
 
-**No phase 97.** Continue by verifying ES=0000h at A95Eh's caller and capturing the displaced INT 13h vector copied into INT 40h (C610h is only a strong in-ROM candidate), tracing the remaining low-bit [BX+90h] FDC state tokens and EEAAh configuration-byte source, finding the INT 14h vector source for F8E7h, identifying chipset registers 10h/11h/16h, and tracing the RTC display callers. The address ledger is still a first-pass classification; whole-ROM semantic coverage is not complete.
+**No phase 97.** Continue by verifying ES=0000h at A95Eh's caller and capturing the displaced INT 13h vector copied into INT 40h (C610h is only a strong in-ROM candidate), tracing the remaining low-nibble [BX+90h] FDC state fields, capturing the runtime INT 14h IVT slot for F8E7h, identifying chipset registers 10h/11h/16h, and tracing the RTC display callers. The address ledger is still a first-pass classification; whole-ROM semantic coverage is not complete.
 
 
 ## Seeded decode results — 2026-11-16
