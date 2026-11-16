@@ -76,3 +76,8 @@ The initial CALL at 05B4h targets 05E0h, which is a single RET stub. It does not
 ## Phase 95 correction — nibble lookup
 
 The 05A3h call is to 0AADh, not 0A0Dh. 0AADh performs a 16-entry word-pointer lookup from 0AE1h indexed by AL. The returned SI is the selected callback-chain base and is copied to BX. The previous claim that this path prints a fixed '6' is withdrawn. See phase 95 for the pointer array and first-record map.
+
+
+## Audit correction — dispatcher prologue at 05E0h (2026-11-16)
+
+The Phase 94 correction appended above is wrong and is withdrawn. Raw bytes in the checked-in `ami486.bin` at `05E0h` are `50 52 BA 03 12 E8 5D 02 5A 58 C3`: `PUSH AX; PUSH DX; MOV DX,1203h; CALL 0845h; POP DX; POP AX; RET`. Therefore the initial `CALL 05E0h` in the 05B4h dispatcher is an active display/helper call, not a RET-only stub. Phase 92 section 4 correctly described this helper. The separate exit call at `05DBh` targets `05EBh`; it remains a distinct entry and must not be conflated with 05E0h. The exact presentation effects of the 05EBh entry are to be described from its own aligned stream.
