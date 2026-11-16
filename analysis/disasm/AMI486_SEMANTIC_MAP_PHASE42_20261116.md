@@ -26,7 +26,7 @@ The 5751h helper returns CMOS index C4h or CDh depending on E19Dh bit 0. The 575
 
 587Ah wraps 584Ah and, when its count is nonzero, repeatedly obtains the index from 575Eh and writes it at a fixed 00A0h stride. It then proceeds to the 586Fh continuation. Thus 575Eh is demonstrably consumed by this screen-rendering path, and its B3h/BAh choice is controlled by E19Dh bit 1.
 
-The 5862h routine has callers in the BIOS Setup/menu code at 0CA Fh, 0CBAh, 0FE9h, 3CB0h, 3E7Ah, 4717h, 48DDh, 4C20h, 4D1Ah and 4F09h (linear listing addresses; see raw call sites). 587Ah is called at 0CD8h. 578Dh is a generic rectangle/fill renderer with numerous callers; it is not a CMOS writer.
+The 5862h routine has callers in the BIOS Setup/menu code at 0CAFh, 0CBAh, 0FE9h, 3CB0h, 3E7Ah, 4717h, 48DDh, 4C20h, 4D1Ah and 4F09h (linear listing addresses; see raw call sites). 587Ah is called at 0CD8h. 578Dh is a generic rectangle/fill renderer with numerous callers; it is not a CMOS writer.
 
 ### What remains unknown
 
