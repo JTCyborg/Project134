@@ -4622,7 +4622,7 @@ Reason: memory-pattern test failure/return target
 2205  B6 01                   mov dh, 1
 
 ===== 222Dh-22ACh =====
-Reason: memory-pattern test final branch/return target
+Reason: memory-pattern failure trampoline with crafted stack frame
 222D  B8 16 16                mov ax, 0x1616
 2230  BC 36 22                mov sp, 0x2236
 2233  E9 99 6B                jmp 0x8dcf
@@ -4652,6 +4652,49 @@ Reason: memory-pattern test final branch/return target
 22A9  B3 02                   mov bl, 2
 22AB  26              db 0x26
 22AC  66              db 0x66
+
+===== 2253h-22D2h =====
+Reason: second memory-pattern probe stream
+2253  66 C7 06 00 00 55 55 AA AA mov dword ptr [0], 0xaaaa5555
+225C  26 66 C7 06 00 01 FF FF FF FF mov dword ptr es:[0x100], 0xffffffff
+2266  26 66 81 3E 00 00 55 55 AA AA cmp dword ptr es:[0], 0xaaaa5555
+2270  0F 85 67 00             jne 0x22db
+2274  26 66 C7 06 00 00 AA AA 55 55 mov dword ptr es:[0], 0x5555aaaa
+227E  26 66 C7 06 00 01 FF FF FF FF mov dword ptr es:[0x100], 0xffffffff
+2288  26 66 81 3E 00 00 AA AA 55 55 cmp dword ptr es:[0], 0x5555aaaa
+2292  0F 85 45 00             jne 0x22db
+2296  B3 00                   mov bl, 0
+2298  26 67 66 81 3D 00 00 80 00 AA AA 55 55 cmp dword ptr es:[0x800000], 0x5555aaaa
+22A5  0F 84 32 00             je 0x22db
+22A9  B3 02                   mov bl, 2
+22AB  26 66 81 3E 00 08 AA AA 55 55 cmp dword ptr es:[0x800], 0x5555aaaa
+22B5  0F 84 22 00             je 0x22db
+22B9  B3 01                   mov bl, 1
+22BB  26 66 81 3E 00 10 AA AA 55 55 cmp dword ptr es:[0x1000], 0x5555aaaa
+22C5  0F 84 12 00             je 0x22db
+22C9  B3 03                   mov bl, 3
+22CB  26              db 0x26
+22CC  66              db 0x66
+22CD  81 3E 00 20 AA AA       cmp word ptr [0x2000], 0xaaaa
+
+===== 22DBh-235Ah =====
+Reason: second memory-pattern probe failure trampoline
+22DB  B7 FF                   mov bh, 0xff
+22DD  26 67 66 C7 05 00 00 00 04 55 55 AA AA mov dword ptr es:[0x4000000], 0xaaaa5555
+22EA  26 67 66 C7 05 00 01 00 04 FF FF FF FF mov dword ptr es:[0x4000100], 0xffffffff
+22F7  26 67 66 81 3D 00 00 00 04 55 55 AA AA cmp dword ptr es:[0x4000000], 0xaaaa5555
+2304  0F 85 79 00             jne 0x2381
+2308  26 67 66 C7 05 00 00 00 04 AA AA 55 55 mov dword ptr es:[0x4000000], 0x5555aaaa
+2315  26 67 66 C7 05 00 01 00 04 FF FF FF FF mov dword ptr es:[0x4000100], 0xffffffff
+2322  26 67 66 81 3D 00 00 00 04 AA AA 55 55 cmp dword ptr es:[0x4000000], 0x5555aaaa
+232F  0F 85 4E 00             jne 0x2381
+2333  B7 00                   mov bh, 0
+2335  26 67 66 81 3D 00 00 80 04 AA AA 55 55 cmp dword ptr es:[0x4800000], 0x5555aaaa
+2342  0F 84 3B 00             je 0x2381
+2346  B7 02                   mov bh, 2
+2348  26 67 66 81 3D 00 08 00 04 AA AA 55 55 cmp dword ptr es:[0x4000800], 0x5555aaaa
+2355  0F 84 28 00             je 0x2381
+2359  B7 01                   mov bh, 1
 
 ===== 6800h-687Fh =====
 Reason: code-dense raw window without phase address token
@@ -4925,6 +4968,119 @@ D1CD  E8 73 00                call 0xd243
 D1D0  FE CD                   dec ch
 D1D2  76 41                   jbe 0xd215
 D1D4  8B C7                   mov ax, di
+
+===== C8BBh-C93Ah =====
+Reason: direct caller of DMA channel-2 setup D156h
+C8BB  E8 98 08                call 0xd156
+C8BE  8B 46 12                mov ax, word ptr [bp + 0x12]
+C8C1  8B 4E 10                mov cx, word ptr [bp + 0x10]
+C8C4  E9 E0 06                jmp 0xcfa7
+C8C7  E8 0F 08                call 0xd0d9
+C8CA  0A C0                   or al, al
+C8CC  74 04                   je 0xc8d2
+C8CE  2A D9                   sub bl, cl
+C8D0  8A C3                   mov al, bl
+C8D2  8A 26 41 00             mov ah, byte ptr [0x41]
+C8D6  0A E4                   or ah, ah
+C8D8  74 01                   je 0xc8db
+C8DA  F9                      stc
+C8DB  88 46 12                mov byte ptr [bp + 0x12], al
+C8DE  E9 67 FD                jmp 0xc648
+C8E1  80 FA 01                cmp dl, 1
+C8E4  76 0A                   jbe 0xc8f0
+C8E6  B4 01                   mov ah, 1
+C8E8  88 26 41 00             mov byte ptr [0x41], ah
+C8EC  F9                      stc
+C8ED  E9 58 FD                jmp 0xc648
+C8F0  BE 90 00                mov si, 0x90
+C8F3  52                      push dx
+C8F4  32 F6                   xor dh, dh
+C8F6  03 F2                   add si, dx
+C8F8  5A                      pop dx
+C8F9  80 3C 00                cmp byte ptr [si], 0
+C8FC  B4 80                   mov ah, 0x80
+C8FE  74 E8                   je 0xc8e8
+C900  BF 3F 00                mov di, 0x3f
+C903  80 0D 80                or byte ptr [di], 0x80
+C906  E8 4F 07                call 0xd058
+C909  E8 F8 07                call 0xd104
+C90C  73 05                   jae 0xc913
+C90E  E8 C8 07                call 0xd0d9
+C911  EB D5                   jmp 0xc8e8
+C913  E8 D4 0B                call 0xd4ea
+C916  E8 68 0A                call 0xd381
+C919  1E                      push ds
+C91A  33 F6                   xor si, si
+C91C  8E DE                   mov ds, si
+C91E  C5 36 78 00             lds si, ptr [0x78]
+C922  8A 44 04                mov al, byte ptr [si + 4]
+C925  1F                      pop ds
+C926  32 E4                   xor ah, ah
+C928  B1 04                   mov cl, 4
+C92A  F6 E1                   mul cl
+C92C  8B C8                   mov cx, ax
+C92E  49                      dec cx
+C92F  E8 65 08                call 0xd197
+C932  72 DA                   jb 0xc90e
+C934  B4 4A                   mov ah, 0x4a
+C936  E8 1D 08                call 0xd156
+C939  8B              db 0x8B
+C93A  4E                      dec si
+
+===== C936h-C9B5h =====
+Reason: direct caller of DMA channel-2 setup D156h
+C936  E8 1D 08                call 0xd156
+C939  8B 4E 10                mov cx, word ptr [bp + 0x10]
+C93C  E8 6B 05                call 0xceaa
+C93F  73 0D                   jae 0xc94e
+C941  BB 42 00                mov bx, 0x42
+C944  B9 07 00                mov cx, 7
+C947  50                      push ax
+C948  E8 25 09                call 0xd270
+C94B  58                      pop ax
+C94C  EB 38                   jmp 0xc986
+C94E  C0 E6 02                shl dh, 2
+C951  0A F2                   or dh, dl
+C953  B2 CD                   mov dl, 0xcd
+C955  1E                      push ds
+C956  33 F6                   xor si, si
+C958  8E DE                   mov ds, si
+C95A  C5 36 78 00             lds si, ptr [0x78]
+C95E  50                      push ax
+C95F  8B 44 07                mov ax, word ptr [si + 7]
+C962  89 46 00                mov word ptr [bp], ax
+C965  58                      pop ax
+C966  8B 7C 03                mov di, word ptr [si + 3]
+C969  1F                      pop ds
+C96A  8B F2                   mov si, dx
+C96C  B5 06                   mov ch, 6
+C96E  80 26 3E 00 7F          and byte ptr [0x3e], 0x7f
+C973  E8 A0 08                call 0xd216
+C976  72 C9                   jb 0xc941
+C978  BB 42 00                mov bx, 0x42
+C97B  B9 07 00                mov cx, 7
+C97E  E8 EF 08                call 0xd270
+C981  72 03                   jb 0xc986
+C983  E8 37 09                call 0xd2bd
+C986  88 26 41 00             mov byte ptr [0x41], ah
+C98A  E8 4C 07                call 0xd0d9
+C98D  8A 26 41 00             mov ah, byte ptr [0x41]
+C991  0A E4                   or ah, ah
+C993  74 01                   je 0xc996
+C995  F9                      stc
+C996  E9 AF FC                jmp 0xc648
+C999  80 FA 80                cmp dl, 0x80
+C99C  72 0A                   jb 0xc9a8
+C99E  B4 01                   mov ah, 1
+C9A0  88 26 41 00             mov byte ptr [0x41], ah
+C9A4  F9                      stc
+C9A5  E9 A0 FC                jmp 0xc648
+C9A8  33 FF                   xor di, di
+C9AA  33 F6                   xor si, si
+C9AC  32 F6                   xor dh, dh
+C9AE  A0 10 00                mov al, byte ptr [0x10]
+C9B1  24 C1                   and al, 0xc1
+C9B3  BF 02 00                mov di, 2
 
 ===== D1C0h-D23Fh =====
 Reason: direct FDC state/reset helper
