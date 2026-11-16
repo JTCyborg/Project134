@@ -193,7 +193,7 @@ When CMOS 0Eh bits C0h are set, the code bypasses the normal type-nibble switch 
 | 3 | 2 | 97h |
 | 4 | 3 | D7h |
 
-Each successful READ ID exits through D3FAh. If all four probes fail, the routine returns with CF set. The new candidate window D46Dh–D496h records this previously clipped alternate path.
+Each successful READ ID exits through D3FAh. If all four probes fail, the routine returns with CF set. The new candidate window D46Dh–D498h records this previously clipped alternate path, including the final JMP back to D3FAh.
 
 This maps the high-bit rate and success fields of [BX+90h], but it does not assign meanings to every low nibble bit or identify the exact CMOS 0Eh board-specific flag semantics.
 
