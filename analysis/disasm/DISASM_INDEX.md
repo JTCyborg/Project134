@@ -739,3 +739,13 @@ This phase is semantic classification of selected regions, not a complete CFG. S
 - Traced the real caller of callback slot `82DEh`: `52A1h CALL 1C06h`, reached when `CS:8281h` bit 6 is clear; the default callback at `19ADh` is RET.
 - Confirmed these are separate POST paths and neither default callback supplies BP.13 or a DAxx transfer.
 - Runtime patching of the slots and the producer of BP.13 remain unresolved.
+
+
+## Semantic map — phase 68 (2026-11-16)
+
+- [AMI486_SEMANTIC_MAP_PHASE68_20261116.md](AMI486_SEMANTIC_MAP_PHASE68_20261116.md)
+- Reconstructed `8AD5h–8AE6h` as the keyboard-controller reset terminal path: wait on port 64h status, write FEh to port 64h, then halt.
+- Confirmed the `527Dh -> 8AD9h` branch is not a normal BIOS callback and does not lead to DA5Eh/DA61h.
+- Catalogued direct consumers of `CS:8281h`: D657h, D724h, 8B11h, F06Ah (bit 6) and F43Dh (bit 7).
+- No direct store to 8281h was confirmed in the inspected ROM paths; producer/source remains unresolved.
+- BP.13 provenance and dynamic entry to DA5Eh/DA61h remain open.
