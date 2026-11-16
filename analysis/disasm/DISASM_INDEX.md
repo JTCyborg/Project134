@@ -877,3 +877,10 @@ This phase is semantic classification of selected regions, not a complete CFG. S
 - CMOS[8Eh] is a shared status/configuration byte with immediate reads at 121Ah, 1271h, 1338h, 140Eh, 15ACh, 1C64h, 5D78h, 5EDFh, 84D3h, 8630h, 8649h, 8662h and F481h (all to EE94h). Other callsites resolve to EEAAh and need separate decode.
 - Corrected 5D54h CALL target: F5DBh (not E5DBh). It starts with TEST AL,01h and accesses keyboard controller ports 64h/60h along its conditional path; caller saves returned AL at DS:0012h and tests bit 5.
 - BEh:BFh has multiple writers; update order and semantic meaning remain open. BP.13 producer and DA5Eh/DA61h dynamic entry remain unresolved.
+
+
+## Corrections after raw-offset revalidation (2026-11-16)
+
+- Phase 80's exact aligned sequence is corrected in its report: it begins at 5D5Ch with `MOV DI,0020h; MOV AX,1E44h; STOSW; MOV AX,CS; STOSW`. The earlier INC SP/PUSH DS and PUSHA interpretations at this location are withdrawn.
+- Correct phase80 CALL sites remain 5D6Dh, 5D75h, 5D7Ah, 5D84h, 5D89h, 5D91h and 5D99h; their targets are EE94h/EE9Dh as tabulated in the corrected report. The conditional branch at 5D7Fh targets 5D9Ch.
+- Phase 81 keyboard-controller call correction: the CALL is at 5D52h and targets F5D9h (not 5D54h/F5DBh). F5D9h begins with IN AL,64h; caller stores AL at DS:0012h and tests bit 5. The corrected phase81 report replaces the earlier offset/target statement.
