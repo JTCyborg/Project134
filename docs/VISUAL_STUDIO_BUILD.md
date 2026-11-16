@@ -17,7 +17,7 @@ Install NASM for Windows and make `nasm.exe` available on `PATH`. The project al
 3. Build the `Project134.BIOS` project.
 4. Confirm that the post-build validator reports a pass.
 
-The current bootstrap output is `bios/out/<Configuration>/Project134.bin` (the exact directory is controlled by the solution output path).
+The current bootstrap output is `out/<Configuration>/Project134.bin` (the exact directory is controlled by the solution output path).
 
 ## Current limitations
 
