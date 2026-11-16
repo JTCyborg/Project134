@@ -119,10 +119,10 @@ Observed ports:
 | D2BDh | Converts FDC status bits in the byte at 0042h into AH error codes. |
 | D2FDh | FDC reset/status sequence using D348h and the MSR. |
 | D348h | Resets/re-enables the controller by modifying state and writing to DOR 03F2h; waits and calls BIOS INT 15h AX=9001h. |
-| D400h–D4FFh | Command/retry sequences with multiple FDC command bytes and per-drive state updates. Exact command names require full caller/parameter analysis. |
+| D3EDh–D462h | Per-drive data-rate selection and state-token updates. D499h constructs a two-byte MFM READ ID command (4Ah, drive/head) and validates its seven-byte result; the AL constants here are rate/state tokens, not FDC opcodes. |
 | D500h–D51Fh | Updates drive/head-related bits and writes a value to port 03F7h. |
-| D520h–D5DCh | Reads and validates multi-byte FDC result sequences, including expected status bytes and drive-state flags. |
-| D5DDh | Helper that derives a selector from AL, invokes D216h and D294h, and compares the returned byte. |
+| D520h–D5D9h | Extended 765-compatible controller setup: VERSION 10h, DUMPREG 0Eh, UNLOCK 14h, CONFIGURE 13h, PERPENDICULAR MODE 12h and LOCK 94h. |
+| D5DDh | LOCK/UNLOCK verifier: sends AL OR 14h and compares the one-byte result with AL>>3. |
 
 The D100h seed begins with a short register/return fragment and should not be assumed to be the subsystem's true entry. Direct call targets such as D156h, D216h, D243h, D294h and D348h are better-aligned analysis roots.
 
@@ -192,7 +192,7 @@ The stream writes and compares 5555h/AAAAh patterns using 16-/32-bit operand/add
 1. Trace the INT 13h hook installation at A95Eh through the caller to prove ES=0 and validate the companion vector at 01D8h.
 2. Confirm the parameters and error contracts for the 26 INT 13h service handlers, especially A216h/A226h/A23Eh/A25Fh and A372h/A381h/A374h.
 3. Recover complete routine boundaries and error contracts for A5CAh, A5A9h, A655h, A694h, A6BBh, A6DCh, A798h and A7BAh.
-4. Identify the FDC commands in D400h–D5FFh and connect DMA channel programming to the command/result paths.
+4. Trace the remaining low-bit state tokens in [BX+90h] around D407h–D462h and identify the source/meaning of the EEAAh configuration values used before PERPENDICULAR MODE.
 5. Find the IVT installation/caller for the F8E7h INT 14h candidate and verify its runtime vector.
 6. Trace the 2100h memory-probe caller and the meaning of the 00800000h comparison.
 
