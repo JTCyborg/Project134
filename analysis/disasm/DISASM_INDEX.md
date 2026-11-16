@@ -950,3 +950,12 @@ This phase is semantic classification of selected regions, not a complete CFG. S
 - Classified 0383h as a Setup hexadecimal digit editor with scan-code-driven increment/decrement and 0..F digit bounds.
 - Flagged callback 02F1h as an overlapping alternate entry (it begins at the second byte of the 02F0h linear instruction); it must be decoded independently.
 - 02DBh and 026Fh remain only partially classified; BP+10h/BP+14h semantics are unresolved.
+
+
+## Project status — paused (2026-11-16)
+
+- User-requested pause recorded in [PROJECT134_PAUSE_CHECKPOINT_20261116.md](PROJECT134_PAUSE_CHECKPOINT_20261116.md).
+- Last completed semantic reports: phases 84–88. Latest work resolved the Setup date/time callback family and the two BP+12h hexadecimal-nibble editor callbacks.
+- Immediate resume targets: 026Fh, 02DBh, and the overlapping alternate entry 02F1h; then continue the ROM-wide coverage ledger.
+- The full 64 KiB BIOS is not yet completely semantically disassembled. BP.13 provenance and dynamic/indirect entry into DA5Eh/DA61h remain open.
+- No further work is to be performed until the user explicitly requests resumption.
