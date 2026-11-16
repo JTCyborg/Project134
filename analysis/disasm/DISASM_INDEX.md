@@ -598,3 +598,13 @@ This phase is semantic classification of selected regions, not a complete CFG. S
 - 5CC6h and 5CF0h OR BP,0 are no-ops; 5D07h clears bit 12 only. 5C37h MOV BP,3 is confined to the fatal memory-test error path.
 - The BP.13 producer must precede the 5C04h memory test or arrive via an earlier stack restore; DA9Fh -> 5BF8h remains an unproven runtime chain.
 - Separated the 546Ch PUSHAW frame from 525Fh: 546Ch is called at 51FEh, 5403h and 541Ah and captures caller-dependent BP.
+
+
+## Semantic map — phase 55 (2026-11-16)
+
+- [AMI486_SEMANTIC_MAP_PHASE55_20261116.md](AMI486_SEMANTIC_MAP_PHASE55_20261116.md)
+- Confirmed the stack-crafted continuation DA9Fh -> 5BF8h -> F5A9h -> RET to 5C04h; SP is explicitly set to 5C02h and the word there is the return IP 5C04h.
+- The DAxx PIT/port-61 timing path does not set BP.13. DA29h can set only BP.0; DA95h sets BP=1 only on the fatal-alarm branch.
+- External runtime entry into the DAxx timing block remains unknown; no direct CALL/JMP to DA61h or DA9Fh appears in the linear listing.
+- 5DBDh saves BP around CALL 1B5Fh and 5DC1h restores it; the RET stub cannot create BP.13.
+- Audited early POST BP flag producers at 113Bh, 1141h, 117Fh, 11A1h/11BCh and 145Eh; none sets bit 13. 12D3h–12D4h restores BP then clears bits 0–13 on a separate path.
