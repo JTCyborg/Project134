@@ -14,7 +14,8 @@ The original Spectrum software accesses memory, ROM, I/O ports and timing direct
 - [ ] Inspect the AMI486 machine registration, initialization and device setup.
 - [ ] Identify the currently working AMI486 BIOS ROM and its provenance.
 - [ ] Identify ROM loading, reset-vector mapping and BIOS execution path.
-- [ ] Create an isolated Project134 machine/profile without changing Project133.
+- [x] Create the separate Project134 repository and record this plan without changing Project133.
+- [ ] Import/establish the PCem source baseline and create an isolated Project134 machine/profile.
 - [ ] Record a reproducible build and runtime baseline.
 
 **Exit criteria:** Project134 builds and starts the selected AMI486 baseline reproducibly; the BIOS ROM and startup path are identified.
