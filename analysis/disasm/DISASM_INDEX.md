@@ -192,3 +192,12 @@ This phase is semantic classification of selected regions, not a complete CFG. S
 - Reinterpreted the `5A5E` table dispatch as Setup-page-specific behavior: Standard/Advanced CMOS → 5 entries; Advanced CHIPSET → 76 entries; Power Management → empty; Peripheral Management → optional runtime table.
 - Corrected `85D6`: `DS:E080+index` is the source and `DS:E000+index` the destination working buffer. These are not ALi1429 hardware windows.
 - Confirmed the separate ALi1429 access helpers use ports `22h/23h`.
+
+
+## Semantic map — phase 8 (2026-11-16)
+
+- [AMI486_SEMANTIC_MAP_PHASE8_20261116.md](AMI486_SEMANTIC_MAP_PHASE8_20261116.md)
+- Read the stock ROM initial values: `82B0=00h`, `82C0=0000h`, `82C2=0000h`, `82C6=0000h`, `82C8=0000h`, `82CA=19A3h`.
+- Corrected `85D6`: when `82B0=0`, CX remains zero and the worker returns; it does **not** fall back to the five-entry table. The optional dynamic table is inactive in the stock ROM.
+- Confirmed the stock runtime table and extended Setup-record ranges are empty; 8400 and 0C53 skip them.
+- Updated phase 6 with an explicit correction to its earlier zero-selector fallback statement.
