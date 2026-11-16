@@ -902,3 +902,12 @@ This phase is semantic classification of selected regions, not a complete CFG. S
 - CMOS[8Eh] now has at least fourteen confirmed read sites: thirteen through EE94h plus the direct 834Fh access.
 - No immediate EE9Dh write-helper call or direct immediate OUT70h/OUT71h write sequence for index 8Eh was found. Register-indexed and data-driven writes remain possible; this is not proof that 8Eh is immutable.
 - The CS-relative table walker around 8324h..83F0h and the CMOS[8Eh] writer search remain open.
+
+
+## Semantic map — phase 84 (2026-11-16)
+
+- [AMI486_SEMANTIC_MAP_PHASE84_20261116.md](AMI486_SEMANTIC_MAP_PHASE84_20261116.md)
+- Classified 0000h..00EEh as OEM/signature metadata and copyright/date text; code begins at 00EFh.
+- Decoded 00EFh..0235h as a coherent Setup/video presentation routine: INT 10h cursor save/restore, 80h-byte stack buffer, save/restore of DS:E000h, BP-relative record formatting, and a CS-resident callback structure at 0AF5h with indirect CALL AX dispatch.
+- Decoded adjacent 0236h..026Eh as a field-edit helper that merges a two-bit field into BP+14h while separately handling bit 3.
+- This is a new low-ROM semantic region; 026Fh onward and callback targets remain to be traced. A raw scan found no direct near CALL to 00EFh, but far/pointer/indirect entries are not excluded.
