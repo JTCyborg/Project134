@@ -948,7 +948,7 @@ This phase is semantic classification of selected regions, not a complete CFG. S
 - Resolved callback 0319h as the high-nibble editor for BP+12h and 0351h as the low-nibble editor; both call the common hexadecimal editor at 0383h.
 - Confirmed Fh sentinel handling with fallback storage at BP+19h/BP+1Ah.
 - Classified 0383h as a Setup hexadecimal digit editor with scan-code-driven increment/decrement and 0..F digit bounds.
-- Flagged callback 02F1h as an overlapping alternate entry (it begins at the second byte of the 02F0h linear instruction); it must be decoded independently.
+- Identified 02F1h as an aligned low-nibble callback entry immediately after the short jump at 02EFh; the 02DBh high-nibble path jumps over it to shared merge code at 02FFh.
 - 02DBh and 026Fh remain only partially classified; BP+10h/BP+14h semantics are unresolved.
 
 
@@ -965,8 +965,8 @@ This phase is semantic classification of selected regions, not a complete CFG. S
 
 - [AMI486_SEMANTIC_MAP_PHASE89_20261116.md](AMI486_SEMANTIC_MAP_PHASE89_20261116.md)
 - Resolved callback 026Fh as an "Options:" path that tests and updates BP+14h bit 2 through the secondary dispatcher at 05B4h.
-- Resolved 02DBh as the high-nibble editor for BP+10h and the overlapping alternate entry 02F1h as the low-nibble editor. Both recompute BP+14h bit 6 based on whether both nibbles are nonzero.
-- Preserved unresolved stack/return behavior: 02DBh has no visible local PUSH AX for its POP AX, while 02F1h begins with PUSH CS. The secondary dispatcher path and its callback-specific return contract require further tracing.
+- Resolved 02DBh as the high-nibble editor for BP+10h and 02F1h as its aligned low-nibble sibling. Both call 05A3h, converge at 02FFh, and recompute BP+14h bit 6 based on whether both nibbles are nonzero.
+- Confirmed the shared PUSH AX at 02FFh balances POP AX at 0316h on both paths; both then restore flags and RET. The secondary dispatcher path and its callback-specific flag contract still require further tracing.
 - Phase 89's initial 0BA5h table alignment was corrected in its report: 0BA5h is a record offset, and the first 026Fh-selected callbacks are 064Ah or 06AEh. See phases 90–91.
 
 
