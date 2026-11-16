@@ -8273,11 +8273,11 @@ E861  CF                      iret
 E862  E3 00                   jcxz 0xe864
 E864  E3              db 0xE3
 
-===== F8E8h-F929h =====
-Reason: guarded six-service interrupt-dispatch wrapper candidate; F92Ah handler table follows at the next byte boundary
-F8E8  FA                      cli
-F8E9  04 73                   add al, 0x73
-F8EB  3A 80 FC 06             cmp al, byte ptr [bx + si + 0x6fc]
+===== F8E7h-F929h =====
+Reason: guarded six-service INT 14h serial dispatcher candidate; F92Ah handler table follows after IRET
+F8E7  83 FA 04                cmp dx, 4
+F8EA  73 3A                   jae 0xf926
+F8EC  80 FC 06                cmp ah, 6
 F8EF  90                      nop
 F8F0  73 34                   jae 0xf926
 F8F2  60                      pushaw
