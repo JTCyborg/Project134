@@ -219,3 +219,11 @@ This phase is semantic classification of selected regions, not a complete CFG. S
 - Decoded page gates: `[B7CA]=0584h` and `[B7CC]=08A5h` enable Advanced CMOS/CHIPSET; `[B7CE]=0000h` disables Power Management.
 - Confirmed Peripheral Management handler `0C53h` uses optional `[82C6,82C8)`, empty in the stock ROM.
 - Identified the common editor entry at `0C7Dh` and the page-specific range/title/help setup performed by each handler.
+
+
+## Semantic map — phase 11 (2026-11-16)
+
+- [AMI486_SEMANTIC_MAP_PHASE11_20261116.md](AMI486_SEMANTIC_MAP_PHASE11_20261116.md)
+- Catalogued the stock Advanced CMOS Setup descriptors in `B7D0–BD53` and Advanced CHIPSET descriptors in `BD54–C5F8`.
+- Extracted Setup item labels, raw descriptor bytes, selector counts/values, and associated explanatory strings.
+- Kept Setup descriptor records separate from the 81-entry CMOS initialization table and the ALi1429 indexed-register path; exact field semantics and hardware bit meanings remain under investigation.
