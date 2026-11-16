@@ -8273,10 +8273,23 @@ E861  CF                      iret
 E862  E3 00                   jcxz 0xe864
 E864  E3              db 0xE3
 
-===== F900h-F97Fh =====
-Reason: interrupt/dispatch wrapper candidate; indirect-call provenance unresolved
-F900  00 23                   add byte ptr [bp + di], ah
-F902  D2 74 1F                sal byte ptr [si + 0x1f], cl
+===== F8E8h-F929h =====
+Reason: guarded six-service interrupt-dispatch wrapper candidate; F92Ah handler table follows at the next byte boundary
+F8E8  FA                      cli
+F8E9  04 73                   add al, 0x73
+F8EB  3A 80 FC 06             cmp al, byte ptr [bx + si + 0x6fc]
+F8EF  90                      nop
+F8F0  73 34                   jae 0xf926
+F8F2  60                      pushaw
+F8F3  8B EC                   mov bp, sp
+F8F5  1E                      push ds
+F8F6  6A 40                   push 0x40
+F8F8  1F                      pop ds
+F8F9  8B FA                   mov di, dx
+F8FB  D1 E7                   shl di, 1
+F8FD  8B 95 00 00             mov dx, word ptr [di]
+F901  23 D2                   and dx, dx
+F903  74 1F                   je 0xf924
 F905  D1 EF                   shr di, 1
 F907  8B BD 7C 00             mov di, word ptr [di + 0x7c]
 F90B  81 E7 FF 00             and di, 0xff
@@ -8293,53 +8306,6 @@ F924  1F                      pop ds
 F925  61                      popaw
 F926  E8 89 97                call 0x90b2
 F929  CF                      iret
-F92A  36 F9                   stc
-F92C  86 F9                   xchg cl, bh
-F92E  C4              db 0xC4
-F92F  F9                      stc
-F930  77 F9                   ja 0xf92b
-F932  99                      cdq
-F933  F9                      stc
-F934  D3 F9                   sar cx, cl
-F936  8A 7E 0E                mov bh, byte ptr [bp + 0xe]
-F939  8A DF                   mov bl, bh
-F93B  80 E7 1F                and bh, 0x1f
-F93E  C0 EB 05                shr bl, 5
-F941  B9 17 04                mov cx, 0x417
-F944  0A DB                   or bl, bl
-F946  74 09                   je 0xf951
-F948  B9 00 06                mov cx, 0x600
-F94B  D1 E9                   shr cx, 1
-F94D  FE CB                   dec bl
-F94F  75 FA                   jne 0xf94b
-F951  B0 80                   mov al, 0x80
-F953  83 C2 03                add dx, 3
-F956  EE                      out dx, al
-F957  E8 08 EF                call 0xe862
-F95A  52                      push dx
-F95B  8A C5                   mov al, ch
-F95D  4A                      dec dx
-F95E  4A                      dec dx
-F95F  EE                      out dx, al
-F960  E8 FF EE                call 0xe862
-F963  8A C1                   mov al, cl
-F965  4A                      dec dx
-F966  EE                      out dx, al
-F967  E8 F8 EE                call 0xe862
-F96A  5A                      pop dx
-F96B  8A C7                   mov al, bh
-F96D  EE                      out dx, al
-F96E  E8 F1 EE                call 0xe862
-F971  2A C0                   sub al, al
-F973  4A                      dec dx
-F974  4A                      dec dx
-F975  EE                      out dx, al
-F976  4A                      dec dx
-F977  83 C2 05                add dx, 5
-F97A  E8 E5 EE                call 0xe862
-F97D  EC                      in al, dx
-F97E  E8              db 0xE8
-F97F  E1              db 0xE1
 
 ===== F936h-F9B5h =====
 Reason: target listed in F92Ah dispatch table
