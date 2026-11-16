@@ -48,3 +48,8 @@ However, no verified caller/continuation currently proves that BX is compared wi
 ## Correction: helper target
 
 The relative CALL displacements in this dispatcher resolve to **EE9Eh**, not D69Eh. This is an alternate entry one byte into the CMOS write helper at EE9Dh: it skips `OUT 70h,AL` and enters at `XCHG AH,AL`, then proceeds through the delays and `OUT 71h,AL`. Thus these call sites write the data byte to the currently selected CMOS index; they do not select a new index themselves. The AL/AH setup immediately before each call is therefore significant, and the index-selection state must be traced from the preceding code.
+
+
+## Superseded findings — phase 78 correction
+
+The `183Ah -> 17F3h` overlapping-entry claim and the `EE9Eh` CALL-target claim in this report are withdrawn. The verified continuations are `1834h JMP DI`, `1836h MOV DI,183Bh`, `1839h JMP 17F2h`; the second setup at `184Ah` jumps to aligned `1810h`. The three write calls are at `183Fh`, `1846h`, and `1853h`, and all target the full helper `EE9Dh`. See phase 78. The aligned CMOS-sum loops and their DI-selected write-back continuations are retained.
