@@ -992,9 +992,8 @@ This phase is semantic classification of selected regions, not a complete CFG. S
 ## Semantic map — phase 92 (2026-11-16)
 
 - [AMI486_SEMANTIC_MAP_PHASE92_20261116.md](AMI486_SEMANTIC_MAP_PHASE92_20261116.md)
-- Traced the common nibble-option helper at 05A3h: it emits '6' from DL=16h, displays the "Options:-" prompt, then enters the linked dispatcher at 05B4h; the masked AL nibble is overwritten and its purpose remains unresolved.
-- Identified the first 0AE1h-table targets as 0B5Dh and 0B6Dh, with a later edge to 026Fh. 05E0h/0845h preserve BX, ruling out cursor corruption by prompt rendering.
-- Marked 0B5Dh/0B6Dh execution as unresolved because the target offsets overlap a dense record-like region in the ROM image; runtime CS/shadow mapping and alternate entries must be verified before assigning semantics.
+- Traced 05A3h/0AADh as a nibble-indexed 16-word pointer lookup at 0AE1h. AL selects a callback-chain base; the returned SI is copied to BX before entering 05B4h. The fixed-'6' interpretation is withdrawn.
+- Identified 0AE1h as a 16-entry pointer array. Entries 0..6 select chain bases 0B75h, 0B4Dh, 0B55h, 0B5Dh, 0B65h, 0B6Dh and 0B45h; 05B4h starts at base+4. For AL=3/5 the first callbacks are 061Ah/0626h, not 0B5Dh/0B6Dh.
 
 
 ## Semantic map — phase 93 (2026-11-16)
@@ -1012,3 +1011,12 @@ This phase is semantic classification of selected regions, not a complete CFG. S
 - Corrected dispatcher entry: 05E0h is a RET stub; renderer 05EBh is invoked only on exit.
 - Downgraded 0B5Dh/0B6Dh from confirmed executable entries to raw-image indirect CALL targets with unresolved validity. Their offsets lie inside a regular four-byte record region and linear decode is implausible; active CS mapping/shadow image must be established.
 - Withdrawn phase-93 linear branch/control-flow claims through 0BE5h as established code facts.
+
+
+## Semantic map — phase 95 (2026-11-16)
+
+- [AMI486_SEMANTIC_MAP_PHASE95_20261116.md](AMI486_SEMANTIC_MAP_PHASE95_20261116.md)
+- Corrected 05A3h: it masks AL, calls 0AADh, and indexes a 16-word pointer array at 0AE1h. The selected chain base is returned in SI and copied to BX.
+- Reconstructed first records for AL=0..6. For AL=3 the base is 0B5Dh and the first record at 0B61h calls 061Ah; for AL=5 the base is 0B6Dh and the first record at 0B71h calls 0626h.
+- Resolved the apparent 0B5Dh/0B6Dh code/data contradiction: they are chain bases, not callback targets. The 0B45h..0B9Dh bytes are linked callback records.
+- Identified 026Fh as a special overlap: AL=7 selects it as a chain base, while 026Fh is also an executable code entry; first record at 0273h calls 16BAh.
