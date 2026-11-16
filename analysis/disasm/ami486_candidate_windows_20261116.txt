@@ -4591,6 +4591,25 @@ Reason: 5555h/AAAAh pattern-write and compare stream candidate
 2179  81 3E 00 20 AA AA       cmp word ptr [0x2000], 0xaaaa
 217F  55                      push bp
 
+===== 2187h-2206h =====
+Reason: memory-pattern test failure/return target
+2187  B6 FF                   mov dh, 0xff
+2189  26 67 66 C7 05 00 00 00 04 55 55 AA AA mov dword ptr es:[0x4000000], 0xaaaa5555
+2196  26 67 66 C7 05 00 01 00 04 FF FF FF FF mov dword ptr es:[0x4000100], 0xffffffff
+21A3  26 67 66 81 3D 00 00 00 04 55 55 AA AA cmp dword ptr es:[0x4000000], 0xaaaa5555
+21B0  0F 85 79 00             jne 0x222d
+21B4  26 67 66 C7 05 00 00 00 04 AA AA 55 55 mov dword ptr es:[0x4000000], 0x5555aaaa
+21C1  26 67 66 C7 05 00 01 00 04 FF FF FF FF mov dword ptr es:[0x4000100], 0xffffffff
+21CE  26 67 66 81 3D 00 00 00 04 AA AA 55 55 cmp dword ptr es:[0x4000000], 0x5555aaaa
+21DB  0F 85 4E 00             jne 0x222d
+21DF  B6 00                   mov dh, 0
+21E1  26 67 66 81 3D 00 00 80 04 AA AA 55 55 cmp dword ptr es:[0x4800000], 0x5555aaaa
+21EE  0F 84 3B 00             je 0x222d
+21F2  B6 02                   mov dh, 2
+21F4  26 67 66 81 3D 00 08 00 04 AA AA 55 55 cmp dword ptr es:[0x4000800], 0x5555aaaa
+2201  0F 84 28 00             je 0x222d
+2205  B6 01                   mov dh, 1
+
 ===== 6800h-687Fh =====
 Reason: code-dense raw window without phase address token
 6800  86 C4                   xchg ah, al
