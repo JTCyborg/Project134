@@ -6,7 +6,7 @@ Prior phase corpus: 96 semantic reports.
 
 ## 1. Purpose and status
 
-This is the first ROM-wide address ledger. It separates **document-reference coverage** from **semantic byte classification**. It is deliberately not a code/data map yet.
+This is the first ROM-wide address ledger. It separates **document-reference coverage** from **semantic byte classification** and now incorporates subsystem-level code/data classifications for selected regions (see section 9). It is not yet a complete code/data map: most bytes remain unclassified or only locally understood.
 
 The 96 phase reports were searched in batches for explicit hexadecimal address tokens ending in `h`. This produces:
 - 153 of 256 pages with at least one explicit phase address reference;
@@ -19,7 +19,7 @@ A page marked `R` only means that at least one address from that page is explici
 Legend:
 - `R` = explicit `hhhh` address reference found in at least one phase report.
 - `—` = no such explicit token found by this narrow scan.
-- Every page remains semantically **UNCLASSIFIED** until its bytes and all reachable entry streams are checked.
+- A page marked R is not thereby fully classified. Some ranges inside referenced and unreferenced pages now have confirmed local classifications, but no 256-byte page is considered complete until all bytes, alternate streams and incoming references have been reconciled.
 
 | +0 | +1 | +2 | +3 | +4 | +5 | +6 | +7 | +8 | +9 | +A | +B | +C | +D | +E | +F |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
