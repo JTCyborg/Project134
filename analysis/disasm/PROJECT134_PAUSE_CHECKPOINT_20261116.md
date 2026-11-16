@@ -151,7 +151,7 @@ See AMI486_CLOCK_AND_TEXT_RENDERING_20261116.md. The 6774h and 67AEh routines ca
 
 ## Address-ledger reconciliation — 2026-11-16
 
-The address ledger is present as a first-pass reference map; it is not yet the complete per-byte semantic classification. Corrected its gap count to 103 pages (153 referenced + 103 without explicit phase-address tokens = 256). The candidate listing now contains 146 code windows and 6 data windows; their distinct union is 8,618 bytes across 46 pages, not a semantic-coverage percentage. The master linear listing already covers the entire 64-KiB ROM, so do not regenerate a duplicate linear decode. Continue with CFG, data/code boundaries and unresolved caller/vector contracts.
+The address ledger is present as a first-pass reference map; it is not yet the complete per-byte semantic classification. Corrected its gap count to 103 pages (153 referenced + 103 without explicit phase-address tokens = 256). The candidate listing now contains 168 code windows and 18 data windows; their distinct union is 10,700 bytes across 56 pages, not a semantic-coverage percentage. The master linear listing already covers the entire 64-KiB ROM, so do not regenerate a duplicate linear decode. Continue with CFG, data/code boundaries and unresolved caller/vector contracts.
 
 
 ## Serial BIOS follow-up — 2026-11-16
@@ -201,7 +201,7 @@ D4EAh independently confirms [0090h+drive] bits 7:6 as the per-drive data-rate s
 
 ## CMOS perpendicular-mode source resolution — 2026-11-16
 
-EEAAh is a protected CMOS read wrapper around EE94h (port 70h selector, port 71h data). D5A1h reads CMOS 0Eh; bit 7 (RTC power lost) or bit 6 (checksum invalid) suppresses drive-specific perpendicular flags. Otherwise it reads CMOS 10h; drive A high nibble type 05h sets parameter bit 2, drive B low nibble type 05h sets bit 3. The resulting byte is sent with PERPENDICULAR MODE 12h. EEAAh source is no longer an open question; low-nibble [BX+90h] semantics and the exact CMOS 0Eh policy remain open.
+EEAAh is a protected CMOS read wrapper around EE94h (port 70h selector, port 71h data). D5A1h reads CMOS 0Eh; bit 7 (RTC power lost) or bit 6 (checksum invalid) suppresses drive-specific perpendicular flags. Otherwise it reads CMOS 10h; drive A high nibble type 05h sets parameter bit 2, drive B low nibble type 05h sets bit 3. The resulting byte is sent with PERPENDICULAR MODE 12h. EEAAh source is no longer an open question; low-nibble [BX+90h] semantics and the CMOS 0Eh fallback behavior is mapped.
 
 
 ## A95Eh caller/ES provenance — 2026-11-16
