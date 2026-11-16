@@ -415,3 +415,11 @@ This phase is semantic classification of selected regions, not a complete CFG. S
 - Disassembled helper 8DDCh and proved that each small-table word is a direct ALi index/value byte pair written through ports 22h/23h.
 - Established that 8750h–87A3h is a separate 21-record, four-byte encoding with a transformed selector and a value byte; entries resolving to selector 26h are skipped.
 - Explicitly supersedes the incorrect small-table range/encoding description in phase32.
+
+
+## Semantic map — phase 34 (2026-11-16)
+
+- [AMI486_SEMANTIC_MAP_PHASE34_20261116.md](AMI486_SEMANTIC_MAP_PHASE34_20261116.md)
+- Fully decoded the 21 four-byte records at 8750h–87A3h: 20 ALi indexed writes and one skipped selector (26h).
+- Recorded exact effective register indices and values after the BIOS subtracts 30h from byte 0 and uses byte 3 as data.
+- Separated confirmed write behavior from unknown ALi register semantics; Project124 mapping remains unverified.
