@@ -4969,6 +4969,74 @@ D1D0  FE CD                   dec ch
 D1D2  76 41                   jbe 0xd215
 D1D4  8B C7                   mov ax, di
 
+===== C648h-C6C7h =====
+Reason: candidate main diskette BIOS dispatcher before FDC helper calls
+C648  8A C4                   mov al, ah
+C64A  9F                      lahf
+C64B  50                      push ax
+C64C  6A 40                   push 0x40
+C64E  1F                      pop ds
+C64F  8A 46 0E                mov al, byte ptr [bp + 0xe]
+C652  3C 01                   cmp al, 1
+C654  77 18                   ja 0xc66e
+C656  32 E4                   xor ah, ah
+C658  BB 90 00                mov bx, 0x90
+C65B  03 D8                   add bx, ax
+C65D  F6 07 10                test byte ptr [bx], 0x10
+C660  74 0C                   je 0xc66e
+C662  B2 04                   mov dl, 4
+C664  F6 E2                   mul dl
+C666  8A C8                   mov cl, al
+C668  D2 E2                   shl dl, cl
+C66A  08 16 8F 00             or byte ptr [0x8f], dl
+C66E  58                      pop ax
+C66F  9E                      sahf
+C670  8A E0                   mov ah, al
+C672  88 66 13                mov byte ptr [bp + 0x13], ah
+C675  B8 01 02                mov ax, 0x201
+C678  72 05                   jb 0xc67f
+C67A  80 66 18 FE             and byte ptr [bp + 0x18], 0xfe
+C67E  48                      dec ax
+C67F  09 46 18                or word ptr [bp + 0x18], ax
+C682  5D                      pop bp
+C683  07                      pop es
+C684  1F                      pop ds
+C685  5F                      pop di
+C686  5E                      pop si
+C687  5D                      pop bp
+C688  5B                      pop bx
+C689  5A                      pop dx
+C68A  59                      pop cx
+C68B  58                      pop ax
+C68C  E8 23 CA                call 0x90b2
+C68F  CF                      iret
+C690  58                      pop ax
+C691  B4 01                   mov ah, 1
+C693  88 26 41 00             mov byte ptr [0x41], ah
+C697  F9                      stc
+C698  EB D8                   jmp 0xc672
+C69A  E8 1F 00                call 0xc6bc
+C69D  88 26 41 00             mov byte ptr [0x41], ah
+C6A1  8A C4                   mov al, ah
+C6A3  9F                      lahf
+C6A4  50                      push ax
+C6A5  1E                      push ds
+C6A6  33 F6                   xor si, si
+C6A8  8E DE                   mov ds, si
+C6AA  C5 36 78 00             lds si, ptr [0x78]
+C6AE  8A 4C 02                mov cl, byte ptr [si + 2]
+C6B1  1F                      pop ds
+C6B2  88 0E 40 00             mov byte ptr [0x40], cl
+C6B6  58                      pop ax
+C6B7  9E                      sahf
+C6B8  8A E0                   mov ah, al
+C6BA  EB B6                   jmp 0xc672
+C6BC  80 26 3E 00 F0          and byte ptr [0x3e], 0xf0
+C6C1  E9 39 0C                jmp 0xd2fd
+C6C4  72 07                   jb 0xc6cd
+C6C6  E9              db 0xE9
+C6C7  B8              db 0xB8
+
 ===== C8BBh-C93Ah =====
 Reason: direct caller of DMA channel-2 setup D156h
 C8BB  E8 98 08                call 0xd156
