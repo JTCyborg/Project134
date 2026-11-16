@@ -457,4 +457,13 @@ This phase is semantic classification of selected regions, not a complete CFG. S
 - Recovered the CPU-speed display lookup at 19C2h: categories 0–6 display nominal values 16/20/25/33/40/50/66 with explicit CPU Clock or DX2 CPU MHz labels.
 - Confirmed AUTO Config gates the category display; CMOS B3h bit 1 selects the DX2 label and separately controls the base-bank category-5 row substitution in 25C4h.
 - Clarified 25C4h +6-bank conditions (CMOS B3h bit 2 OR nonzero CR0 high byte) and documented the separate gated ALi writes at 1A60h.
-- Left category 7's display behavior and ALi register hardware meanings unresolved.
+- Corrected by phase 39: category 7 reads byte 20h at 19C9h and displays 32; whether the overlap with the cache suffix string was intentional remains unresolved.
+
+
+## Semantic map — phase 39 (2026-11-16)
+
+- [AMI486_SEMANTIC_MAP_PHASE39_20261116.md](AMI486_SEMANTIC_MAP_PHASE39_20261116.md)
+- Corrected phase 38: CPU-speed category 7 reads 20h at 19C9h and is displayed as 32 MHz; 19C9h aliases the leading space of the cache suffix string.
+- Decoded the L2 cache-size display: ALi register 18h bit 1 gates the line, bits 6:4 select eight little-endian values (32/128/256/512/64/256/512/1024 KB).
+- Traced POST A1h's CMOS B3h bits 2–3 selection between two small ALi index/value lists, gated by SMSW AH.
+- Kept the intentionality of the data overlap and hardware meanings of ALi register 18h / the B3h-selected lists unresolved.
