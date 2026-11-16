@@ -449,3 +449,12 @@ This phase is semantic classification of selected regions, not a complete CFG. S
 - Recovered the PIT channel-2 measurement: 9096h programs mode 2 with reload 0000h (65536), and 9033h times two generated DIV-instruction stubs.
 - Identified the stubs as repeated DIV BX (F7 F3) and DIV BL (F6 F3), each 1000 instructions, and traced the modular elapsed-count difference returned by 8F50h.
 - Connected that score to 8F12h's eight BDA performance categories and subsequent ALi table-row selection; left MHz calibration and emulator timing fidelity explicitly unresolved.
+
+
+## Semantic map — phase 38 (2026-11-16)
+
+- [AMI486_SEMANTIC_MAP_PHASE38_20261116.md](AMI486_SEMANTIC_MAP_PHASE38_20261116.md)
+- Recovered the CPU-speed display lookup at 19C2h: categories 0–6 display nominal values 16/20/25/33/40/50/66 with explicit CPU Clock or DX2 CPU MHz labels.
+- Confirmed AUTO Config gates the category display; CMOS B3h bit 1 selects the DX2 label and separately controls the base-bank category-5 row substitution in 25C4h.
+- Clarified 25C4h +6-bank conditions (CMOS B3h bit 2 OR nonzero CR0 high byte) and documented the separate gated ALi writes at 1A60h.
+- Left category 7's display behavior and ALi register hardware meanings unresolved.
