@@ -69,7 +69,7 @@ This is clearly an executable-looking pattern-write/compare stream with 16-/32-b
 Raw samples show several distinct content types inside this 4 KiB area:
 
 - `A000h–A0FFh`: instruction-dense bytes, including BIOS interrupt and register-save/restore sequences.
-- `A100h–A123h`: 18 little-endian words. Raw words, in order: `A4A1, 37A1, 72A3, 81A3, 74A3, 9EA4, 8EA1, 8EA1, D3A1, 01A4, 8EA5, 8EA1, 2BA1, A9A5, 8EA1, 8EA1, 8EA1, 7BA1`. Interpreting the byte pairs as x86-native little-endian words gives the values listed above; reversing each pair gives candidate code offsets A1A4, A137, A372, A381, A374, A49E, A18E, A18E, A1D3, A401, A58E, A18E, A12B, A5A9, A18E, A18E, A18E and A17B. Several are aligned code entries seen in the seeded decode. This strongly suggests a byte-swapped dispatch/offset table, but its consumer and exact encoding still require caller verification.
+- `A0F1h–A124h`: 26-entry native little-endian INT 13h function table. The A0A0h dispatcher indexes it with incoming AH (0–19h) via `CS:[DI-5F0Fh]`. Targets: `A197, A20B, A216, A226, A23E, A25F, A18E, A18E, A1A4, A337, A372, A381, A374, A19E, A18E, A18E, A4D3, A501, A18E, A18E, A52B, A1A9, A18E, A18E, A18E, A57B`. A100h is an interior address in this table, not its beginning.
 - `A125h–A18Dh`: padded message text including **“Format !!!”**, **“BootSector Write !!!”**, and **“Possible VIRUS: Continue (Y/N)?”**. This is confirmed embedded text/data, not executable code.
 - `A18Eh`: aligned bytes `B8 00 01 88 26 74 00 F9 C3`; a short executable helper candidate. Its side effect and caller contract remain to be established.
 - `A200h–ACFFh`: instruction-dense routines; raw samples include repeated I/O and conditional control flow. Treat as code candidates with embedded data not yet excluded.
@@ -80,7 +80,7 @@ The A100h words must not be mistaken for a fully understood native little-endian
 
 ### 4.3 D100h–D5FFh — floppy-controller I/O code candidate
 
-The raw stream includes repeated immediate port references to `03F7h` and `03F4h`, `IN AL,DX`-style byte patterns, status-bit tests, retries and calls. This is strongly consistent with floppy-disk-controller access routines. Exact routine boundaries, calling convention and relation to the A000h format/boot-sector message path remain to be traced.
+The raw stream includes repeated immediate port references to `03F7h` and `03F4h`, `IN AL,DX`-style byte patterns, status-bit tests, retries and calls. This is strongly consistent with floppy-disk-controller access routines. Exact routine boundaries, calling convention and relation to the separate INT 40h floppy service remain to be traced.
 
 ### 4.4 6800h — executable code candidate
 
@@ -141,3 +141,8 @@ D100h–D5FFh is the separate floppy-controller/DMA subsystem: FDC ports 03F2h/0
 F92Ah–F935h is a six-word little-endian dispatch table with targets F936h, F986h, F9C4h, F977h, F999h and F9D3h. F977h overlaps the F936h stream as an alternate entry. The F900h wrapper ends in IRET; its actual vector entry remains unknown.
 
 The seeded Capstone output now contains 69 independent 0x80-byte windows and normalizes near-branch targets to 16-bit IP wraparound.
+
+
+## INT 13h dispatch correction
+
+The initial classification of A100h–A123h as a separate byte-swapped table was wrong. A08Dh is the hooked INT 13h entry; DL<80h is forwarded to INT 40h. A0A0h dispatches by AH through the 26-entry little-endian table at A0F1h–A124h. A100h is an interior byte of the table. The exact targets and selectors are documented in AMI486_STORAGE_AND_DISPATCH_REGIONS_20261116.md.
