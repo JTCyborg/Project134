@@ -8,7 +8,7 @@ The BIOS is 16-bit x86 real-mode code and must be emitted as a flat binary ROM. 
 
 ## Prerequisite
 
-NASM for Windows is required. The build script resolves it in this order: an explicit `NasmExe` path, `PATH`, the vcpkg NASM cache under `%VCPKG_ROOT%\\downloads\\tools\\nasm` or `C:\\vcpkg\\downloads\\tools\\nasm`, then the standard Program Files locations. When vcpkg contains multiple cached NASM versions, the highest detected version is selected. No per-user Visual Studio setting is required.
+NASM for Windows is required. The build script resolves it in this order: an explicit `NasmExe` path, `PATH`, the vcpkg NASM cache under `%VCPKG_ROOT%\downloads\tools\nasm` or `C:\vcpkg\downloads\tools\nasm`, then the standard Program Files locations. When vcpkg contains multiple cached NASM versions, the highest detected version is selected. No per-user Visual Studio setting is required.
 
 ## Build
 
