@@ -161,3 +161,28 @@
 00008AEF  B84000            mov ax,0x40
 00008AF2  8ED8              mov ds,ax
 00008AF4  A01700            mov al,[0x17]
+
+
+===== INT 13h hook / INT 40h chain =====
+
+Direct caller:
+134E: E8 0D 96  -> CALL A95Eh
+
+A95Eh instruction sequence:
+A95E FA             CLI
+A95F FC             CLD
+A960 BE 4C 00       MOV SI,004Ch
+A963 BF 00 01       MOV DI,0100h
+A966 B8 8D A0       MOV AX,A08Dh
+A969 26 87 04       XCHG AX,[ES:SI]
+A96C AB             STOSW
+A96D 8C C8          MOV AX,CS
+A96F 26 87 44 02    XCHG AX,[ES:SI+02h]
+A973 AB             STOSW
+
+Semantics:
+- Installs CS:A08Dh as the new INT 13h vector at ES:004Ch/004Eh.
+- Copies the previous INT 13h offset/segment into ES:0100h/0102h, i.e. the INT 40h vector slot.
+- A08Dh forwards DL<80h and AH=00h through INT 40h.
+- A95Eh does not initialize ES; its caller's ES=0000h precondition is not yet proven. Treat the IVT write interpretation as intended but keep ES provenance open.
+- The only direct in-ROM near JMP found to C610h is EC59h -> C610h. There is no literal far pointer C610h:F000h. C610h remains a strong candidate for the prior INT 13h handler, not a proven runtime INT 40h target.
