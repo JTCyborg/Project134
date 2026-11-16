@@ -5,9 +5,9 @@ Decode: Capstone x86-16 seeded windows. See ami486_candidate_windows_20261116.tx
 
 ## 1. Dispatcher
 
-F8E7h–F929h is the guarded interrupt-style wrapper candidate (the previous F900h seed was misaligned):
-- obtains a selector from the saved register frame;
-- indexes the six-word table at F92Ah;
+F8E7h–F929h is the guarded interrupt-style wrapper candidate (the previous F900h and F8E8h seeds were misaligned):
+- uses DX as the COM-port index (0..3), reads the COM base word from the BDA at 0040:0000+2*DX, and skips the service if that word is zero;
+- reads the per-port timeout byte from BDA 0040:007Ch+DX, scales its low byte by four into DI, then indexes the six-word AH handler table at F92Ah;
 - loads the selected handler offset from CS-relative memory;
 - calls the handler through AX;
 - stores returned AX into [BP+0Eh];
@@ -25,7 +25,7 @@ The table is native little-endian:
 | 04h | F999h |
 | 05h | F9D3h |
 
-The AH function selector and the handlers' direct UART register access identify this as the BIOS INT 14h serial communications service. The wrapper validates DX<4 and AH<6; the valid path begins at F8F2h. The IVT installation/caller for the F8E7h candidate has not yet been found, so the vector target itself remains to be verified.
+The AH function selector, DX=COM-port index, BDA COM-base lookup, per-port timeout lookup and the handlers' direct UART register access identify this as the BIOS INT 14h serial communications service. The wrapper validates DX<4 and AH<6; the valid path begins at F8F2h. The IVT installation/caller for the F8E7h candidate has not yet been found, so the vector target itself remains to be verified.
 
 ## 2. UART register evidence
 
@@ -101,11 +101,11 @@ The six functions correspond closely to the classic BIOS serial-service shape:
 - configure modem-control outputs;
 - write modem-control outputs and sample status.
 
-The UART identification and INT 14h service mapping are high-confidence: the code accesses the exact DLAB/DLL/DLM/LCR/IER/THR/RBR/MCR/LSR/MSR offsets, uses the standard DLAB sequence and implements the standard baud-rate divisor table. Only the IVT installation/caller for F900h remains unresolved.
+The UART identification and INT 14h service mapping are high-confidence: the code accesses the exact DLAB/DLL/DLM/LCR/IER/THR/RBR/MCR/LSR/MSR offsets, uses the standard DLAB sequence and implements the standard baud-rate divisor table. Only the IVT installation/caller for F8E7h remains unresolved.
 
 ## 5. Remaining work
 
-1. Find the code that installs or invokes the F900h wrapper and verify INT 14h vector provenance.
+1. Find the code that installs or invokes the F8E7h wrapper and verify INT 14h vector provenance.
 2. Determine the exact bit meaning of the [BP+0Eh]/BH/BL configuration fields.
 3. Confirm the baud-divisor table and supported baud rates.
 4. Validate the return flags and AX/AH/AL contracts against the wrapper's caller frame.
@@ -134,4 +134,4 @@ The divisor sequence is generated as 0600h shifted right by the selector value, 
 
 ## 7. Wrapper entry alignment correction
 
-Raw bytes establish the guarded entry at F8E7h, not F900h or F8E8h. F8E7h begins `83 FA 04` (CMP DX,04h); the guards at F8EAh and F8F0h branch to the cleanup CALL at F926h. The valid path begins with PUSHA at F8F2h. F900h is the final displacement byte of `MOV DX,[BP+DI]` at F8FDh, and F8E8h is an interior byte of the CMP instruction. IRET is at F929h; the six-word table begins at F92Ah. The candidate-window generator is now seeded at F8E7h and clipped after F929h. The INT 14h IVT target remains unverified.
+Raw bytes establish the guarded entry at F8E7h, not F900h or F8E8h. F8E7h begins `83 FA 04` (CMP DX,04h); the guards at F8EAh and F8F0h branch to the cleanup CALL at F926h. The valid path begins with PUSHA at F8F2h. F900h is the final displacement byte of `MOV DX,[DI+0000h]` at F8FDh, and F8E8h is an interior byte of the CMP instruction. IRET is at F929h; the six-word table begins at F92Ah. The candidate-window generator is now seeded at F8E7h and clipped after F929h. The INT 14h IVT target remains unverified.
