@@ -1087,3 +1087,8 @@ The earlier A100h–A123h byte-swapped-table hypothesis is withdrawn. The actual
 ## INT 13h service handlers resolved — 2026-11-16
 
 The 26-entry table at A0F1h now has confirmed standard-service mappings for the main operations: AH=02 read sectors (ATA 20h/REP INSW), 03 write sectors (30h/REP OUTSW), 04 verify (40h), 05 format track (50h with guard/prompt), 08 get parameters, 09 initialize parameters (91h), 0Ah/0Bh read/write long (22h/32h, 204h-byte buffers), 0Ch seek (70h), 0Dh reset path, 10h ready/status, 11h recalibrate (10h), 14h diagnostic (90h), and 15h get disk type/capacity (AH=03h, total sectors CX:DX). The shared A18Eh error stub handles unsupported selectors. AH=19h remains unresolved. Full map: AMI486_STORAGE_AND_DISPATCH_REGIONS_20261116.md.
+
+
+## A000h–AFFFh function map expanded — 2026-11-16
+
+The INT 13h hard-disk handler now has an entry-to-return map in AMI486_STORAGE_AND_DISPATCH_REGIONS_20261116.md. Confirmed data-in/data-out paths: A399h reads 0100h words from 01F0h with REP INSW under ATA command 20h; A406h writes 0100h words to 01F0h with REP OUTSW under command 30h. Read/write-long use 204h-byte buffers and commands 22h/32h. AH=04 verify uses 40h; AH=05 format uses 50h and the user warning path; AH=0Ch seek uses 70h. The service map also covers reset, status, parameters, initialize, ready, recalibrate, diagnostics and capacity.
