@@ -856,3 +856,12 @@ This phase is semantic classification of selected regions, not a complete CFG. S
 - The update is gated by status bits from AL: bit 5 at 5D5Ah skips the larger initialization block; bits 6/7 at 5D7Eh skip the CMOS write.
 - CMOS BEh:BFh therefore has at least two distinct writers: the checksum sum routine (phase 78) and this CS-relative POST value writer. Withdraw the global claim that BEh:BFh is a dedicated checksum field; the checksum routine's local behavior remains confirmed.
 - E5DBh status provenance, BEh:BFh readers and writer ordering, BP.13 provenance, and DA5Eh/DA61h dynamic entry remain open.
+
+
+## Semantic map — phase 80 (2026-11-16)
+
+- [AMI486_SEMANTIC_MAP_PHASE80_20261116.md](AMI486_SEMANTIC_MAP_PHASE80_20261116.md)
+- Corrected the phase 79 CALL-target alignment at 5D6Dh..5D99h: calls enter EE94h (CMOS read) and EE9Dh (CMOS write), not EE93h RET stubs.
+- Decoded the second BEh:BFh writer: read CMOS[B8h] into DI, clear CMOS[B8h], read CMOS[8Eh] and test bits 6/7; if clear, read CMOS[BEh:BFh], subtract the saved old CMOS[B8h] byte, and write the adjusted word back.
+- Withdrawn phase 79's incorrect CS-relative BFBEh interpretation. BEh:BFh has at least two writers (range-sum writer and this conditional adjustment), so its global semantic role and update ordering remain unresolved.
+- CMOS[B8h]/[8Eh] provenance, E5DBh status source, BP.13 producer and DA5Eh/DA61h dynamic entry remain open.
