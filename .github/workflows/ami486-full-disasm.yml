@@ -68,4 +68,5 @@ jobs:
             exit 0
           fi
           git commit -m "Generate complete linear 16-bit AMI486 ROM disassembly"
+          git pull --rebase origin main
           git push
