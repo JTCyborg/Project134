@@ -57,7 +57,7 @@ Reason: Legacy floppy INT 13h AH dispatch table
 Words: C69A, C6CE, C7E2, C7E2, C7E2, C8E1, C999, C6D9, C78B, C716, CB09
 
 ===== DATA 2AB3h-2AC2h =====
-Reason: Eight Setup clock-label string pointers
+Reason: Seven Setup clock-label strings plus callback offset 5756h
 Words: B62D, B65C, B664, B66C, B674, B67C, B685, 5756
 
 ===== DATA 2B0Bh-2B12h =====
@@ -4759,6 +4759,63 @@ Reason: Setup chipset-option helper aligned code entry
 2A7D  80 26 46 E0 F0          and byte ptr [0xe046], 0xf0
 2A82  80              db 0x80
 2A83  26              db 0x26
+
+===== 5756h-57D5h =====
+Reason: callback target in final entry of 2AB3h clock selector table
+5756  E1 01                   loope 0x5759
+5758  00 74 02                add byte ptr [si + 2], dh
+575B  B0 CD                   mov al, 0xcd
+575D  C3                      ret
+575E  B0 B3                   mov al, 0xb3
+5760  F7 06 9D E1 02 00       test word ptr [0xe19d], 2
+5766  74 02                   je 0x576a
+5768  B0 BA                   mov al, 0xba
+576A  C3                      ret
+576B  51                      push cx
+576C  A1 99 E1                mov ax, word ptr [0xe199]
+576F  E8 7F FF                call 0x56f1
+5772  8A C1                   mov al, cl
+5774  8A 26 9F E1             mov ah, byte ptr [0xe19f]
+5778  AB                      stosw word ptr es:[di], ax
+5779  33 C9                   xor cx, cx
+577B  8A 0E 9B E1             mov cl, byte ptr [0xe19b]
+577F  2A 0E 99 E1             sub cl, byte ptr [0xe199]
+5783  49                      dec cx
+5784  8A C2                   mov al, dl
+5786  F3 AB                   rep stosw word ptr es:[di], ax
+5788  8A C6                   mov al, dh
+578A  AB                      stosw word ptr es:[di], ax
+578B  59                      pop cx
+578C  C3                      ret
+578D  57                      push di
+578E  A3 99 E1                mov word ptr [0xe199], ax
+5791  89 16 9B E1             mov word ptr [0xe19b], dx
+5795  89 1E 9D E1             mov word ptr [0xe19d], bx
+5799  E8 66 FF                call 0x5702
+579C  B0 00                   mov al, 0
+579E  E8 88 FF                call 0x5729
+57A1  8A C8                   mov cl, al
+57A3  E8 AB FF                call 0x5751
+57A6  8A D0                   mov dl, al
+57A8  B0 01                   mov al, 1
+57AA  E8 7C FF                call 0x5729
+57AD  8A F0                   mov dh, al
+57AF  E8 B9 FF                call 0x576b
+57B2  E8 A9 FF                call 0x575e
+57B5  8A C8                   mov cl, al
+57B7  8A F0                   mov dh, al
+57B9  B2 20                   mov dl, 0x20
+57BB  FE 06 9A E1             inc byte ptr [0xe19a]
+57BF  A0 9A E1                mov al, byte ptr [0xe19a]
+57C2  3A 06 9C E1             cmp al, byte ptr [0xe19c]
+57C6  73 05                   jae 0x57cd
+57C8  E8 A0 FF                call 0x576b
+57CB  EB EE                   jmp 0x57bb
+57CD  B0 02                   mov al, 2
+57CF  E8 57 FF                call 0x5729
+57D2  8A C8                   mov cl, al
+57D4  E8              db 0xE8
+57D5  7A              db 0x7A
 
 ===== 2A80h-2AFFh =====
 Reason: Setup chipset-option helper continuation
