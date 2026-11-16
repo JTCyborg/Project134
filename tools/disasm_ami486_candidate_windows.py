@@ -128,7 +128,7 @@ SEEDS = [
     (0x6860, "BIOS INT10 character/attribute output helper"),
     (0x68B0, "hexadecimal byte display helper"),
     (0x68C8, "BIOS INT10 character output helper"),
-    (0x68E2, "numeric/date formatting helper");
+    (0x68E2, "numeric/date formatting helper"),
     (0xD100, "FDC I/O code candidate; references ports 03F4h/03F7h"),
     (0xD104, "FDC media/drive-state helper candidate"),
     (0xD156, "direct DMA programming helper"),
