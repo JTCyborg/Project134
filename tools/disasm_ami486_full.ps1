@@ -32,12 +32,12 @@ if ($exitCode -ne 0) {
 }
 
 $lines = Get-Content -LiteralPath $OutputPath
-if ($lines.Count -eq 0 -or $lines[0] -notmatch '^00000000\\s') {
+if ($lines.Count -eq 0 -or $lines[0] -notmatch '^00000000\s') {
     throw "Unexpected listing start. First='$($lines[0])'"
 }
 $decodedBytes = 0
 foreach ($line in $lines) {
-    if ($line -match '^([0-9A-Fa-f]{8})\\s+([0-9A-Fa-f]+)\\s+') {
+    if ($line -match '^([0-9A-Fa-f]{8})\s+([0-9A-Fa-f]+)\s+') {
         $decodedBytes += [int]($Matches[2].Length / 2)
     } else {
         throw "Unrecognized ndisasm output line: $line"
