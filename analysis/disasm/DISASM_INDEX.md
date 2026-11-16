@@ -1126,14 +1126,19 @@ Detailed map: [AMI486_CLOCK_AND_TEXT_RENDERING_20261116.md](AMI486_CLOCK_AND_TEX
 
 ## Serial BIOS / UART subsystem — 2026-11-16
 
-Detailed map: [AMI486_INT14_SERIAL_BIOS_20261116.md](AMI486_INT14_SERIAL_BIOS_20261116.md). The F900h wrapper dispatches six AH functions through F92Ah. The handlers program UART DLAB/DLL/DLM/LCR/IER, transmit/receive via THR/RBR, and read/write MCR/LSR/MSR. The UART identity is high-confidence; INT 14h vector provenance and exact return contracts remain open.
+Detailed map: [AMI486_INT14_SERIAL_BIOS_20261116.md](AMI486_INT14_SERIAL_BIOS_20261116.md). The F8E7h wrapper dispatches six AH functions through F92Ah. The handlers program UART DLAB/DLL/DLM/LCR/IER, transmit/receive via THR/RBR, and read/write MCR/LSR/MSR. The UART identity is high-confidence; INT 14h vector provenance and exact return contracts remain open.
 
 
 ## INT 14h serial service confirmation — 2026-11-16
 
-The F900h wrapper's AH=00h–05h table is confirmed as the BIOS serial-service family: AH=00h programs UART baud divisor/LCR, AH=01h transmits, AH=02h receives, AH=03h returns LSR/MSR, AH=04h/05h manipulate modem-control outputs. The baud table exactly matches 110–9600 baud divisors. Only the IVT installation/caller for F900h remains unresolved. See AMI486_INT14_SERIAL_BIOS_20261116.md.
+The F8E7h wrapper's AH=00h–05h table is confirmed as the BIOS serial-service family: AH=00h programs UART baud divisor/LCR, AH=01h transmits, AH=02h receives, AH=03h returns LSR/MSR, AH=04h/05h manipulate modem-control outputs. The baud table exactly matches 110–9600 baud divisors. Only the IVT installation/caller for F8E7h remains unresolved. See AMI486_INT14_SERIAL_BIOS_20261116.md.
 
 
 ## FDC DMA direction verified — 2026-11-16
 
 D156h receives mode 46h from C8BBh (8237 channel 2, single, memory-to-FDC write) and mode 4Ah from C936h/C913h (channel 2, single, FDC-to-memory read). The DMA direction is now resolved at these callers; D40Ah–D462h command-byte semantics remain open.
+
+
+## INT 14h wrapper entry and BDA lookup correction — 2026-11-16
+
+The initial F900h candidate seed was misaligned; the first replacement at F8E8h was also one byte late. The current Capstone output verifies the guarded entry candidate at F8E7h (`83 FA 04`, CMP DX,04h), with the valid path beginning at F8F2h. F8FDh is `MOV DX,[DI+0000h]`; because DS=0040h and DI=2*DX, this reads the COM base word from the BDA array at 0040:0000+2*DX. A zero base branches to the restore path. The wrapper then reads the timeout byte at 0040:007Ch+DX and scales it by four. The common cleanup CALL is F926h, IRET is F929h, and the six-word table begins F92Ah. F900h is the final displacement byte of the MOV instruction, not a function entry. The INT 14h IVT installation remains unverified. See AMI486_INT14_SERIAL_BIOS_20261116.md.
