@@ -703,3 +703,13 @@ This phase is semantic classification of selected regions, not a complete CFG. S
 - 2913h resets BP and uses it as a memory-segment counter.
 - D6CEh copies AX through general registers into BP in a stack/register self-test; no edge to DAxx established.
 - BP.13 source remains unresolved; likely inherited or dynamically loaded rather than set by an immediate mask in these paths.
+
+
+## Semantic map — phase 65 (2026-11-16)
+
+- [AMI486_SEMANTIC_MAP_PHASE65_20261116.md](AMI486_SEMANTIC_MAP_PHASE65_20261116.md)
+- D9D9 is an unconditional jump to 1AFBh; D9DCh is not its fall-through.
+- 1AFBh uses a crafted stack return at 1B04h to resume at 1B06h; 1B58h then transfers to 208Dh.
+- The 208Dh/20C6h/20D2h paths use further crafted stack returns; execution resumes at 2098h, 20CCh, and 20DAh.
+- 20DAh enters a temporary CR0.PE memory probe; CR0.PE is cleared at 23BDh. MOV BP,3 at 23DEh is error-only.
+- No direct decoded branch or static pointer word to plausible DAxx entry addresses was found; DA5Eh/DA61h runtime entry remains unresolved.
