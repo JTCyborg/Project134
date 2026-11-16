@@ -201,3 +201,12 @@ This phase is semantic classification of selected regions, not a complete CFG. S
 - Corrected `85D6`: when `82B0=0`, CX remains zero and the worker returns; it does **not** fall back to the five-entry table. The optional dynamic table is inactive in the stock ROM.
 - Confirmed the stock runtime table and extended Setup-record ranges are empty; 8400 and 0C53 skip them.
 - Updated phase 6 with an explicit correction to its earlier zero-selector fallback statement.
+
+
+## Semantic map — phase 9 (2026-11-16)
+
+- [AMI486_SEMANTIC_MAP_PHASE9_20261116.md](AMI486_SEMANTIC_MAP_PHASE9_20261116.md)
+- Cross-checked BIOS ALi1429 access helpers against `Project124/PCem/ali1429.c`: indexed protocol is ports `22h/23h`.
+- PCem explicitly models only registers `13h/14h` for C0000h–FFFFFh shadow windows; remaining indices are generic storage in that model.
+- Confirmed the 81-entry table at `873C–887F` is applied through CMOS ports `70h/71h`, not ALi1429 ports `22h/23h`.
+- Traced the separate direct ALi1429 read-modify-write sequence at `1C5E–1DD0`; register bit meanings remain unassigned absent a fuller register map.
