@@ -273,3 +273,8 @@ A95Eh is called at 134Eh within the function entered at 131Fh; 131Fh is directly
 ## Candidate-window and CMOS-gate refresh — 2026-11-16
 
 The generated candidate listing now contains 168 code windows and 18 data windows (186 headers), with a 10,700-byte union across 56 pages (9,450 code bytes, 1,333 data bytes, 83 overlap bytes). The 131Fh alternate entry is included as a separate window through 1364h. The CMOS 0Eh C0h gate behavior is now mapped: bit 7/6 status causes the BIOS to bypass CMOS 10h drive-type-specific setup and use its alternate probe path; EEAAh reads CMOS through ports 70h/71h. Remaining FDC state uncertainty is confined to the low nibble of [BX+90h].
+
+
+## INT 14h vector-reference scan — 2026-11-16
+
+A full raw-ROM scan found no direct near CALL/JMP target to F8E7h, no literal word reference F8E7h and no far pointer F000:F8E7h. The six-handler UART dispatcher is structurally an INT 14h-style service candidate, but its IVT slot 0000:0054h/0056h may be initialized externally or dynamically. Runtime IVT capture is required before calling it the installed INT 14h target.
