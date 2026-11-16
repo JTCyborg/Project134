@@ -1074,7 +1074,7 @@ Detailed report: [AMI486_STORAGE_AND_DISPATCH_REGIONS_20261116.md](AMI486_STORAG
 - D100h–D5FFh is the independent floppy controller/DMA subsystem using 03F2h/03F4h/03F5h/03F7h and DMA ports 0Ch/0Bh/05h/04h.
 - AD00h–AE5Fh is keyboard translation data candidate; AE60h onward includes INT 15h AH=4Fh keyboard intercept handling.
 - F92Ah–F935h is a six-entry handler-offset table; F977h is an overlapping alternate entry inside the F936h stream. F900h wrapper returns with IRET; vector provenance remains unresolved.
-- The Capstone candidate-window output is now 69 independent windows, with 16-bit near-target wraparound.
+- The Capstone candidate-window output is now 68 independent code windows plus separately emitted data ranges, with 16-bit near-target wraparound.
 
 Do not merge ATA, FDC, keyboard and F9xx dispatch code into one subsystem.
 
