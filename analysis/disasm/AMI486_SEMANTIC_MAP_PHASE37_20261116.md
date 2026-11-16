@@ -8,10 +8,10 @@ This phase resolves the timer-based measurement routine called by 8F12h. It cove
 
 8F50h saves DS and ES, disables interrupts, and sets ES=1000h. It creates two test stubs:
 
-- At 1000:0000, it writes 03E8h words of F7F3h, followed by byte CBh.
-- At 1000:0800, it writes 03E8h words of F6F3h, followed by byte CBh.
+- At 1000:0000, it writes 03E8h (1000 decimal) words of F7F3h, followed by byte CBh.
+- At 1000:0800, it writes 03E8h (1000 decimal) words of F6F3h, followed by byte CBh.
 
-Each region therefore contains 1000h? No: the REP STOSW count is 03E8h words, i.e. 1000 decimal words / 2000 bytes, followed by CBh. The first region occupies offsets 0000h–07D0h inclusive of its terminator, and the second 0800h–0FD0h. The gap is intentional.
+Each region therefore contains 1000 words / 2000 bytes, followed by CBh. The first region occupies offsets 0000h–07D0h inclusive of its terminator, and the second 0800h–0FD0h. The gap is intentional.
 
 The opcode pairs are repeated 16-bit DIV instructions:
 - F7 F3 decodes as DIV BX (word divide).
