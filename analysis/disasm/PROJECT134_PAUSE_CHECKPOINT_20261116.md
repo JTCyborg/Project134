@@ -152,3 +152,8 @@ See AMI486_CLOCK_AND_TEXT_RENDERING_20261116.md. The 6774h and 67AEh routines ca
 ## Address-ledger reconciliation — 2026-11-16
 
 The address ledger is present as a first-pass reference map; it is not yet the complete per-byte semantic classification. Corrected its gap count to 103 pages (153 referenced + 103 without explicit phase-address tokens = 256). The candidate listing now contains 146 code windows and 6 data windows; their distinct union is 8,618 bytes across 46 pages, not a semantic-coverage percentage. The master linear listing already covers the entire 64-KiB ROM, so do not regenerate a duplicate linear decode. Continue with CFG, data/code boundaries and unresolved caller/vector contracts.
+
+
+## Serial BIOS follow-up — 2026-11-16
+
+See AMI486_INT14_SERIAL_BIOS_20261116.md. F900h is a six-function IRET dispatch wrapper strongly matching BIOS INT 14h. F936h initializes UART baud divisor and LCR; F986h transmits; F9C4h receives; F977h reads LSR/MSR; F999h/F9D3h configure modem-control outputs. DX-relative register offsets match a 16550-compatible UART. The actual vector installation remains unresolved.
