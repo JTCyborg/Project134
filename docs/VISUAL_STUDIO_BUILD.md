@@ -12,12 +12,18 @@ Install NASM for Windows and make `nasm.exe` available on `PATH`. The project al
 
 ## Build
 
-1. Open `Project134.sln`.
+1. Open `Project134.sln` in Microsoft Visual Studio.
 2. Select `Debug | x64` or `Release | x64`.
 3. Build the `Project134.BIOS` project.
-4. Confirm that the post-build validator reports a pass.
+4. In the Build Output window, confirm that the script prints the NASM path, source path, output path and `BUILD SUCCESS`.
 
-The current bootstrap output is `out/<Configuration>/Project134.bin` (the exact directory is controlled by the solution output path).
+The output directory is anchored to the BIOS project location, not `$(SolutionDir)`:
+- `out\Debug\Project134.bin`
+- `out\Release\Project134.bin`
+
+The build script creates the output directory, resolves NASM, checks its exit code, verifies that the ROM exists and runs the reset-vector validator. A missing NASM executable or missing output is a build error, not a successful empty build.
+
+If NASM is installed elsewhere, set the MSBuild property `NasmExe` to its full executable path (for example, pass `/p:NasmExe="C:\Tools\NASM\nasm.exe"` to MSBuild).
 
 ## Current limitations
 

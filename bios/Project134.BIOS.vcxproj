@@ -21,17 +21,20 @@
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <PropertyGroup>
-    <OutDir>$(SolutionDir)out\$(Configuration)\</OutDir>
-    <IntDir>$(SolutionDir)obj\$(Configuration)\</IntDir>
+    <!-- Anchor output to this project, not SolutionDir (which can be empty or
+         point elsewhere when the project is opened outside the solution). -->
+    <OutDir>$(MSBuildProjectDirectory)\..\out\$(Configuration)\</OutDir>
+    <IntDir>$(MSBuildProjectDirectory)\..\obj\$(Configuration)\</IntDir>
     <NasmExe Condition="'$(NasmExe)'==''">nasm.exe</NasmExe>
     <RomSize Condition="'$(RomSize)'==''">65536</RomSize>
-    <NMakeBuildCommandLine>if not exist "$(OutDir)" mkdir "$(OutDir)" &amp; "$(NasmExe)" -f bin -DROM_SIZE=$(RomSize) -o "$(OutDir)Project134.bin" "$(ProjectDir)src\reset.asm" &amp;&amp; powershell.exe -NoProfile -ExecutionPolicy Bypass -File "$(ProjectDir)tools\validate_rom.ps1" -RomPath "$(OutDir)Project134.bin" -ExpectedSize $(RomSize)</NMakeBuildCommandLine>
-    <NMakeReBuildCommandLine>if exist "$(OutDir)Project134.bin" del /Q "$(OutDir)Project134.bin" &amp; $(NMakeBuildCommandLine)</NMakeReBuildCommandLine>
+    <NMakeBuildCommandLine>powershell.exe -NoLogo -NoProfile -ExecutionPolicy Bypass -File "$(MSBuildProjectDirectory)\tools\build_bios.ps1" -OutputDirectory "$(OutDir)" -NasmExe "$(NasmExe)" -RomSize $(RomSize)</NMakeBuildCommandLine>
+    <NMakeReBuildCommandLine>$(NMakeBuildCommandLine)</NMakeReBuildCommandLine>
     <NMakeCleanCommandLine>if exist "$(OutDir)Project134.bin" del /Q "$(OutDir)Project134.bin"</NMakeCleanCommandLine>
     <NMakeOutput>$(OutDir)Project134.bin</NMakeOutput>
   </PropertyGroup>
   <ItemGroup>
     <None Include="$(ProjectDir)src\reset.asm" />
+    <None Include="$(ProjectDir)tools\build_bios.ps1" />
     <None Include="$(ProjectDir)tools\validate_rom.ps1" />
     <None Include="$(ProjectDir)README.md" />
   </ItemGroup>
