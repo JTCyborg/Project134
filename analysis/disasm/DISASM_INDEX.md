@@ -1062,7 +1062,7 @@ The first seeded Capstone decode is in `analysis/disasm/ami486_candidate_windows
 - A000h–AFFFh contains an IDE/ATA hard-disk service and boot-sector protection path: direct I/O to 01F0h–01F7h, 512-byte PIO transfer at A406h, ATA command/status helpers, and a BIOS INT 13h vector hook candidate at A95Eh. The A125h embedded warning (“Possible VIRUS: Continue (Y/N)?”) is rendered by A847h.
 - D100h–D5FFh is a separate floppy-controller I/O candidate using 03F4h/03F7h.
 - AD00h–AE5Fh contains keyboard translation-table candidates; AE60h onward contains keyboard/INT 15h handler code.
-- A100h–A123h contains 18 two-byte entries. Byte-reversed values match plausible code offsets; the dispatch encoding remains unconfirmed.
+- A08Dh is the hooked INT 13h hard-disk entry; DL<80h is forwarded to INT 40h. A0A0h dispatches AH=00h–19h through the 26-entry native little-endian table at A0F1h–A124h. A100h is an interior table byte, not a separate table start.
 - Candidate windows are not CFGs. The script normalizes near-branch targets to 16-bit IP wraparound.
 
 
@@ -1077,3 +1077,8 @@ Detailed report: [AMI486_STORAGE_AND_DISPATCH_REGIONS_20261116.md](AMI486_STORAG
 - The Capstone candidate-window output is now 69 independent windows, with 16-bit near-target wraparound.
 
 Do not merge ATA, FDC, keyboard and F9xx dispatch code into one subsystem.
+
+
+## INT 13h dispatcher correction — 2026-11-16
+
+The earlier A100h–A123h byte-swapped-table hypothesis is withdrawn. The actual table begins at A0F1h and contains 26 native little-endian offsets selected by AH through the indirect CALL at A0BDh. A08Dh is the INT 13h handler entry; DL<80h is forwarded to INT 40h. The complete selector-to-target map is in AMI486_STORAGE_AND_DISPATCH_REGIONS_20261116.md.
