@@ -100,6 +100,7 @@ SEEDS = [
     (0xAF00, "keyboard/BIOS event handling code candidate"),
     (0x2100, "5555h/AAAAh pattern-write and compare stream candidate"),
     (0x2187, "memory-pattern test failure/return target"),
+    (0x222D, "memory-pattern test final branch/return target"),
     (0x6800, "code-dense raw window without phase address token"),
     (0xD100, "FDC I/O code candidate; references ports 03F4h/03F7h"),
     (0xD104, "FDC media/drive-state helper candidate"),
