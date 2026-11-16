@@ -1052,7 +1052,7 @@ See [AMI486_ADDRESS_LEDGER_20261116.md](AMI486_ADDRESS_LEDGER_20261116.md).
 - Narrow token scan: 153 pages have explicit address references; 103 pages have none. This is not a coverage percentage.
 - Raw-byte checks uncovered substantial executable-looking content in pages without explicit phase references, including 2100h, 6800h, A000h–ACFFh, AE60h–AFFFh, D100h–D5FFh and F900h.
 - Confirmed data candidates include the Format/BootSector Write/Possible VIRUS message at A125h–A18Dh and keyboard translation tables at AD00h–AE5Fh.
-- A000h–AFFFh, D100h–D5FFh, 2100h and the F900h dispatch wrapper now have dedicated subsystem maps. Remaining high-priority questions include the runtime INT 40h target, F900h vector provenance, the 2100h memory-test caller/ES setup, keyboard table boundaries and the unresolved command semantics at D40Ah–D462h.
+- A000h–AFFFh, D100h–D5FFh, 2100h and the F8E7h INT 14h serial dispatcher now have dedicated subsystem maps. Remaining questions include runtime INT 40h target, INT 14h vector provenance, the 2100h memory-test caller/ES setup, keyboard table boundaries, low-bit [BX+90h] FDC state-token semantics and EEAAh configuration-byte provenance.
 
 
 ## ATA / floppy / keyboard region discoveries — 2026-11-16
@@ -1073,8 +1073,8 @@ Detailed report: [AMI486_STORAGE_AND_DISPATCH_REGIONS_20261116.md](AMI486_STORAG
 - A000h–AFFFh is IDE/ATA hard-disk code, not FDC. It uses ports 01F0h–01F7h and 03F6h; A406h transfers 256 words out, AC00h issues IDENTIFY DEVICE and reads 256 words in. The A125h warning is displayed by A847h; A8F4h accepts Y/N.
 - D100h–D5FFh is the independent floppy controller/DMA subsystem using 03F2h/03F4h/03F5h/03F7h and DMA ports 0Ch/0Bh/05h/04h.
 - AD00h–AE5Fh is keyboard translation data candidate; AE60h onward includes INT 15h AH=4Fh keyboard intercept handling.
-- F92Ah–F935h is the six-entry INT 14h serial-service table; F977h is the AH=03h status entry overlapping the F936h initialization stream. F900h vector installation remains unresolved.
-- The current Capstone candidate-window output has 146 unique bounded code windows plus 6 data windows (152 headers total); their union is 8,618 distinct bytes across 46 pages. This is a selected-window footprint, not semantic coverage.
+- F92Ah–F935h is the six-entry INT 14h serial-service table; F977h is the AH=03h status entry overlapping the F936h initialization stream. F8E7h INT 14h vector installation remains unresolved.
+- The current Capstone candidate-window output has 189 unique bounded code windows plus 6 data windows (195 headers total); their union is 10,493 distinct bytes across 54 pages. This is a selected-window footprint, not semantic coverage.
 
 Do not merge ATA, FDC, keyboard and F9xx dispatch code into one subsystem.
 
@@ -1142,3 +1142,8 @@ D156h receives mode 46h from C8BBh (8237 channel 2, single, memory-to-FDC write)
 ## INT 14h wrapper entry and BDA lookup correction — 2026-11-16
 
 The initial F900h candidate seed was misaligned; the first replacement at F8E8h was also one byte late. The current Capstone output verifies the guarded entry candidate at F8E7h (`83 FA 04`, CMP DX,04h), with the valid path beginning at F8F2h. F8FDh is `MOV DX,[DI+0000h]`; because DS=0040h and DI=2*DX, this reads the COM base word from the BDA array at 0040:0000+2*DX. A zero base branches to the restore path. The wrapper then reads the timeout byte at 0040:007Ch+DX and scales it by four. The common cleanup CALL is F926h, IRET is F929h, and the six-word table begins F92Ah. F900h is the final displacement byte of the MOV instruction, not a function entry. The INT 14h IVT installation remains unverified. See AMI486_INT14_SERIAL_BIOS_20261116.md.
+
+
+## FDC command analysis update — 2026-11-16
+
+D40Ah–D462h is a drive data-rate/state-selection sequence, not a list of FDC command opcodes. D499h sets the rate via 03F7h and sends the two-byte MFM READ ID command 4Ah + drive/head, then reads the seven-byte result. D520h–D5D9h identifies/configures an enhanced 765-compatible controller: VERSION 10h expects 90h, DUMPREG 0Eh returns ten bytes, D5DDh sends UNLOCK 14h or LOCK 94h and verifies the one-byte result, CONFIGURE 13h sends 00 08 00, and PERPENDICULAR MODE 12h uses a computed parameter. Remaining FDC unknowns are the low-bit [BX+90h] token meanings and the EEAAh parameter source. See AMI486_FDC_DMA_SUBSYSTEM_20261116.md.
