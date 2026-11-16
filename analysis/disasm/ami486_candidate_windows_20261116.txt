@@ -4607,7 +4607,7 @@ Reason: 5555h/AAAAh pattern-write and compare stream candidate
 217F  55                      push bp
 
 ===== 2187h-2206h =====
-Reason: memory-pattern test failure/return target
+Reason: 64-MiB memory-alias probe continuation
 2187  B6 FF                   mov dh, 0xff
 2189  26 67 66 C7 05 00 00 00 04 55 55 AA AA mov dword ptr es:[0x4000000], 0xaaaa5555
 2196  26 67 66 C7 05 00 01 00 04 FF FF FF FF mov dword ptr es:[0x4000100], 0xffffffff
@@ -5123,7 +5123,7 @@ Reason: second memory-pattern probe stream
 22CD  81 3E 00 20 AA AA       cmp word ptr [0x2000], 0xaaaa
 
 ===== 22DBh-235Ah =====
-Reason: second memory-pattern probe failure trampoline
+Reason: 64-MiB memory-alias probe continuation and chipset update
 22DB  B7 FF                   mov bh, 0xff
 22DD  26 67 66 C7 05 00 00 00 04 55 55 AA AA mov dword ptr es:[0x4000000], 0xaaaa5555
 22EA  26 67 66 C7 05 00 01 00 04 FF FF FF FF mov dword ptr es:[0x4000100], 0xffffffff
