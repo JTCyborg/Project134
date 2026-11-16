@@ -74,9 +74,33 @@ The sequence is bracketed by CLI/STI and preserves AX/DX. This directly confirms
 
 D3B5h reads CMOS register 10h and selects one of its two nibbles based on DL. This is the standard CMOS floppy-drive-type field. D3CFh uses the returned type to choose a controller setup sequence. D517h writes the derived rate/control value to port 03F7h. The exact meaning of each byte sequence at D40Ah–D462h remains open; the raw command bytes are preserved in the candidate decode and are not assigned speculative names.
 
-## 4. Relationship to INT 13h forwarding
+## 4. Legacy floppy INT 13h handler and INT 40h chain
 
-The hard-disk handler at A08Dh forwards requests with DL<80h to INT 40h. This is consistent with a separate floppy BIOS path, but the actual INT 40h vector target has not yet been tied conclusively to the D100h–D5FFh routines. Do not claim that relationship is proven until the vector/caller is traced.
+A separate legacy floppy INT 13h handler is present at C610h. It:
+- saves the interrupt context, sets DS=0040h and validates AH;
+- accepts AH=00h–05h, AH=08h and AH=15h–18h;
+- dispatches through the 11-word table at C5FAh;
+- returns through the common IRET epilogue at C648h–C68Fh.
+
+The native little-endian table at C5FAh is:
+
+| Service | Target | Interpretation |
+|---:|---:|---|
+| AH=00h | C69Ah | Reset |
+| AH=01h | C6CEh | Return last status |
+| AH=02h | C7E2h | Read sectors |
+| AH=03h | C7E2h | Write sectors |
+| AH=04h | C7E2h | Verify sectors |
+| AH=05h | C8E1h | Format track |
+| AH=08h | C999h | Get drive parameters |
+| AH=15h | C6D9h | Get disk type |
+| AH=16h | C78Bh | Disk-change/status path |
+| AH=17h | C716h | Set media type |
+| AH=18h | CB09h | Set media type/format parameters |
+
+The AH=02h/03h/04h shared target uses request state to choose the data direction/operation. The direct paths from C8BBh and C936h call D156h for DMA channel-2 setup; C913h calls D4EAh, D381h, D197h, D156h, D216h, D270h and D2BDh. C6BCh jumps into D2FDh for Sense Interrupt Status. This directly connects the C610h legacy floppy handler to the D100h–D5FFh FDC/DMA routines.
+
+A95Eh saves the previous INT 13h vector into the INT 40h vector slot. A08Dh forwards requests with DL<80h by executing INT 40h. This is the chain to the legacy floppy handler. C610h is the matching in-ROM floppy INT 13h implementation and is the strong candidate for the saved target; the actual runtime segment:offset stored at 0000:0100h should still be confirmed from a trace or initialized IVT snapshot.
 
 ## 5. Remaining work
 
