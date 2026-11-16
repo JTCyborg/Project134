@@ -261,3 +261,11 @@ This phase is semantic classification of selected regions, not a complete CFG. S
 - Resolved `[CS:82E2]` to `19AE`, a stock `RET` hook.
 - Documented CMOS `8Eh & C0h` bypass gate and CMOS `B6.0` AUTO Config/manual selection.
 - Catalogued bit-level CMOS-to-ALi1429 RMW operations on indices `20h,17h,12h,14h,1Eh,1Ah,21h,22h,25h,27h` through ports `22h/23h`.
+
+
+## Semantic map — phase 16 (2026-11-16)
+
+- [AMI486_SEMANTIC_MAP_PHASE16_20261116.md](AMI486_SEMANTIC_MAP_PHASE16_20261116.md)
+- Traced POST callers for `1E9D`, `1E78`, and `1F47`.
+- Documented second AUTO Config/manual selection at POST checkpoint `A4h` and CMOS-to-ALi1429 RMW writes for indices `16h,19h,25h,12h,18h,1Ah,27h`.
+- Identified independent feature-gated register 14h bit operations and ROM-window setup calls.
