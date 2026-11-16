@@ -618,3 +618,13 @@ This phase is semantic classification of selected regions, not a complete CFG. S
 - The verified 5C04h–5F7Dh path still has no local producer of BP.13; 5CF9h only tests it.
 - The apparent 87xx indirect jumps overlap structured configuration/default data and are not accepted as control-flow edges without runtime/table-base proof.
 - Runtime ordering between 12D3h and the DAxx/5Cxx sequence, and the upstream BP stack frame, remain unresolved.
+
+
+## Semantic map — phase 57 (2026-11-16)
+
+- [AMI486_SEMANTIC_MAP_PHASE57_20261116.md](AMI486_SEMANTIC_MAP_PHASE57_20261116.md)
+- 1662h–1676h performs a 16-bit BP bitmap walk using ROR BP,1 and CF, but PUSH BP / POP BP restores the original bitmap before TEST BX,BP. BP.13 is consumed here, not produced.
+- 145Eh sets BP.6 on the RTC/time validation failure branch; 1576h–158Fh isolates helper BP changes.
+- D743h initializes BP=0; D760h can set bit12; D76Ch can set bit15. D794h/D7F2h/D8B8h set fatal numeric codes 9/6/10. D8DCh/D8EEh/D8F3h set bits3/5/4.
+- 2913h–2939h uses BP as a memory-size counter, copies the count to BX, then repurposes BP as a stack-frame pointer.
+- No newly audited path writes BP.13. Its producer and the runtime entry into DAxx/5Cxx remain unresolved.
