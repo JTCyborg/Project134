@@ -493,3 +493,11 @@ This phase is semantic classification of selected regions, not a complete CFG. S
 - Traced the Setup/editor renderer: E19Dh bit 1 selects CMOS index B3h/BAh at 575Eh, consumed by 587Ah; 571Ch decodes packed UI state and 5862h has Setup/menu callers.
 - Corrected the Phase 41 open question: 88D3h is not directly called by the Setup renderer; it follows the delay loop at 88CEh, reached via D60Ch. The 8914h CMOS B3h write is a separate continuation.
 - Confirmed the local 88FAh–8919h path ORs mask 02h into CMOS B3h only when DL bits 4 and 5 are both set; it never clears existing bits. Exact Setup label and D60Ch caller/register contract remain unresolved.
+
+
+## Semantic map — phase 43 (2026-11-16)
+
+- [AMI486_SEMANTIC_MAP_PHASE43_20261116.md](AMI486_SEMANTIC_MAP_PHASE43_20261116.md)
+- Recovered the sole direct entry to D604h from 5D04h: conditional on BP bit 13, the caller sends 8042 command 60h with data 30h (command-byte programming) before the status branch.
+- Corrected the interpretation of D606h: port 64h bit 2 is the 8042 SYS flag, not IBF/busy. SYS=0 reaches the 88CEh delay and 88D3h continuation; SYS=1 branches to 8A04h.
+- Narrowed the CMOS B3h bit-1 update to the SYS=0, real-mode, non-special-DH path; (DL AND 30h)=30h ORs bit 1 into B3h. DH=4 selects a separate stack continuation whose full register contract remains unresolved.
