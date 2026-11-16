@@ -730,3 +730,12 @@ This phase is semantic classification of selected regions, not a complete CFG. S
 - Audited the CS-resident pointer slots at 82D8h–82E6h: 82DAh defaults to 19ABh, a JMP DI trampoline used by 8A78h; 82DEh and 82E2h default to RET stubs at 19ADh/19AEh.
 - The indirect CALLs at 1C06h and 1C5Eh are therefore no-op callbacks in the stock ROM and cannot produce BP.13 or enter DAxx.
 - Runtime patching by unsearched store/copy forms and external hooks remains unproven; next step is a complete write-form audit of these slots.
+
+
+## Semantic map — phase 67 (2026-11-16)
+
+- [AMI486_SEMANTIC_MAP_PHASE67_20261116.md](AMI486_SEMANTIC_MAP_PHASE67_20261116.md)
+- Traced the real caller of callback slot `82E2h`: `12E7h CALL 1C5Eh`; the default callback at `19AEh` is RET.
+- Traced the real caller of callback slot `82DEh`: `52A1h CALL 1C06h`, reached when `CS:8281h` bit 6 is clear; the default callback at `19ADh` is RET.
+- Confirmed these are separate POST paths and neither default callback supplies BP.13 or a DAxx transfer.
+- Runtime patching of the slots and the producer of BP.13 remain unresolved.
