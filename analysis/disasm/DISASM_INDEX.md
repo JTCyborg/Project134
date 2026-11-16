@@ -541,3 +541,12 @@ This phase is semantic classification of selected regions, not a complete CFG. S
 - Resolved the return from the `552A` 32-KiB word-pattern test: the stack word at `5C66` makes RET land at `5C68`, where ZF selects failure at `5C2E` or successful continuation at `5C6A`.
 - Confirmed successful continuation initializes ES via LES, DS=`0040h`, SS=`0030h`, SP=`0100h`, then enters the keyboard-controller checks.
 - BP bit-13 provenance and an indirect live caller for `8400h` remain unresolved.
+
+
+## Semantic map — phase 49 (2026-11-16)
+
+- [AMI486_SEMANTIC_MAP_PHASE49_20261116.md](AMI486_SEMANTIC_MAP_PHASE49_20261116.md)
+- Corrected the alternate instruction boundary after the `552A` return: successful execution resumes at `5C6A`, not at the linear decode boundary `5C69`. The real path sets ES=`0023h`, DS=`0040h`, SS=`0030h`; no LES executes there.
+- Confirmed `5C8C` tests BP bit12 and `5CF9` tests bit13. The keyboard-controller path and `5D07 AND BP,EFFFh` do not set bit13.
+- The only direct listed entry into `5BF8` is `DA9F`. Its visible predecessor may set BP bit0; a separate `BP=1` path exits to `F4A5` and does not reach `DA9F`.
+- BP bit13 producer/context remains unresolved.
