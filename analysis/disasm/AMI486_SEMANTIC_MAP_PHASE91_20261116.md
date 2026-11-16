@@ -88,12 +88,13 @@ The helper accumulates a base-10 value in AX, returns it in DX, and returns the 
 
 ## 4. Alternate-entry warning
 
-0745h and 0747h are not aligned entry points for the 0749h list editor:
-- 0745h is the second byte of the instruction beginning at 0744h (FF 76 FA).
-- 0747h is the short-jump opcode EB 22 at the end of that sequence.
-- 0749h is the aligned ADD DX,[BP+04h] entry used by the five callbacks mapped in phase 90.
+0745h and 0747h are not confirmed runtime entries for the 0749h list editor:
+- 0745h is the second byte of the instruction beginning at 0744h (FF 76 FA); decoding from 0745h alone gives JBE 0741h.
+- 0747h is the next instruction boundary and contains JMP 076Bh (EB 22).
+- A raw-image scan found no direct relative CALL/JMP/Jcc target and no literal 16-bit pointer hit for either 0745h or 0747h.
+- 0749h is the aligned ADD DX,[BP+04h] entry; its five direct CALL sites are 0656h, 0671h, 0690h, 06A2h and 06B4h, matching the callbacks mapped in phase 90.
 
-Do not normalize these three entry addresses into one function entry. Any other callers of 0745h/0747h must be checked for their incoming flags and stack state.
+Keep 0745h as an alternate-decode candidate and 0747h as an unreferenced instruction boundary, not proven callback entries. The actual callers of 0749h are established.
 
 ## 5. Callback return contract still open
 
@@ -105,4 +106,4 @@ The editor's return values are:
 
 The field callbacks use CX!=0 as the gate for committing their BP-relative field updates. This explains why they do not write a value when the user exits the list without entering digits. The complete interpretation of the returned AH values and the secondary dispatcher's next-record selection remains to be proven from all callback callers.
 
-Next: trace the remaining alternate entries 0745h/0747h and the caller-specific AH/CF branches, then simulate the linked records in the 05B4h dispatcher with exact callback return states.
+Next: trace the caller-specific AH/CF branches and simulate the linked records in the 05B4h dispatcher with exact callback return states; retain 0745h/0747h only as unreferenced alternate-decode candidates.
