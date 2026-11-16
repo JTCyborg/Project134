@@ -72,7 +72,7 @@ The sequence is bracketed by CLI/STI and preserves AX/DX. Direct callers supply 
 
 ### Drive type and rate
 
-D3B5h first reads CMOS register 0Eh and tests bits C0h. If clear, it reads CMOS register 10h and selects the drive-type nibble based on DL (DL=0 selects the high nibble; nonzero selects the low nibble), then deliberately returns ZF=1. If 0Eh bits C0h are set, it returns ZF=0 without reading 10h; D3CFh then takes the alternate probe path at D46Dh. CMOS register 10h is the standard floppy-drive-type field. D517h writes the derived rate code to port 03F7h. The exact meaning of each byte sequence at D40Ah–D462h remains open; the raw command bytes are preserved in the candidate decode and are not assigned speculative names.
+D3B5h reads CMOS register 0Eh and tests bits C0h (RTC power-loss / CMOS-checksum status). If both are clear, it reads CMOS register 10h and selects the drive-type nibble based on DL (DL=0 selects the high nibble; nonzero selects the low nibble), then deliberately returns ZF=1. If either 0Eh bit 7 or bit 6 is set, it returns ZF=0 without reading 10h; D3CFh then takes the conservative alternate rate-probe path at D46Dh. CMOS register 10h is the standard floppy-drive-type field; type 05h is 2.88-MB 3.5-inch drive. D517h writes the derived rate code to port 03F7h. The exact meaning of each byte sequence at D40Ah–D462h remains open; the raw command bytes are preserved in the candidate decode and are not assigned speculative names.
 
 ## 4. Legacy floppy INT 13h handler and INT 40h chain
 
@@ -170,7 +170,7 @@ The sequence is a controller-capability/configuration path, not a media-change-o
 | D54Ah–D567h | Reads 7 + 1 + 2 result bytes | Ten-byte enhanced DUMPREG result block |
 | D584h–D589h | AL=00h; call D5DDh | UNLOCK command 14h; expects returned lock state 00h |
 | D58Bh–D59Bh | CH=4, SI=0013h, DI=0008h; D216h sends 13 00 08 00 | CONFIGURE command 13h with parameters 00h,08h,00h |
-| D59Dh–D5C1h | Calls EEAAh with selectors 0Eh and 10h; folds returned bits into CH | Source and exact semantics of these configuration bits remain open |
+| D59Dh–D5C1h | Reads CMOS 0Eh; if valid, reads CMOS 10h and tests both drive-type nibbles for 05h | Sets the per-drive bits in the PERPENDICULAR MODE parameter for 2.88-MB drives |
 | D5C4h–D5D2h | SI receives command 12h plus the computed parameter; CH=2; D216h sends both bytes | PERPENDICULAR MODE command 12h |
 | D5D4h–D5D9h | AL=80h; call D5DDh | LOCK command 94h; expects returned lock state 10h |
 
@@ -240,3 +240,10 @@ D4EAh provides an independent confirmation of the [BX+90h] rate field:
 - If they differ, the code preserves the low six bits of [008Bh], copies the per-drive rate bits into [008Bh], shifts DH[7:6] down to DH[1:0] and calls D517h to write the rate code to port 03F7h.
 
 Therefore [BX+90h] bits 7:6 are definitively the per-drive data-rate selector, while [008Bh] stores the currently programmed global rate. D4EAh restores the original drive selector in DX before returning. The token's bit 4 success flag and its D7h/17h SPECIFY timing uses are established in section 10; the remaining low-nibble flags still need caller tracing.
+
+
+## 12. CMOS helper and perpendicular-mode parameter source
+
+EE94h is the raw CMOS read helper: it writes the register selector to port 70h, performs the short delay sequence, reads the data from port 71h and returns it in AL. EEAAh is the protected read entry: it disables interrupts, sets the CMOS/NMI index bit for ordinary register selectors, calls EE94h and returns the read byte while restoring the saved flags. Therefore the EEAAh calls in D3B5h and D5A1h are CMOS reads, not opaque hardware-port probes.
+
+D5A1h reads CMOS 0Eh. If either bit 7 or bit 6 is set (RTC power-loss / CMOS checksum-invalid status), it skips the drive-type-dependent perpendicular flags and uses the base parameter 80h. If both are clear, it reads CMOS 10h, splits the drive A high nibble and drive B low nibble, and compares each with type 05h (2.88-MB 3.5-inch drive). A match in drive B sets CH bit 3; a match in drive A sets CH bit 2. The resulting parameter is sent with FDC PERPENDICULAR MODE command 12h. This resolves the former EEAAh parameter-source question; only the remaining low-nibble semantics of [BX+90h] and the precise board-specific policy for CMOS 0Eh remain open.
