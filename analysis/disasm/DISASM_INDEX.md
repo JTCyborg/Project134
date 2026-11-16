@@ -145,3 +145,12 @@ This phase is semantic classification of selected regions, not a complete CFG. S
 - Setup walkers `8300/83AE`: selector split at `55h`; built-in base `B7D0h`, runtime record-table base via `CS:[82C6h]`; optional variable-length tails; CMOS conversion and four-byte translation entries.
 - Memory pattern `2761–27B8`: narrowed to explicit verification of two dwords; additional reads are not visibly compared.
 - Runtime writers of `82C0h/82C6h`, exact setup-record schema, and the overlapping entry at `8E3C` remain open.
+
+
+## Semantic map — phase 3 (2026-11-16)
+
+- [AMI486_SEMANTIC_MAP_PHASE3_20261116.md](AMI486_SEMANTIC_MAP_PHASE3_20261116.md)
+- Resolved pointer groups: `82C0/82C2` bound a runtime four-byte entry array; `82C6/82C8` bound a separate variable-length setup-record range; `82CA` points to a word selector list; `82B0` selects within that list.
+- Reconstructed provisional four-byte record schema: `{index/register, mask, value A, value B/translated value}`, corroborated by consumers `8300`, `8400–84C8`, and `85D6`.
+- Distinguished fixed four-byte configuration entries from variable-length setup records; their formats must not be conflated.
+- Runtime pointer initialization and exact chipset address-space mapping remain unresolved.
