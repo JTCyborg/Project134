@@ -800,3 +800,12 @@ This phase is semantic classification of selected regions, not a complete CFG. S
 - Corrected 29EDh: MOV AX,B6B6h; CALL EE94h; TEST AL,1; RET. EE94h writes AL to CMOS index port 70h and reads data port 71h. The tested value is CMOS byte B6h bit 0.
 - Four direct callers of 29EDh: 1A1Dh, 1C72h, 1F4Dh, 23F2h.
 - BP.13 provenance and DA5Eh/DA61h dynamic entry remain unresolved.
+
+
+## Semantic map — phase 74 (2026-11-16)
+
+- [AMI486_SEMANTIC_MAP_PHASE74_20261116.md](AMI486_SEMANTIC_MAP_PHASE74_20261116.md)
+- Decoded CMOS read primitive EE94h (index AL via port 70h, data returned in AL via port 71h) and write primitive EE9Dh (index AL, value AH).
+- 29EDh reads CMOS/NVRAM byte B6h and tests bit 0. Four direct consumers: 1A1Dh (JZ 1A60h), 1C72h (JZ 1C86h), 1F4Dh (JZ 1F61h), 23F2h (JZ 23FDh). Bit set enables the respective initialization paths.
+- No immediate B6h selector was found at EE9Dh write call sites; dynamic-index writers remain possible and unclassified.
+- BP.13 provenance and DA5Eh/DA61h dynamic entry remain unresolved.
