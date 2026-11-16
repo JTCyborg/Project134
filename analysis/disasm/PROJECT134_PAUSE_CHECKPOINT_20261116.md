@@ -91,3 +91,14 @@ The decoded A000h region is now identified as IDE/ATA hard-disk service and boot
 A100h–A123h has 18 two-byte entries whose byte-reversed values match plausible code offsets; dispatch semantics remain unresolved. The A000h initial seed itself is not yet proven as a true entry.
 
 No phase 97. Continue with call/branch cross-reference and entry validation for the ATA region, then trace the separate FDC and keyboard paths.
+
+
+## Storage/dispatch continuation — 2026-11-16
+
+See `analysis/disasm/AMI486_STORAGE_AND_DISPATCH_REGIONS_20261116.md`.
+
+The A000h subsystem is now classified as IDE/ATA hard-disk and boot-sector protection code (01F0h–01F7h, 03F6h), including IDENTIFY DEVICE at AC00h, a 512-byte data-out routine at A406h, and a Y/N “Possible VIRUS” prompt at A847h/A8F4h. The A95Eh stream writes the INT 13h vector slot through ES; ES=0 is not yet proven from the caller.
+
+D100h–D5FFh is a separate FDC/DMA subsystem (03F2h/03F4h/03F5h/03F7h and DMA 0Ch/0Bh/05h/04h). F92Ah–F935h is a six-entry dispatch table; F977h is an overlapping entry in the F936h stream. The generated candidate decode now covers 69 bounded seeds with 16-bit near-branch wraparound.
+
+Next: validate the actual incoming vector/caller for F900h, confirm ES provenance at A95Eh, and map full helper boundaries/callers for ATA and FDC. No phase 97.
