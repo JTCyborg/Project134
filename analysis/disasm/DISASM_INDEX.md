@@ -568,3 +568,13 @@ This phase is semantic classification of selected regions, not a complete CFG. S
 - Resolved the indexed near-jump operand at D6A2: CS:[SI-2958h] addresses a table based at D6A8h.
 - Recorded the first 11 near targets (selectors 0–10); none targets 8400h. Values above 0Ah are range-routed before this table on the examined dispatch path.
 - No new BP.13 producer identified; D74C still only sets BP bits 12 and 15 after clearing BP.
+
+
+## Semantic map — phase 52 (2026-11-16)
+
+- [AMI486_SEMANTIC_MAP_PHASE52_20261116.md](AMI486_SEMANTIC_MAP_PHASE52_20261116.md)
+- Corrected phase 51 reachability: selectors 04h/05h are diverted before D6A2; selectors 09h/0Ah have conditional alternate routing.
+- Selector 3 -> 5280 restores the saved PUSHAW register frame with POPAW; BP is restored from the frame saved at 5260 in BDA 0040:0067.
+- Selector 6 -> 5486 likewise restores BP from that saved frame at 5493, then saves/restores working registers around INT 15h/AH=89h.
+- Selector 2 -> F71E explicitly sets BP=7 and enters fatal POST handling; it cannot produce BP.13.
+- BP.13 producer remains unresolved; trace the caller/context that populated the PUSHAW frame at 5260.
