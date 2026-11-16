@@ -41,9 +41,9 @@ Four direct callers were verified:
 
 | Call site | Immediate branch | Consequence when bit 0 is set |
 |---|---|---|
-| 1A1Dh | JZ 1A5Eh | continues through the conditional initialization block beginning 1A24h |
-| 1C72h | JZ 1C80h | executes calls to 8F12h, 2537h and 256Ah |
-| 1F4Dh | JZ 1F5Eh | executes calls to 8F12h, 2588h and 25A6h |
+| 1A1Dh | JZ 1A60h | continues through the conditional initialization block beginning 1A24h |
+| 1C72h | JZ 1C86h | executes calls to 8F12h, 2537h and 256Ah |
+| 1F4Dh | JZ 1F61h | executes calls to 8F12h, 2588h and 25A6h |
 | 23F2h | JZ 23FDh | executes calls to 8F12h and 2537h |
 
 The same persistent CMOS bit gates multiple setup/initialization paths, rather than being a one-off test local to the RAM diagnostic. This supports treating B6h.0 as a board/firmware configuration flag. Its human-readable meaning is not yet known.
