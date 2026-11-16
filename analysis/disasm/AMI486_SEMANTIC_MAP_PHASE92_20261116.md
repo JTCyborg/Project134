@@ -66,3 +66,8 @@ The earlier description that 0A0Dh displays the current nibble was incorrect. 0A
 ## Phase 93 correction — dual-use 0B5Dh region
 
 The 0B5Dh/0B6Dh region is not merely a table-like byte block. Both offsets are indirect callback targets and aligned 16-bit instruction entries; the same bytes also form four-byte record-like pairs. The classification is now dual-use/overlap candidate pending runtime proof.
+
+
+## Phase 94 correction — 05B4h entry behavior
+
+The initial CALL at 05B4h targets 05E0h, which is a single RET stub. It does not render the prompt. The renderer at 05EBh is called only on the dispatcher exit path at 05DBh. The dispatcher reads [CS:BX] as the next cursor, calls [CS:BX+2], then uses CF/ZF/AH to decide whether to exit, skip one record, or continue at the returned cursor. See phase 94 for the exact instruction and branch map.
