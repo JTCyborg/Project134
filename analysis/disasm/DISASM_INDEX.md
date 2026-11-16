@@ -340,3 +340,11 @@ This phase is semantic classification of selected regions, not a complete CFG. S
 - Corrected the stock descriptor interpretation: 8250h and 8260h groups are active; 8258h and 8268h groups are zero-filled. Recorded the actual stock selector bytes 4Eh and 4Ah and the zero stock value at 8281h.
 - Traced the INT 15h AH=4Fh keyboard intercept and its keypad +/- scan-code dispatch to the active descriptor handlers.
 - Distinguished the POST-time Setup-key decision at 1E1Ch from the separate keyboard scan-code intercept.
+
+
+## Semantic map — phase 25 (2026-11-16)
+
+- [AMI486_SEMANTIC_MAP_PHASE25_20261116.md](AMI486_SEMANTIC_MAP_PHASE25_20261116.md)
+- Resolved CS:[B517h]=0Fh as the ordinal selector for the fifteenth Advanced CMOS Setup record, BA0Bh, `System Boot Up Sequence`.
+- Decoded the record fields: CMOS ADh, mask 20h, two option codes 10h/0Fh; traced its decoded value to the 8BA3h/8B5Eh ALi1429 dispatch at 1E1Ch.
+- Distinguished this POST Setup path from the independent INT 15h AH=4Fh keyboard intercept that also reaches the same handlers.
