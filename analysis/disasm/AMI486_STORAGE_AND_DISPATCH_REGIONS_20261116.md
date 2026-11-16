@@ -272,3 +272,19 @@ The installed handler at E845h:
 - restores AX/DS and executes IRET.
 
 This confirms E845h as the hard-disk IRQ14 handler installed by A95Eh. The IRQ14 path and the ATA task-file polling/transfer helpers should be analyzed as one subsystem.
+
+
+## 11. Legacy floppy handler preserved at INT 40h
+
+The ROM contains a second, older INT 13h implementation at C610h. Its entry dispatcher:
+- sets DS=0040h;
+- accepts AH=00h–05h, AH=08h and AH=15h–18h;
+- indexes the 11-word little-endian table at C5FAh;
+- returns through the common epilogue C648h–C68Fh, ending in IRET.
+
+Table targets:
+`C69A, C6CE, C7E2, C7E2, C7E2, C8E1, C999, C6D9, C78B, C716, CB09`.
+
+The C8BBh and C936h paths directly call D156h for DMA channel-2 setup; C913h calls the D4EAh/D381h/D197h/D156h/D216h/D270h/D2BDh FDC sequence. This establishes that the D100h–D5FFh FDC/DMA code is called by the legacy floppy INT 13h implementation.
+
+A95Eh saves the displaced INT 13h vector into the INT 40h slot; A08Dh forwards DL<80h requests to INT 40h. C610h is therefore the strong in-ROM candidate for that saved legacy floppy handler. The actual runtime segment:offset in the IVT still needs confirmation from an initialized IVT snapshot or execution trace.
