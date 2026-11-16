@@ -108,6 +108,7 @@ SEEDS = [
     (0xD100, "FDC I/O code candidate; references ports 03F4h/03F7h"),
     (0xD104, "FDC media/drive-state helper candidate"),
     (0xD156, "direct DMA programming helper"),
+    (0xC648, "candidate main diskette BIOS dispatcher before FDC helper calls"),
     (0xC8BB, "direct caller of DMA channel-2 setup D156h"),
     (0xC936, "direct caller of DMA channel-2 setup D156h"),
     (0xD1C0, "direct FDC state/reset helper"),
