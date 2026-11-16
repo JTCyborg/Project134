@@ -995,3 +995,11 @@ This phase is semantic classification of selected regions, not a complete CFG. S
 - Traced the common nibble-option helper at 05A3h: it emits '6' from DL=16h, displays the "Options:-" prompt, then enters the linked dispatcher at 05B4h; the masked AL nibble is overwritten and its purpose remains unresolved.
 - Identified the first 0AE1h-table targets as 0B5Dh and 0B6Dh, with a later edge to 026Fh. 05E0h/0845h preserve BX, ruling out cursor corruption by prompt rendering.
 - Marked 0B5Dh/0B6Dh execution as unresolved because the target offsets overlap a dense record-like region in the ROM image; runtime CS/shadow mapping and alternate entries must be verified before assigning semantics.
+
+
+## Semantic map — phase 93 (2026-11-16)
+
+- [AMI486_SEMANTIC_MAP_PHASE93_20261116.md](AMI486_SEMANTIC_MAP_PHASE93_20261116.md)
+- Identified 0B5Dh and 0B6Dh as aligned indirect instruction entries reached by the 05A3h/05B4h nested dispatcher.
+- The same byte region also aligns as four-byte next-cursor/target-like records, so it is now classified as a dual-use/overlapping code-and-record candidate, not plain data.
+- The 0B5Dh linear stream has branches at 0B71h, 0B85h and 0BA1h and reaches a conditional Setup-page initialization path at 0BE5h / common editor 0C7Dh. Runtime record consumption and stack/flag contracts remain open.
