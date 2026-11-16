@@ -5141,6 +5141,245 @@ Reason: 64-MiB memory-alias probe continuation and chipset update
 2355  0F 84 28 00             je 0x2381
 2359  B7 01                   mov bh, 1
 
+===== 6700h-677Fh =====
+Reason: callers of the numeric text-rendering helper at 6805h
+6700  0D BB 07                or ax, 0x7bb
+6703  00 B4 02 CD             add byte ptr [si - 0x32fe], dh
+6707  10 E8                   adc al, ch
+6709  FA                      cli
+670A  00 8A 46 07             add byte ptr [bp + si + 0x746], cl
+670E  E8 C7 00                call 0x67d8
+6711  BE 01 00                mov si, 1
+6714  B3 0F                   mov bl, 0xf
+6716  E8 EC 00                call 0x6805
+6719  BE 01 00                mov si, 1
+671C  BF 0F 00                mov di, 0xf
+671F  B3 07                   mov bl, 7
+6721  E8 E1 00                call 0x6805
+6724  E8 87 00                call 0x67ae
+6727  52                      push dx
+6728  51                      push cx
+6729  8A C5                   mov al, ch
+672B  BA 17 06                mov dx, 0x617
+672E  E8 7F 01                call 0x68b0
+6731  E8 24 00                call 0x6758
+6734  58                      pop ax
+6735  BA 1C 06                mov dx, 0x61c
+6738  E8 75 01                call 0x68b0
+673B  E8 1A 00                call 0x6758
+673E  58                      pop ax
+673F  8A C4                   mov al, ah
+6741  BA 21 06                mov dx, 0x621
+6744  E8 69 01                call 0x68b0
+6747  59                      pop cx
+6748  5A                      pop dx
+6749  B7 00                   mov bh, 0
+674B  B4 02                   mov ah, 2
+674D  CD 10                   int 0x10
+674F  B4 01                   mov ah, 1
+6751  CD 10                   int 0x10
+6753  83 C4 0A                add sp, 0xa
+6756  5D                      pop bp
+6757  C3                      ret
+6758  B8 20 0E                mov ax, 0xe20
+675B  CD 10                   int 0x10
+675D  E8 0D 00                call 0x676d
+6760  B8 20 0E                mov ax, 0xe20
+6763  CD 10                   int 0x10
+6765  C3                      ret
+6766  B8 2C 0E                mov ax, 0xe2c
+6769  E8 5C 01                call 0x68c8
+676C  C3                      ret
+676D  B8 3A 0E                mov ax, 0xe3a
+6770  E8 55 01                call 0x68c8
+6773  C3                      ret
+6774  B4 04                   mov ah, 4
+6776  CD 1A                   int 0x1a
+6778  73 04                   jae 0x677e
+677A  B4 04                   mov ah, 4
+677C  CD 1A                   int 0x1a
+677E  8B C1                   mov ax, cx
+
+===== 6708h-6787h =====
+Reason: direct CALL site for numeric renderer 6805h
+6708  E8 FA 00                call 0x6805
+670B  8A 46 07                mov al, byte ptr [bp + 7]
+670E  E8 C7 00                call 0x67d8
+6711  BE 01 00                mov si, 1
+6714  B3 0F                   mov bl, 0xf
+6716  E8 EC 00                call 0x6805
+6719  BE 01 00                mov si, 1
+671C  BF 0F 00                mov di, 0xf
+671F  B3 07                   mov bl, 7
+6721  E8 E1 00                call 0x6805
+6724  E8 87 00                call 0x67ae
+6727  52                      push dx
+6728  51                      push cx
+6729  8A C5                   mov al, ch
+672B  BA 17 06                mov dx, 0x617
+672E  E8 7F 01                call 0x68b0
+6731  E8 24 00                call 0x6758
+6734  58                      pop ax
+6735  BA 1C 06                mov dx, 0x61c
+6738  E8 75 01                call 0x68b0
+673B  E8 1A 00                call 0x6758
+673E  58                      pop ax
+673F  8A C4                   mov al, ah
+6741  BA 21 06                mov dx, 0x621
+6744  E8 69 01                call 0x68b0
+6747  59                      pop cx
+6748  5A                      pop dx
+6749  B7 00                   mov bh, 0
+674B  B4 02                   mov ah, 2
+674D  CD 10                   int 0x10
+674F  B4 01                   mov ah, 1
+6751  CD 10                   int 0x10
+6753  83 C4 0A                add sp, 0xa
+6756  5D                      pop bp
+6757  C3                      ret
+6758  B8 20 0E                mov ax, 0xe20
+675B  CD 10                   int 0x10
+675D  E8 0D 00                call 0x676d
+6760  B8 20 0E                mov ax, 0xe20
+6763  CD 10                   int 0x10
+6765  C3                      ret
+6766  B8 2C 0E                mov ax, 0xe2c
+6769  E8 5C 01                call 0x68c8
+676C  C3                      ret
+676D  B8 3A 0E                mov ax, 0xe3a
+6770  E8 55 01                call 0x68c8
+6773  C3                      ret
+6774  B4 04                   mov ah, 4
+6776  CD 1A                   int 0x1a
+6778  73 04                   jae 0x677e
+677A  B4 04                   mov ah, 4
+677C  CD 1A                   int 0x1a
+677E  8B C1                   mov ax, cx
+6780  E8 5F 01                call 0x68e2
+6783  73 22                   jae 0x67a7
+6785  3D 01 19                cmp ax, 0x1901
+
+===== 6716h-6795h =====
+Reason: direct CALL site for numeric renderer 6805h
+6716  E8 EC 00                call 0x6805
+6719  BE 01 00                mov si, 1
+671C  BF 0F 00                mov di, 0xf
+671F  B3 07                   mov bl, 7
+6721  E8 E1 00                call 0x6805
+6724  E8 87 00                call 0x67ae
+6727  52                      push dx
+6728  51                      push cx
+6729  8A C5                   mov al, ch
+672B  BA 17 06                mov dx, 0x617
+672E  E8 7F 01                call 0x68b0
+6731  E8 24 00                call 0x6758
+6734  58                      pop ax
+6735  BA 1C 06                mov dx, 0x61c
+6738  E8 75 01                call 0x68b0
+673B  E8 1A 00                call 0x6758
+673E  58                      pop ax
+673F  8A C4                   mov al, ah
+6741  BA 21 06                mov dx, 0x621
+6744  E8 69 01                call 0x68b0
+6747  59                      pop cx
+6748  5A                      pop dx
+6749  B7 00                   mov bh, 0
+674B  B4 02                   mov ah, 2
+674D  CD 10                   int 0x10
+674F  B4 01                   mov ah, 1
+6751  CD 10                   int 0x10
+6753  83 C4 0A                add sp, 0xa
+6756  5D                      pop bp
+6757  C3                      ret
+6758  B8 20 0E                mov ax, 0xe20
+675B  CD 10                   int 0x10
+675D  E8 0D 00                call 0x676d
+6760  B8 20 0E                mov ax, 0xe20
+6763  CD 10                   int 0x10
+6765  C3                      ret
+6766  B8 2C 0E                mov ax, 0xe2c
+6769  E8 5C 01                call 0x68c8
+676C  C3                      ret
+676D  B8 3A 0E                mov ax, 0xe3a
+6770  E8 55 01                call 0x68c8
+6773  C3                      ret
+6774  B4 04                   mov ah, 4
+6776  CD 1A                   int 0x1a
+6778  73 04                   jae 0x677e
+677A  B4 04                   mov ah, 4
+677C  CD 1A                   int 0x1a
+677E  8B C1                   mov ax, cx
+6780  E8 5F 01                call 0x68e2
+6783  73 22                   jae 0x67a7
+6785  3D 01 19                cmp ax, 0x1901
+6788  72 1D                   jb 0x67a7
+678A  3D 99 20                cmp ax, 0x2099
+678D  77 18                   ja 0x67a7
+678F  8B C2                   mov ax, dx
+6791  E8 4E 01                call 0x68e2
+6794  73 11                   jae 0x67a7
+
+===== 6721h-67A0h =====
+Reason: direct CALL site for numeric renderer 6805h
+6721  E8 E1 00                call 0x6805
+6724  E8 87 00                call 0x67ae
+6727  52                      push dx
+6728  51                      push cx
+6729  8A C5                   mov al, ch
+672B  BA 17 06                mov dx, 0x617
+672E  E8 7F 01                call 0x68b0
+6731  E8 24 00                call 0x6758
+6734  58                      pop ax
+6735  BA 1C 06                mov dx, 0x61c
+6738  E8 75 01                call 0x68b0
+673B  E8 1A 00                call 0x6758
+673E  58                      pop ax
+673F  8A C4                   mov al, ah
+6741  BA 21 06                mov dx, 0x621
+6744  E8 69 01                call 0x68b0
+6747  59                      pop cx
+6748  5A                      pop dx
+6749  B7 00                   mov bh, 0
+674B  B4 02                   mov ah, 2
+674D  CD 10                   int 0x10
+674F  B4 01                   mov ah, 1
+6751  CD 10                   int 0x10
+6753  83 C4 0A                add sp, 0xa
+6756  5D                      pop bp
+6757  C3                      ret
+6758  B8 20 0E                mov ax, 0xe20
+675B  CD 10                   int 0x10
+675D  E8 0D 00                call 0x676d
+6760  B8 20 0E                mov ax, 0xe20
+6763  CD 10                   int 0x10
+6765  C3                      ret
+6766  B8 2C 0E                mov ax, 0xe2c
+6769  E8 5C 01                call 0x68c8
+676C  C3                      ret
+676D  B8 3A 0E                mov ax, 0xe3a
+6770  E8 55 01                call 0x68c8
+6773  C3                      ret
+6774  B4 04                   mov ah, 4
+6776  CD 1A                   int 0x1a
+6778  73 04                   jae 0x677e
+677A  B4 04                   mov ah, 4
+677C  CD 1A                   int 0x1a
+677E  8B C1                   mov ax, cx
+6780  E8 5F 01                call 0x68e2
+6783  73 22                   jae 0x67a7
+6785  3D 01 19                cmp ax, 0x1901
+6788  72 1D                   jb 0x67a7
+678A  3D 99 20                cmp ax, 0x2099
+678D  77 18                   ja 0x67a7
+678F  8B C2                   mov ax, dx
+6791  E8 4E 01                call 0x68e2
+6794  73 11                   jae 0x67a7
+6796  0A C0                   or al, al
+6798  74 0D                   je 0x67a7
+679A  0A E4                   or ah, ah
+679C  74 09                   je 0x67a7
+679E  80 FC 12                cmp ah, 0x12
+
 ===== 6800h-687Fh =====
 Reason: code-dense raw window without phase address token
 6800  86 C4                   xchg ah, al
@@ -5208,6 +5447,221 @@ Reason: code-dense raw window without phase address token
 687A  EB 04                   jmp 0x6880
 687C  24 70                   and al, 0x70
 687E  0A D8                   or bl, al
+
+===== 6805h-6884h =====
+Reason: numeric text-rendering loop
+6805  3B F7                   cmp si, di
+6807  74 37                   je 0x6840
+6809  8B C6                   mov ax, si
+680B  3A 46 06                cmp al, byte ptr [bp + 6]
+680E  75 0E                   jne 0x681e
+6810  80 FB 0F                cmp bl, 0xf
+6813  75 09                   jne 0x681e
+6815  53                      push bx
+6816  B3 8F                   mov bl, 0x8f
+6818  E8 26 00                call 0x6841
+681B  5B                      pop bx
+681C  EB 03                   jmp 0x6821
+681E  E8 20 00                call 0x6841
+6821  46                      inc si
+6822  B4 03                   mov ah, 3
+6824  CD 10                   int 0x10
+6826  80 FA 4F                cmp dl, 0x4f
+6829  75 10                   jne 0x683b
+682B  80 C6 02                add dh, 2
+682E  80 FE 19                cmp dh, 0x19
+6831  74 0D                   je 0x6840
+6833  B2 35                   mov dl, 0x35
+6835  B4 02                   mov ah, 2
+6837  CD 10                   int 0x10
+6839  EB CA                   jmp 0x6805
+683B  80 C2 02                add dl, 2
+683E  EB F5                   jmp 0x6835
+6840  C3                      ret
+6841  3C 09                   cmp al, 9
+6843  77 07                   ja 0x684c
+6845  50                      push ax
+6846  B0 20                   mov al, 0x20
+6848  E8 15 00                call 0x6860
+684B  58                      pop ax
+684C  98                      cwde
+684D  99                      cdq
+684E  B9 0A 00                mov cx, 0xa
+6851  F7 F1                   div cx
+6853  0B C0                   or ax, ax
+6855  74 05                   je 0x685c
+6857  52                      push dx
+6858  E8 F1 FF                call 0x684c
+685B  5A                      pop dx
+685C  8A C2                   mov al, dl
+685E  0C 30                   or al, 0x30
+6860  50                      push ax
+6861  53                      push bx
+6862  B4 08                   mov ah, 8
+6864  CD 10                   int 0x10
+6866  5B                      pop bx
+6867  8B CB                   mov cx, bx
+6869  8A C4                   mov al, ah
+686B  F6 C3 88                test bl, 0x88
+686E  75 0C                   jne 0x687c
+6870  24 70                   and al, 0x70
+6872  A8 20                   test al, 0x20
+6874  75 02                   jne 0x6878
+6876  0C 07                   or al, 7
+6878  8A D8                   mov bl, al
+687A  EB 04                   jmp 0x6880
+687C  24 70                   and al, 0x70
+687E  0A D8                   or bl, al
+6880  58                      pop ax
+6881  51                      push cx
+6882  B4 09                   mov ah, 9
+6884  B9              db 0xB9
+
+===== 6841h-68C0h =====
+Reason: recursive decimal conversion helper
+6841  3C 09                   cmp al, 9
+6843  77 07                   ja 0x684c
+6845  50                      push ax
+6846  B0 20                   mov al, 0x20
+6848  E8 15 00                call 0x6860
+684B  58                      pop ax
+684C  98                      cwde
+684D  99                      cdq
+684E  B9 0A 00                mov cx, 0xa
+6851  F7 F1                   div cx
+6853  0B C0                   or ax, ax
+6855  74 05                   je 0x685c
+6857  52                      push dx
+6858  E8 F1 FF                call 0x684c
+685B  5A                      pop dx
+685C  8A C2                   mov al, dl
+685E  0C 30                   or al, 0x30
+6860  50                      push ax
+6861  53                      push bx
+6862  B4 08                   mov ah, 8
+6864  CD 10                   int 0x10
+6866  5B                      pop bx
+6867  8B CB                   mov cx, bx
+6869  8A C4                   mov al, ah
+686B  F6 C3 88                test bl, 0x88
+686E  75 0C                   jne 0x687c
+6870  24 70                   and al, 0x70
+6872  A8 20                   test al, 0x20
+6874  75 02                   jne 0x6878
+6876  0C 07                   or al, 7
+6878  8A D8                   mov bl, al
+687A  EB 04                   jmp 0x6880
+687C  24 70                   and al, 0x70
+687E  0A D8                   or bl, al
+6880  58                      pop ax
+6881  51                      push cx
+6882  B4 09                   mov ah, 9
+6884  B9 01 00                mov cx, 1
+6887  CD 10                   int 0x10
+6889  5B                      pop bx
+688A  B4 03                   mov ah, 3
+688C  CD 10                   int 0x10
+688E  FE C2                   inc dl
+6890  B4 02                   mov ah, 2
+6892  CD 10                   int 0x10
+6894  C3                      ret
+6895  50                      push ax
+6896  B4 02                   mov ah, 2
+6898  CD 10                   int 0x10
+689A  58                      pop ax
+689B  B4 04                   mov ah, 4
+689D  F6 E4                   mul ah
+689F  03 F0                   add si, ax
+68A1  B9 03 00                mov cx, 3
+68A4  2E 8A 04                mov al, byte ptr cs:[si]
+68A7  46                      inc si
+68A8  B4 0E                   mov ah, 0xe
+68AA  E8 1B 00                call 0x68c8
+68AD  E2 F5                   loop 0x68a4
+68AF  C3                      ret
+68B0  50                      push ax
+68B1  B4 02                   mov ah, 2
+68B3  CD 10                   int 0x10
+68B5  58                      pop ax
+68B6  50                      push ax
+68B7  C0 E8 04                shr al, 4
+68BA  E8 01 00                call 0x68be
+68BD  58                      pop ax
+68BE  25 0F 00                and ax, 0xf
+
+===== 6860h-68DFh =====
+Reason: BIOS INT10 character/attribute output helper
+6860  50                      push ax
+6861  53                      push bx
+6862  B4 08                   mov ah, 8
+6864  CD 10                   int 0x10
+6866  5B                      pop bx
+6867  8B CB                   mov cx, bx
+6869  8A C4                   mov al, ah
+686B  F6 C3 88                test bl, 0x88
+686E  75 0C                   jne 0x687c
+6870  24 70                   and al, 0x70
+6872  A8 20                   test al, 0x20
+6874  75 02                   jne 0x6878
+6876  0C 07                   or al, 7
+6878  8A D8                   mov bl, al
+687A  EB 04                   jmp 0x6880
+687C  24 70                   and al, 0x70
+687E  0A D8                   or bl, al
+6880  58                      pop ax
+6881  51                      push cx
+6882  B4 09                   mov ah, 9
+6884  B9 01 00                mov cx, 1
+6887  CD 10                   int 0x10
+6889  5B                      pop bx
+688A  B4 03                   mov ah, 3
+688C  CD 10                   int 0x10
+688E  FE C2                   inc dl
+6890  B4 02                   mov ah, 2
+6892  CD 10                   int 0x10
+6894  C3                      ret
+6895  50                      push ax
+6896  B4 02                   mov ah, 2
+6898  CD 10                   int 0x10
+689A  58                      pop ax
+689B  B4 04                   mov ah, 4
+689D  F6 E4                   mul ah
+689F  03 F0                   add si, ax
+68A1  B9 03 00                mov cx, 3
+68A4  2E 8A 04                mov al, byte ptr cs:[si]
+68A7  46                      inc si
+68A8  B4 0E                   mov ah, 0xe
+68AA  E8 1B 00                call 0x68c8
+68AD  E2 F5                   loop 0x68a4
+68AF  C3                      ret
+68B0  50                      push ax
+68B1  B4 02                   mov ah, 2
+68B3  CD 10                   int 0x10
+68B5  58                      pop ax
+68B6  50                      push ax
+68B7  C0 E8 04                shr al, 4
+68BA  E8 01 00                call 0x68be
+68BD  58                      pop ax
+68BE  25 0F 00                and ax, 0xf
+68C1  0D 30 0E                or ax, 0xe30
+68C4  E8 01 00                call 0x68c8
+68C7  C3                      ret
+68C8  53                      push bx
+68C9  51                      push cx
+68CA  50                      push ax
+68CB  B7 00                   mov bh, 0
+68CD  B4 08                   mov ah, 8
+68CF  CD 10                   int 0x10
+68D1  8A DC                   mov bl, ah
+68D3  58                      pop ax
+68D4  50                      push ax
+68D5  B4 09                   mov ah, 9
+68D7  B9 01 00                mov cx, 1
+68DA  CD 10                   int 0x10
+68DC  58                      pop ax
+68DD  59                      pop cx
+68DE  5B                      pop bx
+68DF  CD              db 0xCD
 
 ===== D100h-D17Fh =====
 Reason: FDC I/O code candidate; references ports 03F4h/03F7h
