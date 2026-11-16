@@ -819,3 +819,13 @@ This phase is semantic classification of selected regions, not a complete CFG. S
 - Confirmed no CMOS B6h write yet. B6h is still only proven as a read selector in 29EDh.
 - Identified additional direct CMOS/I/O paths at 13F8h, 14D0h..1508h, 5E10h..5E30h and 834Fh..8372h for subsequent tracing.
 - BP.13 provenance and DA5Eh/DA61h dynamic entry remain unresolved.
+
+
+## Semantic map — phase 76 (2026-11-16)
+
+- [AMI486_SEMANTIC_MAP_PHASE76_20261116.md](AMI486_SEMANTIC_MAP_PHASE76_20261116.md)
+- Resolved CS:[82B3h] = 00E0h. The 1810h CMOS sum loop reads B4h..BDh, skips BEh/BFh, then reads C0h..E0h inclusive; it accumulates bytes in BX and dispatches via JMP DI.
+- Confirmed 17F0h separately sums CMOS indices 90h..ADh.
+- Corrected phase 75: 14D0h..1518h mixes POST writes to port 80h with CMOS reads. The shown helper calls target EE94h (read), not EE9Dh (write); no CMOS write is proven in this snippet.
+- BP.13 at 5CF8h is tested, not produced. 5D08h AND BP,EFFFh clears bit 12. No BP.13 producer found here.
+- BP.13 provenance and DA5Eh/DA61h dynamic entry remain unresolved.
