@@ -809,3 +809,13 @@ This phase is semantic classification of selected regions, not a complete CFG. S
 - 29EDh reads CMOS/NVRAM byte B6h and tests bit 0. Four direct consumers: 1A1Dh (JZ 1A60h), 1C72h (JZ 1C86h), 1F4Dh (JZ 1F61h), 23F2h (JZ 23FDh). Bit set enables the respective initialization paths.
 - No immediate B6h selector was found at EE9Dh write call sites; dynamic-index writers remain possible and unclassified.
 - BP.13 provenance and DA5Eh/DA61h dynamic entry remain unresolved.
+
+
+## Semantic map — phase 75 (2026-11-16)
+
+- [AMI486_SEMANTIC_MAP_PHASE75_20261116.md](AMI486_SEMANTIC_MAP_PHASE75_20261116.md)
+- Identified aligned CMOS scan loops at 17F0h (indices 90h..ADh) and 1810h (starting B4h, skips two indices at BEh, upper bound CS:[82B3h]); both accumulate read bytes in BX and dispatch through JMP DI.
+- Classified the EE9Dh raw CALL-site scan as candidates only; overlapping code/data means each must be validated against reachable instruction boundaries.
+- Confirmed no CMOS B6h write yet. B6h is still only proven as a read selector in 29EDh.
+- Identified additional direct CMOS/I/O paths at 13F8h, 14D0h..1508h, 5E10h..5E30h and 834Fh..8372h for subsequent tracing.
+- BP.13 provenance and DA5Eh/DA61h dynamic entry remain unresolved.
