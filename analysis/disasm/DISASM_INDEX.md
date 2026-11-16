@@ -1052,7 +1052,7 @@ See [AMI486_ADDRESS_LEDGER_20261116.md](AMI486_ADDRESS_LEDGER_20261116.md).
 - Narrow token scan: 153 pages have explicit address references; 103 pages have none. This is not a coverage percentage.
 - Raw-byte checks uncovered substantial executable-looking content in pages without explicit phase references, including 2100h, 6800h, A000h–ACFFh, AE60h–AFFFh, D100h–D5FFh and F900h.
 - Confirmed data candidates include the Format/BootSector Write/Possible VIRUS message at A125h–A18Dh and keyboard translation tables at AD00h–AE5Fh.
-- A000h–AFFFh, D100h–D5FFh, 2100h and the F8E7h INT 14h serial dispatcher now have dedicated subsystem maps. Remaining questions include ES=0000h provenance at A95Eh's call site and the value of the displaced INT 13h vector copied into INT 40h, INT 14h vector provenance, the 2100h memory-test caller/ES setup, keyboard table boundaries and low-nibble [BX+90h] FDC state-token semantics.
+- A000h–AFFFh, D100h–D5FFh, 2100h and the F8E7h INT 14h serial dispatcher now have dedicated subsystem maps. Remaining questions include ES=0000h provenance at A95Eh's call site and the value of the displaced INT 13h vector copied into INT 40h, INT 14h runtime IVT target (no direct ROM reference to F8E7h was found), the 2100h memory-test caller/ES setup, keyboard table boundaries and low-nibble [BX+90h] FDC state-token semantics.
 
 
 ## ATA / floppy / keyboard region discoveries — 2026-11-16
@@ -1176,3 +1176,8 @@ The 131Fh entry is overlapping: its direct caller is 1BAAh, and its alternate st
 ## Candidate-window / CMOS gate refresh — 2026-11-16
 
 The candidate artifact now contains 168 code windows and 18 data ranges; union 10,700 bytes across 56 pages. The 131Fh alternate entry (direct caller 1BAAh) is now seeded separately through 1364h. CMOS 0Eh bit 7/6 gating and the EEAAh CMOS read wrapper are mapped; only the low nibble of [BX+90h] remains semantically incomplete in this FDC token family.
+
+
+## INT 14h vector scan — 2026-11-16
+
+No direct near CALL/JMP xref to F8E7h, literal F8E7h word reference or far pointer F000:F8E7h exists in the ROM image. Treat the F8E7h UART dispatcher as an INT 14h-style candidate until the runtime IVT slot 0000:0054h/0056h is captured.
