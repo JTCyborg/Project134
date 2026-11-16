@@ -517,3 +517,11 @@ This phase is semantic classification of selected regions, not a complete CFG. S
 - Reconstructed stack-crafted control flow around 5BF8h–5C8Ch; 5C70h is not a proven standalone entry point.
 - The only direct linear-list transfer into 5BF8h is DA9Fh. The apparent D9E0h–DA9Fh caller block is not reached sequentially from D9D9h, whose 16-bit near JMP wraps to 1AFBh. No static direct entry or stack setup into D9DCh–DA9Fh was found.
 - DX=0061h is only a conditional result if the unverified D9E0h alternate block executes; it is not established as the register value at 88D3h. BP bit 13 source remains unresolved.
+
+
+## Semantic map — phase 46 (2026-11-16)
+
+- [AMI486_SEMANTIC_MAP_PHASE46_20261116.md](AMI486_SEMANTIC_MAP_PHASE46_20261116.md)
+- Confirmed direct entries 8408h→D90Dh and 84C8h→D90Dh, plus 86D8h→D8EAh.
+- D8EAh path can OR BP bits 3, 4, or 5, but not bit 13. D90Dh is a live CMOS/POST path; it restores DX with POP DX from its crafted stack at D958h and exits through D9D9h→1AFBh, not into DAxx.
+- Corrects phase45's overly broad statement about no external entry into D8xx–DAxx; no entry into DA9Fh/D9E0h has been established.
