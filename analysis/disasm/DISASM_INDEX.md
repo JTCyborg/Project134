@@ -683,3 +683,12 @@ This phase is semantic classification of selected regions, not a complete CFG. S
 - On the successful path, the temporary BP=1 at 51F4h is restored at 5239h. PUSHAW at 525Fh therefore captures the incoming BP value to this block.
 - BP.13 was already present at the runtime entry into 509Eh/50A0h; the actual entry/caller and first producer remain unresolved.
 
+
+
+## Semantic map — phase 63 (2026-11-16)
+
+- [AMI486_SEMANTIC_MAP_PHASE63_20261116.md](AMI486_SEMANTIC_MAP_PHASE63_20261116.md)
+- Found the unique direct near JMP into 509Eh at 5F62h, following calls to 5FD6h and 54E5h.
+- Reconstructed the stack-crafted path DA9Fh → 5BF8h → 5C04h → 5F62h → 509Eh.
+- No BP.13 producer appears on the successful DAxx/5Cxx path; BP.13 is inherited from an earlier context.
+- Corrected a linear-disassembly false positive: the apparent 1B05h SBB BP instruction is skipped stack data because EE94h RET consumes the word at 1B04h and resumes at 1B06h.
