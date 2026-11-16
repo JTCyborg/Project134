@@ -1122,3 +1122,8 @@ Detailed report: [AMI486_MEMORY_CHIPSET_INITIALIZATION_20261116.md](AMI486_MEMOR
 ## RTC and numeric display helpers — 2026-11-16
 
 Detailed map: [AMI486_CLOCK_AND_TEXT_RENDERING_20261116.md](AMI486_CLOCK_AND_TEXT_RENDERING_20261116.md). 6774h reads RTC date via INT 1Ah AH=04h; 67AEh reads RTC time via AH=02h; 6805h prints sequential decimal labels; 6841h formats decimal digits; 68B0h displays hexadecimal bytes; 6860h/68C8h write characters with attributes through INT 10h. The exact UI caller and 67D8h field transform remain open.
+
+
+## Serial BIOS / UART subsystem — 2026-11-16
+
+Detailed map: [AMI486_INT14_SERIAL_BIOS_20261116.md](AMI486_INT14_SERIAL_BIOS_20261116.md). The F900h wrapper dispatches six AH functions through F92Ah. The handlers program UART DLAB/DLL/DLM/LCR/IER, transmit/receive via THR/RBR, and read/write MCR/LSR/MSR. The UART identity is high-confidence; INT 14h vector provenance and exact return contracts remain open.
