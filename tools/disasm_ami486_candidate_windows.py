@@ -21,6 +21,7 @@ DATA_RANGES = [
     (0xAD00, 0xAE60, "Keyboard translation data candidates", "hexascii"),
     (0xF92A, 0xF936, "F9xx indirect-handler offset table", "words"),
     (0xE401, 0xE481, "First eight 16-byte fixed-disk parameter records", "hexascii"),
+    (0xC5FA, 0xC610, "Legacy floppy INT 13h AH dispatch table", "words"),
 ]
 
 SEEDS = [
@@ -108,7 +109,7 @@ SEEDS = [
     (0xD100, "FDC I/O code candidate; references ports 03F4h/03F7h"),
     (0xD104, "FDC media/drive-state helper candidate"),
     (0xD156, "direct DMA programming helper"),
-    (0xC600, "candidate INT13/INT40 diskette service entry region"),
+    (0xC610, "legacy floppy INT 13h handler entry; saved into INT 40h by A95Eh"),
     (0xC648, "shared FDC/INT13 status epilogue"),
     (0xC6BC, "FDC sense-interrupt status call bridge"),
     (0xC700, "diskette BIOS dispatch continuation"),
