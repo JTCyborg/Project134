@@ -46,7 +46,7 @@ Its sequence:
 4. Loads ES=0038h, clears DF, and executes a 32-bit REP LODSD with ES override. It reads 00040000h dwords = 1 MiB, beginning at linear address 00100000h and ending immediately below 00200000h.
 5. Loads ES=0010h, clears CR0.PE, writes CR0, executes a short jump, then jumps through DI to the caller-supplied continuation.
 
-The GDT entry selected by selector 0038h is the descriptor at GDT base + 7*8 = F2647Eh. Its bytes are FF FF 00 00 00 93 8F 00: a present ring-0 writable data segment, base zero, 4-GiB limit with 4-KiB granularity. Selector 0010h selects a 64-KiB real-mode-compatible data descriptor used before clearing PE.
+The GDT entry selected by selector 0038h is the descriptor at GDT base + 7*8 = F267Eh. Its bytes are FF FF 00 00 00 93 8F 00: a present ring-0 writable data segment, base zero, 4-GiB limit with 4-KiB granularity. Selector 0010h selects a 64-KiB real-mode-compatible data descriptor used before clearing PE.
 
 The observed operation is a protected-mode flat-address read sweep of physical 1–2 MiB. It does not write or compare the scanned words. This may serve as a cache/memory conditioning delay or sweep, but the ROM alone does not prove a specific cache-control effect. Do not call it a destructive memory test.
 
