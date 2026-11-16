@@ -5046,6 +5046,2312 @@ Reason: unreferenced page sample; classify raw code/data
 2DFE  BB              db 0xBB
 2DFF  FF              db 0xFF
 
+===== 2DF5h-2E74h =====
+Reason: timer/port-61 measurement helper
+2DF5  FA                      cli
+2DF6  E4 61                   in al, 0x61
+2DF8  A2 04 F8                mov byte ptr [0xf804], al
+2DFB  E8 5A 00                call 0x2e58
+2DFE  BB FF FF                mov bx, 0xffff
+2E01  A0 04 F8                mov al, byte ptr [0xf804]
+2E04  0C 01                   or al, 1
+2E06  E6 61                   out 0x61, al
+2E08  EB 00                   jmp 0x2e0a
+2E0A  9A 00 00 00 10          lcall 0x1000, 0
+2E0F  A0 04 F8                mov al, byte ptr [0xf804]
+2E12  24 FC                   and al, 0xfc
+2E14  E6 61                   out 0x61, al
+2E16  EB 00                   jmp 0x2e18
+2E18  E8 2E 00                call 0x2e49
+2E1B  A3 00 F8                mov word ptr [0xf800], ax
+2E1E  E4 61                   in al, 0x61
+2E20  A2 04 F8                mov byte ptr [0xf804], al
+2E23  E8 32 00                call 0x2e58
+2E26  BB FF FF                mov bx, 0xffff
+2E29  A0 04 F8                mov al, byte ptr [0xf804]
+2E2C  0C 01                   or al, 1
+2E2E  E6 61                   out 0x61, al
+2E30  9A 00 08 00 10          lcall 0x1000, 0x800
+2E35  A0 04 F8                mov al, byte ptr [0xf804]
+2E38  24 FC                   and al, 0xfc
+2E3A  E6 61                   out 0x61, al
+2E3C  EB 00                   jmp 0x2e3e
+2E3E  E8 08 00                call 0x2e49
+2E41  29 06 00 F8             sub word ptr [0xf800], ax
+2E45  A1 00 F8                mov ax, word ptr [0xf800]
+2E48  C3                      ret
+2E49  E4 42                   in al, 0x42
+2E4B  EB 00                   jmp 0x2e4d
+2E4D  8A E0                   mov ah, al
+2E4F  E4 42                   in al, 0x42
+2E51  EB 00                   jmp 0x2e53
+2E53  86 E0                   xchg al, ah
+2E55  F7 D8                   neg ax
+2E57  C3                      ret
+2E58  E4 61                   in al, 0x61
+2E5A  24 FC                   and al, 0xfc
+2E5C  E6 61                   out 0x61, al
+2E5E  EB 00                   jmp 0x2e60
+2E60  B0 B4                   mov al, 0xb4
+2E62  E6 43                   out 0x43, al
+2E64  EB 00                   jmp 0x2e66
+2E66  2A C0                   sub al, al
+2E68  E6 42                   out 0x42, al
+2E6A  EB 00                   jmp 0x2e6c
+2E6C  EB 00                   jmp 0x2e6e
+2E6E  E6 42                   out 0x42, al
+2E70  EB 00                   jmp 0x2e72
+2E72  C3                      ret
+2E73  00              db 0x00
+2E74  50                      push ax
+
+===== 2E58h-2ED7h =====
+Reason: timer measurement continuation
+2E58  E4 61                   in al, 0x61
+2E5A  24 FC                   and al, 0xfc
+2E5C  E6 61                   out 0x61, al
+2E5E  EB 00                   jmp 0x2e60
+2E60  B0 B4                   mov al, 0xb4
+2E62  E6 43                   out 0x43, al
+2E64  EB 00                   jmp 0x2e66
+2E66  2A C0                   sub al, al
+2E68  E6 42                   out 0x42, al
+2E6A  EB 00                   jmp 0x2e6c
+2E6C  EB 00                   jmp 0x2e6e
+2E6E  E6 42                   out 0x42, al
+2E70  EB 00                   jmp 0x2e72
+2E72  C3                      ret
+2E73  00 50 33                add byte ptr [bx + si + 0x33], dl
+2E76  FF 0F                   dec word ptr [bx]
+2E78  01 E0                   add ax, sp
+2E7A  0A E4                   or ah, ah
+2E7C  74 02                   je 0x2e80
+2E7E  F7 D7                   not di
+2E80  2E A0 13 B5             mov al, byte ptr cs:[0xb513]
+2E84  E8 27 55                call 0x83ae
+2E87  8B F0                   mov si, ax
+2E89  83 E6 7F                and si, 0x7f
+2E8C  5B                      pop bx
+2E8D  8A FC                   mov bh, ah
+2E8F  8C C8                   mov ax, cs
+2E91  0B FF                   or di, di
+2E93  75 09                   jne 0x2e9e
+2E95  3D 00 F0                cmp ax, 0xf000
+2E98  75 04                   jne 0x2e9e
+2E9A  08 BC 00 E0             or byte ptr [si - 0x2000], bh
+2E9E  0A DB                   or bl, bl
+2EA0  74 0F                   je 0x2eb1
+2EA2  0B FF                   or di, di
+2EA4  75 05                   jne 0x2eab
+2EA6  3D 00 F0                cmp ax, 0xf000
+2EA9  74 03                   je 0x2eae
+2EAB  E9 86 58                jmp 0x8734
+2EAE  E9 87 58                jmp 0x8738
+2EB1  E9 73 58                jmp 0x8727
+2EB4  50                      push ax
+2EB5  33 FF                   xor di, di
+2EB7  0F 01 E0                smsw ax
+2EBA  0A E4                   or ah, ah
+2EBC  74 02                   je 0x2ec0
+2EBE  F7 D7                   not di
+2EC0  2E A0 19 B5             mov al, byte ptr cs:[0xb519]
+2EC4  E8 E7 54                call 0x83ae
+2EC7  8B F0                   mov si, ax
+2EC9  83 E6 7F                and si, 0x7f
+2ECC  5B                      pop bx
+2ECD  8A FC                   mov bh, ah
+2ECF  8C C8                   mov ax, cs
+2ED1  0B FF                   or di, di
+2ED3  74 0D                   je 0x2ee2
+2ED5  3D 00 F0                cmp ax, 0xf000
+
+===== 2AB3h-2B32h =====
+Reason: selector table of far-call helper offsets
+2AB3  2D B6 5C                sub ax, 0x5cb6
+2AB6  B6 64                   mov dh, 0x64
+2AB8  B6 6C                   mov dh, 0x6c
+2ABA  B6 74                   mov dh, 0x74
+2ABC  B6 7C                   mov dh, 0x7c
+2ABE  B6 85                   mov dh, 0x85
+2AC0  B6 56                   mov dh, 0x56
+2AC2  57                      push di
+2AC3  33 DB                   xor bx, bx
+2AC5  BE B3 2A                mov si, 0x2ab3
+2AC8  8A 1E 50 E0             mov bl, byte ptr [0xe050]
+2ACC  F6 06 36 E0 01          test byte ptr [0xe036], 1
+2AD1  0F 84 0D 00             je 0x2ae2
+2AD5  80 E3 07                and bl, 7
+2AD8  D0 E3                   shl bl, 1
+2ADA  03 F3                   add si, bx
+2ADC  2E 8B 04                mov ax, word ptr cs:[si]
+2ADF  EB 27                   jmp 0x2b08
+2AE1  90                      nop
+2AE2  80 26 50 E0 F8          and byte ptr [0xe050], 0xf8
+2AE7  02 D8                   add bl, al
+2AE9  80 E3 07                and bl, 7
+2AEC  80 FB 07                cmp bl, 7
+2AEF  0F 85 0A 00             jne 0x2afd
+2AF3  B3 06                   mov bl, 6
+2AF5  3C 80                   cmp al, 0x80
+2AF7  0F 87 02 00             ja 0x2afd
+2AFB  B3 00                   mov bl, 0
+2AFD  08 1E 50 E0             or byte ptr [0xe050], bl
+2B01  D0 E3                   shl bl, 1
+2B03  03 F3                   add si, bx
+2B05  2E 8B 04                mov ax, word ptr cs:[si]
+2B08  5F                      pop di
+2B09  5E                      pop si
+2B0A  CB                      retf
+2B0B  FF B5 04 B6             push word ptr [di - 0x49fc]
+2B0F  0B B6 10 B6             or si, word ptr [bp - 0x49f0]
+2B13  56                      push si
+2B14  57                      push di
+2B15  33 DB                   xor bx, bx
+2B17  BE 0B 2B                mov si, 0x2b0b
+2B1A  8A 1E 46 E0             mov bl, byte ptr [0xe046]
+2B1E  F6 06 36 E0 01          test byte ptr [0xe036], 1
+2B23  0F 84 0D 00             je 0x2b34
+2B27  80 E3 03                and bl, 3
+2B2A  D0 E3                   shl bl, 1
+2B2C  03 F3                   add si, bx
+2B2E  2E 8B 04                mov ax, word ptr cs:[si]
+2B31  EB 16                   jmp 0x2b49
+
+===== 2B0Bh-2B8Ah =====
+Reason: selector table of far-call helper offsets
+2B0B  FF B5 04 B6             push word ptr [di - 0x49fc]
+2B0F  0B B6 10 B6             or si, word ptr [bp - 0x49f0]
+2B13  56                      push si
+2B14  57                      push di
+2B15  33 DB                   xor bx, bx
+2B17  BE 0B 2B                mov si, 0x2b0b
+2B1A  8A 1E 46 E0             mov bl, byte ptr [0xe046]
+2B1E  F6 06 36 E0 01          test byte ptr [0xe036], 1
+2B23  0F 84 0D 00             je 0x2b34
+2B27  80 E3 03                and bl, 3
+2B2A  D0 E3                   shl bl, 1
+2B2C  03 F3                   add si, bx
+2B2E  2E 8B 04                mov ax, word ptr cs:[si]
+2B31  EB 16                   jmp 0x2b49
+2B33  90                      nop
+2B34  80 26 46 E0 FC          and byte ptr [0xe046], 0xfc
+2B39  02 D8                   add bl, al
+2B3B  80 E3 03                and bl, 3
+2B3E  08 1E 46 E0             or byte ptr [0xe046], bl
+2B42  D0 E3                   shl bl, 1
+2B44  03 F3                   add si, bx
+2B46  2E 8B 04                mov ax, word ptr cs:[si]
+2B49  5F                      pop di
+2B4A  5E                      pop si
+2B4B  CB                      retf
+2B4C  56                      push si
+2B4D  57                      push di
+2B4E  33 DB                   xor bx, bx
+2B50  BE 0B 2B                mov si, 0x2b0b
+2B53  8A 1E 46 E0             mov bl, byte ptr [0xe046]
+2B57  F6 06 36 E0 01          test byte ptr [0xe036], 1
+2B5C  0F 84 0D 00             je 0x2b6d
+2B60  80 E3 0C                and bl, 0xc
+2B63  D0 EB                   shr bl, 1
+2B65  03 F3                   add si, bx
+2B67  2E 8B 04                mov ax, word ptr cs:[si]
+2B6A  EB 1E                   jmp 0x2b8a
+2B6C  90                      nop
+2B6D  80 26 46 E0 F3          and byte ptr [0xe046], 0xf3
+2B72  C0 EB 02                shr bl, 2
+2B75  02 D8                   add bl, al
+2B77  80 E3 03                and bl, 3
+2B7A  8A C3                   mov al, bl
+2B7C  C0 E0 02                shl al, 2
+2B7F  08 06 46 E0             or byte ptr [0xe046], al
+2B83  D0 E3                   shl bl, 1
+2B85  03 F3                   add si, bx
+2B87  2E 8B 04                mov ax, word ptr cs:[si]
+2B8A  5F                      pop di
+
+===== 2B8Dh-2C0Ch =====
+Reason: selector table of far-call helper offsets
+2B8D  D3 B6 D8 B6             sal word ptr [bp - 0x4928], cl
+2B91  56                      push si
+2B92  57                      push di
+2B93  33 DB                   xor bx, bx
+2B95  BE 8D 2B                mov si, 0x2b8d
+2B98  8A 1E 49 E0             mov bl, byte ptr [0xe049]
+2B9C  F6 06 36 E0 01          test byte ptr [0xe036], 1
+2BA1  0F 84 0E 00             je 0x2bb3
+2BA5  80 E3 40                and bl, 0x40
+2BA8  C0 EB 05                shr bl, 5
+2BAB  03 F3                   add si, bx
+2BAD  2E 8B 04                mov ax, word ptr cs:[si]
+2BB0  EB 1E                   jmp 0x2bd0
+2BB2  90                      nop
+2BB3  80 26 49 E0 BF          and byte ptr [0xe049], 0xbf
+2BB8  C0 EB 06                shr bl, 6
+2BBB  02 D8                   add bl, al
+2BBD  80 E3 01                and bl, 1
+2BC0  8A C3                   mov al, bl
+2BC2  C0 E0 06                shl al, 6
+2BC5  08 06 49 E0             or byte ptr [0xe049], al
+2BC9  D0 E3                   shl bl, 1
+2BCB  03 F3                   add si, bx
+2BCD  2E 8B 04                mov ax, word ptr cs:[si]
+2BD0  5F                      pop di
+2BD1  5E                      pop si
+2BD2  CB                      retf
+2BD3  56                      push si
+2BD4  57                      push di
+2BD5  33 DB                   xor bx, bx
+2BD7  BE 8D 2B                mov si, 0x2b8d
+2BDA  8A 1E 49 E0             mov bl, byte ptr [0xe049]
+2BDE  F6 06 36 E0 01          test byte ptr [0xe036], 1
+2BE3  0F 84 0E 00             je 0x2bf5
+2BE7  80 E3 20                and bl, 0x20
+2BEA  C0 EB 04                shr bl, 4
+2BED  03 F3                   add si, bx
+2BEF  2E 8B 04                mov ax, word ptr cs:[si]
+2BF2  EB 1E                   jmp 0x2c12
+2BF4  90                      nop
+2BF5  80 26 49 E0 DF          and byte ptr [0xe049], 0xdf
+2BFA  C0 EB 05                shr bl, 5
+2BFD  02 D8                   add bl, al
+2BFF  80 E3 01                and bl, 1
+2C02  8A C3                   mov al, bl
+2C04  C0 E0 05                shl al, 5
+2C07  08 06 49 E0             or byte ptr [0xe049], al
+2C0B  D0 E3                   shl bl, 1
+
+===== 2C16h-2C95h =====
+Reason: selector table of far-call helper offsets
+2C16  B5 0B                   mov ch, 0xb
+2C18  B6 04                   mov dh, 4
+2C1A  B6 FF                   mov dh, 0xff
+2C1C  B5 56                   mov ch, 0x56
+2C1E  57                      push di
+2C1F  33 DB                   xor bx, bx
+2C21  BE 15 2C                mov si, 0x2c15
+2C24  8A 1E 47 E0             mov bl, byte ptr [0xe047]
+2C28  F6 06 36 E0 01          test byte ptr [0xe036], 1
+2C2D  0F 84 0D 00             je 0x2c3e
+2C31  80 E3 03                and bl, 3
+2C34  D0 E3                   shl bl, 1
+2C36  03 F3                   add si, bx
+2C38  2E 8B 04                mov ax, word ptr cs:[si]
+2C3B  EB 29                   jmp 0x2c66
+2C3D  90                      nop
+2C3E  80 26 47 E0 FC          and byte ptr [0xe047], 0xfc
+2C43  02 D8                   add bl, al
+2C45  80 E3 03                and bl, 3
+2C48  80 FB 00                cmp bl, 0
+2C4B  0F 85 0A 00             jne 0x2c59
+2C4F  B3 03                   mov bl, 3
+2C51  3C 80                   cmp al, 0x80
+2C53  0F 87 02 00             ja 0x2c59
+2C57  B3 01                   mov bl, 1
+2C59  08 1E 47 E0             or byte ptr [0xe047], bl
+2C5D  8A D3                   mov dl, bl
+2C5F  D0 E3                   shl bl, 1
+2C61  03 F3                   add si, bx
+2C63  2E 8B 04                mov ax, word ptr cs:[si]
+2C66  5F                      pop di
+2C67  5E                      pop si
+2C68  CB                      retf
+2C69  56                      push si
+2C6A  57                      push di
+2C6B  8A 1E 42 E0             mov bl, byte ptr [0xe042]
+2C6F  0A C0                   or al, al
+2C71  0F 85 1C 00             jne 0x2c91
+2C75  80 0E 42 E0 20          or byte ptr [0xe042], 0x20
+2C7A  BE 71 B5                mov si, 0xb571
+2C7D  F6 C3 20                test bl, 0x20
+2C80  0F 85 08 00             jne 0x2c8c
+2C84  80 26 42 E0 1F          and byte ptr [0xe042], 0x1f
+2C89  BE 68 B5                mov si, 0xb568
+2C8C  8B C6                   mov ax, si
+2C8E  EB 1C                   jmp 0x2cac
+2C90  90                      nop
+2C91  C0 EB 05                shr bl, 5
+2C94  02 C3                   add al, bl
+
+===== B62Dh-B6ACh =====
+Reason: target from 2AB3 selector table
+B62D  37                      aaa
+B62E  2E 31 39                xor word ptr cs:[bx + di], di
+B631  4D                      dec bp
+B632  48                      dec ax
+B633  7A 00                   jp 0xb635
+B635  31 34                   xor word ptr [si], si
+B637  2E 33 32                xor si, word ptr cs:[bp + si]
+B63A  4D                      dec bp
+B63B  48                      dec ax
+B63C  7A 00                   jp 0xb63e
+B63E  32 38                   xor bh, byte ptr [bx + si]
+B640  2E 36 34 4D             xor al, 0x4d
+B644  48                      dec ax
+B645  7A 00                   jp 0xb647
+B647  43                      inc bx
+B648  4C                      dec sp
+B649  4B                      dec bx
+B64A  32 00                   xor al, byte ptr [bx + si]
+B64C  43                      inc bx
+B64D  4C                      dec sp
+B64E  4B                      dec bx
+B64F  32 20                   xor ah, byte ptr [bx + si]
+B651  2F                      das
+B652  32 00                   xor al, byte ptr [bx + si]
+B654  43                      inc bx
+B655  4C                      dec sp
+B656  4B                      dec bx
+B657  32 20                   xor ah, byte ptr [bx + si]
+B659  2F                      das
+B65A  33 00                   xor ax, word ptr [bx + si]
+B65C  43                      inc bx
+B65D  4C                      dec sp
+B65E  4B                      dec bx
+B65F  32 20                   xor ah, byte ptr [bx + si]
+B661  2F                      das
+B662  34 00                   xor al, 0
+B664  43                      inc bx
+B665  4C                      dec sp
+B666  4B                      dec bx
+B667  32 20                   xor ah, byte ptr [bx + si]
+B669  2F                      das
+B66A  35 00 43                xor ax, 0x4300
+B66D  4C                      dec sp
+B66E  4B                      dec bx
+B66F  32 20                   xor ah, byte ptr [bx + si]
+B671  2F                      das
+B672  36 00 43 4C             add byte ptr ss:[bp + di + 0x4c], al
+B676  4B                      dec bx
+B677  32 20                   xor ah, byte ptr [bx + si]
+B679  2F                      das
+B67A  38 00                   cmp byte ptr [bx + si], al
+B67C  43                      inc bx
+B67D  4C                      dec sp
+B67E  4B                      dec bx
+B67F  32 20                   xor ah, byte ptr [bx + si]
+B681  2F                      das
+B682  31 30                   xor word ptr [bx + si], si
+B684  00 43 4C                add byte ptr [bp + di + 0x4c], al
+B687  4B                      dec bx
+B688  32 20                   xor ah, byte ptr [bx + si]
+B68A  2F                      das
+B68B  31 32                   xor word ptr [bp + si], si
+B68D  00 41 54                add byte ptr [bx + di + 0x54], al
+B690  43                      inc bx
+B691  4C                      dec sp
+B692  4B                      dec bx
+B693  00 41 54                add byte ptr [bx + di + 0x54], al
+B696  43                      inc bx
+B697  4C                      dec sp
+B698  4B                      dec bx
+B699  2F                      das
+B69A  32 00                   xor al, byte ptr [bx + si]
+B69C  41                      inc cx
+B69D  54                      push sp
+B69E  43                      inc bx
+B69F  4C                      dec sp
+B6A0  4B                      dec bx
+B6A1  32 00                   xor al, byte ptr [bx + si]
+B6A3  41                      inc cx
+B6A4  54                      push sp
+B6A5  43                      inc bx
+B6A6  4C                      dec sp
+B6A7  4B                      dec bx
+B6A8  32 2F                   xor ch, byte ptr [bx]
+B6AA  32 00                   xor al, byte ptr [bx + si]
+B6AC  41                      inc cx
+
+===== B664h-B6E3h =====
+Reason: target from 2AB3 selector table
+B664  43                      inc bx
+B665  4C                      dec sp
+B666  4B                      dec bx
+B667  32 20                   xor ah, byte ptr [bx + si]
+B669  2F                      das
+B66A  35 00 43                xor ax, 0x4300
+B66D  4C                      dec sp
+B66E  4B                      dec bx
+B66F  32 20                   xor ah, byte ptr [bx + si]
+B671  2F                      das
+B672  36 00 43 4C             add byte ptr ss:[bp + di + 0x4c], al
+B676  4B                      dec bx
+B677  32 20                   xor ah, byte ptr [bx + si]
+B679  2F                      das
+B67A  38 00                   cmp byte ptr [bx + si], al
+B67C  43                      inc bx
+B67D  4C                      dec sp
+B67E  4B                      dec bx
+B67F  32 20                   xor ah, byte ptr [bx + si]
+B681  2F                      das
+B682  31 30                   xor word ptr [bx + si], si
+B684  00 43 4C                add byte ptr [bp + di + 0x4c], al
+B687  4B                      dec bx
+B688  32 20                   xor ah, byte ptr [bx + si]
+B68A  2F                      das
+B68B  31 32                   xor word ptr [bp + si], si
+B68D  00 41 54                add byte ptr [bx + di + 0x54], al
+B690  43                      inc bx
+B691  4C                      dec sp
+B692  4B                      dec bx
+B693  00 41 54                add byte ptr [bx + di + 0x54], al
+B696  43                      inc bx
+B697  4C                      dec sp
+B698  4B                      dec bx
+B699  2F                      das
+B69A  32 00                   xor al, byte ptr [bx + si]
+B69C  41                      inc cx
+B69D  54                      push sp
+B69E  43                      inc bx
+B69F  4C                      dec sp
+B6A0  4B                      dec bx
+B6A1  32 00                   xor al, byte ptr [bx + si]
+B6A3  41                      inc cx
+B6A4  54                      push sp
+B6A5  43                      inc bx
+B6A6  4C                      dec sp
+B6A7  4B                      dec bx
+B6A8  32 2F                   xor ch, byte ptr [bx]
+B6AA  32 00                   xor al, byte ptr [bx + si]
+B6AC  41                      inc cx
+B6AD  54                      push sp
+B6AE  43                      inc bx
+B6AF  4C                      dec sp
+B6B0  4B                      dec bx
+B6B1  32 2F                   xor ch, byte ptr [bx]
+B6B3  34 00                   xor al, 0
+B6B5  41                      inc cx
+B6B6  54                      push sp
+B6B7  43                      inc bx
+B6B8  4C                      dec sp
+B6B9  4B                      dec bx
+B6BA  32 2F                   xor ch, byte ptr [bx]
+B6BC  38 00                   cmp byte ptr [bx + si], al
+B6BE  4F                      dec di
+B6BF  53                      push bx
+B6C0  43                      inc bx
+B6C1  00 43 4C                add byte ptr [bp + di + 0x4c], al
+B6C4  4B                      dec bx
+B6C5  49                      dec cx
+B6C6  4F                      dec di
+B6C7  00 36 34 4B             add byte ptr [0x4b34], dh
+B6CB  42                      inc dx
+B6CC  00 31                   add byte ptr [bx + di], dh
+B6CE  32 38                   xor bh, byte ptr [bx + si]
+B6D0  4B                      dec bx
+B6D1  42                      inc dx
+B6D2  00 30                   add byte ptr [bx + si], dh
+B6D4  20 57 53                and byte ptr [bx + 0x53], dl
+B6D7  00 31                   add byte ptr [bx + di], dh
+B6D9  20 57 53                and byte ptr [bx + 0x53], dl
+B6DC  00 32                   add byte ptr [bp + si], dh
+B6DE  20 57 53                and byte ptr [bx + 0x53], dl
+B6E1  00 33                   add byte ptr [bp + di], dh
+B6E3  20              db 0x20
+
+===== B66Ch-B6EBh =====
+Reason: target from 2AB3 selector table
+B66C  43                      inc bx
+B66D  4C                      dec sp
+B66E  4B                      dec bx
+B66F  32 20                   xor ah, byte ptr [bx + si]
+B671  2F                      das
+B672  36 00 43 4C             add byte ptr ss:[bp + di + 0x4c], al
+B676  4B                      dec bx
+B677  32 20                   xor ah, byte ptr [bx + si]
+B679  2F                      das
+B67A  38 00                   cmp byte ptr [bx + si], al
+B67C  43                      inc bx
+B67D  4C                      dec sp
+B67E  4B                      dec bx
+B67F  32 20                   xor ah, byte ptr [bx + si]
+B681  2F                      das
+B682  31 30                   xor word ptr [bx + si], si
+B684  00 43 4C                add byte ptr [bp + di + 0x4c], al
+B687  4B                      dec bx
+B688  32 20                   xor ah, byte ptr [bx + si]
+B68A  2F                      das
+B68B  31 32                   xor word ptr [bp + si], si
+B68D  00 41 54                add byte ptr [bx + di + 0x54], al
+B690  43                      inc bx
+B691  4C                      dec sp
+B692  4B                      dec bx
+B693  00 41 54                add byte ptr [bx + di + 0x54], al
+B696  43                      inc bx
+B697  4C                      dec sp
+B698  4B                      dec bx
+B699  2F                      das
+B69A  32 00                   xor al, byte ptr [bx + si]
+B69C  41                      inc cx
+B69D  54                      push sp
+B69E  43                      inc bx
+B69F  4C                      dec sp
+B6A0  4B                      dec bx
+B6A1  32 00                   xor al, byte ptr [bx + si]
+B6A3  41                      inc cx
+B6A4  54                      push sp
+B6A5  43                      inc bx
+B6A6  4C                      dec sp
+B6A7  4B                      dec bx
+B6A8  32 2F                   xor ch, byte ptr [bx]
+B6AA  32 00                   xor al, byte ptr [bx + si]
+B6AC  41                      inc cx
+B6AD  54                      push sp
+B6AE  43                      inc bx
+B6AF  4C                      dec sp
+B6B0  4B                      dec bx
+B6B1  32 2F                   xor ch, byte ptr [bx]
+B6B3  34 00                   xor al, 0
+B6B5  41                      inc cx
+B6B6  54                      push sp
+B6B7  43                      inc bx
+B6B8  4C                      dec sp
+B6B9  4B                      dec bx
+B6BA  32 2F                   xor ch, byte ptr [bx]
+B6BC  38 00                   cmp byte ptr [bx + si], al
+B6BE  4F                      dec di
+B6BF  53                      push bx
+B6C0  43                      inc bx
+B6C1  00 43 4C                add byte ptr [bp + di + 0x4c], al
+B6C4  4B                      dec bx
+B6C5  49                      dec cx
+B6C6  4F                      dec di
+B6C7  00 36 34 4B             add byte ptr [0x4b34], dh
+B6CB  42                      inc dx
+B6CC  00 31                   add byte ptr [bx + di], dh
+B6CE  32 38                   xor bh, byte ptr [bx + si]
+B6D0  4B                      dec bx
+B6D1  42                      inc dx
+B6D2  00 30                   add byte ptr [bx + si], dh
+B6D4  20 57 53                and byte ptr [bx + 0x53], dl
+B6D7  00 31                   add byte ptr [bx + di], dh
+B6D9  20 57 53                and byte ptr [bx + 0x53], dl
+B6DC  00 32                   add byte ptr [bp + si], dh
+B6DE  20 57 53                and byte ptr [bx + 0x53], dl
+B6E1  00 33                   add byte ptr [bp + di], dh
+B6E3  20 57 53                and byte ptr [bx + 0x53], dl
+B6E6  00 30                   add byte ptr [bx + si], dh
+B6E8  20 6E 73                and byte ptr [bp + 0x73], ch
+B6EB  00              db 0x00
+
+===== B674h-B6F3h =====
+Reason: target from 2AB3 selector table
+B674  43                      inc bx
+B675  4C                      dec sp
+B676  4B                      dec bx
+B677  32 20                   xor ah, byte ptr [bx + si]
+B679  2F                      das
+B67A  38 00                   cmp byte ptr [bx + si], al
+B67C  43                      inc bx
+B67D  4C                      dec sp
+B67E  4B                      dec bx
+B67F  32 20                   xor ah, byte ptr [bx + si]
+B681  2F                      das
+B682  31 30                   xor word ptr [bx + si], si
+B684  00 43 4C                add byte ptr [bp + di + 0x4c], al
+B687  4B                      dec bx
+B688  32 20                   xor ah, byte ptr [bx + si]
+B68A  2F                      das
+B68B  31 32                   xor word ptr [bp + si], si
+B68D  00 41 54                add byte ptr [bx + di + 0x54], al
+B690  43                      inc bx
+B691  4C                      dec sp
+B692  4B                      dec bx
+B693  00 41 54                add byte ptr [bx + di + 0x54], al
+B696  43                      inc bx
+B697  4C                      dec sp
+B698  4B                      dec bx
+B699  2F                      das
+B69A  32 00                   xor al, byte ptr [bx + si]
+B69C  41                      inc cx
+B69D  54                      push sp
+B69E  43                      inc bx
+B69F  4C                      dec sp
+B6A0  4B                      dec bx
+B6A1  32 00                   xor al, byte ptr [bx + si]
+B6A3  41                      inc cx
+B6A4  54                      push sp
+B6A5  43                      inc bx
+B6A6  4C                      dec sp
+B6A7  4B                      dec bx
+B6A8  32 2F                   xor ch, byte ptr [bx]
+B6AA  32 00                   xor al, byte ptr [bx + si]
+B6AC  41                      inc cx
+B6AD  54                      push sp
+B6AE  43                      inc bx
+B6AF  4C                      dec sp
+B6B0  4B                      dec bx
+B6B1  32 2F                   xor ch, byte ptr [bx]
+B6B3  34 00                   xor al, 0
+B6B5  41                      inc cx
+B6B6  54                      push sp
+B6B7  43                      inc bx
+B6B8  4C                      dec sp
+B6B9  4B                      dec bx
+B6BA  32 2F                   xor ch, byte ptr [bx]
+B6BC  38 00                   cmp byte ptr [bx + si], al
+B6BE  4F                      dec di
+B6BF  53                      push bx
+B6C0  43                      inc bx
+B6C1  00 43 4C                add byte ptr [bp + di + 0x4c], al
+B6C4  4B                      dec bx
+B6C5  49                      dec cx
+B6C6  4F                      dec di
+B6C7  00 36 34 4B             add byte ptr [0x4b34], dh
+B6CB  42                      inc dx
+B6CC  00 31                   add byte ptr [bx + di], dh
+B6CE  32 38                   xor bh, byte ptr [bx + si]
+B6D0  4B                      dec bx
+B6D1  42                      inc dx
+B6D2  00 30                   add byte ptr [bx + si], dh
+B6D4  20 57 53                and byte ptr [bx + 0x53], dl
+B6D7  00 31                   add byte ptr [bx + di], dh
+B6D9  20 57 53                and byte ptr [bx + 0x53], dl
+B6DC  00 32                   add byte ptr [bp + si], dh
+B6DE  20 57 53                and byte ptr [bx + 0x53], dl
+B6E1  00 33                   add byte ptr [bp + di], dh
+B6E3  20 57 53                and byte ptr [bx + 0x53], dl
+B6E6  00 30                   add byte ptr [bx + si], dh
+B6E8  20 6E 73                and byte ptr [bp + 0x73], ch
+B6EB  00 31                   add byte ptr [bx + di], dh
+B6ED  20 6E 73                and byte ptr [bp + 0x73], ch
+B6F0  00 32                   add byte ptr [bp + si], dh
+B6F2  20              db 0x20
+B6F3  6E                      outsb dx, byte ptr [si]
+
+===== B67Ch-B6FBh =====
+Reason: target from 2AB3 selector table
+B67C  43                      inc bx
+B67D  4C                      dec sp
+B67E  4B                      dec bx
+B67F  32 20                   xor ah, byte ptr [bx + si]
+B681  2F                      das
+B682  31 30                   xor word ptr [bx + si], si
+B684  00 43 4C                add byte ptr [bp + di + 0x4c], al
+B687  4B                      dec bx
+B688  32 20                   xor ah, byte ptr [bx + si]
+B68A  2F                      das
+B68B  31 32                   xor word ptr [bp + si], si
+B68D  00 41 54                add byte ptr [bx + di + 0x54], al
+B690  43                      inc bx
+B691  4C                      dec sp
+B692  4B                      dec bx
+B693  00 41 54                add byte ptr [bx + di + 0x54], al
+B696  43                      inc bx
+B697  4C                      dec sp
+B698  4B                      dec bx
+B699  2F                      das
+B69A  32 00                   xor al, byte ptr [bx + si]
+B69C  41                      inc cx
+B69D  54                      push sp
+B69E  43                      inc bx
+B69F  4C                      dec sp
+B6A0  4B                      dec bx
+B6A1  32 00                   xor al, byte ptr [bx + si]
+B6A3  41                      inc cx
+B6A4  54                      push sp
+B6A5  43                      inc bx
+B6A6  4C                      dec sp
+B6A7  4B                      dec bx
+B6A8  32 2F                   xor ch, byte ptr [bx]
+B6AA  32 00                   xor al, byte ptr [bx + si]
+B6AC  41                      inc cx
+B6AD  54                      push sp
+B6AE  43                      inc bx
+B6AF  4C                      dec sp
+B6B0  4B                      dec bx
+B6B1  32 2F                   xor ch, byte ptr [bx]
+B6B3  34 00                   xor al, 0
+B6B5  41                      inc cx
+B6B6  54                      push sp
+B6B7  43                      inc bx
+B6B8  4C                      dec sp
+B6B9  4B                      dec bx
+B6BA  32 2F                   xor ch, byte ptr [bx]
+B6BC  38 00                   cmp byte ptr [bx + si], al
+B6BE  4F                      dec di
+B6BF  53                      push bx
+B6C0  43                      inc bx
+B6C1  00 43 4C                add byte ptr [bp + di + 0x4c], al
+B6C4  4B                      dec bx
+B6C5  49                      dec cx
+B6C6  4F                      dec di
+B6C7  00 36 34 4B             add byte ptr [0x4b34], dh
+B6CB  42                      inc dx
+B6CC  00 31                   add byte ptr [bx + di], dh
+B6CE  32 38                   xor bh, byte ptr [bx + si]
+B6D0  4B                      dec bx
+B6D1  42                      inc dx
+B6D2  00 30                   add byte ptr [bx + si], dh
+B6D4  20 57 53                and byte ptr [bx + 0x53], dl
+B6D7  00 31                   add byte ptr [bx + di], dh
+B6D9  20 57 53                and byte ptr [bx + 0x53], dl
+B6DC  00 32                   add byte ptr [bp + si], dh
+B6DE  20 57 53                and byte ptr [bx + 0x53], dl
+B6E1  00 33                   add byte ptr [bp + di], dh
+B6E3  20 57 53                and byte ptr [bx + 0x53], dl
+B6E6  00 30                   add byte ptr [bx + si], dh
+B6E8  20 6E 73                and byte ptr [bp + 0x73], ch
+B6EB  00 31                   add byte ptr [bx + di], dh
+B6ED  20 6E 73                and byte ptr [bp + 0x73], ch
+B6F0  00 32                   add byte ptr [bp + si], dh
+B6F2  20 6E 73                and byte ptr [bp + 0x73], ch
+B6F5  00 33                   add byte ptr [bp + di], dh
+B6F7  20 6E 73                and byte ptr [bp + 0x73], ch
+B6FA  00 30                   add byte ptr [bx + si], dh
+
+===== B685h-B704h =====
+Reason: target from 2AB3 selector table
+B685  43                      inc bx
+B686  4C                      dec sp
+B687  4B                      dec bx
+B688  32 20                   xor ah, byte ptr [bx + si]
+B68A  2F                      das
+B68B  31 32                   xor word ptr [bp + si], si
+B68D  00 41 54                add byte ptr [bx + di + 0x54], al
+B690  43                      inc bx
+B691  4C                      dec sp
+B692  4B                      dec bx
+B693  00 41 54                add byte ptr [bx + di + 0x54], al
+B696  43                      inc bx
+B697  4C                      dec sp
+B698  4B                      dec bx
+B699  2F                      das
+B69A  32 00                   xor al, byte ptr [bx + si]
+B69C  41                      inc cx
+B69D  54                      push sp
+B69E  43                      inc bx
+B69F  4C                      dec sp
+B6A0  4B                      dec bx
+B6A1  32 00                   xor al, byte ptr [bx + si]
+B6A3  41                      inc cx
+B6A4  54                      push sp
+B6A5  43                      inc bx
+B6A6  4C                      dec sp
+B6A7  4B                      dec bx
+B6A8  32 2F                   xor ch, byte ptr [bx]
+B6AA  32 00                   xor al, byte ptr [bx + si]
+B6AC  41                      inc cx
+B6AD  54                      push sp
+B6AE  43                      inc bx
+B6AF  4C                      dec sp
+B6B0  4B                      dec bx
+B6B1  32 2F                   xor ch, byte ptr [bx]
+B6B3  34 00                   xor al, 0
+B6B5  41                      inc cx
+B6B6  54                      push sp
+B6B7  43                      inc bx
+B6B8  4C                      dec sp
+B6B9  4B                      dec bx
+B6BA  32 2F                   xor ch, byte ptr [bx]
+B6BC  38 00                   cmp byte ptr [bx + si], al
+B6BE  4F                      dec di
+B6BF  53                      push bx
+B6C0  43                      inc bx
+B6C1  00 43 4C                add byte ptr [bp + di + 0x4c], al
+B6C4  4B                      dec bx
+B6C5  49                      dec cx
+B6C6  4F                      dec di
+B6C7  00 36 34 4B             add byte ptr [0x4b34], dh
+B6CB  42                      inc dx
+B6CC  00 31                   add byte ptr [bx + di], dh
+B6CE  32 38                   xor bh, byte ptr [bx + si]
+B6D0  4B                      dec bx
+B6D1  42                      inc dx
+B6D2  00 30                   add byte ptr [bx + si], dh
+B6D4  20 57 53                and byte ptr [bx + 0x53], dl
+B6D7  00 31                   add byte ptr [bx + di], dh
+B6D9  20 57 53                and byte ptr [bx + 0x53], dl
+B6DC  00 32                   add byte ptr [bp + si], dh
+B6DE  20 57 53                and byte ptr [bx + 0x53], dl
+B6E1  00 33                   add byte ptr [bp + di], dh
+B6E3  20 57 53                and byte ptr [bx + 0x53], dl
+B6E6  00 30                   add byte ptr [bx + si], dh
+B6E8  20 6E 73                and byte ptr [bp + 0x73], ch
+B6EB  00 31                   add byte ptr [bx + di], dh
+B6ED  20 6E 73                and byte ptr [bp + 0x73], ch
+B6F0  00 32                   add byte ptr [bp + si], dh
+B6F2  20 6E 73                and byte ptr [bp + 0x73], ch
+B6F5  00 33                   add byte ptr [bp + di], dh
+B6F7  20 6E 73                and byte ptr [bp + 0x73], ch
+B6FA  00 30                   add byte ptr [bx + si], dh
+B6FC  20 75 73                and byte ptr [di + 0x73], dh
+B6FF  00 30                   add byte ptr [bx + si], dh
+B701  2E 32 35                xor dh, byte ptr cs:[di]
+B704  20              db 0x20
+
+===== B656h-B6D5h =====
+Reason: target from 2AB3 selector table
+B656  4B                      dec bx
+B657  32 20                   xor ah, byte ptr [bx + si]
+B659  2F                      das
+B65A  33 00                   xor ax, word ptr [bx + si]
+B65C  43                      inc bx
+B65D  4C                      dec sp
+B65E  4B                      dec bx
+B65F  32 20                   xor ah, byte ptr [bx + si]
+B661  2F                      das
+B662  34 00                   xor al, 0
+B664  43                      inc bx
+B665  4C                      dec sp
+B666  4B                      dec bx
+B667  32 20                   xor ah, byte ptr [bx + si]
+B669  2F                      das
+B66A  35 00 43                xor ax, 0x4300
+B66D  4C                      dec sp
+B66E  4B                      dec bx
+B66F  32 20                   xor ah, byte ptr [bx + si]
+B671  2F                      das
+B672  36 00 43 4C             add byte ptr ss:[bp + di + 0x4c], al
+B676  4B                      dec bx
+B677  32 20                   xor ah, byte ptr [bx + si]
+B679  2F                      das
+B67A  38 00                   cmp byte ptr [bx + si], al
+B67C  43                      inc bx
+B67D  4C                      dec sp
+B67E  4B                      dec bx
+B67F  32 20                   xor ah, byte ptr [bx + si]
+B681  2F                      das
+B682  31 30                   xor word ptr [bx + si], si
+B684  00 43 4C                add byte ptr [bp + di + 0x4c], al
+B687  4B                      dec bx
+B688  32 20                   xor ah, byte ptr [bx + si]
+B68A  2F                      das
+B68B  31 32                   xor word ptr [bp + si], si
+B68D  00 41 54                add byte ptr [bx + di + 0x54], al
+B690  43                      inc bx
+B691  4C                      dec sp
+B692  4B                      dec bx
+B693  00 41 54                add byte ptr [bx + di + 0x54], al
+B696  43                      inc bx
+B697  4C                      dec sp
+B698  4B                      dec bx
+B699  2F                      das
+B69A  32 00                   xor al, byte ptr [bx + si]
+B69C  41                      inc cx
+B69D  54                      push sp
+B69E  43                      inc bx
+B69F  4C                      dec sp
+B6A0  4B                      dec bx
+B6A1  32 00                   xor al, byte ptr [bx + si]
+B6A3  41                      inc cx
+B6A4  54                      push sp
+B6A5  43                      inc bx
+B6A6  4C                      dec sp
+B6A7  4B                      dec bx
+B6A8  32 2F                   xor ch, byte ptr [bx]
+B6AA  32 00                   xor al, byte ptr [bx + si]
+B6AC  41                      inc cx
+B6AD  54                      push sp
+B6AE  43                      inc bx
+B6AF  4C                      dec sp
+B6B0  4B                      dec bx
+B6B1  32 2F                   xor ch, byte ptr [bx]
+B6B3  34 00                   xor al, 0
+B6B5  41                      inc cx
+B6B6  54                      push sp
+B6B7  43                      inc bx
+B6B8  4C                      dec sp
+B6B9  4B                      dec bx
+B6BA  32 2F                   xor ch, byte ptr [bx]
+B6BC  38 00                   cmp byte ptr [bx + si], al
+B6BE  4F                      dec di
+B6BF  53                      push bx
+B6C0  43                      inc bx
+B6C1  00 43 4C                add byte ptr [bp + di + 0x4c], al
+B6C4  4B                      dec bx
+B6C5  49                      dec cx
+B6C6  4F                      dec di
+B6C7  00 36 34 4B             add byte ptr [0x4b34], dh
+B6CB  42                      inc dx
+B6CC  00 31                   add byte ptr [bx + di], dh
+B6CE  32 38                   xor bh, byte ptr [bx + si]
+B6D0  4B                      dec bx
+B6D1  42                      inc dx
+B6D2  00 30                   add byte ptr [bx + si], dh
+B6D4  20              db 0x20
+B6D5  57                      push di
+
+===== B5FFh-B67Eh =====
+Reason: target from 2B0B selector table
+B5FF  53                      push bx
+B600  6C                      insb byte ptr es:[di], dx
+B601  6F                      outsw dx, word ptr [si]
+B602  77 00                   ja 0xb604
+B604  4E                      dec si
+B605  6F                      outsw dx, word ptr [si]
+B606  72 6D                   jb 0xb675
+B608  61                      popaw
+B609  6C                      insb byte ptr es:[di], dx
+B60A  00 46 61                add byte ptr [bp + 0x61], al
+B60D  73 74                   jae 0xb683
+B60F  00 46 61                add byte ptr [bp + 0x61], al
+B612  73 74                   jae 0xb688
+B614  65 73 74                jae 0xb68b
+B617  00 32                   add byte ptr [bp + si], dh
+B619  74 00                   je 0xb61b
+B61B  33 74 00                xor si, word ptr [si]
+B61E  34 74                   xor al, 0x74
+B620  00 36 74 00             add byte ptr [0x74], dh
+B624  38 74 00                cmp byte ptr [si], dh
+B627  57                      push di
+B628  42                      inc dx
+B629  00 57 54                add byte ptr [bx + 0x54], dl
+B62C  00 37                   add byte ptr [bx], dh
+B62E  2E 31 39                xor word ptr cs:[bx + di], di
+B631  4D                      dec bp
+B632  48                      dec ax
+B633  7A 00                   jp 0xb635
+B635  31 34                   xor word ptr [si], si
+B637  2E 33 32                xor si, word ptr cs:[bp + si]
+B63A  4D                      dec bp
+B63B  48                      dec ax
+B63C  7A 00                   jp 0xb63e
+B63E  32 38                   xor bh, byte ptr [bx + si]
+B640  2E 36 34 4D             xor al, 0x4d
+B644  48                      dec ax
+B645  7A 00                   jp 0xb647
+B647  43                      inc bx
+B648  4C                      dec sp
+B649  4B                      dec bx
+B64A  32 00                   xor al, byte ptr [bx + si]
+B64C  43                      inc bx
+B64D  4C                      dec sp
+B64E  4B                      dec bx
+B64F  32 20                   xor ah, byte ptr [bx + si]
+B651  2F                      das
+B652  32 00                   xor al, byte ptr [bx + si]
+B654  43                      inc bx
+B655  4C                      dec sp
+B656  4B                      dec bx
+B657  32 20                   xor ah, byte ptr [bx + si]
+B659  2F                      das
+B65A  33 00                   xor ax, word ptr [bx + si]
+B65C  43                      inc bx
+B65D  4C                      dec sp
+B65E  4B                      dec bx
+B65F  32 20                   xor ah, byte ptr [bx + si]
+B661  2F                      das
+B662  34 00                   xor al, 0
+B664  43                      inc bx
+B665  4C                      dec sp
+B666  4B                      dec bx
+B667  32 20                   xor ah, byte ptr [bx + si]
+B669  2F                      das
+B66A  35 00 43                xor ax, 0x4300
+B66D  4C                      dec sp
+B66E  4B                      dec bx
+B66F  32 20                   xor ah, byte ptr [bx + si]
+B671  2F                      das
+B672  36 00 43 4C             add byte ptr ss:[bp + di + 0x4c], al
+B676  4B                      dec bx
+B677  32 20                   xor ah, byte ptr [bx + si]
+B679  2F                      das
+B67A  38 00                   cmp byte ptr [bx + si], al
+B67C  43                      inc bx
+B67D  4C                      dec sp
+B67E  4B                      dec bx
+
+===== B604h-B683h =====
+Reason: target from 2B0B selector table
+B604  4E                      dec si
+B605  6F                      outsw dx, word ptr [si]
+B606  72 6D                   jb 0xb675
+B608  61                      popaw
+B609  6C                      insb byte ptr es:[di], dx
+B60A  00 46 61                add byte ptr [bp + 0x61], al
+B60D  73 74                   jae 0xb683
+B60F  00 46 61                add byte ptr [bp + 0x61], al
+B612  73 74                   jae 0xb688
+B614  65 73 74                jae 0xb68b
+B617  00 32                   add byte ptr [bp + si], dh
+B619  74 00                   je 0xb61b
+B61B  33 74 00                xor si, word ptr [si]
+B61E  34 74                   xor al, 0x74
+B620  00 36 74 00             add byte ptr [0x74], dh
+B624  38 74 00                cmp byte ptr [si], dh
+B627  57                      push di
+B628  42                      inc dx
+B629  00 57 54                add byte ptr [bx + 0x54], dl
+B62C  00 37                   add byte ptr [bx], dh
+B62E  2E 31 39                xor word ptr cs:[bx + di], di
+B631  4D                      dec bp
+B632  48                      dec ax
+B633  7A 00                   jp 0xb635
+B635  31 34                   xor word ptr [si], si
+B637  2E 33 32                xor si, word ptr cs:[bp + si]
+B63A  4D                      dec bp
+B63B  48                      dec ax
+B63C  7A 00                   jp 0xb63e
+B63E  32 38                   xor bh, byte ptr [bx + si]
+B640  2E 36 34 4D             xor al, 0x4d
+B644  48                      dec ax
+B645  7A 00                   jp 0xb647
+B647  43                      inc bx
+B648  4C                      dec sp
+B649  4B                      dec bx
+B64A  32 00                   xor al, byte ptr [bx + si]
+B64C  43                      inc bx
+B64D  4C                      dec sp
+B64E  4B                      dec bx
+B64F  32 20                   xor ah, byte ptr [bx + si]
+B651  2F                      das
+B652  32 00                   xor al, byte ptr [bx + si]
+B654  43                      inc bx
+B655  4C                      dec sp
+B656  4B                      dec bx
+B657  32 20                   xor ah, byte ptr [bx + si]
+B659  2F                      das
+B65A  33 00                   xor ax, word ptr [bx + si]
+B65C  43                      inc bx
+B65D  4C                      dec sp
+B65E  4B                      dec bx
+B65F  32 20                   xor ah, byte ptr [bx + si]
+B661  2F                      das
+B662  34 00                   xor al, 0
+B664  43                      inc bx
+B665  4C                      dec sp
+B666  4B                      dec bx
+B667  32 20                   xor ah, byte ptr [bx + si]
+B669  2F                      das
+B66A  35 00 43                xor ax, 0x4300
+B66D  4C                      dec sp
+B66E  4B                      dec bx
+B66F  32 20                   xor ah, byte ptr [bx + si]
+B671  2F                      das
+B672  36 00 43 4C             add byte ptr ss:[bp + di + 0x4c], al
+B676  4B                      dec bx
+B677  32 20                   xor ah, byte ptr [bx + si]
+B679  2F                      das
+B67A  38 00                   cmp byte ptr [bx + si], al
+B67C  43                      inc bx
+B67D  4C                      dec sp
+B67E  4B                      dec bx
+B67F  32 20                   xor ah, byte ptr [bx + si]
+B681  2F                      das
+B682  31 30                   xor word ptr [bx + si], si
+
+===== B60Bh-B68Ah =====
+Reason: target from 2B0B selector table
+B60B  46                      inc si
+B60C  61                      popaw
+B60D  73 74                   jae 0xb683
+B60F  00 46 61                add byte ptr [bp + 0x61], al
+B612  73 74                   jae 0xb688
+B614  65 73 74                jae 0xb68b
+B617  00 32                   add byte ptr [bp + si], dh
+B619  74 00                   je 0xb61b
+B61B  33 74 00                xor si, word ptr [si]
+B61E  34 74                   xor al, 0x74
+B620  00 36 74 00             add byte ptr [0x74], dh
+B624  38 74 00                cmp byte ptr [si], dh
+B627  57                      push di
+B628  42                      inc dx
+B629  00 57 54                add byte ptr [bx + 0x54], dl
+B62C  00 37                   add byte ptr [bx], dh
+B62E  2E 31 39                xor word ptr cs:[bx + di], di
+B631  4D                      dec bp
+B632  48                      dec ax
+B633  7A 00                   jp 0xb635
+B635  31 34                   xor word ptr [si], si
+B637  2E 33 32                xor si, word ptr cs:[bp + si]
+B63A  4D                      dec bp
+B63B  48                      dec ax
+B63C  7A 00                   jp 0xb63e
+B63E  32 38                   xor bh, byte ptr [bx + si]
+B640  2E 36 34 4D             xor al, 0x4d
+B644  48                      dec ax
+B645  7A 00                   jp 0xb647
+B647  43                      inc bx
+B648  4C                      dec sp
+B649  4B                      dec bx
+B64A  32 00                   xor al, byte ptr [bx + si]
+B64C  43                      inc bx
+B64D  4C                      dec sp
+B64E  4B                      dec bx
+B64F  32 20                   xor ah, byte ptr [bx + si]
+B651  2F                      das
+B652  32 00                   xor al, byte ptr [bx + si]
+B654  43                      inc bx
+B655  4C                      dec sp
+B656  4B                      dec bx
+B657  32 20                   xor ah, byte ptr [bx + si]
+B659  2F                      das
+B65A  33 00                   xor ax, word ptr [bx + si]
+B65C  43                      inc bx
+B65D  4C                      dec sp
+B65E  4B                      dec bx
+B65F  32 20                   xor ah, byte ptr [bx + si]
+B661  2F                      das
+B662  34 00                   xor al, 0
+B664  43                      inc bx
+B665  4C                      dec sp
+B666  4B                      dec bx
+B667  32 20                   xor ah, byte ptr [bx + si]
+B669  2F                      das
+B66A  35 00 43                xor ax, 0x4300
+B66D  4C                      dec sp
+B66E  4B                      dec bx
+B66F  32 20                   xor ah, byte ptr [bx + si]
+B671  2F                      das
+B672  36 00 43 4C             add byte ptr ss:[bp + di + 0x4c], al
+B676  4B                      dec bx
+B677  32 20                   xor ah, byte ptr [bx + si]
+B679  2F                      das
+B67A  38 00                   cmp byte ptr [bx + si], al
+B67C  43                      inc bx
+B67D  4C                      dec sp
+B67E  4B                      dec bx
+B67F  32 20                   xor ah, byte ptr [bx + si]
+B681  2F                      das
+B682  31 30                   xor word ptr [bx + si], si
+B684  00 43 4C                add byte ptr [bp + di + 0x4c], al
+B687  4B                      dec bx
+B688  32 20                   xor ah, byte ptr [bx + si]
+B68A  2F                      das
+
+===== B610h-B68Fh =====
+Reason: target from 2B0B selector table
+B610  46                      inc si
+B611  61                      popaw
+B612  73 74                   jae 0xb688
+B614  65 73 74                jae 0xb68b
+B617  00 32                   add byte ptr [bp + si], dh
+B619  74 00                   je 0xb61b
+B61B  33 74 00                xor si, word ptr [si]
+B61E  34 74                   xor al, 0x74
+B620  00 36 74 00             add byte ptr [0x74], dh
+B624  38 74 00                cmp byte ptr [si], dh
+B627  57                      push di
+B628  42                      inc dx
+B629  00 57 54                add byte ptr [bx + 0x54], dl
+B62C  00 37                   add byte ptr [bx], dh
+B62E  2E 31 39                xor word ptr cs:[bx + di], di
+B631  4D                      dec bp
+B632  48                      dec ax
+B633  7A 00                   jp 0xb635
+B635  31 34                   xor word ptr [si], si
+B637  2E 33 32                xor si, word ptr cs:[bp + si]
+B63A  4D                      dec bp
+B63B  48                      dec ax
+B63C  7A 00                   jp 0xb63e
+B63E  32 38                   xor bh, byte ptr [bx + si]
+B640  2E 36 34 4D             xor al, 0x4d
+B644  48                      dec ax
+B645  7A 00                   jp 0xb647
+B647  43                      inc bx
+B648  4C                      dec sp
+B649  4B                      dec bx
+B64A  32 00                   xor al, byte ptr [bx + si]
+B64C  43                      inc bx
+B64D  4C                      dec sp
+B64E  4B                      dec bx
+B64F  32 20                   xor ah, byte ptr [bx + si]
+B651  2F                      das
+B652  32 00                   xor al, byte ptr [bx + si]
+B654  43                      inc bx
+B655  4C                      dec sp
+B656  4B                      dec bx
+B657  32 20                   xor ah, byte ptr [bx + si]
+B659  2F                      das
+B65A  33 00                   xor ax, word ptr [bx + si]
+B65C  43                      inc bx
+B65D  4C                      dec sp
+B65E  4B                      dec bx
+B65F  32 20                   xor ah, byte ptr [bx + si]
+B661  2F                      das
+B662  34 00                   xor al, 0
+B664  43                      inc bx
+B665  4C                      dec sp
+B666  4B                      dec bx
+B667  32 20                   xor ah, byte ptr [bx + si]
+B669  2F                      das
+B66A  35 00 43                xor ax, 0x4300
+B66D  4C                      dec sp
+B66E  4B                      dec bx
+B66F  32 20                   xor ah, byte ptr [bx + si]
+B671  2F                      das
+B672  36 00 43 4C             add byte ptr ss:[bp + di + 0x4c], al
+B676  4B                      dec bx
+B677  32 20                   xor ah, byte ptr [bx + si]
+B679  2F                      das
+B67A  38 00                   cmp byte ptr [bx + si], al
+B67C  43                      inc bx
+B67D  4C                      dec sp
+B67E  4B                      dec bx
+B67F  32 20                   xor ah, byte ptr [bx + si]
+B681  2F                      das
+B682  31 30                   xor word ptr [bx + si], si
+B684  00 43 4C                add byte ptr [bp + di + 0x4c], al
+B687  4B                      dec bx
+B688  32 20                   xor ah, byte ptr [bx + si]
+B68A  2F                      das
+B68B  31 32                   xor word ptr [bp + si], si
+B68D  00 41 54                add byte ptr [bx + di + 0x54], al
+
+===== B6D3h-B752h =====
+Reason: target from 2B8D selector table
+B6D3  30 20                   xor byte ptr [bx + si], ah
+B6D5  57                      push di
+B6D6  53                      push bx
+B6D7  00 31                   add byte ptr [bx + di], dh
+B6D9  20 57 53                and byte ptr [bx + 0x53], dl
+B6DC  00 32                   add byte ptr [bp + si], dh
+B6DE  20 57 53                and byte ptr [bx + 0x53], dl
+B6E1  00 33                   add byte ptr [bp + di], dh
+B6E3  20 57 53                and byte ptr [bx + 0x53], dl
+B6E6  00 30                   add byte ptr [bx + si], dh
+B6E8  20 6E 73                and byte ptr [bp + 0x73], ch
+B6EB  00 31                   add byte ptr [bx + di], dh
+B6ED  20 6E 73                and byte ptr [bp + 0x73], ch
+B6F0  00 32                   add byte ptr [bp + si], dh
+B6F2  20 6E 73                and byte ptr [bp + 0x73], ch
+B6F5  00 33                   add byte ptr [bp + di], dh
+B6F7  20 6E 73                and byte ptr [bp + 0x73], ch
+B6FA  00 30                   add byte ptr [bx + si], dh
+B6FC  20 75 73                and byte ptr [di + 0x73], dh
+B6FF  00 30                   add byte ptr [bx + si], dh
+B701  2E 32 35                xor dh, byte ptr cs:[di]
+B704  20 75 73                and byte ptr [di + 0x73], dh
+B707  00 30                   add byte ptr [bx + si], dh
+B709  2E 35 20 75             xor ax, 0x7520
+B70D  73 00                   jae 0xb70f
+B70F  30 2E 37 35             xor byte ptr [0x3537], ch
+B713  20 75 73                and byte ptr [di + 0x73], dh
+B716  00 31                   add byte ptr [bx + di], dh
+B718  20 75 73                and byte ptr [di + 0x73], dh
+B71B  00 31                   add byte ptr [bx + di], dh
+B71D  2E 32 35                xor dh, byte ptr cs:[di]
+B720  20 75 73                and byte ptr [di + 0x73], dh
+B723  00 31                   add byte ptr [bx + di], dh
+B725  2E 35 75 00             xor ax, 0x75
+B729  31 2E 37 35             xor word ptr [0x3537], bp
+B72D  20 75 73                and byte ptr [di + 0x73], dh
+B730  00 32                   add byte ptr [bp + si], dh
+B732  20 75 73                and byte ptr [di + 0x73], dh
+B735  00 32                   add byte ptr [bp + si], dh
+B737  2E 32 35                xor dh, byte ptr cs:[di]
+B73A  20 75 73                and byte ptr [di + 0x73], dh
+B73D  00 32                   add byte ptr [bp + si], dh
+B73F  2E 35 20 75             xor ax, 0x7520
+B743  73 00                   jae 0xb745
+B745  32 2E 37 35             xor ch, byte ptr [0x3537]
+B749  20 75 73                and byte ptr [di + 0x73], dh
+B74C  00 33                   add byte ptr [bp + di], dh
+B74E  20 75 73                and byte ptr [di + 0x73], dh
+B751  00 33                   add byte ptr [bp + di], dh
+
+===== B6D8h-B757h =====
+Reason: target from 2B8D selector table
+B6D8  31 20                   xor word ptr [bx + si], sp
+B6DA  57                      push di
+B6DB  53                      push bx
+B6DC  00 32                   add byte ptr [bp + si], dh
+B6DE  20 57 53                and byte ptr [bx + 0x53], dl
+B6E1  00 33                   add byte ptr [bp + di], dh
+B6E3  20 57 53                and byte ptr [bx + 0x53], dl
+B6E6  00 30                   add byte ptr [bx + si], dh
+B6E8  20 6E 73                and byte ptr [bp + 0x73], ch
+B6EB  00 31                   add byte ptr [bx + di], dh
+B6ED  20 6E 73                and byte ptr [bp + 0x73], ch
+B6F0  00 32                   add byte ptr [bp + si], dh
+B6F2  20 6E 73                and byte ptr [bp + 0x73], ch
+B6F5  00 33                   add byte ptr [bp + di], dh
+B6F7  20 6E 73                and byte ptr [bp + 0x73], ch
+B6FA  00 30                   add byte ptr [bx + si], dh
+B6FC  20 75 73                and byte ptr [di + 0x73], dh
+B6FF  00 30                   add byte ptr [bx + si], dh
+B701  2E 32 35                xor dh, byte ptr cs:[di]
+B704  20 75 73                and byte ptr [di + 0x73], dh
+B707  00 30                   add byte ptr [bx + si], dh
+B709  2E 35 20 75             xor ax, 0x7520
+B70D  73 00                   jae 0xb70f
+B70F  30 2E 37 35             xor byte ptr [0x3537], ch
+B713  20 75 73                and byte ptr [di + 0x73], dh
+B716  00 31                   add byte ptr [bx + di], dh
+B718  20 75 73                and byte ptr [di + 0x73], dh
+B71B  00 31                   add byte ptr [bx + di], dh
+B71D  2E 32 35                xor dh, byte ptr cs:[di]
+B720  20 75 73                and byte ptr [di + 0x73], dh
+B723  00 31                   add byte ptr [bx + di], dh
+B725  2E 35 75 00             xor ax, 0x75
+B729  31 2E 37 35             xor word ptr [0x3537], bp
+B72D  20 75 73                and byte ptr [di + 0x73], dh
+B730  00 32                   add byte ptr [bp + si], dh
+B732  20 75 73                and byte ptr [di + 0x73], dh
+B735  00 32                   add byte ptr [bp + si], dh
+B737  2E 32 35                xor dh, byte ptr cs:[di]
+B73A  20 75 73                and byte ptr [di + 0x73], dh
+B73D  00 32                   add byte ptr [bp + si], dh
+B73F  2E 35 20 75             xor ax, 0x7520
+B743  73 00                   jae 0xb745
+B745  32 2E 37 35             xor ch, byte ptr [0x3537]
+B749  20 75 73                and byte ptr [di + 0x73], dh
+B74C  00 33                   add byte ptr [bp + di], dh
+B74E  20 75 73                and byte ptr [di + 0x73], dh
+B751  00 33                   add byte ptr [bp + di], dh
+B753  2E 32 35                xor dh, byte ptr cs:[di]
+B756  20              db 0x20
+B757  75              db 0x75
+
+===== B6FFh-B77Eh =====
+Reason: target from 2C16 selector table
+B6FF  00 30                   add byte ptr [bx + si], dh
+B701  2E 32 35                xor dh, byte ptr cs:[di]
+B704  20 75 73                and byte ptr [di + 0x73], dh
+B707  00 30                   add byte ptr [bx + si], dh
+B709  2E 35 20 75             xor ax, 0x7520
+B70D  73 00                   jae 0xb70f
+B70F  30 2E 37 35             xor byte ptr [0x3537], ch
+B713  20 75 73                and byte ptr [di + 0x73], dh
+B716  00 31                   add byte ptr [bx + di], dh
+B718  20 75 73                and byte ptr [di + 0x73], dh
+B71B  00 31                   add byte ptr [bx + di], dh
+B71D  2E 32 35                xor dh, byte ptr cs:[di]
+B720  20 75 73                and byte ptr [di + 0x73], dh
+B723  00 31                   add byte ptr [bx + di], dh
+B725  2E 35 75 00             xor ax, 0x75
+B729  31 2E 37 35             xor word ptr [0x3537], bp
+B72D  20 75 73                and byte ptr [di + 0x73], dh
+B730  00 32                   add byte ptr [bp + si], dh
+B732  20 75 73                and byte ptr [di + 0x73], dh
+B735  00 32                   add byte ptr [bp + si], dh
+B737  2E 32 35                xor dh, byte ptr cs:[di]
+B73A  20 75 73                and byte ptr [di + 0x73], dh
+B73D  00 32                   add byte ptr [bp + si], dh
+B73F  2E 35 20 75             xor ax, 0x7520
+B743  73 00                   jae 0xb745
+B745  32 2E 37 35             xor ch, byte ptr [0x3537]
+B749  20 75 73                and byte ptr [di + 0x73], dh
+B74C  00 33                   add byte ptr [bp + di], dh
+B74E  20 75 73                and byte ptr [di + 0x73], dh
+B751  00 33                   add byte ptr [bp + di], dh
+B753  2E 32 35                xor dh, byte ptr cs:[di]
+B756  20 75 73                and byte ptr [di + 0x73], dh
+B759  00 33                   add byte ptr [bp + di], dh
+B75B  2E 35 20 75             xor ax, 0x7520
+B75F  73 00                   jae 0xb761
+B761  33 2E 37 35             xor bp, word ptr [0x3537]
+B765  20 75 73                and byte ptr [di + 0x73], dh
+B768  00 31                   add byte ptr [bx + di], dh
+B76A  35 75 20                xor ax, 0x2075
+B76D  00 33                   add byte ptr [bp + di], dh
+B76F  30 75 00                xor byte ptr [di], dh
+B772  36 30 75 00             xor byte ptr ss:[di], dh
+B776  31 32                   xor word ptr [bp + si], si
+B778  30 75 00                xor byte ptr [di], dh
+B77B  30 20                   xor byte ptr [bx + si], ah
+B77D  43                      inc bx
+B77E  4C                      dec sp
+
+===== B556h-B5D5h =====
+Reason: target from 2C16 selector table
+B556  4E                      dec si
+B557  4F                      dec di
+B558  50                      push ax
+B559  51                      push cx
+B55A  52                      push dx
+B55B  53                      push bx
+B55C  54                      push sp
+B55D  52                      push dx
+B55E  02 52 65                add dl, byte ptr [bp + si + 0x65]
+B561  73 65                   jae 0xb5c8
+B563  72 76                   jb 0xb5db
+B565  65 64 00 44 69          add byte ptr fs:[si + 0x69], al
+B56A  73 61                   jae 0xb5cd
+B56C  62 6C 65                bound bp, dword ptr [si + 0x65]
+B56F  64 00 45 6E             add byte ptr fs:[di + 0x6e], al
+B573  61                      popaw
+B574  62 6C 65                bound bp, dword ptr [si + 0x65]
+B577  64 00 41 62             add byte ptr fs:[bx + di + 0x62], al
+B57B  73 65                   jae 0xb5e2
+B57D  6E                      outsb dx, byte ptr [si]
+B57E  74 00                   je 0xb580
+B580  50                      push ax
+B581  72 65                   jb 0xb5e8
+B583  73 65                   jae 0xb5ea
+B585  6E                      outsb dx, byte ptr [si]
+B586  74 00                   je 0xb588
+B588  4C                      dec sp
+B589  6F                      outsw dx, word ptr [si]
+B58A  77 00                   ja 0xb58c
+B58C  48                      dec ax
+B58D  69 67 68 00 4F          imul sp, word ptr [bx + 0x68], 0x4f00
+B592  66 66 00 4F 6E          add byte ptr [bx + 0x6e], cl
+B597  00 4E 6F                add byte ptr [bp + 0x6f], cl
+B59A  00 59 65                add byte ptr [bx + di + 0x65], bl
+B59D  73 00                   jae 0xb59f
+B59F  53                      push bx
+B5A0  65 74 75                je 0xb618
+B5A3  70 00                   jo 0xb5a5
+B5A5  41                      inc cx
+B5A6  6C                      insb byte ptr es:[di], dx
+B5A7  77 61                   ja 0xb60a
+B5A9  79 73                   jns 0xb61e
+B5AB  00 30                   add byte ptr [bx + si], dh
+B5AD  3A 33                   cmp dh, byte ptr [bp + di]
+B5AF  30 30                   xor byte ptr [bx + si], dh
+B5B1  00 44 4F                add byte ptr [si + 0x4f], al
+B5B4  53                      push bx
+B5B5  20 31                   and byte ptr [bx + di], dh
+B5B7  4B                      dec bx
+B5B8  42                      inc dx
+B5B9  00 41 3A                add byte ptr [bx + di + 0x3a], al
+B5BC  2C 20                   sub al, 0x20
+B5BE  43                      inc bx
+B5BF  3A 00                   cmp al, byte ptr [bx + si]
+B5C1  43                      inc bx
+B5C2  3A 2C                   cmp ch, byte ptr [si]
+B5C4  20 41 3A                and byte ptr [bx + di + 0x3a], al
+B5C7  00 32                   add byte ptr [bp + si], dh
+B5C9  35 30 00                xor ax, 0x30
+B5CC  35 30 30                xor ax, 0x3030
+B5CF  00 37                   add byte ptr [bx], dh
+B5D1  35 30 00                xor ax, 0x30
+B5D4  31 30                   xor word ptr [bx + si], si
+
+===== B708h-B787h =====
+Reason: target from B700 selector table candidate
+B708  30 2E 35 20             xor byte ptr [0x2035], ch
+B70C  75 73                   jne 0xb781
+B70E  00 30                   add byte ptr [bx + si], dh
+B710  2E 37                   aaa
+B712  35 20 75                xor ax, 0x7520
+B715  73 00                   jae 0xb717
+B717  31 20                   xor word ptr [bx + si], sp
+B719  75 73                   jne 0xb78e
+B71B  00 31                   add byte ptr [bx + di], dh
+B71D  2E 32 35                xor dh, byte ptr cs:[di]
+B720  20 75 73                and byte ptr [di + 0x73], dh
+B723  00 31                   add byte ptr [bx + di], dh
+B725  2E 35 75 00             xor ax, 0x75
+B729  31 2E 37 35             xor word ptr [0x3537], bp
+B72D  20 75 73                and byte ptr [di + 0x73], dh
+B730  00 32                   add byte ptr [bp + si], dh
+B732  20 75 73                and byte ptr [di + 0x73], dh
+B735  00 32                   add byte ptr [bp + si], dh
+B737  2E 32 35                xor dh, byte ptr cs:[di]
+B73A  20 75 73                and byte ptr [di + 0x73], dh
+B73D  00 32                   add byte ptr [bp + si], dh
+B73F  2E 35 20 75             xor ax, 0x7520
+B743  73 00                   jae 0xb745
+B745  32 2E 37 35             xor ch, byte ptr [0x3537]
+B749  20 75 73                and byte ptr [di + 0x73], dh
+B74C  00 33                   add byte ptr [bp + di], dh
+B74E  20 75 73                and byte ptr [di + 0x73], dh
+B751  00 33                   add byte ptr [bp + di], dh
+B753  2E 32 35                xor dh, byte ptr cs:[di]
+B756  20 75 73                and byte ptr [di + 0x73], dh
+B759  00 33                   add byte ptr [bp + di], dh
+B75B  2E 35 20 75             xor ax, 0x7520
+B75F  73 00                   jae 0xb761
+B761  33 2E 37 35             xor bp, word ptr [0x3537]
+B765  20 75 73                and byte ptr [di + 0x73], dh
+B768  00 31                   add byte ptr [bx + di], dh
+B76A  35 75 20                xor ax, 0x2075
+B76D  00 33                   add byte ptr [bp + di], dh
+B76F  30 75 00                xor byte ptr [di], dh
+B772  36 30 75 00             xor byte ptr ss:[di], dh
+B776  31 32                   xor word ptr [bp + si], si
+B778  30 75 00                xor byte ptr [di], dh
+B77B  30 20                   xor byte ptr [bx + si], ah
+B77D  43                      inc bx
+B77E  4C                      dec sp
+B77F  4B                      dec bx
+B780  32 00                   xor al, byte ptr [bx + si]
+B782  31 20                   xor word ptr [bx + si], sp
+B784  43                      inc bx
+B785  4C                      dec sp
+B786  4B                      dec bx
+B787  32              db 0x32
+
+===== B70Fh-B78Eh =====
+Reason: target from B700 selector table candidate
+B70F  30 2E 37 35             xor byte ptr [0x3537], ch
+B713  20 75 73                and byte ptr [di + 0x73], dh
+B716  00 31                   add byte ptr [bx + di], dh
+B718  20 75 73                and byte ptr [di + 0x73], dh
+B71B  00 31                   add byte ptr [bx + di], dh
+B71D  2E 32 35                xor dh, byte ptr cs:[di]
+B720  20 75 73                and byte ptr [di + 0x73], dh
+B723  00 31                   add byte ptr [bx + di], dh
+B725  2E 35 75 00             xor ax, 0x75
+B729  31 2E 37 35             xor word ptr [0x3537], bp
+B72D  20 75 73                and byte ptr [di + 0x73], dh
+B730  00 32                   add byte ptr [bp + si], dh
+B732  20 75 73                and byte ptr [di + 0x73], dh
+B735  00 32                   add byte ptr [bp + si], dh
+B737  2E 32 35                xor dh, byte ptr cs:[di]
+B73A  20 75 73                and byte ptr [di + 0x73], dh
+B73D  00 32                   add byte ptr [bp + si], dh
+B73F  2E 35 20 75             xor ax, 0x7520
+B743  73 00                   jae 0xb745
+B745  32 2E 37 35             xor ch, byte ptr [0x3537]
+B749  20 75 73                and byte ptr [di + 0x73], dh
+B74C  00 33                   add byte ptr [bp + di], dh
+B74E  20 75 73                and byte ptr [di + 0x73], dh
+B751  00 33                   add byte ptr [bp + di], dh
+B753  2E 32 35                xor dh, byte ptr cs:[di]
+B756  20 75 73                and byte ptr [di + 0x73], dh
+B759  00 33                   add byte ptr [bp + di], dh
+B75B  2E 35 20 75             xor ax, 0x7520
+B75F  73 00                   jae 0xb761
+B761  33 2E 37 35             xor bp, word ptr [0x3537]
+B765  20 75 73                and byte ptr [di + 0x73], dh
+B768  00 31                   add byte ptr [bx + di], dh
+B76A  35 75 20                xor ax, 0x2075
+B76D  00 33                   add byte ptr [bp + di], dh
+B76F  30 75 00                xor byte ptr [di], dh
+B772  36 30 75 00             xor byte ptr ss:[di], dh
+B776  31 32                   xor word ptr [bp + si], si
+B778  30 75 00                xor byte ptr [di], dh
+B77B  30 20                   xor byte ptr [bx + si], ah
+B77D  43                      inc bx
+B77E  4C                      dec sp
+B77F  4B                      dec bx
+B780  32 00                   xor al, byte ptr [bx + si]
+B782  31 20                   xor word ptr [bx + si], sp
+B784  43                      inc bx
+B785  4C                      dec sp
+B786  4B                      dec bx
+B787  32 00                   xor al, byte ptr [bx + si]
+B789  32 20                   xor ah, byte ptr [bx + si]
+B78B  43                      inc bx
+B78C  4C                      dec sp
+B78D  4B                      dec bx
+B78E  32              db 0x32
+
+===== B717h-B796h =====
+Reason: target from B700 selector table candidate
+B717  31 20                   xor word ptr [bx + si], sp
+B719  75 73                   jne 0xb78e
+B71B  00 31                   add byte ptr [bx + di], dh
+B71D  2E 32 35                xor dh, byte ptr cs:[di]
+B720  20 75 73                and byte ptr [di + 0x73], dh
+B723  00 31                   add byte ptr [bx + di], dh
+B725  2E 35 75 00             xor ax, 0x75
+B729  31 2E 37 35             xor word ptr [0x3537], bp
+B72D  20 75 73                and byte ptr [di + 0x73], dh
+B730  00 32                   add byte ptr [bp + si], dh
+B732  20 75 73                and byte ptr [di + 0x73], dh
+B735  00 32                   add byte ptr [bp + si], dh
+B737  2E 32 35                xor dh, byte ptr cs:[di]
+B73A  20 75 73                and byte ptr [di + 0x73], dh
+B73D  00 32                   add byte ptr [bp + si], dh
+B73F  2E 35 20 75             xor ax, 0x7520
+B743  73 00                   jae 0xb745
+B745  32 2E 37 35             xor ch, byte ptr [0x3537]
+B749  20 75 73                and byte ptr [di + 0x73], dh
+B74C  00 33                   add byte ptr [bp + di], dh
+B74E  20 75 73                and byte ptr [di + 0x73], dh
+B751  00 33                   add byte ptr [bp + di], dh
+B753  2E 32 35                xor dh, byte ptr cs:[di]
+B756  20 75 73                and byte ptr [di + 0x73], dh
+B759  00 33                   add byte ptr [bp + di], dh
+B75B  2E 35 20 75             xor ax, 0x7520
+B75F  73 00                   jae 0xb761
+B761  33 2E 37 35             xor bp, word ptr [0x3537]
+B765  20 75 73                and byte ptr [di + 0x73], dh
+B768  00 31                   add byte ptr [bx + di], dh
+B76A  35 75 20                xor ax, 0x2075
+B76D  00 33                   add byte ptr [bp + di], dh
+B76F  30 75 00                xor byte ptr [di], dh
+B772  36 30 75 00             xor byte ptr ss:[di], dh
+B776  31 32                   xor word ptr [bp + si], si
+B778  30 75 00                xor byte ptr [di], dh
+B77B  30 20                   xor byte ptr [bx + si], ah
+B77D  43                      inc bx
+B77E  4C                      dec sp
+B77F  4B                      dec bx
+B780  32 00                   xor al, byte ptr [bx + si]
+B782  31 20                   xor word ptr [bx + si], sp
+B784  43                      inc bx
+B785  4C                      dec sp
+B786  4B                      dec bx
+B787  32 00                   xor al, byte ptr [bx + si]
+B789  32 20                   xor ah, byte ptr [bx + si]
+B78B  43                      inc bx
+B78C  4C                      dec sp
+B78D  4B                      dec bx
+B78E  32 00                   xor al, byte ptr [bx + si]
+B790  33 20                   xor sp, word ptr [bx + si]
+B792  43                      inc bx
+B793  4C                      dec sp
+B794  4B                      dec bx
+B795  32 00                   xor al, byte ptr [bx + si]
+
+===== B71Ch-B79Bh =====
+Reason: target from B700 selector table candidate
+B71C  31 2E 32 35             xor word ptr [0x3532], bp
+B720  20 75 73                and byte ptr [di + 0x73], dh
+B723  00 31                   add byte ptr [bx + di], dh
+B725  2E 35 75 00             xor ax, 0x75
+B729  31 2E 37 35             xor word ptr [0x3537], bp
+B72D  20 75 73                and byte ptr [di + 0x73], dh
+B730  00 32                   add byte ptr [bp + si], dh
+B732  20 75 73                and byte ptr [di + 0x73], dh
+B735  00 32                   add byte ptr [bp + si], dh
+B737  2E 32 35                xor dh, byte ptr cs:[di]
+B73A  20 75 73                and byte ptr [di + 0x73], dh
+B73D  00 32                   add byte ptr [bp + si], dh
+B73F  2E 35 20 75             xor ax, 0x7520
+B743  73 00                   jae 0xb745
+B745  32 2E 37 35             xor ch, byte ptr [0x3537]
+B749  20 75 73                and byte ptr [di + 0x73], dh
+B74C  00 33                   add byte ptr [bp + di], dh
+B74E  20 75 73                and byte ptr [di + 0x73], dh
+B751  00 33                   add byte ptr [bp + di], dh
+B753  2E 32 35                xor dh, byte ptr cs:[di]
+B756  20 75 73                and byte ptr [di + 0x73], dh
+B759  00 33                   add byte ptr [bp + di], dh
+B75B  2E 35 20 75             xor ax, 0x7520
+B75F  73 00                   jae 0xb761
+B761  33 2E 37 35             xor bp, word ptr [0x3537]
+B765  20 75 73                and byte ptr [di + 0x73], dh
+B768  00 31                   add byte ptr [bx + di], dh
+B76A  35 75 20                xor ax, 0x2075
+B76D  00 33                   add byte ptr [bp + di], dh
+B76F  30 75 00                xor byte ptr [di], dh
+B772  36 30 75 00             xor byte ptr ss:[di], dh
+B776  31 32                   xor word ptr [bp + si], si
+B778  30 75 00                xor byte ptr [di], dh
+B77B  30 20                   xor byte ptr [bx + si], ah
+B77D  43                      inc bx
+B77E  4C                      dec sp
+B77F  4B                      dec bx
+B780  32 00                   xor al, byte ptr [bx + si]
+B782  31 20                   xor word ptr [bx + si], sp
+B784  43                      inc bx
+B785  4C                      dec sp
+B786  4B                      dec bx
+B787  32 00                   xor al, byte ptr [bx + si]
+B789  32 20                   xor ah, byte ptr [bx + si]
+B78B  43                      inc bx
+B78C  4C                      dec sp
+B78D  4B                      dec bx
+B78E  32 00                   xor al, byte ptr [bx + si]
+B790  33 20                   xor sp, word ptr [bx + si]
+B792  43                      inc bx
+B793  4C                      dec sp
+B794  4B                      dec bx
+B795  32 00                   xor al, byte ptr [bx + si]
+B797  31 73 74                xor word ptr [bp + di + 0x74], si
+B79A  20              db 0x20
+B79B  54                      push sp
+
+===== B724h-B7A3h =====
+Reason: target from B700 selector table candidate
+B724  31 2E 35 75             xor word ptr [0x7535], bp
+B728  00 31                   add byte ptr [bx + di], dh
+B72A  2E 37                   aaa
+B72C  35 20 75                xor ax, 0x7520
+B72F  73 00                   jae 0xb731
+B731  32 20                   xor ah, byte ptr [bx + si]
+B733  75 73                   jne 0xb7a8
+B735  00 32                   add byte ptr [bp + si], dh
+B737  2E 32 35                xor dh, byte ptr cs:[di]
+B73A  20 75 73                and byte ptr [di + 0x73], dh
+B73D  00 32                   add byte ptr [bp + si], dh
+B73F  2E 35 20 75             xor ax, 0x7520
+B743  73 00                   jae 0xb745
+B745  32 2E 37 35             xor ch, byte ptr [0x3537]
+B749  20 75 73                and byte ptr [di + 0x73], dh
+B74C  00 33                   add byte ptr [bp + di], dh
+B74E  20 75 73                and byte ptr [di + 0x73], dh
+B751  00 33                   add byte ptr [bp + di], dh
+B753  2E 32 35                xor dh, byte ptr cs:[di]
+B756  20 75 73                and byte ptr [di + 0x73], dh
+B759  00 33                   add byte ptr [bp + di], dh
+B75B  2E 35 20 75             xor ax, 0x7520
+B75F  73 00                   jae 0xb761
+B761  33 2E 37 35             xor bp, word ptr [0x3537]
+B765  20 75 73                and byte ptr [di + 0x73], dh
+B768  00 31                   add byte ptr [bx + di], dh
+B76A  35 75 20                xor ax, 0x2075
+B76D  00 33                   add byte ptr [bp + di], dh
+B76F  30 75 00                xor byte ptr [di], dh
+B772  36 30 75 00             xor byte ptr ss:[di], dh
+B776  31 32                   xor word ptr [bp + si], si
+B778  30 75 00                xor byte ptr [di], dh
+B77B  30 20                   xor byte ptr [bx + si], ah
+B77D  43                      inc bx
+B77E  4C                      dec sp
+B77F  4B                      dec bx
+B780  32 00                   xor al, byte ptr [bx + si]
+B782  31 20                   xor word ptr [bx + si], sp
+B784  43                      inc bx
+B785  4C                      dec sp
+B786  4B                      dec bx
+B787  32 00                   xor al, byte ptr [bx + si]
+B789  32 20                   xor ah, byte ptr [bx + si]
+B78B  43                      inc bx
+B78C  4C                      dec sp
+B78D  4B                      dec bx
+B78E  32 00                   xor al, byte ptr [bx + si]
+B790  33 20                   xor sp, word ptr [bx + si]
+B792  43                      inc bx
+B793  4C                      dec sp
+B794  4B                      dec bx
+B795  32 00                   xor al, byte ptr [bx + si]
+B797  31 73 74                xor word ptr [bp + di + 0x74], si
+B79A  20 54 32                and byte ptr [si + 0x32], dl
+B79D  00 54 31                add byte ptr [si + 0x31], dl
+B7A0  20 65 6E                and byte ptr [di + 0x6e], ah
+B7A3  64              db 0x64
+
+===== B729h-B7A8h =====
+Reason: target from B700 selector table candidate
+B729  31 2E 37 35             xor word ptr [0x3537], bp
+B72D  20 75 73                and byte ptr [di + 0x73], dh
+B730  00 32                   add byte ptr [bp + si], dh
+B732  20 75 73                and byte ptr [di + 0x73], dh
+B735  00 32                   add byte ptr [bp + si], dh
+B737  2E 32 35                xor dh, byte ptr cs:[di]
+B73A  20 75 73                and byte ptr [di + 0x73], dh
+B73D  00 32                   add byte ptr [bp + si], dh
+B73F  2E 35 20 75             xor ax, 0x7520
+B743  73 00                   jae 0xb745
+B745  32 2E 37 35             xor ch, byte ptr [0x3537]
+B749  20 75 73                and byte ptr [di + 0x73], dh
+B74C  00 33                   add byte ptr [bp + di], dh
+B74E  20 75 73                and byte ptr [di + 0x73], dh
+B751  00 33                   add byte ptr [bp + di], dh
+B753  2E 32 35                xor dh, byte ptr cs:[di]
+B756  20 75 73                and byte ptr [di + 0x73], dh
+B759  00 33                   add byte ptr [bp + di], dh
+B75B  2E 35 20 75             xor ax, 0x7520
+B75F  73 00                   jae 0xb761
+B761  33 2E 37 35             xor bp, word ptr [0x3537]
+B765  20 75 73                and byte ptr [di + 0x73], dh
+B768  00 31                   add byte ptr [bx + di], dh
+B76A  35 75 20                xor ax, 0x2075
+B76D  00 33                   add byte ptr [bp + di], dh
+B76F  30 75 00                xor byte ptr [di], dh
+B772  36 30 75 00             xor byte ptr ss:[di], dh
+B776  31 32                   xor word ptr [bp + si], si
+B778  30 75 00                xor byte ptr [di], dh
+B77B  30 20                   xor byte ptr [bx + si], ah
+B77D  43                      inc bx
+B77E  4C                      dec sp
+B77F  4B                      dec bx
+B780  32 00                   xor al, byte ptr [bx + si]
+B782  31 20                   xor word ptr [bx + si], sp
+B784  43                      inc bx
+B785  4C                      dec sp
+B786  4B                      dec bx
+B787  32 00                   xor al, byte ptr [bx + si]
+B789  32 20                   xor ah, byte ptr [bx + si]
+B78B  43                      inc bx
+B78C  4C                      dec sp
+B78D  4B                      dec bx
+B78E  32 00                   xor al, byte ptr [bx + si]
+B790  33 20                   xor sp, word ptr [bx + si]
+B792  43                      inc bx
+B793  4C                      dec sp
+B794  4B                      dec bx
+B795  32 00                   xor al, byte ptr [bx + si]
+B797  31 73 74                xor word ptr [bp + di + 0x74], si
+B79A  20 54 32                and byte ptr [si + 0x32], dl
+B79D  00 54 31                add byte ptr [si + 0x31], dl
+B7A0  20 65 6E                and byte ptr [di + 0x6e], ah
+B7A3  64 00 53 59             add byte ptr fs:[bp + di + 0x59], dl
+B7A7  4E                      dec si
+B7A8  2E              db 0x2E
+
+===== B731h-B7B0h =====
+Reason: target from B700 selector table candidate
+B731  32 20                   xor ah, byte ptr [bx + si]
+B733  75 73                   jne 0xb7a8
+B735  00 32                   add byte ptr [bp + si], dh
+B737  2E 32 35                xor dh, byte ptr cs:[di]
+B73A  20 75 73                and byte ptr [di + 0x73], dh
+B73D  00 32                   add byte ptr [bp + si], dh
+B73F  2E 35 20 75             xor ax, 0x7520
+B743  73 00                   jae 0xb745
+B745  32 2E 37 35             xor ch, byte ptr [0x3537]
+B749  20 75 73                and byte ptr [di + 0x73], dh
+B74C  00 33                   add byte ptr [bp + di], dh
+B74E  20 75 73                and byte ptr [di + 0x73], dh
+B751  00 33                   add byte ptr [bp + di], dh
+B753  2E 32 35                xor dh, byte ptr cs:[di]
+B756  20 75 73                and byte ptr [di + 0x73], dh
+B759  00 33                   add byte ptr [bp + di], dh
+B75B  2E 35 20 75             xor ax, 0x7520
+B75F  73 00                   jae 0xb761
+B761  33 2E 37 35             xor bp, word ptr [0x3537]
+B765  20 75 73                and byte ptr [di + 0x73], dh
+B768  00 31                   add byte ptr [bx + di], dh
+B76A  35 75 20                xor ax, 0x2075
+B76D  00 33                   add byte ptr [bp + di], dh
+B76F  30 75 00                xor byte ptr [di], dh
+B772  36 30 75 00             xor byte ptr ss:[di], dh
+B776  31 32                   xor word ptr [bp + si], si
+B778  30 75 00                xor byte ptr [di], dh
+B77B  30 20                   xor byte ptr [bx + si], ah
+B77D  43                      inc bx
+B77E  4C                      dec sp
+B77F  4B                      dec bx
+B780  32 00                   xor al, byte ptr [bx + si]
+B782  31 20                   xor word ptr [bx + si], sp
+B784  43                      inc bx
+B785  4C                      dec sp
+B786  4B                      dec bx
+B787  32 00                   xor al, byte ptr [bx + si]
+B789  32 20                   xor ah, byte ptr [bx + si]
+B78B  43                      inc bx
+B78C  4C                      dec sp
+B78D  4B                      dec bx
+B78E  32 00                   xor al, byte ptr [bx + si]
+B790  33 20                   xor sp, word ptr [bx + si]
+B792  43                      inc bx
+B793  4C                      dec sp
+B794  4B                      dec bx
+B795  32 00                   xor al, byte ptr [bx + si]
+B797  31 73 74                xor word ptr [bp + di + 0x74], si
+B79A  20 54 32                and byte ptr [si + 0x32], dl
+B79D  00 54 31                add byte ptr [si + 0x31], dl
+B7A0  20 65 6E                and byte ptr [di + 0x6e], ah
+B7A3  64 00 53 59             add byte ptr fs:[bp + di + 0x59], dl
+B7A7  4E                      dec si
+B7A8  2E 00 42 79             add byte ptr cs:[bp + si + 0x79], al
+B7AC  70 61                   jo 0xb80f
+B7AE  73 73                   jae 0xb823
+B7B0  00              db 0x00
+
+===== B736h-B7B5h =====
+Reason: target from B700 selector table candidate
+B736  32 2E 32 35             xor ch, byte ptr [0x3532]
+B73A  20 75 73                and byte ptr [di + 0x73], dh
+B73D  00 32                   add byte ptr [bp + si], dh
+B73F  2E 35 20 75             xor ax, 0x7520
+B743  73 00                   jae 0xb745
+B745  32 2E 37 35             xor ch, byte ptr [0x3537]
+B749  20 75 73                and byte ptr [di + 0x73], dh
+B74C  00 33                   add byte ptr [bp + di], dh
+B74E  20 75 73                and byte ptr [di + 0x73], dh
+B751  00 33                   add byte ptr [bp + di], dh
+B753  2E 32 35                xor dh, byte ptr cs:[di]
+B756  20 75 73                and byte ptr [di + 0x73], dh
+B759  00 33                   add byte ptr [bp + di], dh
+B75B  2E 35 20 75             xor ax, 0x7520
+B75F  73 00                   jae 0xb761
+B761  33 2E 37 35             xor bp, word ptr [0x3537]
+B765  20 75 73                and byte ptr [di + 0x73], dh
+B768  00 31                   add byte ptr [bx + di], dh
+B76A  35 75 20                xor ax, 0x2075
+B76D  00 33                   add byte ptr [bp + di], dh
+B76F  30 75 00                xor byte ptr [di], dh
+B772  36 30 75 00             xor byte ptr ss:[di], dh
+B776  31 32                   xor word ptr [bp + si], si
+B778  30 75 00                xor byte ptr [di], dh
+B77B  30 20                   xor byte ptr [bx + si], ah
+B77D  43                      inc bx
+B77E  4C                      dec sp
+B77F  4B                      dec bx
+B780  32 00                   xor al, byte ptr [bx + si]
+B782  31 20                   xor word ptr [bx + si], sp
+B784  43                      inc bx
+B785  4C                      dec sp
+B786  4B                      dec bx
+B787  32 00                   xor al, byte ptr [bx + si]
+B789  32 20                   xor ah, byte ptr [bx + si]
+B78B  43                      inc bx
+B78C  4C                      dec sp
+B78D  4B                      dec bx
+B78E  32 00                   xor al, byte ptr [bx + si]
+B790  33 20                   xor sp, word ptr [bx + si]
+B792  43                      inc bx
+B793  4C                      dec sp
+B794  4B                      dec bx
+B795  32 00                   xor al, byte ptr [bx + si]
+B797  31 73 74                xor word ptr [bp + di + 0x74], si
+B79A  20 54 32                and byte ptr [si + 0x32], dl
+B79D  00 54 31                add byte ptr [si + 0x31], dl
+B7A0  20 65 6E                and byte ptr [di + 0x6e], ah
+B7A3  64 00 53 59             add byte ptr fs:[bp + di + 0x59], dl
+B7A7  4E                      dec si
+B7A8  2E 00 42 79             add byte ptr cs:[bp + si + 0x79], al
+B7AC  70 61                   jo 0xb80f
+B7AE  73 73                   jae 0xb823
+B7B0  00 0C                   add byte ptr [si], cl
+B7B2  74 2E                   je 0xb7e2
+B7B4  B4 2E                   mov ah, 0x2e
+
+===== B73Eh-B7BDh =====
+Reason: target from B700 selector table candidate
+B73E  32 2E 35 20             xor ch, byte ptr [0x2035]
+B742  75 73                   jne 0xb7b7
+B744  00 32                   add byte ptr [bp + si], dh
+B746  2E 37                   aaa
+B748  35 20 75                xor ax, 0x7520
+B74B  73 00                   jae 0xb74d
+B74D  33 20                   xor sp, word ptr [bx + si]
+B74F  75 73                   jne 0xb7c4
+B751  00 33                   add byte ptr [bp + di], dh
+B753  2E 32 35                xor dh, byte ptr cs:[di]
+B756  20 75 73                and byte ptr [di + 0x73], dh
+B759  00 33                   add byte ptr [bp + di], dh
+B75B  2E 35 20 75             xor ax, 0x7520
+B75F  73 00                   jae 0xb761
+B761  33 2E 37 35             xor bp, word ptr [0x3537]
+B765  20 75 73                and byte ptr [di + 0x73], dh
+B768  00 31                   add byte ptr [bx + di], dh
+B76A  35 75 20                xor ax, 0x2075
+B76D  00 33                   add byte ptr [bp + di], dh
+B76F  30 75 00                xor byte ptr [di], dh
+B772  36 30 75 00             xor byte ptr ss:[di], dh
+B776  31 32                   xor word ptr [bp + si], si
+B778  30 75 00                xor byte ptr [di], dh
+B77B  30 20                   xor byte ptr [bx + si], ah
+B77D  43                      inc bx
+B77E  4C                      dec sp
+B77F  4B                      dec bx
+B780  32 00                   xor al, byte ptr [bx + si]
+B782  31 20                   xor word ptr [bx + si], sp
+B784  43                      inc bx
+B785  4C                      dec sp
+B786  4B                      dec bx
+B787  32 00                   xor al, byte ptr [bx + si]
+B789  32 20                   xor ah, byte ptr [bx + si]
+B78B  43                      inc bx
+B78C  4C                      dec sp
+B78D  4B                      dec bx
+B78E  32 00                   xor al, byte ptr [bx + si]
+B790  33 20                   xor sp, word ptr [bx + si]
+B792  43                      inc bx
+B793  4C                      dec sp
+B794  4B                      dec bx
+B795  32 00                   xor al, byte ptr [bx + si]
+B797  31 73 74                xor word ptr [bp + di + 0x74], si
+B79A  20 54 32                and byte ptr [si + 0x32], dl
+B79D  00 54 31                add byte ptr [si + 0x31], dl
+B7A0  20 65 6E                and byte ptr [di + 0x6e], ah
+B7A3  64 00 53 59             add byte ptr fs:[bp + di + 0x59], dl
+B7A7  4E                      dec si
+B7A8  2E 00 42 79             add byte ptr cs:[bp + si + 0x79], al
+B7AC  70 61                   jo 0xb80f
+B7AE  73 73                   jae 0xb823
+B7B0  00 0C                   add byte ptr [si], cl
+B7B2  74 2E                   je 0xb7e2
+B7B4  B4 2E                   mov ah, 0x2e
+B7B6  DB 86 F6 29             fild dword ptr [bp + 0x29f6]
+B7BA  C1 2A 13                shr word ptr [bp + si], 0x13
+B7BD  2B              db 0x2B
+
+===== B745h-B7C4h =====
+Reason: target from B700 selector table candidate
+B745  32 2E 37 35             xor ch, byte ptr [0x3537]
+B749  20 75 73                and byte ptr [di + 0x73], dh
+B74C  00 33                   add byte ptr [bp + di], dh
+B74E  20 75 73                and byte ptr [di + 0x73], dh
+B751  00 33                   add byte ptr [bp + di], dh
+B753  2E 32 35                xor dh, byte ptr cs:[di]
+B756  20 75 73                and byte ptr [di + 0x73], dh
+B759  00 33                   add byte ptr [bp + di], dh
+B75B  2E 35 20 75             xor ax, 0x7520
+B75F  73 00                   jae 0xb761
+B761  33 2E 37 35             xor bp, word ptr [0x3537]
+B765  20 75 73                and byte ptr [di + 0x73], dh
+B768  00 31                   add byte ptr [bx + di], dh
+B76A  35 75 20                xor ax, 0x2075
+B76D  00 33                   add byte ptr [bp + di], dh
+B76F  30 75 00                xor byte ptr [di], dh
+B772  36 30 75 00             xor byte ptr ss:[di], dh
+B776  31 32                   xor word ptr [bp + si], si
+B778  30 75 00                xor byte ptr [di], dh
+B77B  30 20                   xor byte ptr [bx + si], ah
+B77D  43                      inc bx
+B77E  4C                      dec sp
+B77F  4B                      dec bx
+B780  32 00                   xor al, byte ptr [bx + si]
+B782  31 20                   xor word ptr [bx + si], sp
+B784  43                      inc bx
+B785  4C                      dec sp
+B786  4B                      dec bx
+B787  32 00                   xor al, byte ptr [bx + si]
+B789  32 20                   xor ah, byte ptr [bx + si]
+B78B  43                      inc bx
+B78C  4C                      dec sp
+B78D  4B                      dec bx
+B78E  32 00                   xor al, byte ptr [bx + si]
+B790  33 20                   xor sp, word ptr [bx + si]
+B792  43                      inc bx
+B793  4C                      dec sp
+B794  4B                      dec bx
+B795  32 00                   xor al, byte ptr [bx + si]
+B797  31 73 74                xor word ptr [bp + di + 0x74], si
+B79A  20 54 32                and byte ptr [si + 0x32], dl
+B79D  00 54 31                add byte ptr [si + 0x31], dl
+B7A0  20 65 6E                and byte ptr [di + 0x6e], ah
+B7A3  64 00 53 59             add byte ptr fs:[bp + di + 0x59], dl
+B7A7  4E                      dec si
+B7A8  2E 00 42 79             add byte ptr cs:[bp + si + 0x79], al
+B7AC  70 61                   jo 0xb80f
+B7AE  73 73                   jae 0xb823
+B7B0  00 0C                   add byte ptr [si], cl
+B7B2  74 2E                   je 0xb7e2
+B7B4  B4 2E                   mov ah, 0x2e
+B7B6  DB 86 F6 29             fild dword ptr [bp + 0x29f6]
+B7BA  C1 2A 13                shr word ptr [bp + si], 0x13
+B7BD  2B 4C 2B                sub cx, word ptr [si + 0x2b]
+B7C0  91                      xchg cx, ax
+B7C1  2B D3                   sub dx, bx
+B7C3  2B 1D                   sub bx, word ptr [di]
+
+===== B74Dh-B7CCh =====
+Reason: target from B700 selector table candidate
+B74D  33 20                   xor sp, word ptr [bx + si]
+B74F  75 73                   jne 0xb7c4
+B751  00 33                   add byte ptr [bp + di], dh
+B753  2E 32 35                xor dh, byte ptr cs:[di]
+B756  20 75 73                and byte ptr [di + 0x73], dh
+B759  00 33                   add byte ptr [bp + di], dh
+B75B  2E 35 20 75             xor ax, 0x7520
+B75F  73 00                   jae 0xb761
+B761  33 2E 37 35             xor bp, word ptr [0x3537]
+B765  20 75 73                and byte ptr [di + 0x73], dh
+B768  00 31                   add byte ptr [bx + di], dh
+B76A  35 75 20                xor ax, 0x2075
+B76D  00 33                   add byte ptr [bp + di], dh
+B76F  30 75 00                xor byte ptr [di], dh
+B772  36 30 75 00             xor byte ptr ss:[di], dh
+B776  31 32                   xor word ptr [bp + si], si
+B778  30 75 00                xor byte ptr [di], dh
+B77B  30 20                   xor byte ptr [bx + si], ah
+B77D  43                      inc bx
+B77E  4C                      dec sp
+B77F  4B                      dec bx
+B780  32 00                   xor al, byte ptr [bx + si]
+B782  31 20                   xor word ptr [bx + si], sp
+B784  43                      inc bx
+B785  4C                      dec sp
+B786  4B                      dec bx
+B787  32 00                   xor al, byte ptr [bx + si]
+B789  32 20                   xor ah, byte ptr [bx + si]
+B78B  43                      inc bx
+B78C  4C                      dec sp
+B78D  4B                      dec bx
+B78E  32 00                   xor al, byte ptr [bx + si]
+B790  33 20                   xor sp, word ptr [bx + si]
+B792  43                      inc bx
+B793  4C                      dec sp
+B794  4B                      dec bx
+B795  32 00                   xor al, byte ptr [bx + si]
+B797  31 73 74                xor word ptr [bp + di + 0x74], si
+B79A  20 54 32                and byte ptr [si + 0x32], dl
+B79D  00 54 31                add byte ptr [si + 0x31], dl
+B7A0  20 65 6E                and byte ptr [di + 0x6e], ah
+B7A3  64 00 53 59             add byte ptr fs:[bp + di + 0x59], dl
+B7A7  4E                      dec si
+B7A8  2E 00 42 79             add byte ptr cs:[bp + si + 0x79], al
+B7AC  70 61                   jo 0xb80f
+B7AE  73 73                   jae 0xb823
+B7B0  00 0C                   add byte ptr [si], cl
+B7B2  74 2E                   je 0xb7e2
+B7B4  B4 2E                   mov ah, 0x2e
+B7B6  DB 86 F6 29             fild dword ptr [bp + 0x29f6]
+B7BA  C1 2A 13                shr word ptr [bp + si], 0x13
+B7BD  2B 4C 2B                sub cx, word ptr [si + 0x2b]
+B7C0  91                      xchg cx, ax
+B7C1  2B D3                   sub dx, bx
+B7C3  2B 1D                   sub bx, word ptr [di]
+B7C5  2C 69                   sub al, 0x69
+B7C7  2C CF                   sub al, 0xcf
+B7C9  2C 84                   sub al, 0x84
+B7CB  05              db 0x05
+B7CC  A5                      movsw word ptr es:[di], word ptr [si]
+
+===== B752h-B7D1h =====
+Reason: target from B700 selector table candidate
+B752  33 2E 32 35             xor bp, word ptr [0x3532]
+B756  20 75 73                and byte ptr [di + 0x73], dh
+B759  00 33                   add byte ptr [bp + di], dh
+B75B  2E 35 20 75             xor ax, 0x7520
+B75F  73 00                   jae 0xb761
+B761  33 2E 37 35             xor bp, word ptr [0x3537]
+B765  20 75 73                and byte ptr [di + 0x73], dh
+B768  00 31                   add byte ptr [bx + di], dh
+B76A  35 75 20                xor ax, 0x2075
+B76D  00 33                   add byte ptr [bp + di], dh
+B76F  30 75 00                xor byte ptr [di], dh
+B772  36 30 75 00             xor byte ptr ss:[di], dh
+B776  31 32                   xor word ptr [bp + si], si
+B778  30 75 00                xor byte ptr [di], dh
+B77B  30 20                   xor byte ptr [bx + si], ah
+B77D  43                      inc bx
+B77E  4C                      dec sp
+B77F  4B                      dec bx
+B780  32 00                   xor al, byte ptr [bx + si]
+B782  31 20                   xor word ptr [bx + si], sp
+B784  43                      inc bx
+B785  4C                      dec sp
+B786  4B                      dec bx
+B787  32 00                   xor al, byte ptr [bx + si]
+B789  32 20                   xor ah, byte ptr [bx + si]
+B78B  43                      inc bx
+B78C  4C                      dec sp
+B78D  4B                      dec bx
+B78E  32 00                   xor al, byte ptr [bx + si]
+B790  33 20                   xor sp, word ptr [bx + si]
+B792  43                      inc bx
+B793  4C                      dec sp
+B794  4B                      dec bx
+B795  32 00                   xor al, byte ptr [bx + si]
+B797  31 73 74                xor word ptr [bp + di + 0x74], si
+B79A  20 54 32                and byte ptr [si + 0x32], dl
+B79D  00 54 31                add byte ptr [si + 0x31], dl
+B7A0  20 65 6E                and byte ptr [di + 0x6e], ah
+B7A3  64 00 53 59             add byte ptr fs:[bp + di + 0x59], dl
+B7A7  4E                      dec si
+B7A8  2E 00 42 79             add byte ptr cs:[bp + si + 0x79], al
+B7AC  70 61                   jo 0xb80f
+B7AE  73 73                   jae 0xb823
+B7B0  00 0C                   add byte ptr [si], cl
+B7B2  74 2E                   je 0xb7e2
+B7B4  B4 2E                   mov ah, 0x2e
+B7B6  DB 86 F6 29             fild dword ptr [bp + 0x29f6]
+B7BA  C1 2A 13                shr word ptr [bp + si], 0x13
+B7BD  2B 4C 2B                sub cx, word ptr [si + 0x2b]
+B7C0  91                      xchg cx, ax
+B7C1  2B D3                   sub dx, bx
+B7C3  2B 1D                   sub bx, word ptr [di]
+B7C5  2C 69                   sub al, 0x69
+B7C7  2C CF                   sub al, 0xcf
+B7C9  2C 84                   sub al, 0x84
+B7CB  05 A5 08                add ax, 0x8a5
+B7CE  00 00                   add byte ptr [bx + si], al
+B7D0  54                      push sp
+B7D1  79              db 0x79
+
+===== B75Ah-B7D9h =====
+Reason: target from B700 selector table candidate
+B75A  33 2E 35 20             xor bp, word ptr [0x2035]
+B75E  75 73                   jne 0xb7d3
+B760  00 33                   add byte ptr [bp + di], dh
+B762  2E 37                   aaa
+B764  35 20 75                xor ax, 0x7520
+B767  73 00                   jae 0xb769
+B769  31 35                   xor word ptr [di], si
+B76B  75 20                   jne 0xb78d
+B76D  00 33                   add byte ptr [bp + di], dh
+B76F  30 75 00                xor byte ptr [di], dh
+B772  36 30 75 00             xor byte ptr ss:[di], dh
+B776  31 32                   xor word ptr [bp + si], si
+B778  30 75 00                xor byte ptr [di], dh
+B77B  30 20                   xor byte ptr [bx + si], ah
+B77D  43                      inc bx
+B77E  4C                      dec sp
+B77F  4B                      dec bx
+B780  32 00                   xor al, byte ptr [bx + si]
+B782  31 20                   xor word ptr [bx + si], sp
+B784  43                      inc bx
+B785  4C                      dec sp
+B786  4B                      dec bx
+B787  32 00                   xor al, byte ptr [bx + si]
+B789  32 20                   xor ah, byte ptr [bx + si]
+B78B  43                      inc bx
+B78C  4C                      dec sp
+B78D  4B                      dec bx
+B78E  32 00                   xor al, byte ptr [bx + si]
+B790  33 20                   xor sp, word ptr [bx + si]
+B792  43                      inc bx
+B793  4C                      dec sp
+B794  4B                      dec bx
+B795  32 00                   xor al, byte ptr [bx + si]
+B797  31 73 74                xor word ptr [bp + di + 0x74], si
+B79A  20 54 32                and byte ptr [si + 0x32], dl
+B79D  00 54 31                add byte ptr [si + 0x31], dl
+B7A0  20 65 6E                and byte ptr [di + 0x6e], ah
+B7A3  64 00 53 59             add byte ptr fs:[bp + di + 0x59], dl
+B7A7  4E                      dec si
+B7A8  2E 00 42 79             add byte ptr cs:[bp + si + 0x79], al
+B7AC  70 61                   jo 0xb80f
+B7AE  73 73                   jae 0xb823
+B7B0  00 0C                   add byte ptr [si], cl
+B7B2  74 2E                   je 0xb7e2
+B7B4  B4 2E                   mov ah, 0x2e
+B7B6  DB 86 F6 29             fild dword ptr [bp + 0x29f6]
+B7BA  C1 2A 13                shr word ptr [bp + si], 0x13
+B7BD  2B 4C 2B                sub cx, word ptr [si + 0x2b]
+B7C0  91                      xchg cx, ax
+B7C1  2B D3                   sub dx, bx
+B7C3  2B 1D                   sub bx, word ptr [di]
+B7C5  2C 69                   sub al, 0x69
+B7C7  2C CF                   sub al, 0xcf
+B7C9  2C 84                   sub al, 0x84
+B7CB  05 A5 08                add ax, 0x8a5
+B7CE  00 00                   add byte ptr [bx + si], al
+B7D0  54                      push sp
+B7D1  79 70                   jns 0xb843
+B7D3  65 6D                   insw word ptr es:[di], dx
+B7D5  61                      popaw
+B7D6  74 69                   je 0xb841
+B7D8  63 20                   arpl word ptr [bx + si], sp
+
+===== B761h-B7E0h =====
+Reason: target from B700 selector table candidate
+B761  33 2E 37 35             xor bp, word ptr [0x3537]
+B765  20 75 73                and byte ptr [di + 0x73], dh
+B768  00 31                   add byte ptr [bx + di], dh
+B76A  35 75 20                xor ax, 0x2075
+B76D  00 33                   add byte ptr [bp + di], dh
+B76F  30 75 00                xor byte ptr [di], dh
+B772  36 30 75 00             xor byte ptr ss:[di], dh
+B776  31 32                   xor word ptr [bp + si], si
+B778  30 75 00                xor byte ptr [di], dh
+B77B  30 20                   xor byte ptr [bx + si], ah
+B77D  43                      inc bx
+B77E  4C                      dec sp
+B77F  4B                      dec bx
+B780  32 00                   xor al, byte ptr [bx + si]
+B782  31 20                   xor word ptr [bx + si], sp
+B784  43                      inc bx
+B785  4C                      dec sp
+B786  4B                      dec bx
+B787  32 00                   xor al, byte ptr [bx + si]
+B789  32 20                   xor ah, byte ptr [bx + si]
+B78B  43                      inc bx
+B78C  4C                      dec sp
+B78D  4B                      dec bx
+B78E  32 00                   xor al, byte ptr [bx + si]
+B790  33 20                   xor sp, word ptr [bx + si]
+B792  43                      inc bx
+B793  4C                      dec sp
+B794  4B                      dec bx
+B795  32 00                   xor al, byte ptr [bx + si]
+B797  31 73 74                xor word ptr [bp + di + 0x74], si
+B79A  20 54 32                and byte ptr [si + 0x32], dl
+B79D  00 54 31                add byte ptr [si + 0x31], dl
+B7A0  20 65 6E                and byte ptr [di + 0x6e], ah
+B7A3  64 00 53 59             add byte ptr fs:[bp + di + 0x59], dl
+B7A7  4E                      dec si
+B7A8  2E 00 42 79             add byte ptr cs:[bp + si + 0x79], al
+B7AC  70 61                   jo 0xb80f
+B7AE  73 73                   jae 0xb823
+B7B0  00 0C                   add byte ptr [si], cl
+B7B2  74 2E                   je 0xb7e2
+B7B4  B4 2E                   mov ah, 0x2e
+B7B6  DB 86 F6 29             fild dword ptr [bp + 0x29f6]
+B7BA  C1 2A 13                shr word ptr [bp + si], 0x13
+B7BD  2B 4C 2B                sub cx, word ptr [si + 0x2b]
+B7C0  91                      xchg cx, ax
+B7C1  2B D3                   sub dx, bx
+B7C3  2B 1D                   sub bx, word ptr [di]
+B7C5  2C 69                   sub al, 0x69
+B7C7  2C CF                   sub al, 0xcf
+B7C9  2C 84                   sub al, 0x84
+B7CB  05 A5 08                add ax, 0x8a5
+B7CE  00 00                   add byte ptr [bx + si], al
+B7D0  54                      push sp
+B7D1  79 70                   jns 0xb843
+B7D3  65 6D                   insw word ptr es:[di], dx
+B7D5  61                      popaw
+B7D6  74 69                   je 0xb841
+B7D8  63 20                   arpl word ptr [bx + si], sp
+B7DA  52                      push dx
+B7DB  61                      popaw
+B7DC  74 65                   je 0xb843
+B7DE  20 50 72                and byte ptr [bx + si + 0x72], dl
+
 ===== 2187h-2206h =====
 Reason: 64-MiB memory-alias probe continuation
 2187  B6 FF                   mov dh, 0xff
