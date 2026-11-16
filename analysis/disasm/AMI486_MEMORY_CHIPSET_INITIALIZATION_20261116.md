@@ -84,3 +84,27 @@ This links the memory-probe result path to chipset register programming and a pr
 5. Determine whether the memory alias tests are sizing RAM, selecting a memory bank configuration, or validating a preconfigured map.
 
 No physical RAM capacity or whole-ROM semantic coverage percentage is claimed from these routines alone.
+
+
+## 5. Raw-entry and segment-context audit — 2026-11-16
+
+The exact first instructions at 2100h are:
+
+```asm
+2100  C7 06 00 00 55 55       MOV word ptr [DS:0000h],5555h
+2106  AA                      STOSB byte ptr ES:[DI],AL
+2107  AA                      STOSB byte ptr ES:[DI],AL
+2108  26 66 C7 06 00 01 FF FF FF FF  MOV dword ptr ES:[0100h],FFFFFFFFh
+2112  26 66 81 3E 00 00 55 55 AA AA  CMP dword ptr ES:[0000h],AAAA5555h
+211C  0F 85 67 00             JNE 2187h
+```
+
+The first dword pattern is therefore partly caller-dependent: the routine writes the low word through DS:[0000h], then emits two bytes from AL through ES:DI. It is consistent with AL=AAh and DI=0002h when DS/ES address the same base, but those register values are not established by the local stream and must not be assumed.
+
+A full raw-ROM reference scan found no direct near CALL/JMP target to 2100h and no literal far pointer F000:2100h. The only other little-endian 2100h word occurrence is inside a text string. Thus 2100h remains an entry candidate whose transfer mechanism is indirect, stack-threaded or established outside the ROM image; the exact caller is unresolved. Internal branch targets 2187h and 222Dh are directly confirmed.
+
+The result-selector order is exact: DL=00h before testing ES:00800000h; DL=02h before ES:00000800h; DL=01h before ES:00001000h; DL=03h before ES:00002000h. The high-address pass similarly sets DH=00h/02h/01h/03h before checking ES:04800000h, ES:04000800h, ES:04001000h and ES:04002000h. The second pattern pass repeats this with BL/BH.
+
+At 23B6h the continuation loads AX=B823h into ES, reads CR0, clears bit 0 (PE) and writes CR0 back. The selector descriptor/base and the initial protected-mode ES value are not known from this local stream. The later 23E4h continuation sets SS=0030h/SP=0100h, calls 240Ah/2495h/29EDh, then sets DS=ES=0000h and SS=CS before jumping to D9DCh. The segment setup and actual memory map remain caller-dependent.
+
+The previous section's stack-threaded decode remains authoritative: 222Dh reads indexed chipset register 16h, ORs 30h and writes it back, then writes 44h to register 11h; 2381h/2396h pack the probe selectors into chipset registers 10h/11h. This report supersedes the shorter duplicate draft AMI486_MEMORY_ALIAS_TEST_2100_20261116.md.
