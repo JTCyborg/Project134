@@ -142,3 +142,8 @@ C610h is the matching in-ROM floppy INT 13h handler candidate. It accepts AH=00h
 ## Memory/chipset initialization follow-up — 2026-11-16
 
 See AMI486_MEMORY_CHIPSET_INITIALIZATION_20261116.md. The memory probe compares patterns at 8 MiB, 64 MiB and 2/4/8 KiB offsets, then uses stack-threaded RET continuations into 8DCFh/8DDCh indexed I/O helpers for ports 22h/23h. Confirmed updates: register 16h OR 30h, register 11h = 44h; another path updates 10h/11h and clears CR0.PE before F66Eh. Do not infer RAM capacity or chipset vendor yet.
+
+
+## RTC and text-rendering follow-up — 2026-11-16
+
+See AMI486_CLOCK_AND_TEXT_RENDERING_20261116.md. The 6774h and 67AEh routines call INT 1Ah AH=04h/AH=02h for RTC date/time. 6700h calls the 6805h numeric grid renderer; 6841h prints decimal, 68B0h prints hexadecimal bytes, and 6860h/68C8h use INT 10h character/attribute services. Exact UI entry and field contracts remain open.
