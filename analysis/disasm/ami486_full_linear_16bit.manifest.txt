@@ -1,0 +1,7 @@
+Target: ami486.bin
+Size: 65536 bytes
+SHA-256: 91fd62ce3ccb0b79b42f5fd6c6a7262ed52824b8ade917181b8a12267fec003b
+Decoder: Capstone x86 16-bit
+Linear decode records: 29731
+Byte coverage: 0000-FFFF (65536/65536)
+Undecodable bytes are emitted as db; this is a linear decode, not code/data classification.
