@@ -112,3 +112,8 @@ A100h–A123h is not a separate byte-swapped pointer table. The actual 26-entry 
 ## INT 13h function-map progress — 2026-11-16
 
 The A0F1h–A124h table is now resolved for the principal standard INT 13h services. Confirmed: AH=02 read sectors (ATA command 20h), AH=03 write sectors (30h), AH=04 verify (40h), AH=05 format track (50h with user prompt), AH=08 drive parameters, AH=09 initialize parameters (91h), AH=0Ah/0Bh read/write long (22h/32h), AH=0Ch seek (70h), AH=0Dh reset, AH=10 ready/status, AH=11 recalibrate (10h), AH=14 diagnostic (90h), AH=15 disk type/capacity (AH=03h and total sectors CX:DX). Unsupported selectors route to A18Eh; AH=19h remains unresolved. See AMI486_STORAGE_AND_DISPATCH_REGIONS_20261116.md.
+
+
+## INT 13h handler progress — 2026-11-16
+
+A08Dh/A0A0h is now mapped as the hard-disk INT 13h handler and AH dispatcher. The table at A0F1h has 26 entries. Main functions: read sectors AH=02h (ATA 20h / REP INSW), write sectors AH=03h (30h / REP OUTSW), verify AH=04h (40h), format AH=05h (50h plus Y/N warning), get parameters AH=08h, initialize AH=09h (91h), read/write long AH=0Ah/0Bh (22h/32h), seek AH=0Ch (70h), reset AH=0Dh, ready AH=10h, recalibrate AH=11h (10h), diagnostics AH=14h (90h), disk type/capacity AH=15h. Detailed entry-to-return map is in AMI486_STORAGE_AND_DISPATCH_REGIONS_20261116.md.
