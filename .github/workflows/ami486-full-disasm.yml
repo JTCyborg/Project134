@@ -6,6 +6,7 @@ on:
     paths:
       - "ami486.bin"
       - ".github/workflows/ami486-full-disasm.yml"
+      - "analysis/disasm/DISASM_INDEX.md"
   workflow_dispatch:
 
 permissions:
