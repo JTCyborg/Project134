@@ -769,3 +769,13 @@ This phase is semantic classification of selected regions, not a complete CFG. S
 - This resolves the phase 69 DS question: the read at F068/F06Ah is CS-overridden, not DS-relative.
 - Candidate raw relative-branch byte patterns targeting near F068h are not yet confirmed incoming edges because source instruction boundaries have not been established.
 - BP.13 provenance and dynamic entry to DA5Eh/DA61h remain unresolved.
+
+
+## Semantic map — phase 71 (2026-11-16)
+
+- [AMI486_SEMANTIC_MAP_PHASE71_20261116.md](AMI486_SEMANTIC_MAP_PHASE71_20261116.md)
+- Confirmed live POST path 156Ah -> 1EC8h -> 2850h; wrapper 1EC8h saves/restores BP around the call.
+- 2850h scans memory segments, counts them temporarily in BP, copies the count to BX, then reuses BP as SP; exports memory count via port 81h and BDA 0040:00E0h.
+- 296Bh–2996h samples PIT channel 0 through ports 43h/40h around a REP LODSW delay loop.
+- This confirmed live routine is distinct from DA5Eh/DA61h; it does not explain persistent BP.13 or establish a DAxx entry.
+- Next: classify 299Bh–29EAh RAM helpers and continue independent BP.13 / DAxx entry analysis.
