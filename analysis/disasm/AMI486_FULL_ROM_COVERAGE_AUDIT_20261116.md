@@ -30,7 +30,7 @@ The exact ROM exists in GitHub, but the available GitHub file interface returns 
 
 A guessed decode or a concatenation of the two overlapping suffix listings would falsely claim completeness. Neither was done.
 
-## Required completion procedure
+## Reproducible generation tool added — 2026-11-16\n\nThe repository now includes `tools/disasm_ami486_full.ps1`. It runs NASM `ndisasm -b 16 -o 0x0` against the local ROM, validates the 65,536-byte input and verifies that the resulting listing accounts for exactly 65,536 decoded bytes. It writes a full linear listing and a manifest containing the local SHA-256. The script has been committed, but it has **not** been executed in this environment; therefore the missing prefix remains ungenerated here and full-ROM disassembly status remains **NOT COMPLETE**.\n\n## Required completion procedure
 
 1. Obtain the exact 65,536-byte `ami486.bin` from the repository.
 2. Verify SHA-256 and byte count.
