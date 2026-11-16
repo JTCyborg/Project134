@@ -984,7 +984,7 @@ This phase is semantic classification of selected regions, not a complete CFG. S
 - [AMI486_SEMANTIC_MAP_PHASE91_20261116.md](AMI486_SEMANTIC_MAP_PHASE91_20261116.md)
 - Decoded the shared numeric list-selection editor at 0749h: BIOS text rendering, keyboard navigation, digit entry, and decimal conversion.
 - Decoded 080Fh as the decimal parser returning the value in DX and entered-digit count in CX; the callbacks commit their fields only when CX is nonzero.
-- Preserved alternate-entry boundaries at 0745h and 0747h; neither is the aligned 0749h entry.
+- Confirmed the five direct CALL sites to aligned 0749h (0656h, 0671h, 0690h, 06A2h, 06B4h). Raw-image scans found no direct branch/call or literal pointer hits for 0745h/0747h; retain them as unreferenced alternate-decode candidates, not proven entries.
 - Found an additional overlapping parser path: the carry branch at 082Ch targets 083Eh, the second byte of the CALL at 083Dh, and decodes as XOR BP,BP before the common epilogue. Its purpose is unresolved.
 - Remaining: caller-specific AH/CF interpretation, alternate-entry contracts, and exact runtime traversal through the 05B4h linked callback dispatcher.
 
