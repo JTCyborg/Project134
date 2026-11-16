@@ -959,3 +959,12 @@ This phase is semantic classification of selected regions, not a complete CFG. S
 - Immediate resume targets: 026Fh, 02DBh, and the overlapping alternate entry 02F1h; then continue the ROM-wide coverage ledger.
 - The full 64 KiB BIOS is not yet completely semantically disassembled. BP.13 provenance and dynamic/indirect entry into DA5Eh/DA61h remain open.
 - No further work is to be performed until the user explicitly requests resumption.
+
+
+## Semantic map — phase 89 (2026-11-16)
+
+- [AMI486_SEMANTIC_MAP_PHASE89_20261116.md](AMI486_SEMANTIC_MAP_PHASE89_20261116.md)
+- Resolved callback 026Fh as an "Options:" path that tests and updates BP+14h bit 2 through the secondary dispatcher at 05B4h.
+- Resolved 02DBh as the high-nibble editor for BP+10h and the overlapping alternate entry 02F1h as the low-nibble editor. Both recompute BP+14h bit 6 based on whether both nibbles are nonzero.
+- Preserved unresolved stack/return behavior: 02DBh has no visible local PUSH AX for its POP AX, while 02F1h begins with PUSH CS. The nested 05A4h/05A3h -> 05B4h path and indirect target 0BA5h require further tracing.
+- The apparent table/code overlap around 0BA5h..0BDFh remains unclassified; do not treat it as ordinary data or executable code without proving its entry/return behavior.
