@@ -64,30 +64,30 @@ The indirect call at A0BDh uses CS:[DI-5F0Fh]. Before the call, DI is set to twi
 |---:|---:|---|
 | 00h | A197h | Disk reset / device probe path |
 | 01h | A20Bh | Return and clear saved status |
-| 02h | A216h | Read-sector path candidate |
-| 03h | A226h | Write-sector path candidate |
-| 04h | A23Eh | Verify/related transfer path candidate |
-| 05h | A25Fh | Format/related transfer path candidate |
+| 02h | A216h | Read sectors: routes to command 20h and REP INSW |
+| 03h | A226h | Write sectors: routes to command 30h and REP OUTSW |
+| 04h | A23Eh | Verify sectors: sends command 40h |
+| 05h | A25Fh | Format track: sends command 50h after a write/format guard and user prompt |
 | 06h | A18Eh | Unsupported/error stub |
 | 07h | A18Eh | Unsupported/error stub |
-| 08h | A1A4h | Drive parameter/geometry path |
+| 08h | A1A4h | Get drive parameters; derives geometry through A2F1h |
 | 09h | A337h | Initialize device parameters; sends ATA command 91h |
-| 0Ah | A372h | Long-sector path candidate |
-| 0Bh | A381h | Long-sector path candidate |
-| 0Ch | A474h | Seek/related path candidate |
-| 0Dh | A19Eh | Secondary drive-detection path |
+| 0Ah | A372h | Read long: 204h-byte buffer, command 22h |
+| 0Bh | A381h | Write long: 204h-byte buffer, command 32h |
+| 0Ch | A474h | Seek: sends command 70h |
+| 0Dh | A19Eh | Checks drive presence, then enters reset path A1B3h |
 | 0Eh | A18Eh | Unsupported/error stub |
 | 0Fh | A18Eh | Unsupported/error stub |
-| 10h | A4D3h | Drive diagnostic/related path candidate |
-| 11h | A501h | Recalibrate command path |
+| 10h | A4D3h | Test-drive-ready/status path |
+| 11h | A501h | Recalibrate: sends command 10h |
 | 12h | A18Eh | Unsupported/error stub |
 | 13h | A18Eh | Unsupported/error stub |
-| 14h | A52Bh | Execute device diagnostic (ATA command 90h) |
-| 15h | A1A9h | Alternate geometry path |
+| 14h | A52Bh | Controller diagnostic: sends command 90h |
+| 15h | A1A9h | Get disk type/capacity; A552h returns AH=03h and total sectors in CX:DX |
 | 16h | A18Eh | Unsupported/error stub |
 | 17h | A18Eh | Unsupported/error stub |
 | 18h | A18Eh | Unsupported/error stub |
-| 19h | A57Bh | Extended geometry/parameter path candidate |
+| 19h | A57Bh | Additional drive-parameter/seek path; exact service contract unresolved |
 
 The table occupies A0F1h–A124h inclusive. A100h is inside the table, not its start. The repeated A18Eh target is a shared error-return stub. Names marked “candidate” require full parameter/caller tracing before mapping them to a specific BIOS service.
 
@@ -163,3 +163,23 @@ No semantic completion percentage is inferred from these sampled windows.
 ## 7. Corrected INT 13h dispatch finding
 
 The previous note that A100h–A123h might be a separate byte-swapped table is withdrawn. The actual dispatcher is A08Dh/A0A0h: A08Dh is the INT 13h hard-disk handler entry; DL<80h is forwarded to INT 40h via INT 40h / RETF 2; A0A0h dispatches by incoming AH, accepts selectors 00h–19h, and calls through the 26-word native little-endian table at A0F1h. The table runs through A124h; A100h is an interior address. The indirect-call base is derived from the displacement at A0BFh: DI-5F0Fh, with 16-bit offset wraparound. This correction supersedes the earlier A100h–A123h byte-swapped-table hypothesis in the first-pass address ledger.
+
+
+## 8. INT 13h service semantics resolved from the handler table
+
+The seeded code now supports the standard service interpretation for the principal entries:
+- AH=02h reads sectors through ATA command 20h and REP INSW.
+- AH=03h writes sectors through ATA command 30h and REP OUTSW.
+- AH=04h verifies sectors through ATA command 40h.
+- AH=05h formats a track through ATA command 50h, after the guard/prompt path.
+- AH=08h returns drive parameters from the parameter table.
+- AH=09h initializes device parameters with ATA command 91h.
+- AH=0Ah/AH=0Bh perform read/write-long paths using 204h-byte buffers and ATA commands 22h/32h.
+- AH=0Ch seeks with ATA command 70h.
+- AH=0Dh checks the selected drive and enters the reset path.
+- AH=10h is a drive-ready/status path.
+- AH=11h recalibrates with ATA command 10h.
+- AH=14h runs controller diagnostics with ATA command 90h.
+- AH=15h returns hard-disk type and capacity; A552h returns AH=03h and total sector count in CX:DX.
+
+Entries 06h, 07h, 0Eh, 0Fh, 12h, 13h, 16h, 17h and 18h all select the shared A18Eh error stub. AH=19h is present but remains an OEM/extended path until its complete caller contract is established.
