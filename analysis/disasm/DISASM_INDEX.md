@@ -559,3 +559,12 @@ This phase is semantic classification of selected regions, not a complete CFG. S
 - Confirmed BP is zeroed at D743 before the only listed D74C entry; D74C can set bits 12 and 15, but not bit 13.
 - Resolved the stock indirect dispatch at 8A78: CS:[82DA]=19ABh, an alternate entry to JMP DI; the trampoline continues through 8A81 to 8CCD, not 8400h.
 - BP bit-13 provenance and any other dynamic entry to 8400h remain unresolved.
+
+
+## Semantic map — phase 51 (2026-11-16)
+
+- [AMI486_SEMANTIC_MAP_PHASE51_20261116.md](AMI486_SEMANTIC_MAP_PHASE51_20261116.md)
+- Traced CMOS 8Fh read/clear at D615–D629 and separated the selector branches at D637/D655.
+- Resolved the indexed near-jump operand at D6A2: CS:[SI-2958h] addresses a table based at D6A8h.
+- Recorded the first 11 near targets (selectors 0–10); none targets 8400h. Values above 0Ah are range-routed before this table on the examined dispatch path.
+- No new BP.13 producer identified; D74C still only sets BP bits 12 and 15 after clearing BP.
