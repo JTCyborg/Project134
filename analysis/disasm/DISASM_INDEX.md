@@ -749,3 +749,13 @@ This phase is semantic classification of selected regions, not a complete CFG. S
 - Catalogued direct consumers of `CS:8281h`: D657h, D724h, 8B11h, F06Ah (bit 6) and F43Dh (bit 7).
 - No direct store to 8281h was confirmed in the inspected ROM paths; producer/source remains unresolved.
 - BP.13 provenance and dynamic entry to DA5Eh/DA61h remain open.
+
+
+## Semantic map — phase 69 (2026-11-16)
+
+- [AMI486_SEMANTIC_MAP_PHASE69_20261116.md](AMI486_SEMANTIC_MAP_PHASE69_20261116.md)
+- Corrected the phase 68 configuration-byte hypothesis: raw ROM offset 8281h is byte 00h in the checked-in image, not an ordinary RAM configuration variable.
+- CS-qualified bit-6 tests at D657h, D724h, 8B11h and related sites therefore take their clear-bit paths in the stock ROM.
+- The unprefixed read at F06Ah still requires DS-state tracing before equating it with the CS-qualified ROM read.
+- The bit-6-set route to the keyboard-controller reset routine is not a stock path through the CS-qualified tests.
+- BP.13 provenance and dynamic entry to DA5Eh/DA61h remain unresolved.
