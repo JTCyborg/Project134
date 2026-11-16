@@ -112,3 +112,8 @@ The script requires the exact 65,536-byte ROM and NASM `ndisasm`, decodes in 16-
 - `analysis/disasm/ami486_full_linear.disasm.manifest.txt`
 
 The manifest records the local ROM SHA-256, disassembler path, mode, origin, line count and decoded byte count. The generated linear listing is a mechanical decode only; it does not establish code reachability or distinguish embedded data from instructions. Preserve the existing reset/POST entry-point listings as separate views.
+
+
+## Automated full-ROM disassembly
+
+A GitHub Actions workflow (`.github/workflows/ami486-full-disasm.yml`) generates `ami486_full_linear_16bit.disasm.txt` directly from the checked-in 64-KiB ROM using NASM `ndisasm -b 16`. The listing is a complete **linear byte decode**, not a claim that every decoded byte is executable code; embedded tables, strings, vectors and overlapping entry points must be classified separately. The workflow verifies exact byte coverage and commits the generated listing.
