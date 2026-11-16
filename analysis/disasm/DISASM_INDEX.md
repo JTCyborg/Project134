@@ -1171,3 +1171,8 @@ The A95Eh call-site chain is now mapped: 1BAAh CALL 131Fh; 131Fh CALL A95Eh at 1
 
 
 The 131Fh entry is overlapping: its direct caller is 1BAAh, and its alternate stream reaches A95Eh at 134Eh after CMOS 0Eh/92h checks. Do not transfer the ES=0000h setup from the separate linear stream at 1303h into this alternate path; that code is bypassed. ES remains an unproven precondition for the A95Eh IVT writes.
+
+
+## Candidate-window / CMOS gate refresh — 2026-11-16
+
+The candidate artifact now contains 168 code windows and 18 data ranges; union 10,700 bytes across 56 pages. The 131Fh alternate entry (direct caller 1BAAh) is now seeded separately through 1364h. CMOS 0Eh bit 7/6 gating and the EEAAh CMOS read wrapper are mapped; only the low nibble of [BX+90h] remains semantically incomplete in this FDC token family.
