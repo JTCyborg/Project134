@@ -57,12 +57,12 @@ The following samples were read directly from the checked-in ROM, not inferred f
 At 2100h the bytes begin:
 
 ```
-2100: C7 06 00 00 55 55 26 66 C7 06 00 01 FF FF
-2110: FF FF 26 66 81 3E 00 00 55 55 0F 85 67 00
+2100: C7 06 00 00 55 55 AA AA 26 66 C7 06 00 01 FF FF
+2110: FF FF 26 66 81 3E 00 00 55 55 AA AA 0F 85 67 00
 2120: 26 66 C7 06 00 00 AA AA 55 55 26 66 C7 06
 ```
 
-This is clearly an executable-looking pattern-write/compare stream with 16-/32-bit operand/address prefixes and conditional branches. It is a high-priority alternate entry / memory-test candidate. Its exact entry boundary, complete extent and caller set still need CFG verification.
+This is an executable-looking pattern-write/compare stream with 16-/32-bit operand/address prefixes and conditional branches. The two AA bytes at 2106h–2107h are STOSB instructions and must not be omitted. A full raw scan found no direct near CALL/JMP target to 2100h and no literal F000:2100h far pointer; 2100h remains an entry candidate with unresolved indirect/stack entry and caller context. Internal branches to 2187h and 222Dh are confirmed. See AMI486_MEMORY_CHIPSET_INITIALIZATION_20261116.md for the byte-aligned decode and segment-state caveats.
 
 ### 4.2 A000h–AFFFh — mixed code, pointer data, message text and keyboard tables
 
@@ -278,3 +278,8 @@ The generated candidate listing now contains 168 code windows and 18 data window
 ## INT 14h vector-reference scan — 2026-11-16
 
 A full raw-ROM scan found no direct near CALL/JMP target to F8E7h, no literal word reference F8E7h and no far pointer F000:F8E7h. The six-handler UART dispatcher is structurally an INT 14h-style service candidate, but its IVT slot 0000:0054h/0056h may be initialized externally or dynamically. Runtime IVT capture is required before calling it the installed INT 14h target.
+
+
+## 2100h raw-byte transcription correction — 2026-11-16
+
+The earlier 2100h ledger excerpt omitted bytes AA AA at 2106h–2107h. The correct sequence is C7 06 00 00 55 55 AA AA 26 66 C7 06 00 01 FF FF. These are two STOSB instructions before the ES:[0100h] sentinel write; see the memory/chipset report for the corrected aligned stream and caller-dependent AL/DI interpretation.
