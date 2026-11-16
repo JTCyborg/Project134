@@ -3774,6 +3774,678 @@ B44A  E8 1D FF                call 0xb36a
 B44D  8A C3                   mov al, bl
 B44F  E8 18 FF                call 0xb36a
 
+===== B3E2h-B461h =====
+Reason: BIOS INT 16h keyboard-service handler entry candidate
+B3E2  1E                      push ds
+B3E3  53                      push bx
+B3E4  51                      push cx
+B3E5  6A 40                   push 0x40
+B3E7  1F                      pop ds
+B3E8  80 EC 03                sub ah, 3
+B3EB  74 44                   je 0xb431
+B3ED  72 14                   jb 0xb403
+B3EF  80 EC 02                sub ah, 2
+B3F2  74 1F                   je 0xb413
+B3F4  80 EC 0B                sub ah, 0xb
+B3F7  74 7F                   je 0xb478
+B3F9  FE CC                   dec ah
+B3FB  74 60                   je 0xb45d
+B3FD  FE CC                   dec ah
+B3FF  74 5E                   je 0xb45f
+B401  EB 0C                   jmp 0xb40f
+B403  FE C4                   inc ah
+B405  74 6C                   je 0xb473
+B407  FE C4                   inc ah
+B409  74 7F                   je 0xb48a
+B40B  FE C4                   inc ah
+B40D  EB 71                   jmp 0xb480
+B40F  59                      pop cx
+B410  5B                      pop bx
+B411  1F                      pop ds
+B412  CF                      iret
+B413  FA                      cli
+B414  8B 1E 1C 00             mov bx, word ptr [0x1c]
+B418  53                      push bx
+B419  E8 7D FF                call 0xb399
+B41C  3B 1E 1A 00             cmp bx, word ptr [0x1a]
+B420  B0 01                   mov al, 1
+B422  74 0A                   je 0xb42e
+B424  89 1E 1C 00             mov word ptr [0x1c], bx
+B428  5B                      pop bx
+B429  89 0F                   mov word ptr [bx], cx
+B42B  53                      push bx
+B42C  B0 00                   mov al, 0
+B42E  5B                      pop bx
+B42F  EB DE                   jmp 0xb40f
+B431  80 FB 1F                cmp bl, 0x1f
+B434  77 D9                   ja 0xb40f
+B436  80 FF 03                cmp bh, 3
+B439  77 D4                   ja 0xb40f
+B43B  3C 05                   cmp al, 5
+B43D  75 D0                   jne 0xb40f
+B43F  C0 CF 03                ror bh, 3
+B442  0A DF                   or bl, bh
+B444  E8 2C FE                call 0xb273
+B447  FB                      sti
+B448  B0 F3                   mov al, 0xf3
+B44A  E8 1D FF                call 0xb36a
+B44D  8A C3                   mov al, bl
+B44F  E8 18 FF                call 0xb36a
+B452  E8 15 FE                call 0xb26a
+B455  FB                      sti
+B456  B0 F4                   mov al, 0xf4
+B458  E8 0F FF                call 0xb36a
+B45B  EB B2                   jmp 0xb40f
+B45D  EB 3B                   jmp 0xb49a
+B45F  A0 18 00                mov al, byte ptr [0x18]
+
+===== B3DEh-B45Dh =====
+Reason: keyboard interrupt/event continuation
+B3DE  FB                      sti
+B3DF  E9 9F DA                jmp 0x8e81
+B3E2  1E                      push ds
+B3E3  53                      push bx
+B3E4  51                      push cx
+B3E5  6A 40                   push 0x40
+B3E7  1F                      pop ds
+B3E8  80 EC 03                sub ah, 3
+B3EB  74 44                   je 0xb431
+B3ED  72 14                   jb 0xb403
+B3EF  80 EC 02                sub ah, 2
+B3F2  74 1F                   je 0xb413
+B3F4  80 EC 0B                sub ah, 0xb
+B3F7  74 7F                   je 0xb478
+B3F9  FE CC                   dec ah
+B3FB  74 60                   je 0xb45d
+B3FD  FE CC                   dec ah
+B3FF  74 5E                   je 0xb45f
+B401  EB 0C                   jmp 0xb40f
+B403  FE C4                   inc ah
+B405  74 6C                   je 0xb473
+B407  FE C4                   inc ah
+B409  74 7F                   je 0xb48a
+B40B  FE C4                   inc ah
+B40D  EB 71                   jmp 0xb480
+B40F  59                      pop cx
+B410  5B                      pop bx
+B411  1F                      pop ds
+B412  CF                      iret
+B413  FA                      cli
+B414  8B 1E 1C 00             mov bx, word ptr [0x1c]
+B418  53                      push bx
+B419  E8 7D FF                call 0xb399
+B41C  3B 1E 1A 00             cmp bx, word ptr [0x1a]
+B420  B0 01                   mov al, 1
+B422  74 0A                   je 0xb42e
+B424  89 1E 1C 00             mov word ptr [0x1c], bx
+B428  5B                      pop bx
+B429  89 0F                   mov word ptr [bx], cx
+B42B  53                      push bx
+B42C  B0 00                   mov al, 0
+B42E  5B                      pop bx
+B42F  EB DE                   jmp 0xb40f
+B431  80 FB 1F                cmp bl, 0x1f
+B434  77 D9                   ja 0xb40f
+B436  80 FF 03                cmp bh, 3
+B439  77 D4                   ja 0xb40f
+B43B  3C 05                   cmp al, 5
+B43D  75 D0                   jne 0xb40f
+B43F  C0 CF 03                ror bh, 3
+B442  0A DF                   or bl, bh
+B444  E8 2C FE                call 0xb273
+B447  FB                      sti
+B448  B0 F3                   mov al, 0xf3
+B44A  E8 1D FF                call 0xb36a
+B44D  8A C3                   mov al, bl
+B44F  E8 18 FF                call 0xb36a
+B452  E8 15 FE                call 0xb26a
+B455  FB                      sti
+B456  B0 F4                   mov al, 0xf4
+B458  E8 0F FF                call 0xb36a
+B45B  EB B2                   jmp 0xb40f
+B45D  EB              db 0xEB
+
+===== B399h-B418h =====
+Reason: BIOS keyboard ring-buffer pointer helper
+B399  43                      inc bx
+B39A  43                      inc bx
+B39B  3B 1E 82 00             cmp bx, word ptr [0x82]
+B39F  75 04                   jne 0xb3a5
+B3A1  8B 1E 80 00             mov bx, word ptr [0x80]
+B3A5  C3                      ret
+B3A6  FA                      cli
+B3A7  F6 06 97 00 40          test byte ptr [0x97], 0x40
+B3AC  75 08                   jne 0xb3b6
+B3AE  80 0E 97 00 40          or byte ptr [0x97], 0x40
+B3B3  E8 87 FF                call 0xb33d
+B3B6  FB                      sti
+B3B7  C3                      ret
+B3B8  E8 5A FF                call 0xb315
+B3BB  74 03                   je 0xb3c0
+B3BD  E8 E6 FF                call 0xb3a6
+B3C0  FA                      cli
+B3C1  8B 1E 1A 00             mov bx, word ptr [0x1a]
+B3C5  3B 1E 1C 00             cmp bx, word ptr [0x1c]
+B3C9  8B 07                   mov ax, word ptr [bx]
+B3CB  C3                      ret
+B3CC  F6 06 96 00 10          test byte ptr [0x96], 0x10
+B3D1  C3                      ret
+B3D2  F6 06 96 00 02          test byte ptr [0x96], 2
+B3D7  C3                      ret
+B3D8  F6 06 96 00 01          test byte ptr [0x96], 1
+B3DD  C3                      ret
+B3DE  FB                      sti
+B3DF  E9 9F DA                jmp 0x8e81
+B3E2  1E                      push ds
+B3E3  53                      push bx
+B3E4  51                      push cx
+B3E5  6A 40                   push 0x40
+B3E7  1F                      pop ds
+B3E8  80 EC 03                sub ah, 3
+B3EB  74 44                   je 0xb431
+B3ED  72 14                   jb 0xb403
+B3EF  80 EC 02                sub ah, 2
+B3F2  74 1F                   je 0xb413
+B3F4  80 EC 0B                sub ah, 0xb
+B3F7  74 7F                   je 0xb478
+B3F9  FE CC                   dec ah
+B3FB  74 60                   je 0xb45d
+B3FD  FE CC                   dec ah
+B3FF  74 5E                   je 0xb45f
+B401  EB 0C                   jmp 0xb40f
+B403  FE C4                   inc ah
+B405  74 6C                   je 0xb473
+B407  FE C4                   inc ah
+B409  74 7F                   je 0xb48a
+B40B  FE C4                   inc ah
+B40D  EB 71                   jmp 0xb480
+B40F  59                      pop cx
+B410  5B                      pop bx
+B411  1F                      pop ds
+B412  CF                      iret
+B413  FA                      cli
+B414  8B 1E 1C 00             mov bx, word ptr [0x1c]
+B418  53                      push bx
+
+===== B3A6h-B425h =====
+Reason: keyboard controller status/command helper
+B3A6  FA                      cli
+B3A7  F6 06 97 00 40          test byte ptr [0x97], 0x40
+B3AC  75 08                   jne 0xb3b6
+B3AE  80 0E 97 00 40          or byte ptr [0x97], 0x40
+B3B3  E8 87 FF                call 0xb33d
+B3B6  FB                      sti
+B3B7  C3                      ret
+B3B8  E8 5A FF                call 0xb315
+B3BB  74 03                   je 0xb3c0
+B3BD  E8 E6 FF                call 0xb3a6
+B3C0  FA                      cli
+B3C1  8B 1E 1A 00             mov bx, word ptr [0x1a]
+B3C5  3B 1E 1C 00             cmp bx, word ptr [0x1c]
+B3C9  8B 07                   mov ax, word ptr [bx]
+B3CB  C3                      ret
+B3CC  F6 06 96 00 10          test byte ptr [0x96], 0x10
+B3D1  C3                      ret
+B3D2  F6 06 96 00 02          test byte ptr [0x96], 2
+B3D7  C3                      ret
+B3D8  F6 06 96 00 01          test byte ptr [0x96], 1
+B3DD  C3                      ret
+B3DE  FB                      sti
+B3DF  E9 9F DA                jmp 0x8e81
+B3E2  1E                      push ds
+B3E3  53                      push bx
+B3E4  51                      push cx
+B3E5  6A 40                   push 0x40
+B3E7  1F                      pop ds
+B3E8  80 EC 03                sub ah, 3
+B3EB  74 44                   je 0xb431
+B3ED  72 14                   jb 0xb403
+B3EF  80 EC 02                sub ah, 2
+B3F2  74 1F                   je 0xb413
+B3F4  80 EC 0B                sub ah, 0xb
+B3F7  74 7F                   je 0xb478
+B3F9  FE CC                   dec ah
+B3FB  74 60                   je 0xb45d
+B3FD  FE CC                   dec ah
+B3FF  74 5E                   je 0xb45f
+B401  EB 0C                   jmp 0xb40f
+B403  FE C4                   inc ah
+B405  74 6C                   je 0xb473
+B407  FE C4                   inc ah
+B409  74 7F                   je 0xb48a
+B40B  FE C4                   inc ah
+B40D  EB 71                   jmp 0xb480
+B40F  59                      pop cx
+B410  5B                      pop bx
+B411  1F                      pop ds
+B412  CF                      iret
+B413  FA                      cli
+B414  8B 1E 1C 00             mov bx, word ptr [0x1c]
+B418  53                      push bx
+B419  E8 7D FF                call 0xb399
+B41C  3B 1E 1A 00             cmp bx, word ptr [0x1a]
+B420  B0 01                   mov al, 1
+B422  74 0A                   je 0xb42e
+B424  89              db 0x89
+B425  1E                      push ds
+
+===== B36Ah-B3E9h =====
+Reason: 8042 keyboard command-byte sender with retry
+B36A  8A E0                   mov ah, al
+B36C  B9 03 00                mov cx, 3
+B36F  51                      push cx
+B370  E8 0D FF                call 0xb280
+B373  8A C4                   mov al, ah
+B375  E6 60                   out 0x60, al
+B377  80 26 97 00 4F          and byte ptr [0x97], 0x4f
+B37C  FB                      sti
+B37D  33 C9                   xor cx, cx
+B37F  F6 06 97 00 30          test byte ptr [0x97], 0x30
+B384  75 02                   jne 0xb388
+B386  E2 F7                   loop 0xb37f
+B388  FA                      cli
+B389  59                      pop cx
+B38A  F6 06 97 00 10          test byte ptr [0x97], 0x10
+B38F  E1 DE                   loope 0xb36f
+B391  75 05                   jne 0xb398
+B393  80 0E 97 00 80          or byte ptr [0x97], 0x80
+B398  C3                      ret
+B399  43                      inc bx
+B39A  43                      inc bx
+B39B  3B 1E 82 00             cmp bx, word ptr [0x82]
+B39F  75 04                   jne 0xb3a5
+B3A1  8B 1E 80 00             mov bx, word ptr [0x80]
+B3A5  C3                      ret
+B3A6  FA                      cli
+B3A7  F6 06 97 00 40          test byte ptr [0x97], 0x40
+B3AC  75 08                   jne 0xb3b6
+B3AE  80 0E 97 00 40          or byte ptr [0x97], 0x40
+B3B3  E8 87 FF                call 0xb33d
+B3B6  FB                      sti
+B3B7  C3                      ret
+B3B8  E8 5A FF                call 0xb315
+B3BB  74 03                   je 0xb3c0
+B3BD  E8 E6 FF                call 0xb3a6
+B3C0  FA                      cli
+B3C1  8B 1E 1A 00             mov bx, word ptr [0x1a]
+B3C5  3B 1E 1C 00             cmp bx, word ptr [0x1c]
+B3C9  8B 07                   mov ax, word ptr [bx]
+B3CB  C3                      ret
+B3CC  F6 06 96 00 10          test byte ptr [0x96], 0x10
+B3D1  C3                      ret
+B3D2  F6 06 96 00 02          test byte ptr [0x96], 2
+B3D7  C3                      ret
+B3D8  F6 06 96 00 01          test byte ptr [0x96], 1
+B3DD  C3                      ret
+B3DE  FB                      sti
+B3DF  E9 9F DA                jmp 0x8e81
+B3E2  1E                      push ds
+B3E3  53                      push bx
+B3E4  51                      push cx
+B3E5  6A 40                   push 0x40
+B3E7  1F                      pop ds
+B3E8  80              db 0x80
+B3E9  EC                      in al, dx
+
+===== B413h-B492h =====
+Reason: INT 16h keyboard-buffer status path
+B413  FA                      cli
+B414  8B 1E 1C 00             mov bx, word ptr [0x1c]
+B418  53                      push bx
+B419  E8 7D FF                call 0xb399
+B41C  3B 1E 1A 00             cmp bx, word ptr [0x1a]
+B420  B0 01                   mov al, 1
+B422  74 0A                   je 0xb42e
+B424  89 1E 1C 00             mov word ptr [0x1c], bx
+B428  5B                      pop bx
+B429  89 0F                   mov word ptr [bx], cx
+B42B  53                      push bx
+B42C  B0 00                   mov al, 0
+B42E  5B                      pop bx
+B42F  EB DE                   jmp 0xb40f
+B431  80 FB 1F                cmp bl, 0x1f
+B434  77 D9                   ja 0xb40f
+B436  80 FF 03                cmp bh, 3
+B439  77 D4                   ja 0xb40f
+B43B  3C 05                   cmp al, 5
+B43D  75 D0                   jne 0xb40f
+B43F  C0 CF 03                ror bh, 3
+B442  0A DF                   or bl, bh
+B444  E8 2C FE                call 0xb273
+B447  FB                      sti
+B448  B0 F3                   mov al, 0xf3
+B44A  E8 1D FF                call 0xb36a
+B44D  8A C3                   mov al, bl
+B44F  E8 18 FF                call 0xb36a
+B452  E8 15 FE                call 0xb26a
+B455  FB                      sti
+B456  B0 F4                   mov al, 0xf4
+B458  E8 0F FF                call 0xb36a
+B45B  EB B2                   jmp 0xb40f
+B45D  EB 3B                   jmp 0xb49a
+B45F  A0 18 00                mov al, byte ptr [0x18]
+B462  8A E0                   mov ah, al
+B464  25 04 73                and ax, 0x7304
+B467  C0 C8 03                ror al, 3
+B46A  0A E0                   or ah, al
+B46C  A0 96 00                mov al, byte ptr [0x96]
+B46F  24 0C                   and al, 0xc
+B471  0A E0                   or ah, al
+B473  A0 17 00                mov al, byte ptr [0x17]
+B476  EB 97                   jmp 0xb40f
+B478  E8 2E 00                call 0xb4a9
+B47B  E8 49 00                call 0xb4c7
+B47E  EB 8F                   jmp 0xb40f
+B480  E8 26 00                call 0xb4a9
+B483  E8 4F 00                call 0xb4d5
+B486  74 F8                   je 0xb480
+B488  EB 85                   jmp 0xb40f
+B48A  E8 2B FF                call 0xb3b8
+B48D  FB                      sti
+B48E  74 13                   je 0xb4a3
+B490  E8 42 00                call 0xb4d5
+
+===== B431h-B4B0h =====
+Reason: INT 16h typematic-rate setup path
+B431  80 FB 1F                cmp bl, 0x1f
+B434  77 D9                   ja 0xb40f
+B436  80 FF 03                cmp bh, 3
+B439  77 D4                   ja 0xb40f
+B43B  3C 05                   cmp al, 5
+B43D  75 D0                   jne 0xb40f
+B43F  C0 CF 03                ror bh, 3
+B442  0A DF                   or bl, bh
+B444  E8 2C FE                call 0xb273
+B447  FB                      sti
+B448  B0 F3                   mov al, 0xf3
+B44A  E8 1D FF                call 0xb36a
+B44D  8A C3                   mov al, bl
+B44F  E8 18 FF                call 0xb36a
+B452  E8 15 FE                call 0xb26a
+B455  FB                      sti
+B456  B0 F4                   mov al, 0xf4
+B458  E8 0F FF                call 0xb36a
+B45B  EB B2                   jmp 0xb40f
+B45D  EB 3B                   jmp 0xb49a
+B45F  A0 18 00                mov al, byte ptr [0x18]
+B462  8A E0                   mov ah, al
+B464  25 04 73                and ax, 0x7304
+B467  C0 C8 03                ror al, 3
+B46A  0A E0                   or ah, al
+B46C  A0 96 00                mov al, byte ptr [0x96]
+B46F  24 0C                   and al, 0xc
+B471  0A E0                   or ah, al
+B473  A0 17 00                mov al, byte ptr [0x17]
+B476  EB 97                   jmp 0xb40f
+B478  E8 2E 00                call 0xb4a9
+B47B  E8 49 00                call 0xb4c7
+B47E  EB 8F                   jmp 0xb40f
+B480  E8 26 00                call 0xb4a9
+B483  E8 4F 00                call 0xb4d5
+B486  74 F8                   je 0xb480
+B488  EB 85                   jmp 0xb40f
+B48A  E8 2B FF                call 0xb3b8
+B48D  FB                      sti
+B48E  74 13                   je 0xb4a3
+B490  E8 42 00                call 0xb4d5
+B493  75 0E                   jne 0xb4a3
+B495  E8 11 00                call 0xb4a9
+B498  EB F0                   jmp 0xb48a
+B49A  E8 1B FF                call 0xb3b8
+B49D  FB                      sti
+B49E  74 03                   je 0xb4a3
+B4A0  E8 24 00                call 0xb4c7
+B4A3  59                      pop cx
+B4A4  5B                      pop bx
+B4A5  1F                      pop ds
+B4A6  CA 02 00                retf 2
+B4A9  8B 1E 1A 00             mov bx, word ptr [0x1a]
+B4AD  3B 1E 1C 00             cmp bx, word ptr [0x1c]
+
+===== B473h-B4F2h =====
+Reason: INT 16h keyboard read path candidate
+B473  A0 17 00                mov al, byte ptr [0x17]
+B476  EB 97                   jmp 0xb40f
+B478  E8 2E 00                call 0xb4a9
+B47B  E8 49 00                call 0xb4c7
+B47E  EB 8F                   jmp 0xb40f
+B480  E8 26 00                call 0xb4a9
+B483  E8 4F 00                call 0xb4d5
+B486  74 F8                   je 0xb480
+B488  EB 85                   jmp 0xb40f
+B48A  E8 2B FF                call 0xb3b8
+B48D  FB                      sti
+B48E  74 13                   je 0xb4a3
+B490  E8 42 00                call 0xb4d5
+B493  75 0E                   jne 0xb4a3
+B495  E8 11 00                call 0xb4a9
+B498  EB F0                   jmp 0xb48a
+B49A  E8 1B FF                call 0xb3b8
+B49D  FB                      sti
+B49E  74 03                   je 0xb4a3
+B4A0  E8 24 00                call 0xb4c7
+B4A3  59                      pop cx
+B4A4  5B                      pop bx
+B4A5  1F                      pop ds
+B4A6  CA 02 00                retf 2
+B4A9  8B 1E 1A 00             mov bx, word ptr [0x1a]
+B4AD  3B 1E 1C 00             cmp bx, word ptr [0x1c]
+B4B1  75 05                   jne 0xb4b8
+B4B3  B8 02 90                mov ax, 0x9002
+B4B6  CD 15                   int 0x15
+B4B8  FB                      sti
+B4B9  E8 FC FE                call 0xb3b8
+B4BC  74 FA                   je 0xb4b8
+B4BE  E8 D8 FE                call 0xb399
+B4C1  89 1E 1A 00             mov word ptr [0x1a], bx
+B4C5  FB                      sti
+B4C6  C3                      ret
+B4C7  3D F0 00                cmp ax, 0xf0
+B4CA  74 06                   je 0xb4d2
+B4CC  3C F0                   cmp al, 0xf0
+B4CE  75 02                   jne 0xb4d2
+B4D0  B0 00                   mov al, 0
+B4D2  0B E4                   or sp, sp
+B4D4  C3                      ret
+B4D5  80 FC 84                cmp ah, 0x84
+B4D8  76 13                   jbe 0xb4ed
+B4DA  80 FC E0                cmp ah, 0xe0
+B4DD  75 25                   jne 0xb504
+B4DF  B4 1C                   mov ah, 0x1c
+B4E1  3C 0A                   cmp al, 0xa
+B4E3  74 1C                   je 0xb501
+B4E5  3C 0D                   cmp al, 0xd
+B4E7  74 18                   je 0xb501
+B4E9  B4 35                   mov ah, 0x35
+B4EB  EB 14                   jmp 0xb501
+B4ED  3D E0 00                cmp ax, 0xe0
+B4F0  74 0F                   je 0xb501
+B4F2  3D              db 0x3D
+
+===== B478h-B4F7h =====
+Reason: INT 16h keyboard status path candidate
+B478  E8 2E 00                call 0xb4a9
+B47B  E8 49 00                call 0xb4c7
+B47E  EB 8F                   jmp 0xb40f
+B480  E8 26 00                call 0xb4a9
+B483  E8 4F 00                call 0xb4d5
+B486  74 F8                   je 0xb480
+B488  EB 85                   jmp 0xb40f
+B48A  E8 2B FF                call 0xb3b8
+B48D  FB                      sti
+B48E  74 13                   je 0xb4a3
+B490  E8 42 00                call 0xb4d5
+B493  75 0E                   jne 0xb4a3
+B495  E8 11 00                call 0xb4a9
+B498  EB F0                   jmp 0xb48a
+B49A  E8 1B FF                call 0xb3b8
+B49D  FB                      sti
+B49E  74 03                   je 0xb4a3
+B4A0  E8 24 00                call 0xb4c7
+B4A3  59                      pop cx
+B4A4  5B                      pop bx
+B4A5  1F                      pop ds
+B4A6  CA 02 00                retf 2
+B4A9  8B 1E 1A 00             mov bx, word ptr [0x1a]
+B4AD  3B 1E 1C 00             cmp bx, word ptr [0x1c]
+B4B1  75 05                   jne 0xb4b8
+B4B3  B8 02 90                mov ax, 0x9002
+B4B6  CD 15                   int 0x15
+B4B8  FB                      sti
+B4B9  E8 FC FE                call 0xb3b8
+B4BC  74 FA                   je 0xb4b8
+B4BE  E8 D8 FE                call 0xb399
+B4C1  89 1E 1A 00             mov word ptr [0x1a], bx
+B4C5  FB                      sti
+B4C6  C3                      ret
+B4C7  3D F0 00                cmp ax, 0xf0
+B4CA  74 06                   je 0xb4d2
+B4CC  3C F0                   cmp al, 0xf0
+B4CE  75 02                   jne 0xb4d2
+B4D0  B0 00                   mov al, 0
+B4D2  0B E4                   or sp, sp
+B4D4  C3                      ret
+B4D5  80 FC 84                cmp ah, 0x84
+B4D8  76 13                   jbe 0xb4ed
+B4DA  80 FC E0                cmp ah, 0xe0
+B4DD  75 25                   jne 0xb504
+B4DF  B4 1C                   mov ah, 0x1c
+B4E1  3C 0A                   cmp al, 0xa
+B4E3  74 1C                   je 0xb501
+B4E5  3C 0D                   cmp al, 0xd
+B4E7  74 18                   je 0xb501
+B4E9  B4 35                   mov ah, 0x35
+B4EB  EB 14                   jmp 0xb501
+B4ED  3D E0 00                cmp ax, 0xe0
+B4F0  74 0F                   je 0xb501
+B4F2  3D F0 00                cmp ax, 0xf0
+B4F5  74 0A                   je 0xb501
+B4F7  3C              db 0x3C
+
+===== B480h-B4FFh =====
+Reason: INT 16h keyboard service continuation
+B480  E8 26 00                call 0xb4a9
+B483  E8 4F 00                call 0xb4d5
+B486  74 F8                   je 0xb480
+B488  EB 85                   jmp 0xb40f
+B48A  E8 2B FF                call 0xb3b8
+B48D  FB                      sti
+B48E  74 13                   je 0xb4a3
+B490  E8 42 00                call 0xb4d5
+B493  75 0E                   jne 0xb4a3
+B495  E8 11 00                call 0xb4a9
+B498  EB F0                   jmp 0xb48a
+B49A  E8 1B FF                call 0xb3b8
+B49D  FB                      sti
+B49E  74 03                   je 0xb4a3
+B4A0  E8 24 00                call 0xb4c7
+B4A3  59                      pop cx
+B4A4  5B                      pop bx
+B4A5  1F                      pop ds
+B4A6  CA 02 00                retf 2
+B4A9  8B 1E 1A 00             mov bx, word ptr [0x1a]
+B4AD  3B 1E 1C 00             cmp bx, word ptr [0x1c]
+B4B1  75 05                   jne 0xb4b8
+B4B3  B8 02 90                mov ax, 0x9002
+B4B6  CD 15                   int 0x15
+B4B8  FB                      sti
+B4B9  E8 FC FE                call 0xb3b8
+B4BC  74 FA                   je 0xb4b8
+B4BE  E8 D8 FE                call 0xb399
+B4C1  89 1E 1A 00             mov word ptr [0x1a], bx
+B4C5  FB                      sti
+B4C6  C3                      ret
+B4C7  3D F0 00                cmp ax, 0xf0
+B4CA  74 06                   je 0xb4d2
+B4CC  3C F0                   cmp al, 0xf0
+B4CE  75 02                   jne 0xb4d2
+B4D0  B0 00                   mov al, 0
+B4D2  0B E4                   or sp, sp
+B4D4  C3                      ret
+B4D5  80 FC 84                cmp ah, 0x84
+B4D8  76 13                   jbe 0xb4ed
+B4DA  80 FC E0                cmp ah, 0xe0
+B4DD  75 25                   jne 0xb504
+B4DF  B4 1C                   mov ah, 0x1c
+B4E1  3C 0A                   cmp al, 0xa
+B4E3  74 1C                   je 0xb501
+B4E5  3C 0D                   cmp al, 0xd
+B4E7  74 18                   je 0xb501
+B4E9  B4 35                   mov ah, 0x35
+B4EB  EB 14                   jmp 0xb501
+B4ED  3D E0 00                cmp ax, 0xe0
+B4F0  74 0F                   je 0xb501
+B4F2  3D F0 00                cmp ax, 0xf0
+B4F5  74 0A                   je 0xb501
+B4F7  3C F0                   cmp al, 0xf0
+B4F9  74 09                   je 0xb504
+B4FB  3C E0                   cmp al, 0xe0
+B4FD  75 02                   jne 0xb501
+B4FF  B0              db 0xB0
+
+===== B48Ah-B509h =====
+Reason: INT 16h keyboard service continuation
+B48A  E8 2B FF                call 0xb3b8
+B48D  FB                      sti
+B48E  74 13                   je 0xb4a3
+B490  E8 42 00                call 0xb4d5
+B493  75 0E                   jne 0xb4a3
+B495  E8 11 00                call 0xb4a9
+B498  EB F0                   jmp 0xb48a
+B49A  E8 1B FF                call 0xb3b8
+B49D  FB                      sti
+B49E  74 03                   je 0xb4a3
+B4A0  E8 24 00                call 0xb4c7
+B4A3  59                      pop cx
+B4A4  5B                      pop bx
+B4A5  1F                      pop ds
+B4A6  CA 02 00                retf 2
+B4A9  8B 1E 1A 00             mov bx, word ptr [0x1a]
+B4AD  3B 1E 1C 00             cmp bx, word ptr [0x1c]
+B4B1  75 05                   jne 0xb4b8
+B4B3  B8 02 90                mov ax, 0x9002
+B4B6  CD 15                   int 0x15
+B4B8  FB                      sti
+B4B9  E8 FC FE                call 0xb3b8
+B4BC  74 FA                   je 0xb4b8
+B4BE  E8 D8 FE                call 0xb399
+B4C1  89 1E 1A 00             mov word ptr [0x1a], bx
+B4C5  FB                      sti
+B4C6  C3                      ret
+B4C7  3D F0 00                cmp ax, 0xf0
+B4CA  74 06                   je 0xb4d2
+B4CC  3C F0                   cmp al, 0xf0
+B4CE  75 02                   jne 0xb4d2
+B4D0  B0 00                   mov al, 0
+B4D2  0B E4                   or sp, sp
+B4D4  C3                      ret
+B4D5  80 FC 84                cmp ah, 0x84
+B4D8  76 13                   jbe 0xb4ed
+B4DA  80 FC E0                cmp ah, 0xe0
+B4DD  75 25                   jne 0xb504
+B4DF  B4 1C                   mov ah, 0x1c
+B4E1  3C 0A                   cmp al, 0xa
+B4E3  74 1C                   je 0xb501
+B4E5  3C 0D                   cmp al, 0xd
+B4E7  74 18                   je 0xb501
+B4E9  B4 35                   mov ah, 0x35
+B4EB  EB 14                   jmp 0xb501
+B4ED  3D E0 00                cmp ax, 0xe0
+B4F0  74 0F                   je 0xb501
+B4F2  3D F0 00                cmp ax, 0xf0
+B4F5  74 0A                   je 0xb501
+B4F7  3C F0                   cmp al, 0xf0
+B4F9  74 09                   je 0xb504
+B4FB  3C E0                   cmp al, 0xe0
+B4FD  75 02                   jne 0xb501
+B4FF  B0 00                   mov al, 0
+B501  0B E4                   or sp, sp
+B503  C3                      ret
+B504  3B E4                   cmp sp, sp
+B506  C3                      ret
+B507  00 00                   add byte ptr [bx + si], al
+B509  01              db 0x01
+
 ===== B3D8h-B457h =====
 Reason: keyboard event state helper direct CALL target
 B3D8  F6 06 96 00 01          test byte ptr [0x96], 1
