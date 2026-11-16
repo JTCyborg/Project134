@@ -550,3 +550,12 @@ This phase is semantic classification of selected regions, not a complete CFG. S
 - Confirmed `5C8C` tests BP bit12 and `5CF9` tests bit13. The keyboard-controller path and `5D07 AND BP,EFFFh` do not set bit13.
 - The only direct listed entry into `5BF8` is `DA9F`. Its visible predecessor may set BP bit0; a separate `BP=1` path exits to `F4A5` and does not reach `DA9F`.
 - BP bit13 producer/context remains unresolved.
+
+
+## Semantic map — phase 50 (2026-11-16)
+
+- [AMI486_SEMANTIC_MAP_PHASE50_20261116.md](AMI486_SEMANTIC_MAP_PHASE50_20261116.md)
+- Split the 8042 SYS=1 route at D604 from the SYS=0 path through 88CE; traced the real-mode branch through D724 and D74C.
+- Confirmed BP is zeroed at D743 before the only listed D74C entry; D74C can set bits 12 and 15, but not bit 13.
+- Resolved the stock indirect dispatch at 8A78: CS:[82DA]=19ABh, an alternate entry to JMP DI; the trampoline continues through 8A81 to 8CCD, not 8400h.
+- BP bit-13 provenance and any other dynamic entry to 8400h remain unresolved.
