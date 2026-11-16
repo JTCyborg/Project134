@@ -476,3 +476,12 @@ This phase is semantic classification of selected regions, not a complete CFG. S
 - Catalogued the independent effects of bits 1, 2 and 3 across CPU-speed labels, ALi row selection, small ALi tables, and diagnostic text.
 - Corrected phase 38's 1A60h branch polarity: the conditional ALi 12h/24h writes happen only when B3h bits 2–3 are both clear and SMSW AH is nonzero.
 - Preserved uncertainty about the intended names of B3h bits 0/7 and the hardware meanings of ALi register operations.
+
+
+## Semantic map — phase 41 (2026-11-16)
+
+- [AMI486_SEMANTIC_MAP_PHASE41_20261116.md](AMI486_SEMANTIC_MAP_PHASE41_20261116.md)
+- Audited direct CMOS B3h write sites: automatic bit-7 recomputation at 11C8h, bit-0 set after the DS scan at 27E8h, and an OR-only update at 8914h capable of setting bit 1.
+- Identified Setup/editor selector 575Eh, which returns CMOS index B3h or BAh according to UI state word E19Dh bit 1; the corresponding user-visible label remains unresolved.
+- Documented additional B3h bit-2 table selection at 8A2Eh and separated it from the other read-only consumers.
+- Explicitly left the stack/caller contract of the 88D3h continuation family unresolved rather than guessing its Setup trigger.
