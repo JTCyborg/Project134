@@ -868,3 +868,12 @@ This phase is semantic classification of selected regions, not a complete CFG. S
 
 
 - Phase 80 correction: the prelude is `MOV DI,0020h; INC SP; PUSH DS; STOSW; MOV AX,CS; STOSW`; there is no PUSHA at 5D5Fh. The two STOSW stores remain at ES:0020h and ES:0022h.
+
+
+## Semantic map — phase 81 (2026-11-16)
+
+- [AMI486_SEMANTIC_MAP_PHASE81_20261116.md](AMI486_SEMANTIC_MAP_PHASE81_20261116.md)
+- Immediate CMOS[B8h] selector is found only in the 5D6Ah/5D72h pair: read old B8h byte, clear B8h, then conditionally subtract the saved byte from CMOS[BEh:BFh].
+- CMOS[8Eh] is a shared status/configuration byte with immediate reads at 121Ah, 1271h, 1338h, 140Eh, 15ACh, 1C64h, 5D78h, 5EDFh, 84D3h, 8630h, 8649h, 8662h and F481h (all to EE94h). Other callsites resolve to EEAAh and need separate decode.
+- Corrected 5D54h CALL target: F5DBh (not E5DBh). It starts with TEST AL,01h and accesses keyboard controller ports 64h/60h along its conditional path; caller saves returned AL at DS:0012h and tests bit 5.
+- BEh:BFh has multiple writers; update order and semantic meaning remain open. BP.13 producer and DA5Eh/DA61h dynamic entry remain unresolved.
