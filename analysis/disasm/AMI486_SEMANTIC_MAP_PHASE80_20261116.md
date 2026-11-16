@@ -19,8 +19,10 @@ EE94h is the complete CMOS read routine (OUT 70h,AL; delays; IN AL,71h; RET). EE
 ## 2. Exact aligned routine and data flow
 
 ```asm
-5D60  PUSH DS
-5D61  STOSW                 ; preceding PUSHA at 5D5F, DI=0020h
+5D5E  MOV DI,0020h
+5D61  INC SP
+5D62  PUSH DS
+5D63  STOSW                 ; preceding PUSHA at 5D5F, DI=0020h
 5D63  MOV AX,CS
 5D65  STOSW                 ; stores CS at ES:0022h
 5D66  MOV AL,FEh
@@ -48,7 +50,7 @@ EE94h is the complete CMOS read routine (OUT 70h,AL; delays; IN AL,71h; RET). EE
 5D99  CALL EE9Dh            ; write result low byte to CMOS[BFh]
 ```
 
-The entry context immediately before 5D60h includes `MOV DI,0020h; PUSHA`. The two STOSW instructions store the original AX and CS in ES:0020h and ES:0022h respectively. The later `MOV DI,AX` at 5D70h replaces DI with the zero-extended value read from CMOS B8h.
+The entry context immediately before the first STOSW is `MOV DI,0020h; INC SP; PUSH DS`. The two STOSW instructions store the current AX and CS in ES:0020h and ES:0022h respectively. There is no PUSHA at this location; the earlier PUSHA annotation was an address-alignment error. The later `MOV DI,AX` at 5D70h replaces DI with the zero-extended value read from CMOS B8h.
 
 The first CMOS access therefore reads the old B8h byte into DI, and the next write clears CMOS B8h to zero. If CMOS[8Eh] bits 6 and 7 are both clear, the code reads the word CMOS[BEh:BFh], subtracts the saved old B8h byte (zero-extended), and writes the adjusted word back to BEh:BFh.
 
