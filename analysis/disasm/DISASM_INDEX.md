@@ -911,3 +911,12 @@ This phase is semantic classification of selected regions, not a complete CFG. S
 - Decoded 00EFh..0235h as a coherent Setup/video presentation routine: INT 10h cursor save/restore, 80h-byte stack buffer, save/restore of DS:E000h, BP-relative record formatting, and a CS-resident callback structure at 0AF5h with indirect CALL AX dispatch.
 - Decoded adjacent 0236h..026Eh as a field-edit helper that merges a two-bit field into BP+14h while separately handling bit 3.
 - This is a new low-ROM semantic region; 026Fh onward and callback targets remain to be traced. A raw scan found no direct near CALL to 00EFh, but far/pointer/indirect entries are not excluded.
+
+
+## Semantic map — phase 85 (2026-11-16)
+
+- [AMI486_SEMANTIC_MAP_PHASE85_20261116.md](AMI486_SEMANTIC_MAP_PHASE85_20261116.md)
+- Reconstructed the indirect dispatcher at 01EDh..020Dh: record word +0 is copied to BP+00h and feeds the next cursor; word +2 is invoked by CALL AX.
+- Callback return CF/ZF controls traversal (JAE adds 4; otherwise JZ re-enters without adding; otherwise exits through 099Dh). This is a flag-controlled threaded structure, not a simple fixed array.
+- Following the JAE continuation from 0AF5h yields callback targets 6373h, 63C9h, 641Fh, 6485h, 64E3h, 6541h, 0319h, 0351h, 02DBh, 02F1h, 0236h, 026Fh, then 6373h again.
+- The six 63xx handlers share a port/parameter + helper + saved-flags prologue; 0319h/0351h/02DBh/02F1h manipulate BP-relative editor state. Individual field labels and actual callback execution outcomes remain open.
