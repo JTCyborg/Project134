@@ -1112,3 +1112,8 @@ A95Eh installs F000:A08Dh at INT 13h, saves the displaced vector in INT 40h, ins
 ## Legacy floppy INT13 and INT40 chain — 2026-11-16
 
 C610h is the in-ROM legacy floppy INT 13h handler candidate. Its 11-word dispatch table at C5FAh maps AH=00–05, 08 and 15–18 to C69Ah/C6CEh/C7E2h/C7E2h/C7E2h/C8E1h/C999h/C6D9h/C78Bh/C716h/CB09h. The C8BBh/C936h paths call DMA setup D156h; C913h enters the D100h FDC transaction chain. A95Eh saves the displaced INT13 vector into INT40, and A08Dh forwards floppy requests there. The runtime vector value still needs an IVT snapshot. Details: AMI486_FDC_DMA_SUBSYSTEM_20261116.md.
+
+
+## Memory alias and chipset-init sequence — 2026-11-16
+
+Detailed report: [AMI486_MEMORY_CHIPSET_INITIALIZATION_20261116.md](AMI486_MEMORY_CHIPSET_INITIALIZATION_20261116.md). The 2100h/2187h/2253h/22DBh streams test aliasing at 8 MiB, 64 MiB and 2/4/8 KiB offsets. Stack-threaded code uses 8DCFh/8DDCh to read/write indexed registers through ports 22h/23h. Confirmed operations include register 16h |= 30h and register 11h = 44h; the 2381h path updates registers 10h/11h and clears CR0.PE before F66Eh. Exact chipset identity and register semantics remain open.
