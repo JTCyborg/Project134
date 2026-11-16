@@ -25,7 +25,7 @@ The table is native little-endian:
 | 04h | F999h |
 | 05h | F9D3h |
 
-The wrapper's vector installation/caller has not yet been found. The register convention (AH function, DX port base) and handler behavior are strongly consistent with a BIOS INT 14h serial communications service, but the INT 14h vector itself is not yet byte-verified.
+The AH function selector, DX port-base convention, and exact AH=00h–03h operation set identify this as the BIOS INT 14h serial communications service. The IVT installation/caller for the F900h entry has not yet been found, so the vector target itself remains to be verified.
 
 ## 2. UART register evidence
 
@@ -47,7 +47,7 @@ This is direct port-offset evidence, not an inference from routine names.
 ### AH=00h — F936h: initialize UART
 
 - Reads configuration byte from [BP+0Eh].
-- Derives baud divisor in CX; the default path starts with 0417h and the alternate path adjusts the divisor by shifting 0600h.
+- Derives baud divisor in CX from AL[7:5]: 0=0417h (110 baud), 1=0300h (150), 2=0180h (300), 3=00C0h (600), 4=0060h (1200), 5=0030h (2400), 6=0018h (4800), 7=000Ch (9600). The default path starts with 0417h; other values are 0600h shifted right by the selector count.
 - Writes 80h to DX+3 (LCR DLAB).
 - Writes CH to DX+1 (DLM) and CL to DX+0 (DLL).
 - Writes BH to DX+3 (final LCR format).
@@ -56,7 +56,7 @@ This is direct port-offset evidence, not an inference from routine names.
 
 ### AH=01h — F986h: transmit character
 
-- Calls F9E7h with MCR/wait parameters.
+- Calls F9E7h with MCR=03h (DTR+RTS), waits for MSR mask 30h (CTS/DSR) and LSR mask 20h (THR empty).
 - Loads the character from [BP+0Eh].
 - If the readiness check succeeds, writes AL to DX+0 (THR).
 - On failure, sets bit 7 in AH and returns.
@@ -101,7 +101,7 @@ The six functions correspond closely to the classic BIOS serial-service shape:
 - configure modem-control outputs;
 - write modem-control outputs and sample status.
 
-The UART identification is high-confidence because the code accesses the exact DLAB/DLL/DLM/LCR/IER/THR/RBR/MCR/LSR/MSR offsets and uses the standard DLAB sequence. The mapping to INT 14h is strongly supported by the AH selector dispatch and DX base-port convention, but remains a candidate until the IVT vector or caller is found.
+The UART identification and INT 14h service mapping are high-confidence: the code accesses the exact DLAB/DLL/DLM/LCR/IER/THR/RBR/MCR/LSR/MSR offsets, uses the standard DLAB sequence and implements the standard baud-rate divisor table. Only the IVT installation/caller for F900h remains unresolved.
 
 ## 5. Remaining work
 
@@ -112,3 +112,21 @@ The UART identification is high-confidence because the code accesses the exact D
 5. Trace whether all six selectors are reachable or whether AH=04h/05h are OEM extensions.
 
 No claim is made that the serial BIOS subsystem is fully mapped.
+
+
+## 6. Verified baud-rate table and line-control field
+
+The AH=00h initializer splits AL into baud selector AL[7:5] and line-control bits AL[4:0]. The divisors are:
+
+| AL[7:5] | Divisor | Baud |
+|---:|---:|---:|
+| 0 | 0417h | 110 |
+| 1 | 0300h | 150 |
+| 2 | 0180h | 300 |
+| 3 | 00C0h | 600 |
+| 4 | 0060h | 1200 |
+| 5 | 0030h | 2400 |
+| 6 | 0018h | 4800 |
+| 7 | 000Ch | 9600 |
+
+The divisor sequence is generated as 0600h shifted right by the selector value, except selector zero which uses 0417h. The low five bits are written to LCR after setting DLAB, matching the standard 8250/16450/16550 line-control layout.
