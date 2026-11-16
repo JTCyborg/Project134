@@ -252,3 +252,12 @@ This phase is semantic classification of selected regions, not a complete CFG. S
 - Confirmed `1A8F` is a RET stub and traced `1A90` as pre-save normalization of `E017` plus a video-ROM signature consistency check.
 - Corrected phase 13: `E7E8` is a keyboard-controller command/response test, not a Setup-image validator; `E1AA.0` records that test result.
 - No new ALi1429 writeback path was found in these routines; the direct `22h/23h` RMW block remains `1C5E–1DD0`.
+
+
+## Semantic map — phase 15 (2026-11-16)
+
+- [AMI486_SEMANTIC_MAP_PHASE15_20261116.md](AMI486_SEMANTIC_MAP_PHASE15_20261116.md)
+- Traced POST checkpoint `8Ch` to `1C5E`, proving this is the live chipset-apply routine.
+- Resolved `[CS:82E2]` to `19AE`, a stock `RET` hook.
+- Documented CMOS `8Eh & C0h` bypass gate and CMOS `B6.0` AUTO Config/manual selection.
+- Catalogued bit-level CMOS-to-ALi1429 RMW operations on indices `20h,17h,12h,14h,1Eh,1Ah,21h,22h,25h,27h` through ports `22h/23h`.
