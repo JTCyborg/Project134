@@ -77,15 +77,14 @@ The common conversion helper at 080Fh parses the digit buffer:
 0834  CMP SI,0005h
 0838  JE 0842h
 083A  CMP AX,00FFh
-083D  JBE 0842h
-083F  CALL F571h
-0842  MOV CX,DI
-0844  POP SI
-0845  POP AX
-0846  RET
+083D  CALL F571h
+0840  MOV CX,DI
+0842  POP SI
+0843  POP AX
+0844  RET
 ```
 
-The helper accumulates a base-10 value in AX, returns it in DX, and returns the number of entered digits in CX. The 00FFh upper-bound check is bypassed when SI=5; otherwise values above 255 take the F571h error path. The arithmetic-overflow and carry paths also reject the input. The exact meaning of the SI=5 exception is not assigned globally; callers use both SI=3 and SI=5.
+The helper accumulates a base-10 value in AX, returns it in DX, and returns the number of entered digits in CX. The 00FFh upper-bound check is bypassed when SI=5; otherwise values above 255 call F571h. The signed-overflow branch at 081Eh also calls F571h. A separate carry branch at 082Ch targets 083Eh, the second byte of that CALL displacement; the alternate stream is `XOR BP,BP; MOV CX,DI; POP SI; POP AX; RET`. This unusual BP-clearing error/alternate path is not yet explained and must not be merged with the aligned 083Dh CALL stream. The exact meaning of the SI=5 exception is not assigned globally; callers use both SI=3 and SI=5.
 
 ## 4. Alternate-entry warning
 
