@@ -164,3 +164,12 @@ This phase is semantic classification of selected regions, not a complete CFG. S
 - Traced `85D6` selectors: AL=0 copies masked source-window bits, AL=1 selects +2, AL=2 selects +3, merging into the destination window.
 - Confirmed the separate setup-record base/end pair `82C6/82C8` is consumed by 8300/83AE and the setup editor; direct static writers remain unidentified.
 - Corrected the earlier overstatement: pointer consumer roles are established, but runtime pointer provenance and chipset-window names are still unresolved.
+
+
+## Semantic map — phase 5 (2026-11-16)
+
+- [AMI486_SEMANTIC_MAP_PHASE5_20261116.md](AMI486_SEMANTIC_MAP_PHASE5_20261116.md)
+- Decoded built-in configuration table: exactly 81 four-byte records at `873C–887F`.
+- Count fields: `8880=5`, `8882=76`, `8884=0`, `8886=81`; threshold `8888=E0h`.
+- Identified table slices: first five records at `873C`, remaining 76 at `8750`; 8400 consumes all 81 for CMOS application.
+- Preserved the distinction between the CMOS register/mask/value consumer and the generic two-profile configuration worker.
