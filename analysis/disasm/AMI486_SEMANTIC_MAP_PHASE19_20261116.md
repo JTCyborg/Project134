@@ -59,7 +59,7 @@ The extra 2441h and 244Ch entries were missed by the earlier narrow trace. 2441h
 - Calls 242Bh if lookup for key B521h returns nonzero.
 - Calls 2436h if lookup for key B523h returns nonzero.
 - Then checks the word at C000:0000 for AA55h.
-- If absent, scans candidate segments E000h through E600h in 0800h increments, calling 1BB3h for each candidate.
+- If absent, scans candidate segments beginning at E000h and below E800h, calling 1BB3h. An invalid candidate advances BX by 0080h (2 KiB); a valid image advances BX by its declared image length (size byte × 512 bytes, expressed as paragraphs), so the scan is not unconditionally a fixed 2-KiB stride.
 - Returns with ZF reflecting whether the C000h signature test succeeded (the code uses OR SP,SP / CMP SP,SP idioms to set flags).
 
 The calls to 2420h/242Bh/2436h are therefore conditional on the record-walker result, not direct tests of raw Boolean bytes.
