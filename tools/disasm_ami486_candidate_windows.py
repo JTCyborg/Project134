@@ -127,6 +127,7 @@ SEEDS = [
     (0xD294, "direct CALL target; FDC result/data read helper"),
     (0xD580, "FDC command completion continuation"),
     (0xD5DB, "FDC routine continuation / return path"),
+    (0xE845, "INT 76h / IRQ14 handler installed by A95Eh"),
     (0xF900, "interrupt/dispatch wrapper candidate; indirect-call provenance unresolved"),
     (0xF936, "target listed in F92Ah dispatch table"),
     (0xF977, "target listed in F92Ah dispatch table"),
