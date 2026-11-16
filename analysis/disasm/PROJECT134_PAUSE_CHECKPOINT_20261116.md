@@ -172,3 +172,8 @@ The caller mode bytes resolve DMA direction: C8BBh passes 46h (memory-to-FDC wri
 ## INT 14h wrapper correction — 2026-11-16
 
 The F9xx serial dispatcher entry was byte-aligned again against the generated Capstone window. Correct candidate entry: F8E7h (83 FA 04), not F900h or F8E8h. DX is the COM-port index 0..3; the wrapper reads the COM base word from BDA 0040:0000+2*DX and the timeout byte from 0040:007Ch+DX. The valid path begins at F8F2h; AH selects one of six UART handlers via F92Ah. The common cleanup CALL is F926h, IRET F929h, and table F92Ah–F935h. F900h is the last displacement byte of MOV DX,[DI+0000h], not a function entry. The generator output now verifies F8E7h–F929h. The INT 14h vector installation/caller remains unresolved.
+
+
+## Candidate-window refresh — 2026-11-16
+
+The generated candidate listing now contains 189 code windows plus 6 data windows (195 headers total). Their distinct union is 10,493 bytes across 54 pages; this is not a semantic coverage percentage. The F9xx serial window is aligned at F8E7h–F929h, with F92Ah–F935h emitted as the handler table. The INT 14h vector source remains open.
