@@ -154,3 +154,13 @@ This phase is semantic classification of selected regions, not a complete CFG. S
 - Reconstructed provisional four-byte record schema: `{index/register, mask, value A, value B/translated value}`, corroborated by consumers `8300`, `8400–84C8`, and `85D6`.
 - Distinguished fixed four-byte configuration entries from variable-length setup records; their formats must not be conflated.
 - Runtime pointer initialization and exact chipset address-space mapping remain unresolved.
+
+
+## Semantic map — phase 4 (2026-11-16)
+
+- [AMI486_SEMANTIC_MAP_PHASE4_20261116.md](AMI486_SEMANTIC_MAP_PHASE4_20261116.md)
+- Tightened the four-byte record schema to `{key/index, mask, value_A, value_B}`, with consumer-specific meanings.
+- Distinguished the unbounded key search in `8300` from the end-pointer-bounded walk in `8400`.
+- Traced `85D6` selectors: AL=0 copies masked source-window bits, AL=1 selects +2, AL=2 selects +3, merging into the destination window.
+- Confirmed the separate setup-record base/end pair `82C6/82C8` is consumed by 8300/83AE and the setup editor; direct static writers remain unidentified.
+- Corrected the earlier overstatement: pointer consumer roles are established, but runtime pointer provenance and chipset-window names are still unresolved.
