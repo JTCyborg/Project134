@@ -99,7 +99,7 @@ See `analysis/disasm/AMI486_STORAGE_AND_DISPATCH_REGIONS_20261116.md`.
 
 The A000h subsystem is now classified as IDE/ATA hard-disk and boot-sector protection code (01F0h–01F7h, 03F6h), including IDENTIFY DEVICE at AC00h, a 512-byte data-out routine at A406h, and a Y/N “Possible VIRUS” prompt at A847h/A8F4h. The A95Eh stream writes the INT 13h vector slot through ES; ES=0 is not yet proven from the caller.
 
-D100h–D5FFh is a separate FDC/DMA subsystem (03F2h/03F4h/03F5h/03F7h and DMA 0Ch/0Bh/05h/04h). F92Ah–F935h is a six-entry dispatch table; F977h is an overlapping entry in the F936h stream. The generated candidate decode now covers 68 unique bounded seeds plus separately emitted data ranges with 16-bit near-branch wraparound.
+D100h–D5FFh is a separate FDC/DMA subsystem (03F2h/03F4h/03F5h/03F7h and DMA 0Ch/0Bh/05h/04h). F92Ah–F935h is a six-entry dispatch table; F977h is an overlapping entry in the F936h stream. The generated candidate decode now covers 85 unique bounded code windows plus separately emitted data ranges with 16-bit near-branch wraparound.
 
 Next: validate the actual incoming vector/caller for F900h, confirm ES provenance at A95Eh, and map full helper boundaries/callers for ATA and FDC. No phase 97.
 
@@ -117,3 +117,8 @@ The A0F1h–A124h table is now resolved for the principal standard INT 13h servi
 ## INT 13h handler progress — 2026-11-16
 
 A08Dh/A0A0h is now mapped as the hard-disk INT 13h handler and AH dispatcher. The table at A0F1h has 26 entries. Main functions: read sectors AH=02h (ATA 20h / REP INSW), write sectors AH=03h (30h / REP OUTSW), verify AH=04h (40h), format AH=05h (50h plus Y/N warning), get parameters AH=08h, initialize AH=09h (91h), read/write long AH=0Ah/0Bh (22h/32h), seek AH=0Ch (70h), reset AH=0Dh, ready AH=10h, recalibrate AH=11h (10h), diagnostics AH=14h (90h), disk type/capacity AH=15h. Detailed entry-to-return map is in AMI486_STORAGE_AND_DISPATCH_REGIONS_20261116.md.
+
+
+## FDC/DMA follow-up — 2026-11-16
+
+See AMI486_FDC_DMA_SUBSYSTEM_20261116.md. D156h programs DMA channel 2; D243h and D294h implement FDC FIFO command/result byte exchange; D270h collects result blocks; D2FDh issues Sense Interrupt Status 08h; D348h resets the controller; D3B5h reads CMOS floppy type register 10h; D499h performs a three-attempt FDC command/result transaction. D40Ah–D462h command sequences and the INT 40h vector target remain open.
