@@ -25,6 +25,7 @@
          point elsewhere when the project is opened outside the solution). -->
     <OutDir>$(MSBuildProjectDirectory)\..\out\$(Configuration)\</OutDir>
     <IntDir>$(MSBuildProjectDirectory)\..\obj\$(Configuration)\</IntDir>
+    <!-- build_bios.ps1 resolves NASM from PATH or the local vcpkg tool cache. -->
     <NasmExe Condition="'$(NasmExe)'==''">nasm.exe</NasmExe>
     <RomSize Condition="'$(RomSize)'==''">65536</RomSize>
     <NMakeBuildCommandLine>powershell.exe -NoLogo -NoProfile -ExecutionPolicy Bypass -File "$(MSBuildProjectDirectory)\tools\build_bios.ps1" -OutputDirectory "$(OutDir)" -NasmExe "$(NasmExe)" -RomSize $(RomSize)</NMakeBuildCommandLine>
