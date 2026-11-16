@@ -423,3 +423,12 @@ This phase is semantic classification of selected regions, not a complete CFG. S
 - Fully decoded the 21 four-byte records at 8750h–87A3h: 20 ALi indexed writes and one skipped selector (26h).
 - Recorded exact effective register indices and values after the BIOS subtracts 30h from byte 0 and uses byte 3 as data.
 - Separated confirmed write behavior from unknown ALi register semantics; Project124 mapping remains unverified.
+
+
+## Semantic map — phase 35 (2026-11-16)
+
+- [AMI486_SEMANTIC_MAP_PHASE35_20261116.md](AMI486_SEMANTIC_MAP_PHASE35_20261116.md)
+- Audited ALi indexed read/write helpers (8DCF/8DDC) and their call sites.
+- Recovered the CMOS-to-ALi masked read/modify/write mapping in the manual POST configuration path at 1C85h–1DD0h.
+- Separated AUTO Config derived-table paths from manual CMOS programming and the later POST A4 stage.
+- Documented ALi register 13h/14h shadow-control operations and the CMOS 8Eh C0h configuration gate.
