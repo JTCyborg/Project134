@@ -305,3 +305,12 @@ This phase is semantic classification of selected regions, not a complete CFG. S
 - Fully decoded the 8306h CMOS-to-option lookup and its 83AEh companion metadata lookup; caller ZF/JNZ checks test the decoded option, not a raw Boolean feature flag.
 - Audited all static references to 82C6h/82C8h: no ROM write sites exist; stock optional extended Setup-record range remains inactive absent external/runtime initialization.
 - Refined the POST memory-test sequence at 26F9h–29EAh: documented overlapping pattern writes, compared offsets, spaced reads, 32-KiB read pass, 16-KiB fill/scan/clear, and the unresolved physical mapping.
+
+
+## Semantic map — phase 21 (2026-11-16)
+
+- [AMI486_SEMANTIC_MAP_PHASE21_20261116.md](AMI486_SEMANTIC_MAP_PHASE21_20261116.md)
+- Mapped POST handlers 1DE8h–1E35h, 1E78h, 1E9Dh, 1EC8h–1F46h, 1F47h–203Eh and 2042h–2064h.
+- Added two further CMOS-option-gated ROM-shadow windows (E000h and alternate C800h) to the three already mapped in Phase 17/19.
+- Documented additional ALi1429 register read/modify/write masks in the POST A4 path; kept hardware bit names unresolved.
+- Explicitly separated 100% mechanical byte decoding from semantic recognition; a reliable semantic percentage requires a per-byte code/data/reachability ledger and is not yet available.
