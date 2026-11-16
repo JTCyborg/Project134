@@ -940,3 +940,13 @@ This phase is semantic classification of selected regions, not a complete CFG. S
 - Verified date and time paths use BIOS INT 1Ah RTC services (AH=04h/05h for date and AH=02h/03h for time), plus INT 16h keyboard and INT 10h display services.
 - Documented wrap/range evidence: month 1..12, day 1..31, year 1901..2099, hour 00..23, minute/second 00..59.
 - Remaining Setup callbacks and helper contracts are still open; no claims are made that the entire Setup editor is complete.
+
+
+## Semantic map — phase 88 (2026-11-16)
+
+- [AMI486_SEMANTIC_MAP_PHASE88_20261116.md](AMI486_SEMANTIC_MAP_PHASE88_20261116.md)
+- Resolved callback 0319h as the high-nibble editor for BP+12h and 0351h as the low-nibble editor; both call the common hexadecimal editor at 0383h.
+- Confirmed Fh sentinel handling with fallback storage at BP+19h/BP+1Ah.
+- Classified 0383h as a Setup hexadecimal digit editor with scan-code-driven increment/decrement and 0..F digit bounds.
+- Flagged callback 02F1h as an overlapping alternate entry (it begins at the second byte of the 02F0h linear instruction); it must be decoded independently.
+- 02DBh and 026Fh remain only partially classified; BP+10h/BP+14h semantics are unresolved.
