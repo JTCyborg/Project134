@@ -160,7 +160,7 @@ A08Dh is the hooked hard-disk INT 13h entry; A0A0h is its AH dispatcher; A0F1h�
 
 ## FDC/DMA subsystem map
 
-See [AMI486_FDC_DMA_SUBSYSTEM_20261116.md](AMI486_FDC_DMA_SUBSYSTEM_20261116.md). D156h programs DMA channel 2 (ports 0Ch/0Bh/05h/04h/81h, then unmasks channel 2 via 0Ah); D243h writes FDC FIFO command bytes, D294h reads result bytes, D270h collects result blocks, D2FDh sends Sense Interrupt Status (08h), D348h toggles DOR 03F2h, D3B5h reads CMOS floppy type register 10h, and D499h performs a three-attempt command/result transaction. D40Ah–D462h command-byte meanings and the INT 40h vector target remain unresolved.
+See [AMI486_FDC_DMA_SUBSYSTEM_20261116.md](AMI486_FDC_DMA_SUBSYSTEM_20261116.md). D156h programs DMA channel 2 (ports 0Ch/0Bh/05h/04h/81h, then unmasks channel 2 via 0Ah); D243h writes FDC FIFO command bytes, D294h reads result bytes, D270h collects result blocks, D2FDh sends Sense Interrupt Status (08h), D348h toggles DOR 03F2h, D3B5h reads CMOS floppy type register 10h, and D499h performs a three-attempt command/result transaction. D40Ah–D462h is now mapped as data-rate/state-token selection feeding a D499h READ ID transaction; D520h–D5D9h is an enhanced FDC VERSION/DUMPREG/UNLOCK/CONFIGURE/PERPENDICULAR/LOCK sequence. Remaining gaps are low-bit state-token semantics, EEAAh configuration-byte provenance and the runtime INT 40h vector.
 
 
 ## Keyboard subsystem map
@@ -220,7 +220,7 @@ The first-pass region descriptions above have been refined by raw-byte and calle
 | E845h–E864h | INT 76h / IRQ14 handler | AMI486_STORAGE_AND_DISPATCH_REGIONS_20261116.md |
 | F8E7h–F9FCh | BIOS INT 14h serial-service dispatcher and UART handlers | AMI486_INT14_SERIAL_BIOS_20261116.md |
 
-The current candidate-window artifact has 146 unique bounded code windows and 6 separately emitted data ranges (152 headers). Its union is 8,618 bytes across 46 pages: 7,974 code-candidate bytes, 671 data-candidate bytes and 27 bytes of code/data overlap. This is a sampling footprint only, not semantic coverage.
+The current candidate-window artifact has 189 unique bounded code windows and 6 separately emitted data ranges (195 headers). Its union is 10,493 bytes across 54 pages: 9,837 code-candidate bytes, 671 data-candidate bytes and 15 bytes of code/data overlap. This is a sampling footprint only, not semantic coverage.
 
 
 ## 9. F9xx dispatcher entry-boundary correction
@@ -231,3 +231,8 @@ The first candidate seed at F900h was misaligned; the attempted replacement at F
 ## FDC DMA direction cross-reference
 
 D156h writes the caller-supplied mode byte unchanged to DMA port 0Bh. C8BBh supplies 46h (8237 channel 2, single, memory-to-device); C936h/C913h supply 4Ah (channel 2, single, device-to-memory). This confirms FDC write/read DMA direction at these call sites. Detailed analysis: AMI486_FDC_DMA_SUBSYSTEM_20261116.md.
+
+
+## FDC command/rate interpretation update — 2026-11-16
+
+The D40Ah–D462h bytes are not raw FDC command opcodes. D3EDh/D499h derive the data-rate selector from AL[7:6] and write it to 03F7h; D3FAh stores the full AL token in [BX+90h]. D499h sends a two-byte 4Ah/drive-head READ ID command through D1C0h and reads seven result bytes through D270h. D520h–D5D9h is the enhanced 765-compatible controller sequence: VERSION 10h (expects 90h), DUMPREG 0Eh (ten result bytes), UNLOCK 14h, CONFIGURE 13h with 00 08 00, PERPENDICULAR MODE 12h and LOCK 94h. The remaining unknowns are the low-bit semantics of [BX+90h] tokens, the source of EEAAh-derived perpendicular-mode bits, and the actual INT 40h vector.
