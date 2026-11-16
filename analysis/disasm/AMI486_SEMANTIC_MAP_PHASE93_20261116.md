@@ -74,3 +74,8 @@ Not proven:
 - Which exact Setup item labels correspond to the record chain.
 
 Next: reconstruct the control-flow and stack state from each entry (0B5Dh and 0B6Dh) through 0C04h, and compare it with the 05B4h caller's expected CF/ZF/AH result. Then trace whether the four-byte record view is actually read at runtime or is only an overlapping static interpretation.
+
+
+## Phase 94 correction — do not treat the table bytes as proven code
+
+The 05B4h dispatcher does issue near CALL AX to the values 0B5Dh and 0B6Dh, but the raw bytes at those offsets are embedded in a regular four-byte record region and linear 8086 decoding yields implausible operations. Therefore these are confirmed raw-image indirect CALL targets, not confirmed semantically valid code entries. The claimed linear control-flow path through 0BE5h is withdrawn as an established code path; branches at 0B71h/0B85h/0BA1h are only speculative alternate decoding of record bytes. See phase 94 for the corrected dispatcher contract and unresolved CS mapping.
