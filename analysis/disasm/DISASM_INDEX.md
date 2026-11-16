@@ -1147,3 +1147,8 @@ The initial F900h candidate seed was misaligned; the first replacement at F8E8h 
 ## FDC command analysis update — 2026-11-16
 
 D40Ah–D462h is a drive data-rate/state-selection sequence, not a list of FDC command opcodes. D499h sets the rate via 03F7h and sends the two-byte MFM READ ID command 4Ah + drive/head, then reads the seven-byte result. D520h–D5D9h identifies/configures an enhanced 765-compatible controller: VERSION 10h expects 90h, DUMPREG 0Eh returns ten bytes, D5DDh sends UNLOCK 14h or LOCK 94h and verifies the one-byte result, CONFIGURE 13h sends 00 08 00, and PERPENDICULAR MODE 12h uses a computed parameter. Remaining FDC unknowns are the low-bit [BX+90h] token meanings and the EEAAh parameter source. See AMI486_FDC_DMA_SUBSYSTEM_20261116.md.
+
+
+## FDC drive-state refinement — 2026-11-16
+
+The CMOS floppy-type helper D3B5h checks CMOS 0Eh bits C0h; when clear, it reads CMOS 10h and extracts the drive-type nibble (high nibble for drive 0, low nibble for nonzero). D3CFh dispatches normal type values to rate probes: type 1 selects token 93h; type 2 tries rate codes 0/1; type 3 tries 0/2; type 4/default tries 3/0/2. If CMOS 0Eh C0h is set, D46Dh tries 0/1/2/3. D3FAh proves bit 4 is the success flag and bits 7:6 are the rate selector. C84Bh is a direct caller of D3CFh; C855h maps D7h to SPECIFY 03 AF 02, 17h to 03 BF 02, and other observed tokens to 03 DF 02. The D46Dh alternate candidate window now extends through D498h so its final JMP is included. See AMI486_FDC_DMA_SUBSYSTEM_20261116.md.
