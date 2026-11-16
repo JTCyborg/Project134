@@ -288,3 +288,46 @@ Table targets:
 The C8BBh and C936h paths directly call D156h for DMA channel-2 setup; C913h calls the D4EAh/D381h/D197h/D156h/D216h/D270h/D2BDh FDC sequence. This establishes that the D100h–D5FFh FDC/DMA code is called by the legacy floppy INT 13h implementation.
 
 A95Eh saves the displaced INT 13h vector into the INT 40h slot; A08Dh forwards DL<80h requests to INT 40h. C610h is therefore the strong in-ROM candidate for that saved legacy floppy handler. The actual runtime segment:offset in the IVT still needs confirmation from an initialized IVT snapshot or execution trace.
+
+
+## 3.1 Corrected F9xx wrapper entry and alignment
+
+A raw-byte recheck shows that the seeded window previously beginning at F900h was misaligned: F900h is the final displacement byte of the four-byte instruction at F8FDh, not an instruction boundary. The wrapper's guarded candidate entry is F8E8h. Its exact entry-aligned stream through the IRET is:
+
+```asm
+F8E8  CMP DX,04h
+F8EA  JAE F926h
+F8EC  CMP AH,06h
+F8EF  NOP
+F8F0  JAE F926h
+F8F2  PUSHA
+F8F3  MOV BP,SP
+F8F5  PUSH DS
+F8F6  PUSH 40h
+F8F8  POP DS
+F8F9  MOV DI,DX
+F8FB  SHL DI,1
+F8FD  MOV DX,[BP+DI]
+F901  ADD [BP+DI],AH
+F903  SAL byte [SI+1Fh],CL
+F906  SHR DI,1
+F908  MOV DI,[DI+7Ch]
+F90C  AND DI,00FFh
+F910  SHL DI,2
+F913  MOV AL,AH
+F915  MOV AH,00h
+F917  SHL AX,1
+F919  XCHG DI,AX
+F91A  MOV DI,[CS:DI-06D6h]
+F91F  XCHG DI,AX
+F920  CALL AX
+F922  MOV [BP+0Eh],AX
+F925  POP DS
+F926  POPA
+F927  CALL 90B2h
+F92A  IRET
+```
+
+The two range guards branch to F927h (the common CALL 90B2h cleanup) and then IRET. The six-word handler table begins at F92Ah immediately after the IRET, with targets F936h, F986h, F9C4h, F977h, F999h and F9D3h. AH is range-checked to 0..5 before the table dispatch. DX is range-checked to 0..3 and is used in the stack/BDA lookup sequence; the precise service contract and the interrupt vector that reaches F8E8h remain unresolved.
+
+**Correction:** remove the F900h candidate seed. It started on the last byte of the F8FDh instruction and shifted the decode by one byte. The generator now seeds F8E8h and clips the window at F929h, leaving F92Ah–F935h to the explicit data-table emitter. The F936h and other table-target windows remain separate. Do not describe F900h as a function entry.
