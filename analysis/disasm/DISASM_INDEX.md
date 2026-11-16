@@ -456,7 +456,7 @@ This phase is semantic classification of selected regions, not a complete CFG. S
 - [AMI486_SEMANTIC_MAP_PHASE38_20261116.md](AMI486_SEMANTIC_MAP_PHASE38_20261116.md)
 - Recovered the CPU-speed display lookup at 19C2h: categories 0–6 display nominal values 16/20/25/33/40/50/66 with explicit CPU Clock or DX2 CPU MHz labels.
 - Confirmed AUTO Config gates the category display; CMOS B3h bit 1 selects the DX2 label and separately controls the base-bank category-5 row substitution in 25C4h.
-- Clarified 25C4h +6-bank conditions (CMOS B3h bit 2 OR nonzero CR0 high byte) and documented the separate gated ALi writes at 1A60h.
+- Clarified 25C4h +6-bank conditions (CMOS B3h bit 2 OR nonzero CR0 high byte); phase 40 corrects 1A60h: conditional ALi 12h/24h writes occur only when B3h bits 2–3 are both clear and SMSW AH is nonzero.
 - Corrected by phase 39: category 7 reads byte 20h at 19C9h and displays 32; whether the overlap with the cache suffix string was intentional remains unresolved.
 
 
@@ -467,3 +467,12 @@ This phase is semantic classification of selected regions, not a complete CFG. S
 - Decoded the L2 cache-size display: ALi register 18h bit 1 gates the line, bits 6:4 select eight little-endian values (32/128/256/512/64/256/512/1024 KB).
 - Traced POST A1h's CMOS B3h bits 2–3 selection between two small ALi index/value lists, gated by SMSW AH.
 - Kept the intentionality of the data overlap and hardware meanings of ALi register 18h / the B3h-selected lists unresolved.
+
+
+## Semantic map — phase 40 (2026-11-16)
+
+- [AMI486_SEMANTIC_MAP_PHASE40_20261116.md](AMI486_SEMANTIC_MAP_PHASE40_20261116.md)
+- Consolidated direct CMOS B3h bit consumers and both in-ROM writers: bit 7 is recalculated from a strict >0200h comparison; bit 0 is set at the end of the DS scan.
+- Catalogued the independent effects of bits 1, 2 and 3 across CPU-speed labels, ALi row selection, small ALi tables, and diagnostic text.
+- Corrected phase 38's 1A60h branch polarity: the conditional ALi 12h/24h writes happen only when B3h bits 2–3 are both clear and SMSW AH is nonzero.
+- Preserved uncertainty about the intended names of B3h bits 0/7 and the hardware meanings of ALi register operations.
