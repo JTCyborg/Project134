@@ -532,3 +532,12 @@ This phase is semantic classification of selected regions, not a complete CFG. S
 - [AMI486_SEMANTIC_MAP_PHASE47_20261116.md](AMI486_SEMANTIC_MAP_PHASE47_20261116.md)
 - Reconstructed DH=4 stack continuation: SP=88EEh; RET at 8930h pops 88F0h and resumes at JNE 88FAh. The branch depends on LAHF after DIV BL, whose flags are undefined, so outcome is CPU/emulator-specific and must not be assumed.
 - 8400h has no direct CALL/JMP entry in the linear listing; 84C8h is internal to the 8400h routine. BP bit13 remains unresolved.
+
+
+## Semantic map — phase 48 (2026-11-16)
+
+- [AMI486_SEMANTIC_MAP_PHASE48_20261116.md](AMI486_SEMANTIC_MAP_PHASE48_20261116.md)
+- Reconstructed the stack-crafted path at `5C50–5C58`: the second POP loads SP=`ED0Bh`; the following `OR BP,BP` tests bit 15, not bit 13.
+- Resolved the return from the `552A` 32-KiB word-pattern test: the stack word at `5C66` makes RET land at `5C68`, where ZF selects failure at `5C2E` or successful continuation at `5C6A`.
+- Confirmed successful continuation initializes ES via LES, DS=`0040h`, SS=`0030h`, SP=`0100h`, then enters the keyboard-controller checks.
+- BP bit-13 provenance and an indirect live caller for `8400h` remain unresolved.
