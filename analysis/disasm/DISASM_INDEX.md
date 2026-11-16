@@ -1074,7 +1074,7 @@ Detailed report: [AMI486_STORAGE_AND_DISPATCH_REGIONS_20261116.md](AMI486_STORAG
 - D100h–D5FFh is the independent floppy controller/DMA subsystem using 03F2h/03F4h/03F5h/03F7h and DMA ports 0Ch/0Bh/05h/04h.
 - AD00h–AE5Fh is keyboard translation data candidate; AE60h onward includes INT 15h AH=4Fh keyboard intercept handling.
 - F92Ah–F935h is a six-entry handler-offset table; F977h is an overlapping alternate entry inside the F936h stream. F900h wrapper returns with IRET; vector provenance remains unresolved.
-- The Capstone candidate-window output is now 109 unique bounded code windows plus separately emitted data ranges, with 16-bit near-target wraparound.
+- The Capstone candidate-window output is now 111 unique bounded code windows plus separately emitted data ranges, with 16-bit near-target wraparound.
 
 Do not merge ATA, FDC, keyboard and F9xx dispatch code into one subsystem.
 
@@ -1102,3 +1102,8 @@ Detailed report: [AMI486_FDC_DMA_SUBSYSTEM_20261116.md](AMI486_FDC_DMA_SUBSYSTEM
 ## Keyboard BIOS subsystem — 2026-11-16
 
 Detailed map: [AMI486_KEYBOARD_SUBSYSTEM_20261116.md](AMI486_KEYBOARD_SUBSYSTEM_20261116.md). AD00h–AE5Fh contains translation data; AE6Fh invokes INT 15h AH=4Fh; B242h/B253h map lock/modifier scan codes; B26Ah/B273h control the 8042 interface; B33Dh sends keyboard LED/scanning commands; B3E2h dispatches INT 16h services; B399h/B4A9h maintain the BIOS ring buffer.
+
+
+## INT 13h vector chain and IRQ14 handler — 2026-11-16
+
+A95Eh installs F000:A08Dh at INT 13h, saves the displaced vector in INT 40h, installs F000:E845h at INT 76h/IRQ14, and sets INT 41h/INT 46h fixed-disk parameter table pointers into 16-byte records at E401h selected from CMOS. A08Dh forwards floppy DL<80h requests through INT 40h to the old BIOS INT 13h handler. E845h sends PIC EOIs and calls INT 15h AX=9100h. Full wiring is in AMI486_STORAGE_AND_DISPATCH_REGIONS_20261116.md.
