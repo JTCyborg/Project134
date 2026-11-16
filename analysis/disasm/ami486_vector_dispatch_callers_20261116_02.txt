@@ -190,6 +190,6 @@ Semantics:
 
 ===== ES provenance chain for the A95Eh call =====
 
-The direct call to A95Eh is at 134Eh, inside the function whose entry is 131Fh. That function is directly called from 1BAAh. The 1BAAh caller saves/restores DS around a C000h option-ROM signature check but does not initialize ES. Within the 131Fh function, 1303h temporarily sets ES=0000h to write ES:01D0h, then 130Fh POP ES restores the prior ES before the call at 134Eh. Therefore the observed local code does not prove ES=0000h at A95Eh; ES is inherited from the 1BAAh caller chain.
+The direct call to A95Eh is at 134Eh, inside the alternate entry stream beginning at 131Fh. The 131Fh entry is a direct CALL target from 1BAAh. The 131Fh stream reads CMOS 0Eh and 92h and conditionally calls A95Eh when the CMOS status gate is clear and register 92h is nonzero. The 1BAAh caller saves/restores DS around a C000h option-ROM signature check but does not initialize ES. The earlier 1303h sequence that temporarily sets ES=0000h belongs to a different, linearly decoded stream beginning before 131Fh; it is not executed by a CALL entering at 131Fh. Therefore the observed 131Fh caller path does not prove ES=0000h at A95Eh; ES is inherited from the 1BAAh caller chain.
 
-The candidate-window generator now includes the direct-call target 131Fh through its RET at 1364h so this caller context remains reproducible. A95Eh's IVT interpretation remains conditional on ES=0000h at the call.
+The candidate-window generator includes the direct-call target 131Fh through its RET at 1364h so this alternate entry context remains reproducible. A95Eh's IVT interpretation remains conditional on ES=0000h at the call.
