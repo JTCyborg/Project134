@@ -6,10 +6,10 @@ Correct the reset-vector mistake in phase 59, reconstruct the actual incoming ed
 
 ## 1. Correct hardware reset vector
 
-The raw `ami486.bin` image is 65,534 bytes in the repository. Its final bytes at file offset FFF0h are:
+The raw `ami486.bin` image is 65,536 bytes in the repository. Its final bytes at file offset FFF0h are:
 
 ```
-FF F0: EA 5B E0 00 F0
+FFF0: EA 5B E0 00 F0
 ```
 
 This is the x86 reset-vector instruction:
