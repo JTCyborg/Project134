@@ -288,3 +288,12 @@ This phase is semantic classification of selected regions, not a complete CFG. S
 - Traced the separate C0000h shadow-window path: POST 5E20h -> 1BF6h -> B51D/8300h hook -> 2415h.
 - Decoded 2686h as a protected-mode flat-segment read sweep of 1 MiB at physical 00100000h–001FFFFFh, followed by a return to real mode through DI.
 - Kept the purpose of the read sweep and the OEM/runtime hook conditions unresolved; no unsupported cache semantics assigned.
+
+
+## Semantic map — phase 19 (2026-11-16)
+
+- [AMI486_SEMANTIC_MAP_PHASE19_20261116.md](AMI486_SEMANTIC_MAP_PHASE19_20261116.md)
+- Corrected the 8300h interpretation: it is a BX-preserving wrapper around the real record walker at 8306h; B51x values are lookup keys, not proven Boolean flags.
+- Completed the common ROM-window helper family 2415h–244Ch, including the previously missed E000h and alternate C800h entries; documented register 13h/14h staging and the 32-KiB same-address read/write operation.
+- Traced the 5E05h POST scan and the 1BB3h Option-ROM checksum/initialization far call.
+- Corrected Phase 18: the 26F9h/2686h memory test path performs a 55AA55AAh write and compare at its base address; it is not read-only.
