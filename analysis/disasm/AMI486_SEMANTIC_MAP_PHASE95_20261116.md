@@ -49,7 +49,7 @@ The array is not itself a linked list. It selects one of several per-value chain
 
 ## 3. Exact 05B4h record interpretation
 
-05B4h begins with CALL 05E0h; 05E0h is simply RET. Then 05B7h adds four to BX and reads a four-byte record:
+05B4h begins with CALL 05E0h; 05E0h is a display/helper routine (`PUSH AX; PUSH DX; MOV DX,1203h; CALL 0845h; POP DX; POP AX; RET`). Then 05B7h adds four to BX and reads a four-byte record:
 
 - [CS:BX] -> next cursor, saved at [BP+02h].
 - [CS:BX+02h] -> near callback target, called with CALL AX.
@@ -92,3 +92,7 @@ After a callback returns, 05B4h saves flags and exits if CF=0, ZF=1, or AH=01h. 
 2. Resolve AL=7's record/callback and the overlap at 026Fh/0273h.
 3. Decode the remaining pointer entries 8..15, especially overlaps at 63C9h, 6373h and 641Fh.
 4. Reconcile the option chains with the Setup callbacks already mapped in phases 87–90.
+
+## Audit correction — dispatcher display helper (2026-11-16)
+
+The statement that `05E0h` is simply RET is withdrawn. Its entry is a real helper and the RET is at `05EAh`. The separate `05EBh` entry is invoked on the exit path. The raw bytes are recorded in phase 92's audit correction; the 05B4h linked-record and selected-base findings in this report are otherwise retained.
