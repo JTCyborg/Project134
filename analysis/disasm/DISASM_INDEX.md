@@ -660,3 +660,14 @@ This phase is semantic classification of selected regions, not a complete CFG. S
 - PUSHAW at 525Fh saves the incoming BP after temporary BP=1 at 51F4h is undone by POP BP at 5239h; POPAW at 5289h restores it before E2C6h.
 - The bitmap BP.13 is therefore already present at 5194h. Its caller/producer and the connection to D604h remain unresolved.
 
+
+
+## Semantic map — phase 61 (2026-11-16)
+
+- [AMI486_SEMANTIC_MAP_PHASE61_20261116.md](AMI486_SEMANTIC_MAP_PHASE61_20261116.md)
+- Traced the 509Eh–5194h path: it includes CMOS write, F3DB helper, INT 15h/AH=89h, memory-test helpers, and stack-crafted RET into FA4E.
+- 5194h tests BP.15 (sign), not BP.13. The nonnegative path temporarily writes BP=1 and restores the prior value at 5239h.
+- PUSHAW at 525Fh captures BP after both branches converge; POPAW at 5289h restores it before E2C6h.
+- No direct static near CALL/JMP targets into 509Eh, 50E1h, 5189h, 5190h, 5194h, 51F3h, 525Fh, 5280h, or 52C1h were found; simple literal near-offset table words were also absent.
+- BP preservation across F3DB, helper calls, and INT 15h/AH=89h remains unproven. The caller and first BP.13 producer remain unresolved.
+
