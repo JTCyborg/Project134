@@ -348,3 +348,11 @@ This phase is semantic classification of selected regions, not a complete CFG. S
 - Resolved CS:[B517h]=0Fh as the ordinal selector for the fifteenth Advanced CMOS Setup record, BA0Bh, `System Boot Up Sequence`.
 - Decoded the record fields: CMOS ADh, mask 20h, two option codes 10h/0Fh; traced its decoded value to the 8BA3h/8B5Eh ALi1429 dispatch at 1E1Ch.
 - Distinguished this POST Setup path from the independent INT 15h AH=4Fh keyboard intercept that also reaches the same handlers.
+
+
+## Semantic map — phase 26 (2026-11-16)
+
+- [AMI486_SEMANTIC_MAP_PHASE26_20261116.md](AMI486_SEMANTIC_MAP_PHASE26_20261116.md)
+- Resolved B51Bh=13h as the ordinal selector for record 19, `Fast Gate A20 Option` (BA91h; CMOS 2Dh, mask 02h).
+- Traced POST 1DD8h–1E18h to the 8042 read-input-port command C0h via F5D9h.
+- Resolved B519h=11h as record 17, `External Cache Memory` (BA4Fh), and callback selector 2 to 2EB4h.
