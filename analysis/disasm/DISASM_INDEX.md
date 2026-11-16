@@ -356,3 +356,11 @@ This phase is semantic classification of selected regions, not a complete CFG. S
 - Resolved B51Bh=13h as the ordinal selector for record 19, `Fast Gate A20 Option` (BA91h; CMOS 2Dh, mask 02h).
 - Traced POST 1DD8h–1E18h to the 8042 read-input-port command C0h via F5D9h.
 - Resolved B519h=11h as record 17, `External Cache Memory` (BA4Fh), and callback selector 2 to 2EB4h.
+
+
+## Semantic map — phase 27 (2026-11-16)
+
+- [AMI486_SEMANTIC_MAP_PHASE27_20261116.md](AMI486_SEMANTIC_MAP_PHASE27_20261116.md)
+- Mapped the 8042 command/data helpers F635h, F644h, F622h, F62Dh, F651h and response/read helpers.
+- Identified F66Ah as D1h/DFh (A20 gate enable) and F66Eh as D1h/DDh (A20 gate disable), using output-port bit 1.
+- Separated the POST C0h input-port probe at F5D9h from the actual D1h output-port writes.
