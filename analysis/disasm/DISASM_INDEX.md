@@ -1277,7 +1277,7 @@ Report: [AMI486_ADDRESS_LEDGER_REGION_D655_E3FF_20261117.md](AMI486_ADDRESS_LEDG
 - DAA2h–DFFFh is 1,374 zero bytes. E000h/E005h are entry stubs; E05Bh is the reset entry target; E160h–E25Fh and E260h–E2BFh are separately classified descriptor-like/parameter blocks.
 - New direct entry: the stack-return continuation D906h executes `JMP 8400h`. This corrects phase 52's former unresolved dynamic-entry note; it does not contradict phase 51's table-target statement. The 8400h path clears/restores CMOS 8Eh–FFh and preserves BP.13.
 - Candidate generator: 541 code windows, 140 data ranges; 29,460 unique code-window bytes, 15,775 unique data-range bytes, 117 overlap bytes, 45,118-byte union (68.84%), 203 pages touched and 125 fully covered. These are seeded inspection masks, not semantic-completion percentages.
-- Largest remaining uncovered intervals in the current mask: 19F8h–20FFh (1,800 bytes), CA16h–D0FFh (1,770 bytes), 873Ch–8DCEh (1,683 bytes), FA53h–FFFFh (1,453 bytes), and 244Eh–29F5h (1,448 bytes).
+- Largest remaining uncovered intervals in the current mask: CA16h–D0FFh (1,770 bytes), 873Ch–8DCEh (1,683 bytes), 2436h–29F5h (1,472 bytes), FA53h–FFFFh (1,453 bytes), and 5A4Ch–5FE3h (1,432 bytes).
 
 
 ## Interrupt/CMOS/diagnostic region E862h–F52Dh — 2026-11-17
@@ -1290,7 +1290,7 @@ Report: [AMI486_ADDRESS_LEDGER_REGION_E862_F52D_20261117.md](AMI486_ADDRESS_LEDG
 - EC5Ch, ECE7h, ED1Bh and ED3Dh cover printer/status, timer/floppy timeout and INT 1Ah-compatible RTC/time-date services. EE94h/EE9Dh are CMOS indexed read/write helpers; EEE7h/EEEFh handle POST/PIC programming.
 - F068h clears CR0.PE and returns through the E2B8h IDT pointer to reset entry E05Bh. F10Dh–F302h covers CMOS Setup validation/editor; F371h is the encoded “EVALUATION COPY, NOT FOR SALE” message; F3DBh/F419h validate video/ROM signatures; F4A5h/F50Dh are fatal diagnostic paths.
 - The E87Bh and F0A3h tables, EFC7h–F041h opaque block and several interrupt-vector installations remain unresolved.
-- Current candidate mask: 541 code windows, 140 data ranges; 29,460 unique code bytes, 15,775 unique data bytes, 117 overlap bytes, 45,118-byte union (68.84%), 203 pages touched, 125 fully covered. These are inspection masks, not semantic completion.
+- Current candidate mask: 597 code windows, 153 data ranges; 31,279 unique code bytes, 15,827 unique data bytes, 121 overlap bytes, 46,985-byte union (71.69%), 210 pages touched, 135 fully covered. These are inspection masks, not semantic completion.
 - Largest remaining uncovered intervals: 19F8h–20FFh (1,800 bytes), CA16h–D0FFh (1,770 bytes), 873Ch–8DCEh (1,683 bytes), FA53h–FFFFh (1,453 bytes), 244Eh–29F5h (1,448 bytes).
 
 
@@ -1303,3 +1303,13 @@ Report: [AMI486_ADDRESS_LEDGER_REGION_696F_72D8_20261117.md](AMI486_ADDRESS_LEDG
 - The three targets implement controller/drive initialization, alternate geometry initialization, and the main disk-test state machine. 6C15h is the INT 13h wrapper; 6D94h/6E30h perform disk requests; 7033h is the read-throughput benchmark and prints the “KB/sec ms” label at 7145h.
 - 6CB4h–6CC0h is a 13-byte status-token table; 6CC1h is an INT3 alignment byte. 6BD8h–6BDDh is the three-word mode table; 6B61h is a NOP alignment byte.
 - Current candidate mask: 541 code windows, 140 data ranges, 45,118-byte union (68.84%), 71 uncovered intervals, 203 pages touched and 125 fully covered. Largest remaining gap: 19F8h–20FFh (1,800 bytes). This is not semantic completion.
+
+
+## POST/cache/ALi/option-ROM/A20 region 19B0h–23CEh — 2026-11-17
+
+Report: [AMI486_ADDRESS_LEDGER_REGION_19B0_23CE_20261117.md](AMI486_ADDRESS_LEDGER_REGION_19B0_23CE_20261117.md).
+
+- The former 19F8h–20FFh gap is now fully covered by bounded code windows and explicit data ranges. It contains cache/CPU-speed display, B3h-selected ALi profile setup, option-ROM scanning/validation, manual CMOS-to-ALi configuration, POST A1h/A4h paths, the 21-record 8750h table walker and the A20-bracketed protected-mode memory-address probe.
+- Stack-return trampolines at 1AFBh, 1B20h, 208Dh, 20C9h and 20CEh are kept separate from their embedded return words. The 2068h LGDT pseudo-descriptor and adjacent descriptor bytes are classified as data.
+- Current candidate mask: 597 code windows, 153 data ranges, 31,279 unique code bytes, 15,827 unique data bytes, 121 overlap bytes, 46,985-byte union (71.69%), 66 uncovered intervals, 210 pages touched and 135 fully covered. This is not semantic completion.
+- Next largest uncovered interval: CA16h–D0FFh (1,770 bytes).
