@@ -95,3 +95,31 @@ Still open:
 ## Next analysis target
 
 Trace all callers/entry paths into F736h, F780h, F786h, F7FAh and F810h. Reconstruct the complete register contract (especially BX, AL, DL, ES, CX), and distinguish the normal disk boot path from the three error-message branches.
+
+## Follow-up: entry-state contract and all local calls to F810h
+
+A second pass over the call sites confirms four near CALL references to the retry helper at F810h:
+
+- F782: CALL F810h (displacement 008Bh)
+- F79D: CALL F810h (displacement 0070h)
+- F7D5: CALL F810h (displacement 0038h)
+- F7E7: CALL F810h (displacement 0026h)
+
+These calls belong to the disk boot/validation code around F780h. The helper itself sets CX=1 for each INT 13h read and AX=0201h, while the caller-provided DL and ES:BX are not overwritten by the helper. The routine preserves the retry counter on the stack; it does not preserve AX after a successful read (AX is the BIOS return value).
+
+The common dispatcher at D691h performs:
+- AX=0040h; DS=0040h
+- AL=00h; ES=0000h
+- AL=30h; SS=0030h; SP=0100h
+- SI is doubled and used to index the table at D6A8h
+
+It does **not** initialize BX, CX, DX, or DI. Thus BX/CX/DL are inherited from the state-machine path. In particular, the F786h path must not be described as having a fully known disk I/O register contract yet.
+
+For marker 06h, SI=0006h on entry to D6A1h; shifting left once produces SI=000Ch and CF=0. The table jump selects F786h. F786h loads SI=7B22h, but at F78Eh the JNC is taken, transferring directly to F7FAh. Therefore this path bypasses the message-output call at F795h. The strings at 7B22h/7B3Ah/7B52h are alternate error paths, not evidence that marker 06h prints an error.
+
+At F7FAh the code copies BX to DI, reads the first word at ES:DI into AX, sets CX=0080h, and scans using REPNZ SCASB with AL equal to the low byte of that first word. The scan is therefore a search for the first byte value in the first word, not itself an AA55 signature comparison. The scan result controls the branch at F807h. A separate AA55 comparison exists in the alternate boot path around F7A3h/F7DBh and must not be conflated with this scan.
+
+### Remaining unknowns
+- The precise producer of BX/CX/DL on the marker-06 dispatch path.
+- Whether ES:BX at F7FAh refers to a sector buffer or another boot image buffer (ES is definitely 0000h from D691h unless changed by an intervening path).
+- The exact role of the F736h helper and the caller context around F780h.
