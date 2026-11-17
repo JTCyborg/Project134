@@ -1628,3 +1628,41 @@ The trampoline at 90B4h is `JMP 90E7h`. The first instructions at 90E7h are `CMP
 The 90E7h/AH=87h branch contains 386 protected-mode setup instructions (`LGDT`, `LIDT`, `SMSW`/`LMSW`-class control-register handling and port 70h/71h accesses) and is consistent with a special extended-memory transfer service; its exact API and descriptor layout need a separate pass. The ordinary path for AH!=87h continues at 9220h and is the relevant next target for the temporary AH=14h controller-diagnostic call.
 
 This pass does not yet establish direct reads of E411-E420 by A08Dh or 90E7h. The DPT vector is installed in the IVT for the duration of the test, but the data consumer still needs to be identified in the 9220h path or in the firmware's chained handler.
+
+### A08Dh instruction-level correction
+
+The initial compact listing above had the prologue register order and one local operand imprecise. The exact sequence is:
+
+```asm
+A09F  PUSH AX
+A0A0  PUSH CX
+A0A1  PUSH DX
+A0A2  PUSH BX
+A0A3  PUSH SI
+A0A4  PUSH DI
+A0A5  PUSH DS
+A0A6  PUSH ES
+A0A7  SUB SP,8
+A0AA  PUSH BP
+A0AB  MOV BP,SP
+...
+A0C5  MOV AX,0201h
+A0C8  JB  A0CFh
+A0CA  AND BYTE [BP+1Eh],FEh
+A0CE  DEC AX
+A0CF  OR WORD [BP+1Eh],AX
+A0D2  POP BP
+A0D3  ADD SP,8
+A0D6  POP ES
+A0D7  POP DS
+A0D8  POP DI
+A0D9  POP SI
+A0DA  POP BX
+A0DB  POP DX
+A0DC  POP CX
+A0DD  POP AX
+A0DE  CALL 90B2h
+A0E1  IRET
+```
+
+The local operand is BP+1Eh (not a negative BP displacement). The handler saves/restores BX as well as the other listed registers. `OR WORD [BP+1Eh],AX` is the exact width of the final operation; do not infer the local's higher-level meaning until the caller's stack frame and the earlier stores to this slot are traced. The separate entry at A0E2h writes AH=01h to BDA byte 0040:0074, sets CF, and jumps into the common code at A0C2h; it is an error-return entry, not part of the normal IRET epilogue.
