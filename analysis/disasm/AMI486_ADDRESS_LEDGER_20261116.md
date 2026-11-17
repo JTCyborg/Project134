@@ -75,7 +75,7 @@ Raw samples show several distinct content types inside this 4 KiB area:
 - `A125h–A18Dh`: padded message text including **“Format !!!”**, **“BootSector Write !!!”**, and **“Possible VIRUS: Continue (Y/N)?”**. This is confirmed embedded text/data, not executable code.
 - `A18Eh`: aligned bytes `B8 00 01 88 26 74 00 F9 C3`; shared INT 13h unsupported/error stub. It sets AH=01h, stores status 01h at DS:0074h, sets CF and returns.
 - `A200h–ACFFh`: instruction-dense routines; raw samples include repeated I/O and conditional control flow. Treat as code candidates with embedded data not yet excluded.
-- `AD00h–AE5Fh`: keyboard translation data candidates. The bytes contain scan-code-like values and recognizable QWERTY/ASDF/Z/X/C/V/B/N/M and numeric-key sequences.
+- `AC5Bh–ACFFh`: first keyboard scan-code translation table; code at B031h loads BX=AC60h. AC5Ch–AC5Fh is retained as an unresolved prefix/header. `AD00h–AE5Fh` is a separate keyboard translation-data region with recognizable QWERTY/ASDF/Z/X/C/V/B/N/M and numeric-key sequences.
 - `AE60h–AFFFh`: returns to instruction-dense code, including BIOS interrupt calls and control-flow branches.
 
 The A100h words must not be mistaken for a fully understood native little-endian pointer table. The raw pairs, when byte-reversed, match plausible code entries such as A1A4h, A137h, A372h, A381h, A49Eh, A18Eh, A1D3h, A401h and A5A9h. This is a strong byte-swapped-table hypothesis, not yet a proven table contract.
@@ -127,7 +127,7 @@ Confirmed from the decoded bytes:
 - A847h renders the embedded A125h/A148h prompt via BIOS INT 10h. This ties the “Possible VIRUS” message to the ATA/boot-sector protection path.
 - A95Eh replaces INT 13h at 0000:004Ch with F000:A08Dh, saves the displaced INT 13h vector at INT 40h (0000:0100h), installs INT 76h/IRQ14 at F000:E845h, and configures INT 41h/INT 46h fixed-disk parameter table pointers at E401h-based 16-byte records. A08Dh forwards floppy DL<80h requests through INT 40h.
 - D100h–D5FFh is the FDC/DMA subsystem called by the legacy floppy INT 13h handler at C610h; C8BBh/C936h call D156h DMA setup. A08Dh forwards DL<80h requests to the saved old INT 13h vector in INT 40h.
-- AE60h onward enters a keyboard/INT 15h related handler path; AD00h–AE5Fh remains translation-table data candidate.
+- AE60h onward enters a keyboard/INT 15h related handler path; AC60h–ACFFh and AD00h–AE5Fh remain separate translation-table data regions.
 
 The first A000h seed decodes the initial bytes as unusual but syntactically valid instructions. Its true entry boundary remains unconfirmed; prefer the aligned entries established by direct calls/branches in the seeded listing.
 
@@ -167,7 +167,7 @@ See [AMI486_FDC_DMA_SUBSYSTEM_20261116.md](AMI486_FDC_DMA_SUBSYSTEM_20261116.md)
 
 ## Keyboard subsystem map
 
-See [AMI486_KEYBOARD_SUBSYSTEM_20261116.md](AMI486_KEYBOARD_SUBSYSTEM_20261116.md). AD00h–AE5Fh is keyboard translation data; AE6Fh onward invokes INT 15h AH=4Fh and handles E0h/E1h prefixes and ACK/RESEND bytes. B242h/B253h map lock/modifier scan codes; B26Ah/B273h enable/disable the 8042 interface; B33Dh sends EDh/F4h LED/scanning commands; B3E2h is an INT 16h dispatcher; B399h/B4A9h manage the BIOS ring buffer.
+See [AMI486_KEYBOARD_SUBSYSTEM_20261116.md](AMI486_KEYBOARD_SUBSYSTEM_20261116.md). AC60h–ACFFh is an additional scan-code table referenced by B031h; AD00h–AE5Fh is a separate translation-data region. AE6Fh onward invokes INT 15h AH=4Fh and handles E0h/E1h prefixes and ACK/RESEND bytes. B242h/B253h map lock/modifier scan codes; B26Ah/B273h enable/disable the 8042 interface; B33Dh sends EDh/F4h LED/scanning commands; B3E2h is an INT 16h dispatcher; B399h/B4A9h manage the BIOS ring buffer.
 
 
 ## INT 13h/40h/76h vector wiring and fixed-disk tables
@@ -213,7 +213,8 @@ The first-pass region descriptions above have been refined by raw-byte and calle
 | A95Eh onward | INT 13h/INT 40h chaining, INT 76h IRQ14 install, INT 41h/46h disk parameter tables | AMI486_STORAGE_AND_DISPATCH_REGIONS_20261116.md |
 | C5FAh–C60Fh | Legacy floppy INT 13h AH dispatch table | AMI486_FDC_DMA_SUBSYSTEM_20261116.md |
 | C610h onward | Legacy floppy INT 13h handler; direct callers of D100h–D5FFh FDC/DMA helpers | AMI486_FDC_DMA_SUBSYSTEM_20261116.md |
-| AD00h–AE5Fh | Keyboard translation data | AMI486_KEYBOARD_SUBSYSTEM_20261116.md |
+| AC5Bh–ACFFh | First keyboard scan-code table and prefix bytes | AMI486_KEYBOARD_SUBSYSTEM_20261116.md |
+| AD00h–AE5Fh | Second keyboard translation data region | AMI486_KEYBOARD_SUBSYSTEM_20261116.md |
 | AE6Fh onward / B1E9h–B4xxh | Scan-code intercept, 8042 commands, BIOS keyboard buffer and INT 16h services | AMI486_KEYBOARD_SUBSYSTEM_20261116.md |
 | 2100h–23E1h | Memory-alias probes, stack-threaded indexed chipset I/O, CR0.PE transition | AMI486_MEMORY_CHIPSET_INITIALIZATION_20261116.md |
 | 6700h–68E2h | RTC date/time display and numeric/hex text rendering helpers | AMI486_CLOCK_AND_TEXT_RENDERING_20261116.md |
@@ -747,3 +748,11 @@ Detailed map: [AMI486_ADDRESS_LEDGER_REGION_3E99_3F4A_20261117.md](AMI486_ADDRES
 Corrected the 3E3Fh window, which previously crossed the RET at 3E98h and included only the start of the next routine. It now ends at 3E98h. Added the parser at 3E99h–3EF1h, including its colon/space delimiter loop at 3EBFh and the 3EEBh back-edge, and the BP-framed metric/value formatter at 3EF2h–3F49h. The formatter uses helpers 5928h, 578Dh, 58A0h/58A1h, F571h and 5902h.
 
 Generator update: 3c87a27e0d387c1cce8d39a6c64c4db2d699661e. The latest generated manifest still predates this phase. The previous projected union was 63,808 bytes (97.36%); adding this 139-byte interval gives a projected 63,947/65,536 bytes (97.58%) and 51 uncovered intervals. The next largest remaining interval is expected to be AC80h–ACFFh (128 bytes). These are range-union calculations, not a regenerated manifest or CI result.
+
+## 42. Keyboard scan-code table prefix and AC60h translation map — AC5Bh–ACFFh (2026-11-17)
+
+Detailed map: [AMI486_ADDRESS_LEDGER_REGION_AC5B_AD00_20261117.md](AMI486_ADDRESS_LEDGER_REGION_AC5B_AD00_20261117.md).
+
+Corrected the AC00h ATA identify/read-transfer candidate boundary: the routine ends at AC5Ah with RET, so its code window is now 5Bh bytes. AC5Bh–ACFFh is data, not code. The confirmed 160-byte table at AC60h is referenced by the keyboard handler at B031h, which loads BX=AC60h before calling its mapping helper. It contains F0h/FFh markers and scan-code-like groups. The adjacent AC5Bh–AC5Fh prefix/header is retained as data but not semantically named. The existing AD00h–AE5Fh keyboard table remains a separate region.
+
+Generator update: 7227215784dca6c9ffd34174cca3e3adaeb92a66. The latest generated manifest still predates this correction. The previous projected union was 63,947 bytes (97.58%); adding the 128-byte gap AC80h–ACFFh gives a projected 64,075/65,536 bytes (97.77%) and 50 uncovered intervals. The next largest remaining interval is expected to be 61B2h–622Ah (121 bytes). These are range-union calculations, not a regenerated manifest or CI result.
