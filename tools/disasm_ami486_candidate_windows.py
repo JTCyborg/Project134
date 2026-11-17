@@ -154,6 +154,7 @@ LIMITS.update({
 })
 
 LIMITS.update({
+    0x566B: 0x43,  # alternate Setup/video initializer; ends at the JMP displacement before 56AEh
     0x5A4C: 0x56, 0x5AA2: 0x13, 0x5AB5: 0x37, 0x5AEC: 0x90,
     0x5B7C: 0x59, 0x5BD5: 0x23, 0x5BF8: 0x0A,
     0x5C04: 0x1A, 0x5C1E: 0x06, 0x5C26: 0x25,
@@ -165,7 +166,8 @@ LIMITS.update({
 
 DATA_RANGES = [
     (0x8E09, 0x8E44, "unresolved four-byte prefix 86 C4 FF E7 followed by the 55-byte indexed value table used by the helper at 8E44h", "hexascii"),
-    (0x562B, 0x566B, "16-entry x 4-byte Setup text-attribute palette table selected by [E037h]", "hexascii"),
+    (0x55EB, 0x562B, "Source copy of the 16-entry x 4-byte Setup text-attribute palette table; copied to 562Bh by the video/Setup initializer at 566Bh", "hexascii"),
+    (0x562B, 0x566B, "Working copy of the 16-entry x 4-byte Setup text-attribute palette table selected by [E037h]", "hexascii"),
     (0x0000, 0x00EF, "AMI BIOS copyright/identity block and embedded date/pattern bytes preceding the 00EFh code candidate", "hexascii"),
     (0x3044, 0x318C, "Complete Setup main-menu caption strings, ending at the final NUL", "ascii"),
     (0x318C, 0x31A4, "Setup main-menu caption pointer table (12 words)", "words"),
@@ -811,6 +813,7 @@ SEEDS = [
     (0x68B0, "hexadecimal byte display helper"),
     (0x68C8, "BIOS INT10 character output helper"),
     (0x68E2, "numeric/date formatting helper"),
+    (0x566B, "Setup video-mode/INT10-vector check and 64-byte palette-table initializer; jumps into 56CBh"),
     (0xD100, "FDC I/O code candidate; references ports 03F4h/03F7h"),
     (0xD104, "FDC media/drive-state helper candidate"),
     (0xD156, "direct DMA programming helper"),
