@@ -584,3 +584,12 @@ Detailed map: [AMI486_ADDRESS_LEDGER_REGION_1364_188D_20261117.md](AMI486_ADDRES
 The actual entry is 1364h, reached by the stack-threaded continuation at 135Dh after the FA4Eh integrity check. The 1364h–1655h POST stream updates conventional-memory size, validates RTC time and converts BCD time to BIOS ticks, enumerates I/O resources, detects the FPU, performs CMOS/ALi configuration, scans option-ROM/shadow windows and continues video setup. An eight-byte XLAT table at 15CEh–15D5h is split out as data. Helper 1656h displays RUN SETUP UTILITY / Press <F1> to RESUME and waits for F1 when warning flags require it. Other mapped helpers include BCD conversion, CMOS pair reads, I/O resource probes, CMOS checksum accumulation/storage, ATA device-control reset and 8042 output-buffer drain.
 
 The second CMOS checksum loop has a variable upper bound at CS:82B3h and skips BFh/C0h when CX reaches BEh; preserve that behavior rather than hard-coding a range. Candidate generation was updated to split the embedded lookup table and seed the helper entries. GitHub Actions run 44083305295 passed: 772 windows / 229 data ranges, 55,941 covered bytes (85.36%), 69 uncovered intervals. The next largest gap is E481h–E830h (944 bytes).
+
+
+## 23. Fixed-disk parameter table and 8042 helpers — E481h–E830h (2026-11-17)
+
+Detailed map: [AMI486_ADDRESS_LEDGER_REGION_E481_E830_20261117.md](AMI486_ADDRESS_LEDGER_REGION_E481_E830_20261117.md).
+
+E481h–E6F0h continues the 16-byte fixed-disk parameter table already recorded at E401h–E480h: 39 more records, 47 records total across E401h–E6F0h. E6F2h is a near JMP to F758h; it skips a 243-byte opaque embedded payload at E6F5h–E7E7h, which contains a 16-byte descending-value table at E729h. The code at E7E8h–E82Dh contains 8042 keyboard-controller status/command helpers, and E82Eh is a near JMP to B3DEh.
+
+The candidate generator now splits the table, padding, jump, payload and helper entries. GitHub Actions run 44083781676 passed: 779 windows / 232 data ranges, 56,885 covered bytes (86.80%), 68 uncovered intervals. The next largest uncovered interval is F5AEh–F8E6h (825 bytes). The fixed-disk record field semantics and payload consumer remain open.
