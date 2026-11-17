@@ -26,6 +26,14 @@ LIMITS.update({
     0x29BB: 0x80, 0x29ED: 0x20,
 })
 
+# Byte-aligned continuations inside the 2436h–29F5h POST/shadow/memory-test region.
+LIMITS.update({
+    0x24AE: 0x90, 0x24E1: 0x80, 0x2536: 0x20, 0x25C4: 0x80,
+    0x2601: 0x30, 0x2615: 0x30, 0x26D6: 0x40,
+    0x27A0: 0x60, 0x27B0: 0x40, 0x27B6: 0x30,
+    0x2850: 0xA0, 0x28DC: 0x40, 0x28F2: 0x40,
+})
+
 # Additional independently seeded entries for the 873Ch–8DCEh address-ledger pass.
 # Short limits preserve known adjacent entry boundaries and avoid implying one CFG.
 LIMITS.update({
@@ -525,6 +533,19 @@ SEEDS = [
     (0x2850, "POST memory setup helper called from 1EC8h"),
     (0x29BB, "second-stage memory test: 32-KiB read pass and 16-KiB fill/verify/clear"),
     (0x29ED, "CMOS B6h.0 AUTO Config selector used by POST and CPU-speed display"),
+    (0x24AE, "conditional continuation of the 24A4h CMOS/ALi feature probe"),
+    (0x24E1, "branch continuation in the ALi indexed-register/profile initialization sequence"),
+    (0x2536, "branch target from the 24ABh optional chipset setup path"),
+    (0x25C4, "shared AUTO Config index-selection helper called by 2537h/256Ah/2588h/25A6h"),
+    (0x2601, "branch continuation in the 25C4h CMOS B3h AUTO Config selector"),
+    (0x2615, "shared alternate return path in the 25C4h AUTO Config selector"),
+    (0x26D6, "post-memory-test helper continuation after the protected-mode memory scan"),
+    (0x27A0, "aligned continuation of the protected-mode memory-pattern loop"),
+    (0x27B0, "fall-through continuation after the 27A8h memory comparison"),
+    (0x27B6, "mismatch branch target in the protected-mode memory-pattern test"),
+    (0x28DC, "common chipset-configuration continuation in the 2850h POST helper"),
+    (0x28F2, "direct CALL target from the 2893h POST configuration path"),
+
 
     (0x88F0, "stack-return continuation after the 8921h arithmetic/flag probe"),
     (0x8904, "conditional continuation in the D60Ch CMOS B3h update path"),
