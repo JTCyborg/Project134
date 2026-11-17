@@ -1070,3 +1070,50 @@ Thus the mapping byte is not always a plain nibble from E012h: the 0Fh value is 
 The two direct calls from the parent region to 475Ch are at 4729h and 4730h; another call is at 5089h. The parent at 4729h clears E189h, calls this routine, increments E189h, and calls it again, indicating a repeated per-index initialization pass. The exact loop bounds and meaning of E189h still require tracing the complete parent and the 5089h caller.
 
 The previous note's claim that the E019h lookup participates in deriving the E1ADh *destination* was incorrect. It only supplies the replacement *value* in the 0Fh case. ROM bytes remain unchanged; this is a documentation correction and extension.
+
+### Confirmed two-entry bound for the E1ADh population paths
+
+The separate caller at `5089h` is part of the routine beginning at `5038h`. Its byte-level control flow closes the remaining question about the number of entries handled by this caller:
+
+~~~asm
+5038  LEA BX,[3128h]
+503C  LEA AX,[380Fh]
+5040  CALL 3E43h
+5043  MOV BYTE [E189h],00h
+5048  MOV AL,[E1A2h]
+504A  MOV [E19Fh],AL
+504E  MOV AX,0A02h
+5051  MOV DX,0E4Dh
+5054  CALL 5802h
+5057  MOV AL,[E1A4h]
+505A  MOV [E19Fh],AL
+505E  MOV AX,0A18h
+5061  MOV DX,0E36h
+5064  MOV BX,0003h
+5067  CALL 578Eh
+506A  LEA BX,[3C1Fh]
+506E  MOV AX,0C28h
+5071  CALL 58A1h
+5074  MOV AL,[E189h]
+5076  CALL 5AEAh
+5079  MOV AL,[E1A2h]
+507B  MOV [E19Fh],AL
+507F  LEA BX,[36F5h]
+5083  MOV AX,0426h
+5086  CALL 58D3h
+5089  CALL 475Ch
+508C  MOV AL,[E189h]
+508F  CALL 5B7Ch
+5092  INC BYTE [E189h]
+5096  CMP BYTE [E189h],02h
+509B  JL 5048h
+509D  RET
+~~~
+
+The key loop-control instructions are `5092h..509Bh`: after each iteration E189h is incremented, compared against 2, and the body repeats while it is below 2. Since E189h is initialized to zero at `5043h`, this caller invokes `475Ch` exactly twice, with indices 0 and 1. It then returns. The call at `5089h` is therefore not an unbounded or open-ended scan.
+
+This independently confirms the same two-entry index range seen in the earlier setup sequence at `4724h..4732h` (clear E189h, call `475Ch`, increment, call `475Ch`). The two callers are distinct paths, but both populate only entries 0 and 1 of E1ADh in the code examined so far. This does not prove that no other routine can write further E1ADh entries; direct static references previously found include only the producer write at `47A3h` and the consumer read at `4B74h`.
+
+The caller also performs per-index work around the producer: `5AEAh` is called with AL=E189h before the UI/helper sequence, then `475Ch` populates E1ADh[E189h], and `5B7Ch` is called with the same index afterward. Their internal semantics are not inferred here. In particular, the two-entry bound is proven by the caller's loop, while the user-facing meaning of the two slots and the E019h replacement bytes remains open.
+
+ROM bytes remain unchanged; this is a documentation-only update.
