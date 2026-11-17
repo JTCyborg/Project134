@@ -859,3 +859,23 @@ The worker at `69D1h` compares this returned AL:
 - `R`: takes the retry branch back to the disk-operation loop.
 
 This establishes the actual user-action semantics from the character comparisons and branch destinations; it is not merely inferred from the prompt wording. The status code `1Bh` remains a separate ESC/user-break sentinel and is not one of the three A/R/I responses.
+
+
+### Caller-level result handling: batch record worker at 6ACEh
+
+The second direct caller of `69D1h` is not an independent disk command: it is called from `6ACEh`, a batch walker over 3-byte records beginning at `3939h`.
+
+Confirmed control flow in `6ACEh`:
+
+- If `WORD [E423h] == 0`, it returns immediately with CF clear.
+- Otherwise it calls `6AADh`, loads the record count from `[E423h]`, initializes `[E3BDh]=1`, and sets `SI=3939h`.
+- For each record it pushes the current count, record pointer, and record-derived values, then calls `69D1h` at `6AF9h`.
+- After the call it removes 10 argument bytes and restores SI/CX. It then tests `[E3B9h]`: zero advances SI by 3 and loops; nonzero exits with CF set. Exhausting the loop returns CF clear.
+
+This means the batch caller's final status is based on the latched BIOS status byte `[E3B9h]`, not solely on the worker's returned CF. It stops at the first record for which the status byte remains nonzero; otherwise it advances to the next 3-byte record.
+
+### Correction: Ignore branch is not a simple clear-CF return
+
+The earlier shorthand that described the worker's `I` response as “clear CF and return” was too strong. At `69D1h`, after the `I` comparison, the equal branch enters code at `6A5Dh`, which modifies the record/geometry progress state using the current stack arguments and updates `[E1B5h]` / `[E1B7h]`. Depending on the bounds checks it either advances the progress pair or clears it, then rejoins the worker's operation path. It is therefore an in-operation Ignore/advance path, not a direct epilogue. The exact semantic names of those two state fields remain intentionally unresolved.
+
+The `A` response is still directly confirmed to reach `STC` and the worker epilogue. The non-`I`/non-`A` accepted response (`R`) takes the retry branch back to the operation loop. ESC remains the separate `[E3B9h]=1Bh` path.
