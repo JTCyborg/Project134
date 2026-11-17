@@ -1,54 +1,61 @@
-# ami486.bin — CS:[8281].40h CPU-mode gate
+# ami486.bin — CS:[8281].40h CPU-mode path selector
 
 Date: 2026-11-17  
 ROM: `ami486.bin`, 64 KiB, branch `main`.
 
-## Strongest semantic evidence
+## Confirmed flag and consumers
 
-The repeated `TEST BYTE PTR CS:[8281],40h` checks are not merely generic POST options. The final-segment consumer at `F069` directly selects whether the BIOS enters a protected-mode setup path:
+The byte at `CS:8281` is distinct from `CS:8280`. Its bit `40h` is tested by multiple routines, including POST and low-level CPU-mode code. The ROM image starts with `CS:8280=2Fh` and `CS:8281=00h`.
+
+The final-segment consumer at `F069` is decisive because the two outcomes are visible in the instruction stream:
 
 ```asm
-F069: TEST BYTE PTR CS:[8281],40h
-F070: JZ   F075
-F072: JMP  8AD6h       ; real-mode/fallback path (relative target)
-F075: LGDT [E268]
-F07B: MOV  AX,0040h
-F07E: MOV  DS,AX
-F080: MOV  ES,AX
-F082: MOV  SS,AX
-F084: MOV  EAX,CR0
-F087: AND  EAX,0FFFFFFFEh
-F08D: MOV  CR0,EAX
-F090: JMP  F000:F090h
+F069: 2E F6 06 81 82 40    TEST BYTE PTR CS:[8281],40h
+F06F: 74 03                JZ   F074
+F071: E9 61 9A             JMP  8AD5h
+F074: 2E 0F 01 16 68 E2    LGDT FWORD PTR CS:[E268]
+F07A: B8 40 00             MOV  AX,0040h
+F07D: 8E D8                MOV  DS,AX
+F07F: 8E C0                MOV  ES,AX
+F081: 8E D0                MOV  SS,AX
+F083: 0F 20 C0             MOV  EAX,CR0
+F086: 24 FE                AND  AL,0FEh
+F088: 0F 22 C0             MOV  CR0,EAX
+F08B: EA 90 F0 00 F0       JMP  F000:F090
+F090: 2E 0F 01 1E B8 E2    LGDT FWORD PTR CS:[E2B8]
+F096: E9 C2 EF             JMP  E05Bh
 ```
 
-The byte stream at the transition area must be decoded with its actual instruction origin; the listing above is a semantic outline, not a claim that every displayed offset has been independently reassembled. The decisive facts are the test at `F069`, the conditional branch around the near jump, and the fall-through sequence containing `LGDT`, `MOV EAX,CR0`, and `MOV CR0,EAX`.
+The relative target of the `F071` near jump is `8AD5h` (next IP `F074h` plus signed displacement `9A61h`). Thus:
 
-Correction to target calculation: the near jump immediately after the conditional branch transfers to the low-ROM routine around `8AD3h`; the protected-mode setup is the fall-through path when bit `40h` is set.
+- If `CS:[8281].40h` is **set**, the code jumps to `8AD5h` and skips the sequence at `F074–F099`.
+- If the bit is **clear**, it executes the sequence that loads a descriptor table, accesses CR0, clears bit 0 of CR0 (PE), performs a far jump to `F000:F090`, loads another descriptor table, and jumps to `E05Bh`.
 
-## Other consumers corroborate the interpretation
+This is a mode-transition / return-to-real-mode sequence on the clear-bit path. It is not evidence that setting the flag enables protected mode. The exact meaning of the alternate path at `8AD5h` remains to be established.
 
-- Around `8CA9`, the routine uses `0F 01 E0` (SMSW), tests the low machine-status bits, and accesses CR0 with `0F 20 C0` / `0F 22 C0`. This is explicitly machine-status/control-register logic.
+## Corroborating consumers
+
+- Around `8CA9`, code uses `0F 01 E0` (SMSW), tests machine-status bits, and accesses CR0 with `0F 20 C0` / `0F 22 C0`.
 - Around `D657` and `D724`, the same flag gates code containing SMSW and CR0 operations.
-- Around `914F`, the flag gates a path using `LGDT`, CR0 access, and a 32-bit operand-size prefix. This is consistent with a protected-mode or CPU-mode transition/helper.
-- Around `8BEC–8CA9`, several routines use operand-size-prefixed 32-bit register preservation and CR0-related code.
+- Around `914F`, the flag gates a path containing `LGDT`, CR0 access, and a 32-bit operand-size prefix.
+- Around `8BEC–8CA9`, multiple routines use operand-size-prefixed 32-bit register preservation and CR0-related logic.
 
-Taken together, the best-supported working interpretation is:
+The defensible current interpretation is therefore:
 
-**`CS:[8281].6` is a global gate for the BIOS's 386-class 32-bit / protected-mode-capable execution path.**
+**`CS:[8281].6` is a global selector controlling which CPU-mode/control-register path the firmware takes.**
 
-This is stronger than the previous neutral label “unknown mode flag”, but it is not proof that the bit specifically identifies an Intel 486. The code demonstrates 386+ mechanisms (32-bit operand-size prefixes, CR0, LGDT); distinguishing 386, 486, and compatible CPUs requires tracing the detection routine that sets the bit.
+It is not yet safe to call it a CPU-generation capability bit (386 vs 486), a “protected-mode available” flag, or a “currently in protected mode” flag. The branch at `F069` alone does not establish those semantics.
 
 ## POST references
 
-The POST tests at `5272` and `5478` consult the same flag before selecting alternate branches. Their branches should be traced against the low-level routines above; do not treat these tests as the CMOS-save gate.
+The POST checks around `5272` and `5478` consult the same bit and select alternate paths. They are separate from the CMOS-save routine at `1C06`, which tests `CS:[8280]&40h`.
 
 ## Setter remains unresolved
 
-The 64 KiB ROM scan found the repeated direct read pattern but no obvious direct immediate store to `CS:[8281]`. A setter may use a pointer, copy a larger configuration/CPU-state block, or be outside this ROM. Continue by tracing the CPU identification / feature-probe path and writes to the containing `CS:8280` structure.
+A scan of all occurrences of the address bytes `81 82` found the repeated direct TEST pattern, but no obvious direct immediate store to `CS:[8281]`. A setter may use a pointer, copy a larger state/configuration block, or be outside this ROM. The CPU probe and the alternate routine at `8AD5h` are the next tracing targets.
 
 ## BIOS replacement implications
 
-A replacement BIOS must not blindly set this bit. It should set the capability only after a real CPU probe establishes that the required instructions and CR0 behavior are available. If the replacement targets only real mode, it can deliberately avoid the protected-mode branch, but must also ensure every other consumer of the flag receives a consistent value. The flag is part of the legacy firmware's internal contract, not a standardized BIOS interface.
+A replacement BIOS must preserve the distinction between these two bytes and must not assign a meaning to `CS:[8281].6` based only on its name or the CPU family implied by the ROM filename. Before reproducing this behavior, identify the setter, trace `8AD5h`, and map all consumers. The flag is an internal firmware contract, not a standardized BIOS interface.
 
 No ROM bytes changed.
