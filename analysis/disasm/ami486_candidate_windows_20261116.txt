@@ -27910,6 +27910,267 @@ Reason: option-ROM scan invalid-candidate helper: advances BX by 0080h, restores
 1BF4  1F                      pop ds
 1BF5  C3                      ret
 
+===== 066Bh-0689h =====
+Reason: indirect-entry candidate: Setup structure byte-field editor at BP-relative offset 1Dh; uses numeric renderer 749h
+066B  BA 18 00                mov dx, 0x18
+066E  BE 03 00                mov si, 3
+0671  E8 D5 00                call 0x749
+0674  E3 52                   jcxz 0x6c8
+0676  8B 76 06                mov si, word ptr [bp + 6]
+0679  88 52 1D                mov byte ptr [bp + si + 0x1d], dl
+067C  80 FA 08                cmp dl, 8
+067F  C6 42 20 00             mov byte ptr [bp + si + 0x20], 0
+0683  76 43                   jbe 0x6c8
+0685  C6 42 20 08             mov byte ptr [bp + si + 0x20], 8
+0689  C3                      ret
+
+===== 068Ah-069Bh =====
+Reason: indirect-entry candidate: Setup structure word-field editor at BP-relative offset 1Eh
+068A  BA 1E 00                mov dx, 0x1e
+068D  BE 05 00                mov si, 5
+0690  E8 B6 00                call 0x749
+0693  E3 33                   jcxz 0x6c8
+0695  8B 76 06                mov si, word ptr [bp + 6]
+0698  89 52 1E                mov word ptr [bp + si + 0x1e], dx
+069B  C3                      ret
+
+===== 069Ch-06ADh =====
+Reason: indirect-entry candidate: Setup structure word-field editor at BP-relative offset 21h
+069C  BA 24 00                mov dx, 0x24
+069F  BE 05 00                mov si, 5
+06A2  E8 A4 00                call 0x749
+06A5  E3 21                   jcxz 0x6c8
+06A7  8B 76 06                mov si, word ptr [bp + 6]
+06AA  89 52 21                mov word ptr [bp + si + 0x21], dx
+06AD  C3                      ret
+
+===== 06AEh-06C8h =====
+Reason: indirect-entry candidate: Setup structure byte-field editor at BP-relative offset 23h
+06AE  BA 2A 00                mov dx, 0x2a
+06B1  BE 03 00                mov si, 3
+06B4  E8 92 00                call 0x749
+06B7  E3 06                   jcxz 0x6bf
+06B9  8B 76 06                mov si, word ptr [bp + 6]
+06BC  88 52 23                mov byte ptr [bp + si + 0x23], dl
+06BF  9C                      pushf
+06C0  80 FC 4D                cmp ah, 0x4d
+06C3  75 02                   jne 0x6c7
+06C5  B4 50                   mov ah, 0x50
+06C7  9D                      popf
+06C8  C3                      ret
+
+===== 06C9h-0730h =====
+Reason: direct CALL targets from 4BA3h, 4F4Ch and 4F67h; generic BIOS Setup numeric field editor
+06C9  56                      push si
+06CA  57                      push di
+06CB  55                      push bp
+06CC  83 EC 10                sub sp, 0x10
+06CF  8B EC                   mov bp, sp
+06D1  53                      push bx
+06D2  52                      push dx
+06D3  50                      push ax
+06D4  B7 00                   mov bh, 0
+06D6  8B 46 FA                mov ax, word ptr [bp - 6]
+06D9  E8 E5 02                call 0x9c1
+06DC  B4 08                   mov ah, 8
+06DE  CD 10                   int 0x10
+06E0  8A DC                   mov bl, ah
+06E2  E8 4C 00                call 0x731
+06E5  8A 46 18                mov al, byte ptr [bp + 0x18]
+06E8  32 E4                   xor ah, ah
+06EA  8B F0                   mov si, ax
+06EC  E8 55 00                call 0x744
+06EF  E3 27                   jcxz 0x718
+06F1  3C 0D                   cmp al, 0xd
+06F3  74 04                   je 0x6f9
+06F5  3C 1B                   cmp al, 0x1b
+06F7  75 EC                   jne 0x6e5
+06F9  3B 56 FC                cmp dx, word ptr [bp - 4]
+06FC  77 E7                   ja 0x6e5
+06FE  8B 76 FE                mov si, word ptr [bp - 2]
+0701  88 14                   mov byte ptr [si], dl
+0703  80 7E 18 03             cmp byte ptr [bp + 0x18], 3
+0707  74 02                   je 0x70b
+0709  89 14                   mov word ptr [si], dx
+070B  B4 00                   mov ah, 0
+070D  8B E5                   mov sp, bp
+070F  83 C4 10                add sp, 0x10
+0712  5D                      pop bp
+0713  5F                      pop di
+0714  5E                      pop si
+0715  C2 02 00                ret 2
+0718  0A C0                   or al, al
+071A  74 C9                   je 0x6e5
+071C  50                      push ax
+071D  8B 46 FA                mov ax, word ptr [bp - 6]
+0720  E8 9E 02                call 0x9c1
+0723  B8 20 09                mov ax, 0x920
+0726  B9 05 00                mov cx, 5
+0729  CD 10                   int 0x10
+072B  E8 03 00                call 0x731
+072E  58                      pop ax
+072F  EB DA                   jmp 0x70b
+
+===== 0731h-0743h =====
+Reason: called by 6E2h and 72Bh; formats/refreshes the numeric field value
+0731  8B 76 FE                mov si, word ptr [bp - 2]
+0734  32 E4                   xor ah, ah
+0736  80 7E 18 03             cmp byte ptr [bp + 0x18], 3
+073A  8A 04                   mov al, byte ptr [si]
+073C  74 02                   je 0x740
+073E  8B 04                   mov ax, word ptr [si]
+0740  E8 BA 02                call 0x9fd
+0743  C3                      ret
+
+===== 0744h-0748h =====
+Reason: called by 6ECh; cursor/input wrapper for numeric field editor
+0744  FF 76 FA                push word ptr [bp - 6]
+0747  EB 22                   jmp 0x76b
+
+===== 0749h-076Ah =====
+Reason: direct CALL targets from 656h, 671h, 690h, 6A2h and 6B4h; draw and edit numeric field at selected screen coordinates
+0749  03 56 04                add dx, word ptr [bp + 4]
+074C  8B CE                   mov cx, si
+074E  52                      push dx
+074F  4A                      dec dx
+0750  41                      inc cx
+0751  41                      inc cx
+0752  51                      push cx
+0753  52                      push dx
+0754  B6 07                   mov dh, 7
+0756  8A 1E A3 E1             mov bl, byte ptr [0xe1a3]
+075A  B7 00                   mov bh, 0
+075C  E8 48 5E                call 0x65a7
+075F  5A                      pop dx
+0760  59                      pop cx
+0761  8A 1E A3 E1             mov bl, byte ptr [0xe1a3]
+0765  80 CB 80                or bl, 0x80
+0768  E8 3C 5E                call 0x65a7
+
+===== 076Bh-080Eh =====
+Reason: numeric field keyboard loop: handles digits, Backspace, Enter/Esc, arrows and PageUp/PageDown
+076B  B4 03                   mov ah, 3
+076D  CD 10                   int 0x10
+076F  5A                      pop dx
+0770  51                      push cx
+0771  E8 29 02                call 0x99d
+0774  52                      push dx
+0775  B4 02                   mov ah, 2
+0777  CD 10                   int 0x10
+0779  33 FF                   xor di, di
+077B  B4 00                   mov ah, 0
+077D  CD 16                   int 0x16
+077F  80 FC 0E                cmp ah, 0xe
+0782  75 13                   jne 0x797
+0784  0B FF                   or di, di
+0786  74 F3                   je 0x77b
+0788  4F                      dec di
+0789  B9 01 00                mov cx, 1
+078C  B4 0E                   mov ah, 0xe
+078E  CD 10                   int 0x10
+0790  E3 E9                   jcxz 0x77b
+0792  E8 F9 01                call 0x98e
+0795  EB E4                   jmp 0x77b
+0797  3D 00 4D                cmp ax, 0x4d00
+079A  74 4F                   je 0x7eb
+079C  3D 00 50                cmp ax, 0x5000
+079F  74 4A                   je 0x7eb
+07A1  3D 00 4B                cmp ax, 0x4b00
+07A4  74 38                   je 0x7de
+07A6  3D 00 48                cmp ax, 0x4800
+07A9  74 33                   je 0x7de
+07AB  3D 00 49                cmp ax, 0x4900
+07AE  74 46                   je 0x7f6
+07B0  3D 00 51                cmp ax, 0x5100
+07B3  74 41                   je 0x7f6
+07B5  80 FC 01                cmp ah, 1
+07B8  74 3C                   je 0x7f6
+07BA  80 FC 1C                cmp ah, 0x1c
+07BD  75 09                   jne 0x7c8
+07BF  B4 4D                   mov ah, 0x4d
+07C1  EB 28                   jmp 0x7eb
+07C3  E8 AB ED                call 0xf571
+07C6  EB B3                   jmp 0x77b
+07C8  3C 30                   cmp al, 0x30
+07CA  72 F7                   jb 0x7c3
+07CC  3C 39                   cmp al, 0x39
+07CE  77 F3                   ja 0x7c3
+07D0  3B F7                   cmp si, di
+07D2  74 EF                   je 0x7c3
+07D4  88 43 0A                mov byte ptr [bp + di + 0xa], al
+07D7  47                      inc di
+07D8  8B CE                   mov cx, si
+07DA  2B CF                   sub cx, di
+07DC  EB AE                   jmp 0x78c
+07DE  E8 2E 00                call 0x80f
+07E1  E3 03                   jcxz 0x7e6
+07E3  5A                      pop dx
+07E4  EB 8E                   jmp 0x774
+07E6  3B E4                   cmp sp, sp
+07E8  F9                      stc
+07E9  EB 17                   jmp 0x802
+07EB  E8 21 00                call 0x80f
+07EE  E3 03                   jcxz 0x7f3
+07F0  5A                      pop dx
+07F1  EB 81                   jmp 0x774
+07F3  F8                      clc
+07F4  EB 0C                   jmp 0x802
+07F6  E8 16 00                call 0x80f
+07F9  E3 04                   jcxz 0x7ff
+07FB  5A                      pop dx
+07FC  E9 75 FF                jmp 0x774
+07FF  0B E4                   or sp, sp
+0801  F9                      stc
+0802  59                      pop cx
+0803  59                      pop cx
+0804  50                      push ax
+0805  9C                      pushf
+0806  B4 01                   mov ah, 1
+0808  CD 10                   int 0x10
+080A  9D                      popf
+080B  58                      pop ax
+080C  8B CF                   mov cx, di
+080E  C3                      ret
+
+===== 080Fh-0844h =====
+Reason: called by 7DEh, 7EBh and 7F6h; parse decimal digit buffer with overflow/range checks
+080F  50                      push ax
+0810  56                      push si
+0811  8B CF                   mov cx, di
+0813  E3 2D                   jcxz 0x842
+0815  33 F6                   xor si, si
+0817  33 C0                   xor ax, ax
+0819  BA 0A 00                mov dx, 0xa
+081C  F7 E2                   mul dx
+081E  70 1D                   jo 0x83d
+0820  8A 52 0A                mov dl, byte ptr [bp + si + 0xa]
+0823  46                      inc si
+0824  80 EA 30                sub dl, 0x30
+0827  B6 00                   mov dh, 0
+0829  03 C2                   add ax, dx
+082B  72 10                   jb 0x83d
+082D  E2 EA                   loop 0x819
+082F  8B D0                   mov dx, ax
+0831  5E                      pop si
+0832  56                      push si
+0833  83 FE 05                cmp si, 5
+0836  74 0A                   je 0x842
+0838  3D FF 00                cmp ax, 0xff
+083B  76 05                   jbe 0x842
+083D  E8 31 ED                call 0xf571
+0840  8B CF                   mov cx, di
+0842  5E                      pop si
+0843  58                      pop ax
+0844  C3                      ret
+
+===== 0845h-084Eh =====
+Reason: direct CALL target from 5E5h; text-input helper prologue and JMP to shared editor at 0892h
+0845  53                      push bx
+0846  8A 1E A6 E1             mov bl, byte ptr [0xe1a6]
+084A  B7 00                   mov bh, 0
+084C  52                      push dx
+084D  EB 43                   jmp 0x892
+
 ===== 10DFh-131Fh =====
 Reason: POST hardware-initialization continuation: 8042 self-test, CMOS/memory configuration checks, setup-warning path and video/chipset initialization; entry provenance unresolved
 10DF  00 B0 F4 E6             add byte ptr [bx + si - 0x190c], dh
