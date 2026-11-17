@@ -91,7 +91,7 @@ The six 13-byte records at CABBh–CB08h are:
 | CAD5h | `DF 02 25 02 09 2A FF 50 F6 0F 08 4F 80` |
 | CAE2h | `DF 02 25 02 12 1B FF 6C F6 0F 08 4F 00` |
 | CAEFh | `DF 02 25 02 09 2A FF 50 F6 0F 08 27 40` |
-| CAFC h | `DF 02 25 02 24 1B FF 50 F6 0F 08 4F C0` |
+| CAFCh | `DF 02 25 02 24 1B FF 50 F6 0F 08 4F C0` |
 
 These are parameter records, not executable code. The repeated first word DF02h is a field within each record; its exact interpretation is not inferred here. The 13-byte record at C8CAh begins `0A C0 74 04 2A D9 8A C3 8A 26 41 00 0A`; its first word C00Ah points into the `Parity` text at C00Ah. Because C8CAh is also an executable continuation after C8C7h, both views must be preserved.
 
@@ -135,5 +135,7 @@ D058h updates the BDA motor/status bytes, writes the motor-control value to FDC 
 ## 7. Candidate-generator integration
 
 The candidate generator adds byte-aligned seeds at CA15h, CB09h, CBF8h, CC87h, CD22h, CD6Ah, CD88h, CDDFh, CE45h, CEAAh, CFA7h, D058h and D0D9h. It adds data ranges for the two five-word tables, the six 13-byte parameter records, and the overlapping 13-byte data view at C8CAh. D0D9h is extended through D103h so its POP/RET epilogue is not left outside the window.
+
+The latest generated candidate mask now has 610 code windows and 163 data ranges: 32,861 unique code-window bytes, 15,940 unique data-range bytes, 130 overlap bytes, and a 48,671/65,536-byte union (74.27%). It contains 68 uncovered intervals; 216 pages are touched and 140 are fully covered. The former CA16h–D0FFh gap is fully covered. The next largest uncovered interval is 873Ch–8DCEh (1,683 bytes). These are candidate-map metrics, not semantic completion.
 
 This is a bounded diskette/INT 13h subsystem map, not a whole-ROM completion claim.
