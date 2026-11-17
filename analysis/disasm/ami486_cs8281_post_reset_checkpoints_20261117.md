@@ -76,7 +76,7 @@ The routine waits for the 8042 input-buffer-full bit (status bit 1) to clear, se
 
 ## What is established
 
-- `CS:[8281].40h` is a reset-request condition checked at multiple POST points and at the final CPU-mode transition point.
+- At these two POST checkpoints and the final transition checkpoint, a set `CS:[8281].40h` selects the 8042 reset path. This is a local control-flow result, not a claim that the bit has one global meaning; other consumers use the same bit for CMOS and CPU-state/register-save decisions (see `ami486_cs8281_bit40_complete_xrefs_20261117.md`).
 - Both early POST set-bit branches enter the reset body at `8AD6h`; the final transition enters at `8AD5h`.
 - Both early clear-bit branches converge at `F068h`, before the final flag test.
 - The second check is preceded by a write of `CMOS[8Fh]=06h`.
