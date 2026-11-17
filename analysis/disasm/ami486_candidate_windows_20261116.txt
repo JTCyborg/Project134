@@ -1392,16 +1392,20 @@ Reason: E0h key threshold used by the 8378h record lookup to switch from the bui
 8888  E0                                              .
 
 ===== DATA 8E4Eh-8E61h =====
-Reason: Ten-word ALi indexed-register profile list selected by the CMOS B3h profile path
+Reason: Ten-word ALi indexed-register profile list selected by CMOS B3h bit 2 set in the 1AFBh path
 Words: 21C0, 00C1, 00C5, 0FC6, 00C8, 00C9, 00CB, 00CC, 00CE, 00CF
 
 ===== DATA 8E62h-8E75h =====
-Reason: Ten-word alternate ALi indexed-register profile list selected by the CMOS B3h profile path
+Reason: Ten-word ALi indexed-register list selected by the 8A20h POST path when DL bit 2 is set
 Words: 21C0, 00C1, 0AC5, 06C6, 0CC8, 07C9, 00CB, 00CC, 00CE, 00CF
 
-===== DATA 8E76h-8E7Dh =====
-Reason: Four-word short ALi indexed-register profile list selected by the CMOS B3h profile path
-Words: 00C1, 00C2, 10C1, 00C2
+===== DATA 8E76h-8E79h =====
+Reason: Two-word ALi indexed-register profile selected by CMOS B3h bit 2 clear in the 1AFBh path
+Words: 00C1, 00C2
+
+===== DATA 8E7Ah-8E7Dh =====
+Reason: Two-word ALi indexed-register profile selected by the 8A20h POST path when DL bit 2 is clear
+Words: 10C1, 00C2
 
 ===== DATA 88EEh-88EFh =====
 Reason: Crafted near-return word 88F0h used by the arithmetic/flag probe at 8921h
