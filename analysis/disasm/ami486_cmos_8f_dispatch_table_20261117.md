@@ -1201,3 +1201,16 @@ The code rejects nonzero high bytes for the cylinder and sectors-per-track words
 `E401h` table sample confirms its record layout: e.g. first record is `306 cylinders / 4 heads / 17 sectors`, second `615 / 4 / 17`, third `615 / 6 / 17`, and subsequent entries include geometries such as `940 / 8 / 17`, `733 / 5 / 17`, and `900 / 15 / 17`. There are exactly `2Eh` (46) records scanned by this routine. The scan compares only the three CHS fields above plus the `FFFFh` sentinel condition; other record bytes are not yet assigned semantics.
 
 Correction to the previous ABADh summary: it had the `AH=01h` and `AH=00h` target routines reversed, and the two branch functions are now identified as ATA recalibrate (`AC34h`) and ATA IDENTIFY DEVICE (`ABDDh`). The ROM remains unchanged.
+
+### 5AECh caller: exact transfer and result handling after ATA IDENTIFY
+
+The current ROM bytes confirm the following data flow at `5AECh` (the helper called by `5076h`):
+
+1. The helper saves registers/segments and examines the incoming `AL` index. For `AL=0`, it copies 20h bytes from `DS:E012h` to `ES:E092h` (the `REP MOVSB` source/destination pair is set up at `5AF6h..5B06h`). For nonzero index it skips that copy. It restores the incoming index and stores it in `E18Ah`.
+2. It adds `80h` to the index, copies that value to `DL`, and calls `AB34h`. Thus `AB34h` receives `DL=80h` for index 0 or `DL=81h` for index 1 in the two-entry caller loop. The ATA drive/head selector is subsequently formed as `A0h`/`B0h` by the ATA helper.
+3. After `AB34h` returns, the helper restores the original index from `E18Ah`, then tests the returned `AL` against `0Eh` and `2Fh`. This result is not directly written to `E1ADh` here; the caller subsequently invokes `475Ch`, which performs the `E1ADh[E189h]` write.
+4. The branch logic at `5B1Ah..5B45h` conditionally updates `E012h`/`E019h` state, including setting/clearing the `F0h` flag and changing `E012h` through shifts/masks. The `2Fh` result has a separate path from the ordinary table-index result. The exact state-machine interpretation is not assigned yet because the flag stack and both branches must be traced together with the later `5B7Ch` confirmation helper.
+
+The important separation is now clear: `AB34h` returns the geometry-table match result in `AL`; `5AECh` preserves the caller's original drive index in `E18Ah` and performs post-probe state updates; `475Ch` later converts the current `E012h`/`E019h` state into the `E1ADh` per-drive geometry index. Do not describe the return from `AB34h` as directly setting `E1ADh`.
+
+A further correction to the previous note: `AB34h` scans 46 records at `CS:E401h`, but its loop's result encoding and the `+05h == FFFFh` eligibility filter are separate from the `5AECh` state machine. The mapping of result `2Fh` and indices `00h..2Eh` into setup-visible disk types still requires tracing `5B7Ch` and its caller's UI branch.
