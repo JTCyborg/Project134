@@ -1550,7 +1550,7 @@ Reason: temporary INT 1Ch timer handler installed by 626Bh
 6397  E8 DA 03                call 0x6774
 639A  8A C6                   mov al, dh
 
-===== 6616h-6695h =====
+===== 6616h-6757h =====
 Reason: direct CALL target from temporary INT 1Ch calendar-refresh handler at 631Ch
 6616  55                      push bp
 6617  83 EC 0A                sub sp, 0xa
@@ -1609,6 +1609,86 @@ Reason: direct CALL target from temporary INT 1Ch calendar-refresh handler at 63
 6690  B2 07                   mov dl, 7
 6692  F6 F2                   div dl
 6694  8A C4                   mov al, ah
+6696  02 C1                   add al, cl
+6698  3C 06                   cmp al, 6
+669A  76 02                   jbe 0x669e
+669C  2C 07                   sub al, 7
+669E  88 46 08                mov byte ptr [bp + 8], al
+66A1  BA 17 05                mov dx, 0x517
+66A4  8A 46 08                mov al, byte ptr [bp + 8]
+66A7  BE 29 78                mov si, 0x7829
+66AA  E8 E8 01                call 0x6895
+66AD  E8 B6 00                call 0x6766
+66B0  BA 1C 05                mov dx, 0x51c
+66B3  8A 46 07                mov al, byte ptr [bp + 7]
+66B6  48                      dec ax
+66B7  BE 45 78                mov si, 0x7845
+66BA  E8 D8 01                call 0x6895
+66BD  BA 20 05                mov dx, 0x520
+66C0  8A 46 02                mov al, byte ptr [bp + 2]
+66C3  E8 EA 01                call 0x68b0
+66C6  BA 23 05                mov dx, 0x523
+66C9  8A 46 01                mov al, byte ptr [bp + 1]
+66CC  E8 E1 01                call 0x68b0
+66CF  BA 25 05                mov dx, 0x525
+66D2  8A 46 00                mov al, byte ptr [bp]
+66D5  E8 D8 01                call 0x68b0
+66D8  8A 46 07                mov al, byte ptr [bp + 7]
+66DB  BF 20 00                mov di, 0x20
+66DE  FE C8                   dec al
+66E0  74 03                   je 0x66e5
+66E2  E8 F3 00                call 0x67d8
+66E5  8A 46 06                mov al, byte ptr [bp + 6]
+66E8  FE C8                   dec al
+66EA  98                      cwde
+66EB  B1 07                   mov cl, 7
+66ED  F6 F1                   div cl
+66EF  8A 46 08                mov al, byte ptr [bp + 8]
+66F2  2A C4                   sub al, ah
+66F4  79 02                   jns 0x66f8
+66F6  04 07                   add al, 7
+66F8  32 E4                   xor ah, ah
+66FA  8B F7                   mov si, di
+66FC  2B F0                   sub si, ax
+66FE  BA 35 0D                mov dx, 0xd35
+6701  BB 07 00                mov bx, 7
+6704  B4 02                   mov ah, 2
+6706  CD 10                   int 0x10
+6708  E8 FA 00                call 0x6805
+670B  8A 46 07                mov al, byte ptr [bp + 7]
+670E  E8 C7 00                call 0x67d8
+6711  BE 01 00                mov si, 1
+6714  B3 0F                   mov bl, 0xf
+6716  E8 EC 00                call 0x6805
+6719  BE 01 00                mov si, 1
+671C  BF 0F 00                mov di, 0xf
+671F  B3 07                   mov bl, 7
+6721  E8 E1 00                call 0x6805
+6724  E8 87 00                call 0x67ae
+6727  52                      push dx
+6728  51                      push cx
+6729  8A C5                   mov al, ch
+672B  BA 17 06                mov dx, 0x617
+672E  E8 7F 01                call 0x68b0
+6731  E8 24 00                call 0x6758
+6734  58                      pop ax
+6735  BA 1C 06                mov dx, 0x61c
+6738  E8 75 01                call 0x68b0
+673B  E8 1A 00                call 0x6758
+673E  58                      pop ax
+673F  8A C4                   mov al, ah
+6741  BA 21 06                mov dx, 0x621
+6744  E8 69 01                call 0x68b0
+6747  59                      pop cx
+6748  5A                      pop dx
+6749  B7 00                   mov bh, 0
+674B  B4 02                   mov ah, 2
+674D  CD 10                   int 0x10
+674F  B4 01                   mov ah, 1
+6751  CD 10                   int 0x10
+6753  83 C4 0A                add sp, 0xa
+6756  5D                      pop bp
+6757  C3                      ret
 
 ===== 68E2h-6961h =====
 Reason: direct CALL target from BIOS INT 1Ah date/time BCD validation helpers
