@@ -21594,7 +21594,7 @@ EEE9  E6 F1                   out 0xf1, al
 EEEB  E3 00                   jcxz 0xeeed
 EEED  E3 00                   jcxz 0xeeef
 
-===== EEEFh-EF36h =====
+===== EEEFh-EF35h =====
 Reason: master/slave PIC initialization and mask programming sequence
 EEEF  B0 11                   mov al, 0x11
 EEF1  E6 A0                   out 0xa0, al
@@ -21632,7 +21632,6 @@ EF2F  E3 00                   jcxz 0xef31
 EF31  E3 00                   jcxz 0xef33
 EF33  E6 21                   out 0x21, al
 EF35  C3                      ret
-EF36  E8              db 0xE8
 
 ===== EF36h-EF56h =====
 Reason: CMOS 8Dh/port-61h NMI status helper; called from F724h and F808h
@@ -21660,7 +21659,7 @@ EF57  E9 D7 F8                jmp 0xe831
 Reason: near-JMP stub to 9870h
 F065  E9 08 A8                jmp 0x9870
 
-===== F068h-F095h =====
+===== F068h-F098h =====
 Reason: protected-mode exit/reset path; clears CR0.PE, loads IDT at E2B8h and jumps to E05Bh
 F068  FA                      cli
 F069  2E F6 06 81 82 40       test byte ptr cs:[0x8281], 0x40
@@ -21676,6 +21675,7 @@ F086  24 FE                   and al, 0xfe
 F088  0F 22 C0                mov cr0, eax
 F08B  EA 90 F0 00 F0          ljmp 0xf000:0xf090
 F090  2E 0F 01 1E B8 E2       lidt cs:[0xe2b8]
+F096  E9 C2 EF                jmp 0xe05b
 
 ===== F104h-F10Ch =====
 Reason: small hardware-state helper calling 1714h and 2EF2h
