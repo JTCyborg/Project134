@@ -14,9 +14,8 @@ The original `ami486.bin` remains immutable reference input. This reconstruction
 
 - Source: repository-root `ami486.bin`
 - Git blob: `480c7520c93e6c7ed437cf3ad214da7503f82ec6`
-- Encoded payload fetched for this task: 88,841 Base64 characters
-- Decoded byte length: 66,630 bytes (0x10446)
-- Important: this is the current repository file length, not yet proof of the physical flash-window mapping. The image must be mapped against the chipset's ROM decode and reset-vector alias before choosing a final linker origin.
+- The binary endpoint returned a Base64 payload of 88,841 characters in this session. Its length is not valid Base64 (not divisible by four), so the payload is treated as incomplete and no decoded file size or checksum is claimed here.
+- Before generating a clone, verify the exact byte length and cryptographic hash from a complete binary download. Then map the file against the chipset's ROM decode and reset-vector alias before choosing a final linker origin.
 - Existing disassembly notes: `analysis/disasm/`
 
 ## Reconstruction strategy
