@@ -96,3 +96,10 @@ The only direct BP write found among the inspected selector targets is F71E: `MO
 - Any other dynamic entry into 8400h.
 
 The linear listing is not a complete CFG. Stack-crafted continuations, external interrupt entry, and alternate instruction boundaries remain relevant.
+
+
+## Post-audit correction — direct D906h to 8400h entry (2026-11-17)
+
+The earlier unresolved statement about any non-table dynamic entry into 8400h is now resolved. D8FEh sets SP=D904h and jumps to EE9Dh; the stack word at D904h is D906h, so the helper returns to D906h. The aligned stream is `MOV AL,0Fh; OUT 80h,AL; JMP 8400h` (E9 F3 AAh at D90Ah resolves to 8400h). This is a direct near-JMP entry and is independent of the D6A2h table. The earlier phase-51 finding remains correct: none of the eleven D6A2h table words equals 8400h.
+
+At 8400h, CS:8280h bit 40h gates a CMOS 8Eh path. It reads CMOS 8Eh, executes `AND BP,FFC7h` (clears BP bits 3–5 and preserves bit 13), clears CMOS 8Eh–FFh, then restores the 32-byte block at CMOS 8Eh–ADh from the ROM table at 820Eh and merges further table-driven fields. This path does not create BP.13; its producer remains unresolved. The aligned stack-return slots 8414h, 842Ah, 8444h, 8460h, 847Eh, 849Eh and 84BCh are data, with continuations 8416h, 842Ch, 8446h, 8462h, 8480h, 84A0h and 84BEh. See `AMI486_ADDRESS_LEDGER_REGION_D655_E3FF_20261117.md`.
