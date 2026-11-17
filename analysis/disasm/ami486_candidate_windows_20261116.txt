@@ -3499,7 +3499,7 @@ Reason: aligned continuation after the first prefixed dword store at 20FEh
 2181  0F 84 02 00             je 0x2187
 2185  B2 04                   mov dl, 4
 
-===== 3E3Fh-3EBEh =====
+===== 3E3Fh-3E98h =====
 Reason: direct CALL target from 00EFh screen-presentation stream
 3E3F  55                      push bp
 3E40  8B EC                   mov bp, sp
@@ -3535,24 +3535,6 @@ Reason: direct CALL target from 00EFh screen-presentation stream
 3E95  8B E5                   mov sp, bp
 3E97  5D                      pop bp
 3E98  C3                      ret
-3E99  55                      push bp
-3E9A  8B EC                   mov bp, sp
-3E9C  83 EC 04                sub sp, 4
-3E9F  53                      push bx
-3EA0  57                      push di
-3EA1  8B F8                   mov di, ax
-3EA3  A0 A8 E1                mov al, byte ptr [0xe1a8]
-3EA6  A2 9F E1                mov byte ptr [0xe19f], al
-3EA9  A2 A0 E1                mov byte ptr [0xe1a0], al
-3EAC  E8 7B 1A                call 0x592a
-3EAF  8B C8                   mov cx, ax
-3EB1  03 46 FA                add ax, word ptr [bp - 6]
-3EB4  48                      dec ax
-3EB5  89 46 FC                mov word ptr [bp - 4], ax
-3EB8  49                      dec cx
-3EB9  D1 E9                   shr cx, 1
-3EBB  03 F9                   add di, cx
-3EBD  EB 26                   jmp 0x3ee5
 
 ===== 0995h-0A14h =====
 Reason: direct CALL target from 00EFh screen-presentation stream
@@ -32241,4 +32223,87 @@ Reason: Setup/POST metric display routine with BP frame; formats the E1AFh value
 71E0  8B E5                   mov sp, bp
 71E2  5D                      pop bp
 71E3  C3                      ret
+
+===== 3E99h-3EF1h =====
+Reason: Setup value-input/parser routine: obtains field text, loops over colon and space delimiters, and stores parsed characters
+3E99  55                      push bp
+3E9A  8B EC                   mov bp, sp
+3E9C  83 EC 04                sub sp, 4
+3E9F  53                      push bx
+3EA0  57                      push di
+3EA1  8B F8                   mov di, ax
+3EA3  A0 A8 E1                mov al, byte ptr [0xe1a8]
+3EA6  A2 9F E1                mov byte ptr [0xe19f], al
+3EA9  A2 A0 E1                mov byte ptr [0xe1a0], al
+3EAC  E8 7B 1A                call 0x592a
+3EAF  8B C8                   mov cx, ax
+3EB1  03 46 FA                add ax, word ptr [bp - 6]
+3EB4  48                      dec ax
+3EB5  89 46 FC                mov word ptr [bp - 4], ax
+3EB8  49                      dec cx
+3EB9  D1 E9                   shr cx, 1
+3EBB  03 F9                   add di, cx
+3EBD  EB 26                   jmp 0x3ee5
+3EBF  8B 5E FC                mov bx, word ptr [bp - 4]
+3EC2  FF 4E FC                dec word ptr [bp - 4]
+3EC5  8A 07                   mov al, byte ptr [bx]
+3EC7  88 46 FF                mov byte ptr [bp - 1], al
+3ECA  3C 3A                   cmp al, 0x3a
+3ECC  75 05                   jne 0x3ed3
+3ECE  E8 C0 19                call 0x5891
+3ED1  EB 09                   jmp 0x3edc
+3ED3  80 7E FF 20             cmp byte ptr [bp - 1], 0x20
+3ED7  75 03                   jne 0x3edc
+3ED9  E8 D9 19                call 0x58b5
+3EDC  8B D7                   mov dx, di
+3EDE  4F                      dec di
+3EDF  8A 46 FF                mov al, byte ptr [bp - 1]
+3EE2  E8 09 1A                call 0x58ee
+3EE5  8B 46 FA                mov ax, word ptr [bp - 6]
+3EE8  39 46 FC                cmp word ptr [bp - 4], ax
+3EEB  73 D2                   jae 0x3ebf
+3EED  5F                      pop di
+3EEE  8B E5                   mov sp, bp
+3EF0  5D                      pop bp
+3EF1  C3                      ret
+
+===== 3EF2h-3F49h =====
+Reason: Setup metric/value formatter: converts the input value, positions the cursor, and displays the formatted result
+3EF2  55                      push bp
+3EF3  8B EC                   mov bp, sp
+3EF5  83 EC 02                sub sp, 2
+3EF8  53                      push bx
+3EF9  57                      push di
+3EFA  56                      push si
+3EFB  BE 19 00                mov si, 0x19
+3EFE  E8 29 1A                call 0x592a
+3F01  8B F8                   mov di, ax
+3F03  3B FE                   cmp di, si
+3F05  76 02                   jbe 0x3f09
+3F07  8B F0                   mov si, ax
+3F09  8B C6                   mov ax, si
+3F0B  D1 E8                   shr ax, 1
+3F0D  05 03 00                add ax, 3
+3F10  8B C8                   mov cx, ax
+3F12  2D 28 0A                sub ax, 0xa28
+3F15  F7 D8                   neg ax
+3F17  81 C1 28 0E             add cx, 0xe28
+3F1B  8A 16 A6 E1             mov dl, byte ptr [0xe1a6]
+3F1F  88 16 9F E1             mov byte ptr [0xe19f], dl
+3F23  8B D1                   mov dx, cx
+3F25  BB 03 00                mov bx, 3
+3F28  E8 62 18                call 0x578d
+3F2B  8B 5E FC                mov bx, word ptr [bp - 4]
+3F2E  B8 28 0B                mov ax, 0xb28
+3F31  E8 6D 19                call 0x58a1
+3F34  8D 1E DB 36             lea bx, [0x36db]
+3F38  B8 28 0D                mov ax, 0xd28
+3F3B  E8 63 19                call 0x58a1
+3F3E  E8 30 B6                call 0xf571
+3F41  E8 BE 19                call 0x5902
+3F44  5E                      pop si
+3F45  5F                      pop di
+3F46  8B E5                   mov sp, bp
+3F48  5D                      pop bp
+3F49  C3                      ret
 
