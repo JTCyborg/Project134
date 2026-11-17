@@ -155,6 +155,7 @@ DATA_RANGES = [
     (0x6CB4, 0x6CC1, "Thirteen-byte bit-mask/status-token lookup table; consumed by 6CC2h", "hexascii"),
     (0x6CC1, 0x6CC2, "Single INT3 trap/alignment byte between the status table and 6CC2h helper", "hexascii"),
     (0x6BD8, 0x6BDE, "Three-word near-call dispatch table: 6B14h, 71E4h, 6CE3h", "words"),
+    (0x6B61, 0x6B62, "Single NOP alignment byte before the 6B62h status-query entry", "hexascii"),
 ]
 
 SEEDS = [
