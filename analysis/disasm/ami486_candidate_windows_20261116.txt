@@ -14583,6 +14583,604 @@ FA4E  60                      pushaw
 FA4F  BE 70 FF                mov si, 0xff70
 FA52  B9              db 0xB9
 
+===== 93F8h-949Eh =====
+Reason: feature-gated 8042 auxiliary-device initialization path; exact entry/vector provenance unresolved
+93F8  50                      push ax
+93F9  0F 01 E0                smsw ax
+93FC  A8 01                   test al, 1
+93FE  75 7A                   jne 0x947a
+9400  2E 8A 26 56 82          mov ah, byte ptr cs:[0x8256]
+9405  0A E4                   or ah, ah
+9407  74 71                   je 0x947a
+9409  A0 16 00                mov al, byte ptr [0x16]
+940C  A8 40                   test al, 0x40
+940E  74 6A                   je 0x947a
+9410  24 07                   and al, 7
+9412  3C 07                   cmp al, 7
+9414  75 68                   jne 0x947e
+9416  52                      push dx
+9417  BA 20 00                mov dx, 0x20
+941A  E8 C3 56                call 0xeae0
+941D  A8 02                   test al, 2
+941F  75 58                   jne 0x9479
+9421  B2 A0                   mov dl, 0xa0
+9423  E8 BA 56                call 0xeae0
+9426  A8 10                   test al, 0x10
+9428  75 4F                   jne 0x9479
+942A  51                      push cx
+942B  E8 73 00                call 0x94a1
+942E  E3 6C                   jcxz 0x949c
+9430  B0 AF                   mov al, 0xaf
+9432  E8 6A 00                call 0x949f
+9435  E3 65                   jcxz 0x949c
+9437  B0 C0                   mov al, 0xc0
+9439  E8 63 00                call 0x949f
+943C  E3 5E                   jcxz 0x949c
+943E  E8 72 00                call 0x94b3
+9441  E3 59                   jcxz 0x949c
+9443  22 C4                   and al, ah
+9445  24 7F                   and al, 0x7f
+9447  A0 16 00                mov al, byte ptr [0x16]
+944A  74 03                   je 0x944f
+944C  35 80 80                xor ax, 0x8080
+944F  A8 80                   test al, 0x80
+9451  74 44                   je 0x9497
+9453  B0 20                   mov al, 0x20
+9455  E8 47 00                call 0x949f
+9458  E3 42                   jcxz 0x949c
+945A  E8 56 00                call 0x94b3
+945D  E3 3D                   jcxz 0x949c
+945F  50                      push ax
+9460  8A D0                   mov dl, al
+9462  B0 60                   mov al, 0x60
+9464  E8 38 00                call 0x949f
+9467  8A C2                   mov al, dl
+9469  0C 30                   or al, 0x30
+946B  E6 60                   out 0x60, al
+946D  E8 31 00                call 0x94a1
+9470  0A E4                   or ah, ah
+9472  78 10                   js 0x9484
+9474  E8 2C F7                call 0x8ba3
+9477  EB 0E                   jmp 0x9487
+9479  5A                      pop dx
+947A  58                      pop ax
+947B  E9 9D 58                jmp 0xed1b
+947E  FE 06 16 00             inc byte ptr [0x16]
+9482  EB F6                   jmp 0x947a
+9484  E8 D7 F6                call 0x8b5e
+9487  B0 60                   mov al, 0x60
+9489  E8 13 00                call 0x949f
+948C  58                      pop ax
+948D  E6 60                   out 0x60, al
+948F  E8 0F 00                call 0x94a1
+9492  80 36 16 00 80          xor byte ptr [0x16], 0x80
+9497  80 26 16 00 F8          and byte ptr [0x16], 0xf8
+949C  59                      pop cx
+949D  EB DA                   jmp 0x9479
+
+===== 949Fh-94A0h =====
+Reason: 8042 command-port write helper (OUT 64h)
+949F  E6 64                   out 0x64, al
+
+===== 94A1h-94B2h =====
+Reason: 8042 input/output buffer wait helper
+94A1  33 C9                   xor cx, cx
+94A3  E3 00                   jcxz 0x94a5
+94A5  E4 64                   in al, 0x64
+94A7  A8 01                   test al, 1
+94A9  75 05                   jne 0x94b0
+94AB  A8 02                   test al, 2
+94AD  E0 F4                   loopne 0x94a3
+94AF  C3                      ret
+94B0  33 C9                   xor cx, cx
+94B2  C3                      ret
+
+===== 94B3h-94C1h =====
+Reason: 8042 output-buffer wait and data-read helper
+94B3  33 C9                   xor cx, cx
+94B5  E3 00                   jcxz 0x94b7
+94B7  E4 64                   in al, 0x64
+94B9  A8 01                   test al, 1
+94BB  E1 F8                   loope 0x94b5
+94BD  74 02                   je 0x94c1
+94BF  E4 60                   in al, 0x60
+94C1  C3                      ret
+
+===== 94C2h-94F8h =====
+Reason: eight-function PS/2 auxiliary-device service dispatcher with IRET epilogue
+94C2  55                      push bp
+94C3  1E                      push ds
+94C4  57                      push di
+94C5  50                      push ax
+94C6  3C 08                   cmp al, 8
+94C8  90                      nop
+94C9  90                      nop
+94CA  73 29                   jae 0x94f5
+94CC  6A 40                   push 0x40
+94CE  1F                      pop ds
+94CF  8E 1E 0E 00             mov ds, word ptr [0xe]
+94D3  B4 00                   mov ah, 0
+94D5  D1 E0                   shl ax, 1
+94D7  8B F8                   mov di, ax
+94D9  2E FF 95 FA 94          call word ptr cs:[di - 0x6b06]
+94DE  8B EC                   mov bp, sp
+94E0  88 66 01                mov byte ptr [bp + 1], ah
+94E3  B8 01 02                mov ax, 0x201
+94E6  72 05                   jb 0x94ed
+94E8  80 66 0C FE             and byte ptr [bp + 0xc], 0xfe
+94EC  48                      dec ax
+94ED  09 46 0C                or word ptr [bp + 0xc], ax
+94F0  58                      pop ax
+94F1  5F                      pop di
+94F2  1F                      pop ds
+94F3  5D                      pop bp
+94F4  CF                      iret
+94F5  B4 01                   mov ah, 1
+94F7  F9                      stc
+94F8  EB              db 0xEB
+
+===== 950Ah-9514h =====
+Reason: PS/2 mouse reporting enable/disable callback
+950A  80 FF 01                cmp bh, 1
+950D  72 06                   jb 0x9515
+950F  74 12                   je 0x9523
+9511  B4 01                   mov ah, 1
+9513  F9                      stc
+9514  C3                      ret
+
+===== 9515h-9522h =====
+Reason: PS/2 mouse disable-data-reporting path (F5h)
+9515  B0 F5                   mov al, 0xf5
+9517  80 0E 26 00 80          or byte ptr [0x26], 0x80
+951C  BF FF 00                mov di, 0xff
+951F  E8 3A 01                call 0x965c
+9522  C3                      ret
+
+===== 9523h-952Fh =====
+Reason: PS/2 mouse enable-data-reporting path (F4h)
+9523  F6 06 27 00 80          test byte ptr [0x27], 0x80
+9528  B4 05                   mov ah, 5
+952A  74 E7                   je 0x9513
+952C  B0 F4                   mov al, 0xf4
+952E  EB E7                   jmp 0x9517
+
+===== 9530h-954Eh =====
+Reason: PS/2 mouse status query callback (E9h)
+9530  80 FF 02                cmp bh, 2
+9533  77 DC                   ja 0x9511
+9535  0A FF                   or bh, bh
+9537  74 0B                   je 0x9544
+9539  80 FF 01                cmp bh, 1
+953C  B0 E6                   mov al, 0xe6
+953E  74 02                   je 0x9542
+9540  FE C0                   inc al
+9542  EB D3                   jmp 0x9517
+9544  86 F9                   xchg cl, bh
+9546  B8 E9 03                mov ax, 0x3e9
+9549  E8 B7 00                call 0x9603
+954C  86 F9                   xchg cl, bh
+954E  C3                      ret
+
+===== 954Fh-955Ah =====
+Reason: PS/2 mouse reset callback (FFh)
+954F  B8 FF 02                mov ax, 0x2ff
+9552  E8 AE 00                call 0x9603
+9555  C6 06 26 00 00          mov byte ptr [0x26], 0
+955A  C3                      ret
+
+===== 955Bh-9588h =====
+Reason: PS/2 mouse sample-rate callback (F3h; values from 9589h)
+955B  80 FF 06                cmp bh, 6
+955E  77 25                   ja 0x9585
+9560  53                      push bx
+9561  8A DF                   mov bl, bh
+9563  B7 00                   mov bh, 0
+9565  2E 8A BF 89 95          mov bh, byte ptr cs:[bx - 0x6a77]
+956A  B0 F3                   mov al, 0xf3
+956C  80 0E 26 00 80          or byte ptr [0x26], 0x80
+9571  BF FF 00                mov di, 0xff
+9574  E8 E5 00                call 0x965c
+9577  72 0A                   jb 0x9583
+9579  8A C7                   mov al, bh
+957B  80 0E 26 00 80          or byte ptr [0x26], 0x80
+9580  E8 D9 00                call 0x965c
+9583  5B                      pop bx
+9584  C3                      ret
+9585  F9                      stc
+9586  B4 02                   mov ah, 2
+9588  C3                      ret
+
+===== 9590h-9599h =====
+Reason: alternate PS/2 mouse resolution callback entry (E8h) inside the 958Eh linear ENTER decode
+9590  80 FF 03                cmp bh, 3
+9593  77 F0                   ja 0x9585
+9595  B0 E8                   mov al, 0xe8
+9597  53                      push bx
+9598  EB D2                   jmp 0x956c
+
+===== 959Ah-95A4h =====
+Reason: PS/2 mouse device-ID query callback (F2h)
+959A  86 DF                   xchg bh, bl
+959C  B8 F2 01                mov ax, 0x1f2
+959F  E8 61 00                call 0x9603
+95A2  86 DF                   xchg bh, bl
+95A4  C3                      ret
+
+===== 95A5h-95E1h =====
+Reason: PS/2 auxiliary-device mode/IRQ12 setup callback; parameter semantics partly open
+95A5  80 FF 08                cmp bh, 8
+95A8  77 DB                   ja 0x9585
+95AA  0A FF                   or bh, bh
+95AC  74 D7                   je 0x9585
+95AE  53                      push bx
+95AF  FE CF                   dec bh
+95B1  FA                      cli
+95B2  80 26 27 00 F8          and byte ptr [0x27], 0xf8
+95B7  80 CF 40                or bh, 0x40
+95BA  08 3E 27 00             or byte ptr [0x27], bh
+95BE  BB 03 00                mov bx, 3
+95C1  FB                      sti
+95C2  E8 8A FF                call 0x954f
+95C5  73 0B                   jae 0x95d2
+95C7  4B                      dec bx
+95C8  75 F8                   jne 0x95c2
+95CA  80 26 27 00 B8          and byte ptr [0x27], 0xb8
+95CF  F9                      stc
+95D0  5B                      pop bx
+95D1  C3                      ret
+95D2  E4 A1                   in al, 0xa1
+95D4  E3 00                   jcxz 0x95d6
+95D6  E3 00                   jcxz 0x95d8
+95D8  E3 00                   jcxz 0x95da
+95DA  24 EF                   and al, 0xef
+95DC  E6 A1                   out 0xa1, al
+95DE  32 E4                   xor ah, ah
+95E0  5B                      pop bx
+95E1  C3                      ret
+
+===== 95E2h-9602h =====
+Reason: PS/2 mouse user callback pointer installer at BDA 0040:0022h
+95E2  50                      push ax
+95E3  BF 22 00                mov di, 0x22
+95E6  8C C0                   mov ax, es
+95E8  FA                      cli
+95E9  89 1D                   mov word ptr [di], bx
+95EB  89 45 02                mov word ptr [di + 2], ax
+95EE  0B C3                   or ax, bx
+95F0  A0 27 00                mov al, byte ptr [0x27]
+95F3  75 04                   jne 0x95f9
+95F5  24 7F                   and al, 0x7f
+95F7  EB 02                   jmp 0x95fb
+95F9  0C 80                   or al, 0x80
+95FB  A2 27 00                mov byte ptr [0x27], al
+95FE  58                      pop ax
+95FF  FB                      sti
+9600  32 E4                   xor ah, ah
+9602  C3                      ret
+
+===== 9603h-965Bh =====
+Reason: PS/2 mouse command/response transaction wrapper
+9603  50                      push ax
+9604  E8 EB 00                call 0x96f2
+9607  58                      pop ax
+9608  75 4E                   jne 0x9658
+960A  50                      push ax
+960B  33 FF                   xor di, di
+960D  E8 4C 00                call 0x965c
+9610  5F                      pop di
+9611  72 47                   jb 0x965a
+9613  8B C7                   mov ax, di
+9615  E8 A3 00                call 0x96bb
+9618  75 3E                   jne 0x9658
+961A  3C FA                   cmp al, 0xfa
+961C  75 2C                   jne 0x964a
+961E  E8 9A 00                call 0x96bb
+9621  75 35                   jne 0x9658
+9623  8A D8                   mov bl, al
+9625  FE CC                   dec ah
+9627  74 12                   je 0x963b
+9629  E8 8F 00                call 0x96bb
+962C  75 2A                   jne 0x9658
+962E  8A F8                   mov bh, al
+9630  FE CC                   dec ah
+9632  74 07                   je 0x963b
+9634  E8 84 00                call 0x96bb
+9637  75 1F                   jne 0x9658
+9639  8A D0                   mov dl, al
+963B  F6 06 27 00 40          test byte ptr [0x27], 0x40
+9640  74 05                   je 0x9647
+9642  E8 B1 00                call 0x96f6
+9645  75 11                   jne 0x9658
+9647  32 E4                   xor ah, ah
+9649  C3                      ret
+964A  F6 06 27 00 40          test byte ptr [0x27], 0x40
+964F  B4 04                   mov ah, 4
+9651  74 07                   je 0x965a
+9653  E8 A0 00                call 0x96f6
+9656  74 02                   je 0x965a
+9658  B4 03                   mov ah, 3
+965A  F9                      stc
+965B  C3                      ret
+
+===== 965Ch-96BAh =====
+Reason: send one byte to PS/2 auxiliary device through 8042 D4h
+965C  51                      push cx
+965D  B9 10 00                mov cx, 0x10
+9660  50                      push ax
+9661  51                      push cx
+9662  FA                      cli
+9663  B0 D4                   mov al, 0xd4
+9665  E8 CD 5F                call 0xf635
+9668  59                      pop cx
+9669  58                      pop ax
+966A  75 29                   jne 0x9695
+966C  E8 63 00                call 0x96d2
+966F  FB                      sti
+9670  E0 EE                   loopne 0x9660
+9672  75 21                   jne 0x9695
+9674  F7 C7 FF 00             test di, 0xff
+9678  75 02                   jne 0x967c
+967A  59                      pop cx
+967B  C3                      ret
+967C  B9 10 00                mov cx, 0x10
+967F  51                      push cx
+9680  33 C9                   xor cx, cx
+9682  F6 06 26 00 80          test byte ptr [0x26], 0x80
+9687  E0 F9                   loopne 0x9682
+9689  59                      pop cx
+968A  E0 F3                   loopne 0x967f
+968C  74 12                   je 0x96a0
+968E  E8 69 01                call 0x97fa
+9691  75 02                   jne 0x9695
+9693  E4 60                   in al, 0x60
+9695  FB                      sti
+9696  B4 03                   mov ah, 3
+9698  80 26 26 00 07          and byte ptr [0x26], 7
+969D  F9                      stc
+969E  59                      pop cx
+969F  C3                      ret
+96A0  F6 06 26 00 20          test byte ptr [0x26], 0x20
+96A5  75 0B                   jne 0x96b2
+96A7  F6 06 26 00 40          test byte ptr [0x26], 0x40
+96AC  74 E7                   je 0x9695
+96AE  B4 04                   mov ah, 4
+96B0  EB E6                   jmp 0x9698
+96B2  80 26 26 00 07          and byte ptr [0x26], 7
+96B7  32 E4                   xor ah, ah
+96B9  59                      pop cx
+96BA  C3                      ret
+
+===== 96BBh-96D1h =====
+Reason: read one byte from 8042 data port 60h with timeout
+96BB  51                      push cx
+96BC  50                      push ax
+96BD  B9 10 00                mov cx, 0x10
+96C0  51                      push cx
+96C1  33 C9                   xor cx, cx
+96C3  E8 34 01                call 0x97fa
+96C6  E0 FB                   loopne 0x96c3
+96C8  59                      pop cx
+96C9  E0 F5                   loopne 0x96c0
+96CB  58                      pop ax
+96CC  75 02                   jne 0x96d0
+96CE  E4 60                   in al, 0x60
+96D0  59                      pop cx
+96D1  C3                      ret
+
+===== 96D2h-96F1h =====
+Reason: write one byte to 8042 data port 60h with readiness checks
+96D2  51                      push cx
+96D3  50                      push ax
+96D4  33 C9                   xor cx, cx
+96D6  E8 21 01                call 0x97fa
+96D9  74 09                   je 0x96e4
+96DB  A8 01                   test al, 1
+96DD  74 0C                   je 0x96eb
+96DF  E2 F5                   loop 0x96d6
+96E1  58                      pop ax
+96E2  59                      pop cx
+96E3  C3                      ret
+96E4  E4 60                   in al, 0x60
+96E6  80 26 26 00 F8          and byte ptr [0x26], 0xf8
+96EB  32 E4                   xor ah, ah
+96ED  58                      pop ax
+96EE  E6 60                   out 0x60, al
+96F0  59                      pop cx
+96F1  C3                      ret
+
+===== 96F2h-9711h =====
+Reason: 8042 command helper for command 65h
+96F2  B0 65                   mov al, 0x65
+96F4  EB 02                   jmp 0x96f8
+96F6  B0 47                   mov al, 0x47
+96F8  51                      push cx
+96F9  50                      push ax
+96FA  FA                      cli
+96FB  B9 10 00                mov cx, 0x10
+96FE  51                      push cx
+96FF  B0 60                   mov al, 0x60
+9701  E8 31 5F                call 0xf635
+9704  59                      pop cx
+9705  75 07                   jne 0x970e
+9707  58                      pop ax
+9708  50                      push ax
+9709  E8 C6 FF                call 0x96d2
+970C  E0 F0                   loopne 0x96fe
+970E  FB                      sti
+970F  58                      pop ax
+9710  59                      pop cx
+9711  C3                      ret
+
+===== 9712h-9783h =====
+Reason: IRQ12 mouse packet handler; parses BDA packet state and far-calls BDA callback pointer
+9712  FB                      sti
+9713  E8 9C F9                call 0x90b2
+9716  1E                      push ds
+9717  6A 40                   push 0x40
+9719  1F                      pop ds
+971A  8E 1E 0E 00             mov ds, word ptr [0xe]
+971E  60                      pushaw
+971F  E8 D8 00                call 0x97fa
+9722  75 25                   jne 0x9749
+9724  E4 60                   in al, 0x60
+9726  F6 06 26 00 80          test byte ptr [0x26], 0x80
+972B  75 1F                   jne 0x974c
+972D  57                      push di
+972E  BF 26 00                mov di, 0x26
+9731  8B 1D                   mov bx, word ptr [di]
+9733  81 E3 07 07             and bx, 0x707
+9737  80 25 F8                and byte ptr [di], 0xf8
+973A  32 FB                   xor bh, bl
+973C  74 2B                   je 0x9769
+973E  B7 00                   mov bh, 0
+9740  88 87 28 00             mov byte ptr [bx + 0x28], al
+9744  FE C3                   inc bl
+9746  08 1D                   or byte ptr [di], bl
+9748  5F                      pop di
+9749  E9 9B 00                jmp 0x97e7
+974C  B4 40                   mov ah, 0x40
+974E  3C FE                   cmp al, 0xfe
+9750  74 0C                   je 0x975e
+9752  B4 10                   mov ah, 0x10
+9754  3C FC                   cmp al, 0xfc
+9756  74 06                   je 0x975e
+9758  3C FA                   cmp al, 0xfa
+975A  75 D1                   jne 0x972d
+975C  B4 20                   mov ah, 0x20
+975E  80 26 26 00 7F          and byte ptr [0x26], 0x7f
+9763  08 26 26 00             or byte ptr [0x26], ah
+9767  EB E0                   jmp 0x9749
+9769  F6 45 01 80             test byte ptr [di + 1], 0x80
+976D  74 D9                   je 0x9748
+976F  56                      push si
+9770  8B F3                   mov si, bx
+9772  BF 28 00                mov di, 0x28
+9775  33 DB                   xor bx, bx
+9777  8B CB                   mov cx, bx
+9779  8B D3                   mov dx, bx
+977B  8A E3                   mov ah, bl
+977D  D1 E6                   shl si, 1
+977F  2E FF A4 84 97          jmp word ptr cs:[si - 0x687c]
+
+===== 9794h-97A0h =====
+Reason: first alternate packet-decode entry selected by the 9784h jump table
+9794  8A F8                   mov bh, al
+9796  8A 5D 04                mov bl, byte ptr [di + 4]
+9799  8A 6D 06                mov ch, byte ptr [di + 6]
+979C  8A 75 05                mov dh, byte ptr [di + 5]
+979F  EB 15                   jmp 0x97b6
+
+===== 97A1h-97B0h =====
+Reason: second alternate packet-decode entry selected by the 9784h jump table
+97A1  8A F8                   mov bh, al
+97A3  8A 5D 03                mov bl, byte ptr [di + 3]
+97A6  8A 6D 05                mov ch, byte ptr [di + 5]
+97A9  8A 4D 02                mov cl, byte ptr [di + 2]
+97AC  8A 75 04                mov dh, byte ptr [di + 4]
+97AF  EB 1F                   jmp 0x97d0
+
+===== 97B1h-97BAh =====
+Reason: third alternate packet-decode entry selected by the 9784h jump table
+97B1  8A E8                   mov ch, al
+97B3  8A 75 04                mov dh, byte ptr [di + 4]
+97B6  8A 4D 03                mov cl, byte ptr [di + 3]
+97B9  EB 0C                   jmp 0x97c7
+
+===== 97BBh-97C4h =====
+Reason: fourth alternate packet-decode entry selected by the 9784h jump table
+97BB  8A E8                   mov ch, al
+97BD  8A 4D 04                mov cl, byte ptr [di + 4]
+97C0  8A 75 03                mov dh, byte ptr [di + 3]
+97C3  EB 0B                   jmp 0x97d0
+
+===== 97C5h-97CDh =====
+Reason: fifth alternate packet-decode entry selected by the 9784h jump table
+97C5  8A C8                   mov cl, al
+97C7  8A 55 02                mov dl, byte ptr [di + 2]
+97CA  8B 05                   mov ax, word ptr [di]
+97CC  EB 0B                   jmp 0x97d9
+
+===== 97CEh-97D4h =====
+Reason: sixth alternate packet-decode entry selected by the 9784h jump table
+97CE  8A C8                   mov cl, al
+97D0  8A 55 01                mov dl, byte ptr [di + 1]
+97D3  EB 02                   jmp 0x97d7
+
+===== 97D5h-97D8h =====
+Reason: seventh alternate packet-decode entry selected by the 9784h jump table
+97D5  8A E0                   mov ah, al
+97D7  8A 05                   mov al, byte ptr [di]
+
+===== 97D9h-97E6h =====
+Reason: common mouse callback argument setup and far-call path
+97D9  50                      push ax
+97DA  52                      push dx
+97DB  51                      push cx
+97DC  53                      push bx
+97DD  FF 1E 22 00             lcall [0x22]
+97E1  58                      pop ax
+97E2  58                      pop ax
+97E3  58                      pop ax
+97E4  58                      pop ax
+97E5  5E                      pop si
+97E6  5F                      pop di
+
+===== 97E7h-97F9h =====
+Reason: IRQ12 EOI and interrupt-frame restore epilogue
+97E7  FA                      cli
+97E8  B0 20                   mov al, 0x20
+97EA  E6 A0                   out 0xa0, al
+97EC  E3 00                   jcxz 0x97ee
+97EE  E3 00                   jcxz 0x97f0
+97F0  E3 00                   jcxz 0x97f2
+97F2  E6 20                   out 0x20, al
+97F4  61                      popaw
+97F5  1F                      pop ds
+97F6  E8 B9 F8                call 0x90b2
+97F9  CF                      iret
+
+===== 97FAh-9800h =====
+Reason: 8042 status-port 64h readiness helper
+97FA  E4 64                   in al, 0x64
+97FC  24 21                   and al, 0x21
+97FE  3C 21                   cmp al, 0x21
+9800  C3                      ret
+
+===== 9801h-9846h =====
+Reason: PS/2 auxiliary-port reset/initialization path; vector source still to verify
+9801  9C                      pushf
+9802  FA                      cli
+9803  E4 A1                   in al, 0xa1
+9805  24 EF                   and al, 0xef
+9807  E3 00                   jcxz 0x9809
+9809  E3 00                   jcxz 0x980b
+980B  E6 A1                   out 0xa1, al
+980D  B0 5C                   mov al, 0x5c
+980F  E8 3F 5E                call 0xf651
+9812  E8 5B 80                call 0x1870
+9815  B9 03 00                mov cx, 3
+9818  51                      push cx
+9819  B0 D4                   mov al, 0xd4
+981B  E8 17 5E                call 0xf635
+981E  B8 FF FA                mov ax, 0xfaff
+9821  E8 A5 5D                call 0xf5c9
+9824  59                      pop cx
+9825  74 06                   je 0x982d
+9827  3C FE                   cmp al, 0xfe
+9829  E1 ED                   loope 0x9818
+982B  EB 13                   jmp 0x9840
+982D  E8 C9 5D                call 0xf5f9
+9830  3C AA                   cmp al, 0xaa
+9832  75 0C                   jne 0x9840
+9834  E8 C2 5D                call 0xf5f9
+9837  0A C0                   or al, al
+9839  75 05                   jne 0x9840
+983B  80 0E 10 00 04          or byte ptr [0x10], 4
+9840  B0 65                   mov al, 0x65
+9842  E8 0C 5E                call 0xf651
+9845  9D                      popf
+9846  C3                      ret
+
 ===== 8E89h-8EA6h =====
 Reason: interrupt-style IRET dispatcher using the overlapping five-word table at 8EA7h
 8E89  1E                      push ds
