@@ -1256,3 +1256,40 @@ This confirms that `5B7Ch` is drive-index-aware and that Y bypasses its fallback
 ### E401h geometry-table eligibility marker
 
 The scan in `AB34h` advances through 46 records of 10h bytes. Its eligibility test is specifically `WORD [SI+05h] == FFFFh`; records without that marker are skipped even if cylinder/head/SPT values match. This is a validity/selection marker within the ROM's geometry candidate list, not a comparison against the IDENTIFY result. Example: the record at `E451h` has geometry 615/4/17 but `[+05h]=FFFFh`, whereas the earlier 306/4/17 record at `E401h` has `[+05h]=0080h` and is not eligible for this scan. Therefore the list contains entries that are descriptive but deliberately excluded from automatic geometry matching.
+
+### Critical correction: 5B7Ch is a per-drive nibble merge plus shadow-to-live descriptor copy
+
+A fresh decode of the actual ROM bytes at 5B7Ch–5BD4h supersedes the previous provisional explanation of this helper.
+
+Entry and prompt:
+- The caller at 508Ch loads AL from E189h, so the normal input is drive index 0 or 1.
+- The helper computes AL+43h and stores it at 3C52h, then calls 5959h.
+- If the returned key is 'Y' (59h), it restores the original AX and returns immediately. This is the only response explicitly distinguished by the helper; the other returned keys all follow the same non-Y merge path. Do not label that path as “N” or “ESC” individually without further evidence.
+
+Exact non-Y merge:
+- It reads `AL=[E092h]` and `BL=[E012h]`.
+- For drive index 0, it applies `AL &= F0h` and `BL &= 0Fh`. It selects SI=0019h and CX=001Bh.
+- For drive index 1, it applies `AL &= 0Fh` and `BL &= F0h`. It selects SI=001Ah and CX=0024h.
+- It ORs AL and BL and writes the merged byte to `E012h`.
+- It then copies the selected one-byte descriptor field from `E080h+SI` to `E000h+SI`. For index 0 this is E099h -> E019h; for index 1 it is E09Ah -> E01Ah.
+- Finally it copies exactly 9 bytes from `E080h+CX` to `E000h+CX`. Thus drive 0 copies E09Bh–E0A3h -> E01Bh–E023h; drive 1 copies E0A4h–E0ACh -> E024h–E02Ch.
+
+This establishes that 5B7Ch is not a generic nine-byte copy: it merges the selected drive's nibble in the shared byte E012h and synchronizes that drive's 10-byte descriptor (one byte plus nine bytes) from the E080h shadow image into the E000h active image. The source/destination mapping is byte-exact.
+
+### Relationship to the CMOS Setup staging buffers
+
+The separately analyzed routine 84CBh–852Fh provides the buffer-level context:
+- It stages the Setup image at E010h onward, then calls the configuration workers.
+- It later copies 80h bytes from E000h to E080h.
+- The masked worker at 85FEh uses E080h+index as its input/source image and E000h+index as its destination/live image, applying a per-record mask.
+
+Therefore E000h–E07Fh and E080h–E0FFh are paired 80h-byte configuration images used by the Setup staging/merge machinery. In this context, 5B7Ch's copy direction is shadow E080h -> active E000h. E092h is the shadow counterpart of E012h (offset 12h), and the code explicitly merges the drive-specific nibble from that shadow byte with the opposite nibble already in the active byte.
+
+### Corrections to earlier 5B7Ch statements
+
+- The earlier statement that the helper selects DS:0019h/001Ah as source records and copies nine bytes to E000h was imprecise. SI=0019h/001Ah is used as an index into the E080h/E000h paired images; the nine-byte block begins at E01Bh/E024h.
+- The prior wording that “any non-Y response” means load defaults is not supported. The machine code only distinguishes Y from non-Y at this call site.
+- The previous claim that this helper copies nine bytes into E000h is incomplete: it also copies the leading byte at E019h/E01Ah, for a total of ten descriptor bytes per drive, and updates E012h separately.
+- The source record bytes at E099h–E0ACh are part of the staged configuration image; their individual field semantics remain open pending cross-reference analysis.
+
+ROM bytes unchanged. This note corrects interpretation only.
