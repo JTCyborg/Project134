@@ -104,3 +104,42 @@ The `EEE7h` routine reached by the 04h/05h special case has a strong 8259A PIC i
 This is consistent with remapping the master 8259 vectors to 08h and the slave vectors to 70h, with the slave initially fully masked. This identifies the 04h/05h continuation as an interrupt-controller setup path, not the disk loader.
 
 The routine subsequently reads port 61h and conditionally writes a modified value back, then writes `8Dh` to CMOS index port 70h before returning. The exact meaning of that final CMOS index write and the preceding port-F1 write remains open.
+
+## Special path for markers 09h and 0Ah: CMOS[B3h] and CPU cache control
+
+At 8A20h, values 05h, 09h, and 0Ah branch to the special path beginning at 8A2Eh (marker 05h is already intercepted by D637h in the normal startup dispatcher).
+
+```asm
+8A2E: B0 B3          MOV AL,B3h
+8A30: BC 36 8A       MOV SP,8A36h
+8A33: E9 5E 64       JMP EE94h
+8A36: 38 8A          ; word on stack: return IP = 8A38h
+8A38: A8 0C          TEST AL,0Ch
+8A3A: 74 34          JZ 8A70h
+8A3C: 8A D0          MOV DL,AL
+8A3E: 66 C1 C8 10     ROR EAX,10h
+8A42: 8B D8          MOV BX,AX
+8A44: BF 4A 8A       MOV DI,8A4Ah
+8A47: E9 83 02       JMP 8CCDh
+```
+
+EE94h is the CMOS read helper: it writes AL to port 70h, reads port 71h into AL, and returns. Thus this path reads CMOS index B3h. The synthetic stack pointer at 8A30h makes the helper RET continue at 8A38h.
+
+If (CMOS[B3h] & 0Ch) == 0, execution goes to 8A70h and rejoins the common marker-dispatch path. If either bit 2 or bit 3 is set, the byte is copied to DL and the path reaches 8CCDh.
+
+The code at 8CCDh checks the machine status word:
+- If SMSW AX reports PE set, or AH is nonzero, it skips the cache-control write.
+- Otherwise it reads CR0, ORs 60000000h into EAX (CR0.CD and CR0.NW), writes CR0, and executes WBINVD.
+- It then clears AX and jumps through DI, which was set to 8A4Ah.
+
+At 8A4Ah, the ROM selects one of two tables according to bit 2 of DL:
+- bit 2 clear: DI=8E62h and CX=10;
+- bit 2 set: DI=8E7Ah and CX=2.
+
+It then loads a word from CS:[DI], advances DI by two, installs a synthetic stack return address, and jumps through a short delay/return stub at 8DDEh. The resulting continuation is F1E2h (the word placed at the synthetic stack top is E2F1h). F1E2h begins a larger initialization path; its complete purpose remains under investigation. The selected table areas at 8E62h and 8E7Ah contain structured configuration data, not executable instruction sequences.
+
+**Interpretation limit:** CMOS[B3h] bits 2/3 select a low-level initialization branch and can cause CR0 cache-disable bits plus WBINVD to be applied. This does not prove that the CMOS byte is simply a cache-enable setting; the selected table and F1E2h continuation must be traced before assigning user-visible semantics.
+
+## Correction: PIC masks in EEE7h
+
+The 8259 initialization sequence ends by writing FFh to both data ports: FFh to A1h masks all slave IRQs, and the same value to 21h masks all master IRQs. Therefore both PICs are fully masked at the end of this routine. The sequence remaps the master base to 08h and slave base to 70h, sets cascade wiring values 04h (master ICW3) and 02h (slave ICW3), then selects 8086 mode via ICW4=01h for both.
