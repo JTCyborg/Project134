@@ -627,3 +627,12 @@ Detailed map: [AMI486_ADDRESS_LEDGER_REGION_AF86_B1E8_20261117.md](AMI486_ADDRES
 The IVT INT 09h entry at E987h jumps to AF60h. The AF60h prelude selects the AF84h/B2E5h path, AF87h/B1DFh common exit, AF8Ah/B1E4h alternate exit, or the main scan-code body at AF8Dh. The body updates BDA keyboard state bytes 0017h/0018h/0019h, handles SysRq via INT 15h/AH=85h, Ctrl+Alt+Delete via warm-boot flag 0000:0072h=1234h and jump to F000:E05Bh, Ctrl-Break via INT 1Bh, PrintScreen and extended-key paths, and Alt-numeric entry. The shared IRQ tail clears BDA:0096h as appropriate, sends PIC EOI and restores the interrupt frame.
 
 The candidate generator now includes the split branch and bounded entries for the main handler and alternate epilogues. GitHub Actions run 44085161932 passed: 825 windows / 238 data ranges, 59,745 covered bytes (91.16%), 65 uncovered intervals. The next largest uncovered interval is 10DFh–131Eh (576 bytes).
+
+
+## 28. POST 8042/CMOS/video initialization — 10DFh–131Eh (2026-11-17)
+
+Detailed map: [AMI486_ADDRESS_LEDGER_REGION_10DF_131E_20261117.md](AMI486_ADDRESS_LEDGER_REGION_10DF_131E_20261117.md).
+
+Mapped the POST continuation that initializes/tests the 8042 keyboard controller (command byte, FFh reset, FAh ACK, AAh self-test), initializes keyboard-buffer pointers and PIC mask, validates CMOS memory/configuration against BDA values, enumerates I/O resources, displays the Setup warning through 1656h when BP error flags are set, and continues chipset/video setup through 1C4Eh/1C4Fh/1C50h/1C5Eh, INT 11h and INT 10h. The CALL at 131Dh to 135Ah is included completely by extending the candidate window one byte beyond the old gap. The initial 10DFh entry provenance remains unresolved; the first three bytes are retained rather than discarded.
+
+GitHub Actions run 44085575642 passed: 826 windows / 238 data ranges, 60,321 covered bytes (92.04%), 64 uncovered intervals. The next largest uncovered interval is 066Bh–084Eh (484 bytes).
