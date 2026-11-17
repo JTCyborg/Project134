@@ -353,4 +353,13 @@ Critical alignment corrections:
 - The 20D8h return word is consumed by EEEFh, not 8DDCh. The 20FAh return word is now separately classified as data.
 - The B3h path skips the small profile list when bits 2 and 3 are both clear; otherwise it chooses 8E4Eh–8E61h or 8E76h–8E79h. The 1B2Ch tail programs PIT channel 1 via ports 43h/41h.
 
-Current candidate mask: 597 code windows, 154 data ranges, 31,189 unique code bytes, 15,829 unique data bytes, 117 overlap bytes, 46,901-byte union (71.57%), 69 uncovered intervals, 210 pages touched and 133 fully covered pages. This is not semantic completion. Next largest gap: CA16h–D0FFh (1,770 bytes).
+Historical candidate mask before the INT 13h diskette expansion: 597 code windows, 154 data ranges, 31,189 unique code bytes, 15,829 unique data bytes, 117 overlap bytes, 46,901-byte union (71.57%), 69 uncovered intervals, 210 pages touched and 133 fully covered pages. Superseded by the diskette-region update below.
+
+
+## Address-ledger continuation — INT 13h diskette subsystem (2026-11-17)
+
+Detailed map: `AMI486_ADDRESS_LEDGER_REGION_CA15_D103_20261117.md`.
+
+The former CA16h–D0FFh gap (1,770 bytes) is now covered. The region maps the INT 13h drive-geometry/parameter response, CMOS-selected media profiles, six 13-byte diskette parameter records, controller-presence checks, FDC command/status tests, per-drive media detection, motor/readiness timing and INT 1Eh geometry comparisons. C8CAh is both a parameter-table view and an executable continuation after CALL D0D9h at C8C7h. CB09h and CBF8h remain candidate entries without direct near xrefs. D0D9h continues through D103h (POP AX/RET).
+
+Current candidate mask: 610 code windows, 163 data ranges, 32,861 unique code bytes, 15,940 unique data bytes, 130 overlap bytes, 48,671-byte union (74.27%), 68 uncovered intervals, 216 pages touched and 140 fully covered pages. This is not semantic completion. Next largest gap: 873Ch–8DCEh (1,683 bytes).
