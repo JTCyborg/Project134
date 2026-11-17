@@ -553,3 +553,14 @@ The former 1,683-byte candidate gap now has zero uncovered bytes in the code/dat
 - POST CMOS B3h/ALi C2h-C3h operations, CMOS 8Fh reset path, B3h-selected ALi profile path, 82DAh hook sequence, INT 15h keyboard hook, controller/port configuration helpers, CR0 cache-state continuations, 8042 transaction helper and ALi indexed-register callbacks.
 
 Crafted stack-return words are separated from code continuations. Bytes 8893h–8898h, runtime table provenance and ALi register meanings remain unresolved. The candidate mask is an inspection aid, not a semantic-completion percentage.
+
+
+## 20. Upper-ROM checksum, bitmap and metadata tail — FA4Eh–FFFFh (2026-11-17)
+
+Detailed byte map: [AMI486_ADDRESS_LEDGER_REGION_FA4E_FFFF_20261117.md](AMI486_ADDRESS_LEDGER_REGION_FA4E_FFFF_20261117.md).
+
+The former candidate-mask gap FA53h–FFFFh has been inspected, with the checksum entry at FA4Eh included because it is reached by the POST stack-threaded transfer at E34Dh/E350h. FA4Eh compares 76 bytes at FA00h–FA4Bh against the bitwise complement of FF70h–FFBBh. The BX increment at FA5Ah is before the indexed read, so the compared low-memory interval begins at FA00h, not F9FFh. A matching sequence returns through POPA/RET at FA4Ch–FA4Dh; a mismatch falls through to RET at FA64h with the PUSHA frame still on the stack.
+
+FA6Eh–FE6Dh is a 1-KiB structured bitmap/glyph candidate (128 eight-byte records); the bitmap ends at FE6Dh and the three-byte near JMP begins at FE6Eh. FE71h–FEA0h is structured data, FEA1h–FEA7h is a short record, and FEA8h–FEE3h is zero-filled. FEE4h–FF4Fh remains a mixed dispatch/relocation-data candidate pending consumer tracing. FF59h–FF6Fh contains the printable identification string (1992AMI,404-263-8181; FF70h–FFBBh is the verified complement data. FFC7h–FFEFh duplicates FE75h–FE9Dh. FFF0h–FFF4h is the reset vector EA 5B E0 00 F0, and FFF5h–FFFCh is the date 04/04/93.
+
+This closes the byte-inspection pass for the largest remaining gap in the 79.30% candidate-mask snapshot. It does not yet update/regenerate the candidate mask; the generator must receive the FA4Eh code seed and the confirmed bitmap/data ranges before a new union and next-gap ranking can be reported. No whole-ROM semantic completion percentage is claimed.
