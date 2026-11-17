@@ -1317,3 +1317,30 @@ Combined with the 5B7Ch copy map, the two packed source records are:
 The special 5AB5h selector uses DL as a zero/nonzero choice between those two payloads. The normal `AL=2Fh` path therefore consumes one 9-byte payload at a time; it does not copy a contiguous 16-byte source block.
 
 This establishes the packed-record width and expansion mechanics. It does not yet prove which caller-supplied AX pattern is used at every 5AB5h call site, nor the names of the geometry fields represented by each packed byte.
+
+### Call-site confirmation: drive selector propagation into 5AB5h
+
+The two relevant call sites were re-decoded from the ROM bytes.
+
+**Call at 4797h, inside 475Ch**
+- 475Ch reads E189h and uses it as an index into the per-drive selector array at E019h.
+- The selector byte is loaded into AL from [BX+E019h].
+- The same index is copied into DX (DL=E189h).
+- The routine then loads its locally normalized selector into AL and calls 5AB5h at 4797h.
+- Thus, for the normal two-drive loop (E189h=0 or 1), the drive index is explicitly passed as DL while the selected geometry code is passed as AL.
+- The AL=2Fh branch in 5AB5h therefore selects E01Bh for drive 0 and E024h for drive 1, matching the per-drive packed custom records.
+
+**Call at 4B8Dh, inside the 4B68h worker**
+- 4B6Fh–4B7Ah loads the drive selector from E421h, indexes E1ADh, and saves the mapped geometry selector in local byte [BP-1].
+- 4B84h–4B88h loads DL from E421h and clears DH.
+- 4B8Ah loads AL from [BP-1].
+- 4B8Dh calls 5AB5h.
+- This second path passes the mapped geometry code in AL and the current drive index from E421h in DL. It uses the same custom-record selection contract as the 475Ch path.
+
+**Established data flow**
+- E189h is the active drive index in the CMOS/Setup two-drive loop.
+- E421h is the drive index used by the later geometry-application worker at 4B68h.
+- Both callers pass drive index separately from geometry selector. The special selector 2Fh selects the per-drive packed record, while DL chooses which drive's record to expand.
+- This confirms that E01Bh–E023h and E024h–E02Ch are distinct per-drive records, and that drive identity is carried independently all the way into 5AB5h.
+
+The call-site analysis proves selector/index propagation. It does not yet assign semantic names to each byte in the packed records or identify the seven fill bytes' caller values in every invocation.
