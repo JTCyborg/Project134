@@ -13568,6 +13568,15 @@ Reason: return-to-stack code continuation
 2250  B3 FF                   mov bl, 0xff
 2252  26              db 0x26
 
+===== 2207h-222Ch =====
+Reason: fall-through continuation of protected-mode extended-memory alias probe; DH selector and compares at 04001000h and 04002000h
+2207  26 67 66 81 3D 00 10 00 04 AA AA 55 55 cmp dword ptr es:[0x4001000], 0x5555aaaa
+2214  0F 84 15 00             je 0x222d
+2218  B6 03                   mov dh, 3
+221A  26 67 66 81 3D 00 20 00 04 AA AA 55 55 cmp dword ptr es:[0x4002000], 0x5555aaaa
+2227  0F 84 02 00             je 0x222d
+222B  B6 04                   mov dh, 4
+
 ===== 235Bh-2380h =====
 Reason: fall-through continuation of protected-mode extended-memory alias probe; compare at 04001000h and 04002000h
 235B  26 67 66 81 3D 00 10 00 04 AA AA 55 55 cmp dword ptr es:[0x4001000], 0x5555aaaa
