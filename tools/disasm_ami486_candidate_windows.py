@@ -158,7 +158,7 @@ DATA_RANGES = [
     (0x6B61, 0x6B62, "Single NOP alignment byte before the 6B62h status-query entry", "hexascii"),
     (0x19B0, 0x19C2, "Nine-word L2 cache-size lookup; last word is zero/unused", "words"),
     (0x19C2, 0x19CA, "Eight-byte CPU speed lookup table", "hexascii"),
-    (0x19C9, 0x19DB, "“ KB CACHE MEMORY” string with CR/LF/NUL; first space overlaps speed table", "ascii"),
+    (0x19C9, 0x19DC, "“ KB CACHE MEMORY” string with CR/LF/NUL; first space overlaps speed table", "ascii"),
     (0x19DC, 0x19EC, "“MHz CPU Clock” string with CR/LF/NUL", "ascii"),
     (0x19EC, 0x19FB, "“MHz DX2 CPU ” string with CR/LF/NUL", "ascii"),
     (0x19F8, 0x19FB, "CR/LF/NUL suffix of the DX2 CPU label", "hexascii"),
