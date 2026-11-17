@@ -1212,6 +1212,10 @@ Reason: Single INT3 trap/alignment byte between the status table and 6CC2h helpe
 Reason: Three-word near-call dispatch table: 6B14h, 71E4h, 6CE3h
 Words: 6B14, 71E4, 6CE3
 
+===== DATA 6B61h-6B61h =====
+Reason: Single NOP alignment byte before the 6B62h status-query entry
+6B61  90                                              .
+
 ===== 3E3Fh-3EBEh =====
 Reason: direct CALL target from 00EFh screen-presentation stream
 3E3F  55                      push bp
