@@ -282,3 +282,20 @@ The bytes at F1E2h begin an independently decodable routine. Its earlier passwor
 ## Addressing correction for the password buffer copy at F2EAh
 
 The prologue at F1EAh executes PUSH ES, PUSH DS, PUSH SS, POP ES, so ES=SS for this routine. At F2EAh, `MOV DI,E000h; MOV SI,BP; MOV CX,20h; SS: REP MOVSW` copies 40h bytes from SS:BP to ES:E000h, which is SS:E000h. In the known D691h dispatch setup SS is 0030h, making the linear destination 0E300h, not a CMOS index and not segment 0000h:E000h. This is a RAM buffer copy; it does not itself prove persistent password storage.
+
+## Resolved D691h targets for marker 09h and 0Ah
+
+The dispatch table at D6A8h has now been traced one step further:
+
+- Marker 09h selects 8A06h. Because the preceding bounded loop leaves CX=0000h and OR AL,FFh leaves ZF=0, the instruction at 8A06h (`LOOPNZ 89B0h`) decrements CX to FFFFh and branches to 89B0h. 89B0h is a RET. Thus this marker path returns through the stack frame prepared by the D691h setup; it does not enter the following bytes at 8A0Bh.
+- Marker 0Ah selects 9237h. At that entry:
+  ```asm
+  9237: 8B E8          MOV BP,AX
+  9239: 2E 8B 46 00    MOV AX,CS:[BP+00h]
+  923D: 5D             POP BP
+  923E: FF E0          JMP AX
+  ```
+  D691h has left AX=0030h, so this reads the word at CS:0030h. In the current ROM image bytes 0030h–0031h are 4Dh 4Dh, yielding target 4D4Dh. It then restores BP from the stack and jumps to 4D4Dh.
+- The 4D4Dh target is a real routine that manipulates variables in the E1xx/E4xx areas and performs further calls. Its full purpose is not yet established; do not classify it as a disk or password routine solely from this entry.
+
+This resolves the actual destinations for CMOS[8Fh] marker 09h and 0Ah: marker 09h returns via 89B0h; marker 0Ah enters 4D4Dh via the ROM pointer at CS:0030h.
