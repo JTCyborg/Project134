@@ -1332,7 +1332,7 @@ Reason: 81 four-byte CMOS/ALi configuration records consumed by the 8400h indexe
 887C  B6 07 22 05                                     ..".
 
 ===== DATA 8750h-887Fh =====
-Reason: Overlapping 76-record subset processed by the 85C1h E000h state updater; four-byte records
+Reason: Overlapping 76-record suffix processed by the 85C0h E000h state updater; four-byte records
 8750  36 FF 01 00 40 FF 20 F0 41 FF 0A FF 42 FF 10 00 6...@. .A...B...
 8760  43 FF 1F 00 44 FF 0F 00 45 FF 00 00 46 FF 0F 00 C...D...E...F...
 8770  47 FF 69 3A 48 FF 01 01 49 FF 08 60 4A FF 40 00 G.i:H...I..`J.@.
@@ -1352,6 +1352,15 @@ Reason: Overlapping 76-record subset processed by the 85C1h E000h state updater;
 8850  AB 60 00 00 AC 07 20 02 AD FF 33 33 AE 0F 05 00 .`.... ...33....
 8860  AF 83 01 7E B0 60 00 00 B1 07 21 04 B2 FF 40 40 ...~.`....!...@@
 8870  B3 0F 05 00 B4 83 01 7E B5 60 00 00 B6 07 22 05 .......~.`....".
+
+===== DATA 8750h-87A3h =====
+Reason: Overlapping 21-record ALi index/value view consumed by the 208Dh POST table writer; first word encodes index and second word carries data
+8750  36 FF 01 00 40 FF 20 F0 41 FF 0A FF 42 FF 10 00 6...@. .A...B...
+8760  43 FF 1F 00 44 FF 0F 00 45 FF 00 00 46 FF 0F 00 C...D...E...F...
+8770  47 FF 69 3A 48 FF 01 01 49 FF 08 60 4A FF 40 00 G.i:H...I..`J.@.
+8780  4E FF 00 0C 50 FF 21 40 51 FF 00 00 52 FF 64 00 N...P.!@Q...R.d.
+8790  53 FF 5B 5F 54 FF 88 00 55 FF 65 C5 56 FF 00 00 S.[_T...U.e.V...
+87A0  57 FF 30 32                                     W.02
 
 ===== DATA 87A9h-88BAh =====
 Reason: Overlapping 14-row AUTO Config lookup view; 20-byte row stride with 16-bit fields at offsets +00h/+04h/+08h/+0Ch; overlaps other data and code views
@@ -1375,8 +1384,12 @@ Reason: Overlapping 14-row AUTO Config lookup view; 20-byte row stride with 16-b
 88B9  90 80                                           ..
 
 ===== DATA 8880h-8887h =====
-Reason: Adjacent POST configuration constants; word at 8886h is the 0051h (81-record) loop count used at 844Ah
+Reason: Four little-endian counts: 5-entry prefix, 76-entry suffix, zero-entry optional table, and 81-entry full CMOS table
 Words: 0005, 004C, 0000, 0051
+
+===== DATA 8888h-8888h =====
+Reason: E0h key threshold used by the 8378h record lookup to switch from the built-in array to the optional table
+8888  E0                                              .
 
 ===== DATA 8E4Eh-8E61h =====
 Reason: Ten-word ALi indexed-register profile list selected by the CMOS B3h profile path
@@ -1453,6 +1466,38 @@ Words: 89D6
 ===== DATA 89ECh-89EDh =====
 Reason: Crafted near-return word 89EEh used by the 8DCFh ALi indexed-read helper
 Words: 89EE
+
+===== DATA 8A36h-8A37h =====
+Reason: Crafted near-return word 8A38h used by the EE94h CMOS-read trampoline
+Words: 8A38
+
+===== DATA 8A66h-8A67h =====
+Reason: Crafted near-return word 8A68h used by the 8DDCh ALi indexed-write helper
+Words: 8A68
+
+===== DATA 8A8Eh-8A8Fh =====
+Reason: Crafted near-return word 8A90h used by the 8D83h ALi indexed-register sequence
+Words: 8A90
+
+===== DATA 8A9Ah-8A9Bh =====
+Reason: Crafted near-return word 8A9Ch used by the EE94h CMOS-read trampoline
+Words: 8A9C
+
+===== DATA 8AA6h-8AA7h =====
+Reason: Crafted near-return word 8AA8h used by the EE9Dh CMOS-write trampoline
+Words: 8AA8
+
+===== DATA 8AB2h-8AB3h =====
+Reason: Crafted near-return word 8AB4h used by the 8DDCh ALi indexed-write helper
+Words: 8AB4
+
+===== DATA 8ABEh-8ABFh =====
+Reason: Crafted near-return word 8AC0h used by the 8DCFh ALi indexed-read helper
+Words: 8AC0
+
+===== DATA 8ACAh-8ACBh =====
+Reason: Crafted near-return word 8ACCh used by the 8DDCh ALi indexed-write helper
+Words: 8ACC
 
 ===== DATA 8A36h-8A37h =====
 Reason: Crafted near-return word 8A38h used by the EE94h CMOS-read trampoline
@@ -14039,8 +14084,8 @@ Reason: CMOS/ALi configuration selector: searches the 873Ch record array and ret
 83AB  0A C0                   or al, al
 83AD  C3                      ret
 
-===== 85B3h-85BFh =====
-Reason: POST CMOS/ALi state-application wrapper; calls the 873Ch record walkers
+===== 85B3h-862Fh =====
+Reason: POST CMOS/ALi state-application wrapper; applies prefix, optional table, then falls through to the 76-record suffix
 85B3  50                      push ax
 85B4  E8 3E 00                call 0x85f5
 85B7  58                      pop ax
@@ -14048,6 +14093,93 @@ Reason: POST CMOS/ALi state-application wrapper; calls the 873Ch record walkers
 85BB  50                      push ax
 85BC  E8 17 00                call 0x85d6
 85BF  58                      pop ax
+85C0  56                      push si
+85C1  2E 8B 0E 82 88          mov cx, word ptr cs:[0x8882]
+85C6  BE 50 87                mov si, 0x8750
+85C9  EB 33                   jmp 0x85fe
+85CB  56                      push si
+85CC  2E 8B 0E 84 88          mov cx, word ptr cs:[0x8884]
+85D1  BE 80 88                mov si, 0x8880
+85D4  EB 28                   jmp 0x85fe
+85D6  56                      push si
+85D7  33 DB                   xor bx, bx
+85D9  33 C9                   xor cx, cx
+85DB  2E 8A 1E B0 82          mov bl, byte ptr cs:[0x82b0]
+85E0  FE CB                   dec bl
+85E2  78 0A                   js 0x85ee
+85E4  D1 E3                   shl bx, 1
+85E6  2E 8B 36 CA 82          mov si, word ptr cs:[0x82ca]
+85EB  2E 8B 08                mov cx, word ptr cs:[bx + si]
+85EE  2E 8B 36 C0 82          mov si, word ptr cs:[0x82c0]
+85F3  EB 09                   jmp 0x85fe
+85F5  56                      push si
+85F6  2E 8B 0E 80 88          mov cx, word ptr cs:[0x8880]
+85FB  BE 3C 87                mov si, 0x873c
+85FE  E3 2E                   jcxz 0x862e
+8600  32 FF                   xor bh, bh
+8602  50                      push ax
+8603  2E 8A 1C                mov bl, byte ptr cs:[si]
+8606  FE C8                   dec al
+8608  8A 87 80 E0             mov al, byte ptr [bx - 0x1f80]
+860C  78 0A                   js 0x8618
+860E  2E 8A 44 02             mov al, byte ptr cs:[si + 2]
+8612  74 04                   je 0x8618
+8614  2E 8A 44 03             mov al, byte ptr cs:[si + 3]
+8618  2E 8A 54 01             mov dl, byte ptr cs:[si + 1]
+861C  22 C2                   and al, dl
+861E  F6 D2                   not dl
+8620  20 97 00 E0             and byte ptr [bx - 0x2000], dl
+8624  08 87 00 E0             or byte ptr [bx - 0x2000], al
+8628  83 C6 04                add si, 4
+862B  58                      pop ax
+862C  E2 D4                   loop 0x8602
+862E  5E                      pop si
+862F  C3                      ret
+
+===== 85C0h-862Fh =====
+Reason: direct Setup dispatch target for the 76-record suffix; also fall-through continuation of the 85B3h wrapper
+85C0  56                      push si
+85C1  2E 8B 0E 82 88          mov cx, word ptr cs:[0x8882]
+85C6  BE 50 87                mov si, 0x8750
+85C9  EB 33                   jmp 0x85fe
+85CB  56                      push si
+85CC  2E 8B 0E 84 88          mov cx, word ptr cs:[0x8884]
+85D1  BE 80 88                mov si, 0x8880
+85D4  EB 28                   jmp 0x85fe
+85D6  56                      push si
+85D7  33 DB                   xor bx, bx
+85D9  33 C9                   xor cx, cx
+85DB  2E 8A 1E B0 82          mov bl, byte ptr cs:[0x82b0]
+85E0  FE CB                   dec bl
+85E2  78 0A                   js 0x85ee
+85E4  D1 E3                   shl bx, 1
+85E6  2E 8B 36 CA 82          mov si, word ptr cs:[0x82ca]
+85EB  2E 8B 08                mov cx, word ptr cs:[bx + si]
+85EE  2E 8B 36 C0 82          mov si, word ptr cs:[0x82c0]
+85F3  EB 09                   jmp 0x85fe
+85F5  56                      push si
+85F6  2E 8B 0E 80 88          mov cx, word ptr cs:[0x8880]
+85FB  BE 3C 87                mov si, 0x873c
+85FE  E3 2E                   jcxz 0x862e
+8600  32 FF                   xor bh, bh
+8602  50                      push ax
+8603  2E 8A 1C                mov bl, byte ptr cs:[si]
+8606  FE C8                   dec al
+8608  8A 87 80 E0             mov al, byte ptr [bx - 0x1f80]
+860C  78 0A                   js 0x8618
+860E  2E 8A 44 02             mov al, byte ptr cs:[si + 2]
+8612  74 04                   je 0x8618
+8614  2E 8A 44 03             mov al, byte ptr cs:[si + 3]
+8618  2E 8A 54 01             mov dl, byte ptr cs:[si + 1]
+861C  22 C2                   and al, dl
+861E  F6 D2                   not dl
+8620  20 97 00 E0             and byte ptr [bx - 0x2000], dl
+8624  08 87 00 E0             or byte ptr [bx - 0x2000], al
+8628  83 C6 04                add si, 4
+862B  58                      pop ax
+862C  E2 D4                   loop 0x8602
+862E  5E                      pop si
+862F  C3                      ret
 
 ===== 85CBh-85D5h =====
 Reason: record walker over the CS:8880h metadata block
