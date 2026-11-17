@@ -1,4 +1,4 @@
-# AMI486 — CMOS write path and gated save block at 1C00
+# AMI486 — CMOS write path and gated save block at 1C06
 
 Date: 2026-11-17  
 Repository: `JTCyborg/Project134`, branch `main`  
@@ -20,9 +20,9 @@ EEA9: C3          RET
 
 Caller convention is `AL=index, AH=data`. This is the counterpart to the read primitive at `EE94` (AL=index, return AL=data).
 
-## 2. Gated write block at 1C00
+## 2. Gated write block at 1C06
 
-The routine beginning at `1C00` first calls the optional callback in `CS:[82DE]`, then tests bit `40h` in `CS:[8280]`. If that bit is clear, it skips the CMOS writes and returns through the later code path.
+The routine begins at `1C06` (not `1C00`). The bytes at `1C00` belong to the displacement of a conditional branch from the preceding routine. At `1C01` there is a separate `CALL 2415h; RET; RET` stub. The routine at `1C06` first calls the optional callback in `CS:[82DE]`, then tests bit `40h` in `CS:[8280]`. If that bit is clear, it skips the CMOS writes and continues at `1C44`.
 
 When the bit is set, the following writes are performed:
 
@@ -35,7 +35,7 @@ When the bit is set, the following writes are performed:
 | `1C36` | `B1h` | `98h` | `MOV AX,98B1h` |
 | `1C3B` | `98h` | `B1h` | `XCHG AH,AL` then second write |
 
-The exact instruction sequence is:
+The exact instruction sequence, with corrected offsets, is:
 
 ```
 1C16: 8A 26 13 00    MOV AH,[0013]
@@ -83,3 +83,15 @@ It does not yet prove that the Setup UI's `E0xx` variables are the source of the
 2. Trace reads of CMOS `B0h/B1h/97h/98h` to identify the reciprocal markers' purpose.
 3. Decode the helper calls after `1C3E` and the meaning of `DS:[0013]`, `DS:[0014]`.
 4. Compare this save block with Setup handler writes and the CMOS-to-chipset restore block; only then connect E0xx fields to persistent settings.
+
+
+## 6. Cross-reference audit of the 8280h flag byte
+
+A full scan of direct 16-bit offset references to `CS:[8280]` in the 64 KiB ROM found tests of bits `80h`, `40h`, `20h`, `10h`, `08h`, `04h`, `02h`, and `01h` in multiple routines. In the audited direct-reference sites, the instruction form is `TEST byte ptr CS:[8280h],imm8` (`2E F6 06 80 82 imm8`).
+
+No direct immediate `OR`, `AND`, or `MOV` store to `CS:[8280]` was found in the ROM by searching the corresponding direct-address instruction encodings. This does not prove that the flag is never modified: it could be initialized by a block copy, a pointer-based write, or an external/runtime mechanism. It does mean that the flag's setter has not yet been identified.
+
+The complete direct-reference offsets found include:
+`10EE, 114C, 12F4, 1371, 15A7, 1C0C, 5CAB, 8403, 8645, 865E, 8677, 867E, 9243, D7ED, D843, D85D, DA24, DA49, DA90, E2EF, E321, E33A`.
+
+The next investigation should identify initialization/copy routines that populate the CS-resident workspace and search for pointer-based writes into the region containing `8280h`.
