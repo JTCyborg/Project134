@@ -370,6 +370,12 @@ def main():
                 raw = rom[off:off + ins.size]
                 op_str = ins.op_str
                 b = ins.bytes
+                mnemonic = ins.mnemonic
+                # In 16-bit mode, unprefixed 98h/99h are CBW/CWD, not CWDE/CDQ.
+                if b == b"\\x98":
+                    mnemonic = "cbw"
+                elif b == b"\\x99":
+                    mnemonic = "cwd"
                 relative = (
                     b[0] in (0xE8, 0xE9, 0xEB)
                     or 0x70 <= b[0] <= 0x7F
@@ -378,7 +384,7 @@ def main():
                 )
                 if relative and ins.operands and ins.operands[0].type == X86_OP_IMM:
                     op_str = f"0x{ins.operands[0].imm & 0xFFFF:x}"
-                lines.append(f"{off:04X}  {raw.hex(' ').upper():<23} {ins.mnemonic} {op_str}".rstrip())
+                lines.append(f"{off:04X}  {raw.hex(' ').upper():<23} {mnemonic} {op_str}".rstrip())
                 off += ins.size
         lines.append("")
     OUT_PATH.write_text("\n".join(lines) + "\n", encoding="utf-8")
