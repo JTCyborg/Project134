@@ -140,7 +140,7 @@ D100h–D5FFh is the separate floppy-controller/DMA subsystem: FDC ports 03F2h/0
 
 F92Ah–F935h is a six-word little-endian dispatch table with targets F936h, F986h, F9C4h, F977h, F999h and F9D3h. F977h overlaps the F936h stream as an alternate entry. The F8E7h wrapper ends in IRET at F929h; its actual vector entry remains unknown.
 
-Historical snapshot: 168 code windows plus 18 data ranges (186 headers) produced a 10,700-byte union. The current generated artifact is 221 code windows plus 56 data ranges (277 headers); the recomputed union is 20,658 bytes across 105 pages. See section 11 for exact byte-mask counts. Neither figure is semantic coverage. Near-branch targets are normalized to 16-bit IP wraparound.
+Historical snapshot: 168 code windows plus 18 data ranges (186 headers) produced a 10,700-byte union. The 2026-11-17 generated artifact is 243 code windows plus 57 data ranges (300 headers); the recomputed union is 23,064 bytes across 121 pages. See section 11 for exact byte-mask counts. Neither figure is semantic coverage. Near-branch targets are normalized to 16-bit IP wraparound.
 
 
 ## INT 13h dispatch correction
@@ -361,12 +361,12 @@ The updated generator also removes the redundant 2D00h and misaligned 2D80h expl
 
 ### Current reproducible candidate footprint
 
-The regenerated manifest reports 222 code windows and 57 data ranges (279 headers). A byte-mask recomputation from the generated listing yields:
-- code-window bytes: 12,140;
+The regenerated manifest reports 243 code windows and 57 data ranges (300 headers). A byte-mask recomputation from the generated listing yields:
+- code-window bytes: 13,980;
 - data-range bytes: 9,197;
 - overlap: 113;
-- union: 21,224 bytes (32.39%);
-- touched 256-byte pages: 108/256.
+- union: 23,064 bytes (35.19%);
+- touched 256-byte pages: 121/256.
 
 Do not interpret 31.52% as BIOS semantic completion. The code windows are independent linear decodes; the data ranges include confirmed strings/tables and some mixed blocks whose internal table consumers remain open.
 
@@ -396,3 +396,15 @@ Detailed byte-aligned report: [AMI486_LOW_ROM_SETUP_VIDEO_ENTRY_20261117.md](AMI
 - It walks four-byte `next/callback` records beginning directly at `BX=0AF5h`. This differs from the 05B4h dispatcher, which starts at the selected base plus four. The first raw record at 0AF5h is `next=0AEDh, callback=6373h`.
 - Runtime entry is still unproven: no direct near CALL/JMP target or literal 00EFh pointer was found. The visible epilogue pops BP/SI/DI that are not pushed within this stream, so the required caller stack frame remains unresolved.
 - Do not equate this renderer with the separate 3F7Bh POST summary renderer solely because the screen labels overlap.
+
+
+### 11.3 Temporary interrupt hooks and calendar refresh — 2026-11-17
+
+Detailed byte-backed report: [AMI486_TEMPORARY_IVT_CALENDAR_REFRESH_20261117.md](AMI486_TEMPORARY_IVT_CALENDAR_REFRESH_20261117.md).
+
+- `626Bh` installs temporary INT 10h/1Ah/1Ch handlers at F000:62ECh, F000:62FCh and F000:631Ch; it saves the previous six IVT words at 0280h–028Ah.
+- `62BDh`, the actual CALL target at 0210h, restores those six IVT words and returns with STI. The earlier 6220h target annotation is withdrawn.
+- The INT 10h/1Ah hooks forward through existing INT A0h/A1h vectors and bracket the calls with a nesting counter at 028Eh.
+- The INT 1Ch hook uses the BIOS tick count, defers while the nesting counter is nonzero, and calls 6616h to refresh a calendar/date display; it then invokes INT A2h.
+- `6616h` reads the BIOS date through INT 1Ah AH=04h (6774h), validates BCD through 68E2h, converts through 68FDh, and uses CS tables 6164h/616Bh for calendar placement.
+- The raw 6616h stream has been checked through RET at 6757h. The generator source requests a 0142h window, but the generated listing still shows the previous 0080h window; this generation mismatch remains open.
