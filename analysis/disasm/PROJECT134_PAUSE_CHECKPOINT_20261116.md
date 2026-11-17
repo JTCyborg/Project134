@@ -243,7 +243,7 @@ Two previously under-described regions now have byte-backed reports:
 
 ## Address-ledger continuation — 2026-11-17
 
-The Capstone candidate generator has been expanded: 330 code windows, 64 data ranges. Recomputed candidate footprint is 29,072/65,536 bytes (44.36%) across 141 pages, comprising 19,883 unique code-window bytes, 9,302 unique data-range bytes and 113 overlap bytes. This is a sampling footprint only, not semantic coverage.
+The Capstone candidate generator has been expanded: 386 code windows, 74 data ranges. Recomputed candidate footprint is 35,960/65,536 bytes (54.87%) across 169 pages, comprising 22,989 unique code-window bytes, 13,084 unique data-range bytes and 113 overlap bytes. This is a sampling footprint only, not semantic coverage.
 
 New text/table classifications are documented in AMI486_ADDRESS_LEDGER_20261116.md section 11. The 2D11h timing benchmark is now an aligned candidate window; its runtime entry and stack precondition remain unresolved. The next step remains range-driven reconciliation of unclassified bytes and alternate entries, not a numbered phase.
 
@@ -260,7 +260,7 @@ The low-ROM 00EFh candidate seed is generated through 0235h, including the align
 
 The generated candidate window 00EFh–0235h is now byte-aligned through RET. The report AMI486_LOW_ROM_SETUP_VIDEO_ENTRY_20261117.md documents the display/cursor preservation path and the 0AF5h callback-record walker. No direct near CALL/JMP entry or literal 00EFh pointer was found; incoming stack convention remains unresolved.
 
-Current generated candidate footprint: 330 code windows, 64 data ranges, 19,883 unique code-window bytes, 9,302 unique data-range bytes, 113 overlap bytes, 29,072-byte union (44.36%) across 141 pages. This remains a sampling footprint, not semantic completion.
+Current generated candidate footprint: 386 code windows, 74 data ranges, 22,989 unique code-window bytes, 13,084 unique data-range bytes, 113 overlap bytes, 35,960-byte union (54.87%) across 169 pages. This remains a sampling footprint, not semantic completion.
 
 
 ## Temporary IVT/calendar refresh — 2026-11-17
@@ -289,6 +289,18 @@ New byte-backed region reports:
 - analysis/disasm/AMI486_ADDRESS_LEDGER_REGION_4628_55A7_20261117.md — hard-disk Setup utility, bad-track editor and POST memory test.
 - analysis/disasm/AMI486_ADDRESS_LEDGER_REGION_8E89_93F7_20261117.md — timing classifier, PIT2 benchmark and INT 15h AH=80h–91h service table/handlers.
 
-Current candidate map was regenerated successfully by GitHub Actions: 330 code windows, 64 data ranges, 29,072-byte union (44.36%); this is not semantic completion. Candidate listing SHA: 426aa9903c473c7de7c879300358c0b6979dd83c.
+Current candidate map was regenerated successfully by GitHub Actions: 386 code windows, 74 data ranges, 35,960-byte union (54.87%); this is not semantic completion. Candidate listing SHA: 64c64b7250b8c9271635f38230a89a43a71b34ec.
 
 Next selected range: 93F8h–9FFFh (3,080 bytes), continuing the controller/video BIOS cluster. Do not resume numbered phases; keep working from uncovered byte ranges and confirmed references.
+
+
+## Further address-ledger work — 2026-11-17
+
+New reports:
+- analysis/disasm/AMI486_ADDRESS_LEDGER_REGION_93F8_9870_20261117.md — PS/2 auxiliary-device services and IRQ12 packet handling.
+- analysis/disasm/AMI486_ADDRESS_LEDGER_REGION_9848_A017_20261117.md — INT 10h video BIOS dispatch table and service handlers.
+- analysis/disasm/AMI486_ADDRESS_LEDGER_REGION_B7B1_C5FA_20261117.md — Advanced CMOS/Chipset Setup labels, metadata and callback table.
+
+The generator now emits the 8EA7h, 90BAh, 94FAh, 9589h, 9784h, 9848h and B7B2h tables as data ranges. Latest successful artifact: 386 code windows, 74 data ranges, 35,960-byte union (54.87%), 169 pages touched, 98 fully covered. Candidate listing SHA: 64c64b7250b8c9271635f38230a89a43a71b34ec.
+
+Next selected gap: D65Bh–E400h (3,494 bytes). Continue from byte classification and reference evidence; do not return to numbered phase sequencing.
