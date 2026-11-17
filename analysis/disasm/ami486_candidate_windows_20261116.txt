@@ -23182,3 +23182,51 @@ Reason: three-way disk/controller mode dispatcher selected through the word tabl
 6C13  F8                      clc
 6C14  C3                      ret
 
+===== 71E4h-7263h =====
+Reason: second target in the 6BD8h three-way disk/controller mode dispatch table
+71E4  80 3E AB E1 01          cmp byte ptr [0xe1ab], 1
+71E9  75 15                   jne 0x7200
+71EB  83 3E B5 E1 00          cmp word ptr [0xe1b5], 0
+71F0  75 69                   jne 0x725b
+71F2  80 3E B7 E1 00          cmp byte ptr [0xe1b7], 0
+71F7  75 62                   jne 0x725b
+71F9  FE 06 22 E4             inc byte ptr [0xe422]
+71FD  EB 39                   jmp 0x7238
+71FF  90                      nop
+7200  80 3E AB E1 00          cmp byte ptr [0xe1ab], 0
+7205  74 14                   je 0x721b
+7207  83 3E B5 E1 00          cmp word ptr [0xe1b5], 0
+720C  74 03                   je 0x7211
+720E  E9 B5 00                jmp 0x72c6
+7211  80 3E B7 E1 00          cmp byte ptr [0xe1b7], 0
+7216  74 03                   je 0x721b
+7218  E9 AB 00                jmp 0x72c6
+721B  B0 01                   mov al, 1
+721D  A2 C3 E3                mov byte ptr [0xe3c3], al
+7220  A2 22 E4                mov byte ptr [0xe422], al
+7223  B8 FF FF                mov ax, 0xffff
+7226  A3 C1 E3                mov word ptr [0xe3c1], ax
+7229  C6 06 C6 E3 37          mov byte ptr [0xe3c6], 0x37
+722E  C6 06 C7 E3 12          mov byte ptr [0xe3c7], 0x12
+7233  C6 06 AB E1 01          mov byte ptr [0xe1ab], 1
+7238  B8 80 07                mov ax, 0x780
+723B  2B D2                   sub dx, dx
+723D  8A 1E 1F E4             mov bl, byte ptr [0xe41f]
+7241  32 FF                   xor bh, bh
+7243  F7 F3                   div bx
+7245  33 D2                   xor dx, dx
+7247  8A 1E 13 E4             mov bl, byte ptr [0xe413]
+724B  32 FF                   xor bh, bh
+724D  F7 F3                   div bx
+724F  40                      inc ax
+7250  FE CB                   dec bl
+7252  88 1E B4 E1             mov byte ptr [0xe1b4], bl
+7256  2B DB                   sub bx, bx
+7258  A3 B2 E1                mov word ptr [0xe1b2], ax
+725B  E8 BB F8                call 0x6b19
+725E  72 70                   jb 0x72d0
+7260  80              db 0x80
+7261  3E              db 0x3E
+7262  B9              db 0xB9
+7263  E3              db 0xE3
+
