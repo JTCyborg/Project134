@@ -81,6 +81,10 @@ LIMITS.update({
 })
 
 LIMITS.update({
+    0xC780: 0x130,
+})
+
+LIMITS.update({
     0x18E5: 0x18, 0x18FD: 0x17, 0x1914: 0x6C,
     0x1980: 0x0F, 0x198F: 0x13,
     0x19AB: 0x02, 0x19AD: 0x01, 0x19AE: 0x01, 0x19AF: 0x01,
@@ -811,7 +815,7 @@ SEEDS = [
     (0xC648, "shared FDC/INT13 status epilogue"),
     (0xC6BC, "FDC sense-interrupt status call bridge"),
     (0xC700, "diskette BIOS dispatch continuation"),
-    (0xC780, "diskette BIOS dispatch continuation"),
+    (0xC780, "diskette BIOS dispatch/transfer continuation: extends through 0C8AFh, with internal branch target 0C814h and near-JMP path to 0C8DBh"),
     (0xC8B0, "diskette DMA transfer dispatch path"),
     (0xC8BB, "direct caller of DMA channel-2 setup D156h"),
     (0xC913, "diskette FDC DMA/result sequence"),
