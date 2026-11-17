@@ -1293,3 +1293,27 @@ Therefore E000h–E07Fh and E080h–E0FFh are paired 80h-byte configuration imag
 - The source record bytes at E099h–E0ACh are part of the staged configuration image; their individual field semantics remain open pending cross-reference analysis.
 
 ROM bytes unchanged. This note corrects interpretation only.
+
+### 5AB5h: special geometry record is a 9-byte packed source expanded to 16 bytes
+
+A byte-level re-decode of `5AB5h–5AEBh` clarifies how the custom-geometry records written by `5AECh` are consumed.
+
+Entry setup:
+- `DI=E411h` is the destination in the caller's ES segment.
+- If `AL != 2Fh`, the helper selects the normal ROM table at `CS:E3F1h + AL*10h` and copies 10h bytes to ES:E411h.
+- If `AL == 2Fh`, it selects `DS:E01Bh`. When `DL != 0` it adds 9 to SI, selecting `DS:E024h` instead.
+
+Special-path expansion:
+- The source pointer advances through exactly nine bytes: three `MOVSW` operations (6 bytes) and three `MOVSB` operations (3 bytes).
+- Interleaved `STOSW` / `STOSB` operations write the remaining seven destination bytes from the caller's incoming AX/AL.
+- The resulting destination record is exactly 16 bytes at ES:E411h–E420h.
+
+This resolves the apparent mismatch between the 9-byte per-drive blocks saved by `5AECh` and the 16-byte geometry record expected by later code: the special path expands a packed 9-byte record into the standard 16-byte destination layout, filling seven positions with the caller-supplied AX/AL pattern. The exact semantic labels of the nine copied fields and the seven fill positions remain open; do not infer them from the instruction mnemonics alone.
+
+Combined with the 5B7Ch copy map, the two packed source records are:
+- drive index 0: leading byte E019h plus packed 9-byte payload E01Bh–E023h;
+- drive index 1: leading byte E01Ah plus packed 9-byte payload E024h–E02Ch.
+
+The special 5AB5h selector uses DL as a zero/nonzero choice between those two payloads. The normal `AL=2Fh` path therefore consumes one 9-byte payload at a time; it does not copy a contiguous 16-byte source block.
+
+This establishes the packed-record width and expansion mechanics. It does not yet prove which caller-supplied AX pattern is used at every 5AB5h call site, nor the names of the geometry fields represented by each packed byte.
