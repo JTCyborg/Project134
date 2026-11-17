@@ -382,3 +382,14 @@ The four-entry menu table at 393Dh can now be summarized:
 3 -> 4E5Fh (clear E423h counter/state)
 
 No evidence in these handlers identifies the actual physical format/write routine. The next useful step is to follow the helper chain after the confirmation/status prompts in the 4Fxx–52xx region and identify any indirect disk-service dispatch, rather than treating these menu callbacks as the formatter itself.
+
+### Correction to the 4E2Eh helper references
+
+A byte-accurate relative-CALL recalculation corrects the preceding summary: the 4E2Eh/4E65h handler does not directly call 578Dh. Its CALL targets in the 4E64h–4EE6h span are:
+- 4E70h -> 4CE6h
+- 4E7Ah -> 581Ch
+- 4E83h -> 5902h
+- 4E92h -> 581Ch
+- 4EC3h -> 4BDAh
+
+The 581Ch and 5902h helpers belong to the display/input support layer; the 4CE6h and 4BDAh helpers remain to be decoded. Remove the earlier shorthand claim that this handler itself calls 578Dh. The geometry-entry handlers at 4DE7h/4E1Fh still call the shared 4EE7h numeric-input routine, which independently calls 578Dh.
