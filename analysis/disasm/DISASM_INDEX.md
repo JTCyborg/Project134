@@ -1382,3 +1382,13 @@ The 19B0h–23CEh ledger now includes the previously uncovered 235Bh–2380h con
 - The selected values feed the already mapped stack-threaded ALi writes at 2381h, 2396h and 23ACh. The later A20/CR0 exit and memory-test handoff remain in the 23CEh–29F5h ledger.
 - The candidate generator now includes a bounded 235Bh seed of 26h bytes, ending at 2380h.
 
+
+
+## Additional protected-mode memory-alias test continuations — 2026-11-17
+
+The 19B0h–23CEh ledger now records two previously uncovered fall-through spans:
+
+- 21E1h–222Ch: DH-selected comparisons at 04800000h, 04000800h, 04001000h and 04002000h against 5555AAAAh. The 2207h–222Ch tail ends with DH=04h and falls into the ALi 16h read/modify/write path at 222Dh.
+- 235Bh–2380h: BH-selected comparisons at 04001000h and 04002000h, ending with BH=04h before the ALi 10h/11h/16h update chain at 2381h.
+
+Both are continuations of the existing protected-mode extended-memory probe, not independent routines. The candidate generator now has bounded 26h-byte seeds at 2207h and 235Bh. The candidate listing and manifest still need a successful regeneration after these latest seed additions.
