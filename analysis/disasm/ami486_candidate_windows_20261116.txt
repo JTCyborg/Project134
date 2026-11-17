@@ -1573,6 +1573,22 @@ Words: 282A
 Reason: Crafted near-return word 2836h consumed by the 8DDCh indexed-write helper
 Words: 2836
 
+===== DATA 5C02h-5C03h =====
+Reason: Crafted stack-return word 5C04h consumed by the F5A9h POST diagnostic trampoline
+Words: 5C04
+
+===== DATA 5C24h-5C25h =====
+Reason: Crafted stack-return word 5C26h consumed by the 5520h helper
+Words: 5C26
+
+===== DATA 5C56h-5C57h =====
+Reason: Crafted stack-return word 5C58h consumed by the F5A9h POST diagnostic trampoline
+Words: 5C58
+
+===== DATA 5C66h-5C67h =====
+Reason: Crafted stack-return word 5C68h consumed by the 552Ah helper
+Words: 5C68
+
 ===== DATA FA00h-FA4Bh =====
 Reason: 76-byte POST integrity comparison block; bytewise complement of FF70h-FFBBh
 FA00  68 50 50 01 01 01 01 01 2A B2 0A 62 AA 0A A2 4A hPP.....*..b...J
@@ -1658,22 +1674,21 @@ FE91  EE DA FA 4F 7F 3B 3B 4B 3B 33 4B 1F 2B 00 00 00 ...O.;;K;3K.+...
 Reason: Seven-byte upper-ROM metadata/control record
 FEA1  01 06 06 92 E9 3F EE                            .....?.
 
-===== DATA FEA8h-FEE3h =====
-Reason: Zero-filled upper-ROM padding/reserved area
+===== DATA FEA8h-FEE2h =====
+Reason: Zero-filled upper-ROM padding/reserved area before the IVT offset table
 FEA8  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 ................
 FEB8  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 ................
 FEC8  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 ................
-FED8  00 00 00 00 00 00 00 00 00 00 00 97             ............
+FED8  00 00 00 00 00 00 00 00 00 00 00                ...........
 
-===== DATA FEE4h-FF4Fh =====
-Reason: Mixed upper-ROM dispatch/relocation data candidate; individual entries unresolved
-FEE4  EA 97 EA C3 E2 97 EA 97 EA 54 FF 43 EB EB EA A5 .........T.C....
-FEF4  FE 87 E9 97 EA 97 EA 97 EA 97 EA 57 EF 53 FF 65 ...........W.S.e
-FF04  F0 4D F8 41 F8 59 EC 39 E7 59 F8 2E E8 D2 EF 00 .M.A.Y.9.Y......
-FF14  E0 F2 E6 6E FE 53 FF 53 FF A4 F0 C7 EF 00 00 42 ...n.S.S.......B
-FF24  EA D2 EE 97 EA 97 EA 97 EA DB EE 45 E8 B1 90 00 ...........E....
-FF34  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 ................
-FF44  00 00 00 00 00 00 00 00 00 00 00 00             ............
+===== DATA FEE3h-FF32h =====
+Reason: Forty-word IVT handler-offset table copied by POST: vectors 00h-1Fh and 70h-77h; segment fields remain CS
+Words: EA97, EA97, E2C3, EA97, EA97, FF54, EB43, EAEB, FEA5, E987, EA97, EA97, EA97, EA97, EF57, FF53, F065, F84D, F841, EC59, E739, F859, E82E, EFD2, E000, E6F2, FE6E, FF53, FF53, F0A4, EFC7, 0000, EA42, EED2, EA97, EA97, EA97, EEDB, E845, 90B1
+
+===== DATA FF33h-FF4Fh =====
+Reason: Zero-filled upper-ROM padding after the IVT offset table
+FF33  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 ................
+FF43  00 00 00 00 00 00 00 00 00 00 00 00 00          .............
 
 ===== DATA FF50h-FF6Fh =====
 Reason: Upper-ROM identification fields and printable (1992 AMI contact string
@@ -27753,6 +27768,595 @@ Reason: option-ROM scan invalid-candidate helper: advances BX by 0080h, restores
 1BF0  81 C3 80 00             add bx, 0x80
 1BF4  1F                      pop ds
 1BF5  C3                      ret
+
+===== 5A4Ch-5AA1h =====
+Reason: Setup/POST code candidate immediately after the Power-On Defaults prompt; entry xref unresolved
+5A4C  00 50 D1                add byte ptr [bx + si - 0x2f], dl
+5A4F  E0 8B                   loopne 0x59dc
+5A51  D8 8B 9F C0             fmul dword ptr [bp + di - 0x3f61]
+5A55  59                      pop cx
+5A56  E8 00 FF                call 0x5959
+5A59  3C 59                   cmp al, 0x59
+5A5B  58                      pop ax
+5A5C  75 43                   jne 0x5aa1
+5A5E  80 3E 87 E1 02          cmp byte ptr [0xe187], 2
+5A63  77 08                   ja 0x5a6d
+5A65  72 03                   jb 0x5a6a
+5A67  E9 56 2B                jmp 0x85c0
+5A6A  E9 88 2B                jmp 0x85f5
+5A6D  80 3E 87 E1 04          cmp byte ptr [0xe187], 4
+5A72  74 03                   je 0x5a77
+5A74  E9 54 2B                jmp 0x85cb
+5A77  E9 5C 2B                jmp 0x85d6
+5A7A  A0 87 E1                mov al, byte ptr [0xe187]
+5A7D  2C 04                   sub al, 4
+5A7F  32 E4                   xor ah, ah
+5A81  50                      push ax
+5A82  D1 E0                   shl ax, 1
+5A84  8B D8                   mov bx, ax
+5A86  8B 9F C0 59             mov bx, word ptr [bx + 0x59c0]
+5A8A  E8 CC FE                call 0x5959
+5A8D  3C 59                   cmp al, 0x59
+5A8F  58                      pop ax
+5A90  75 0F                   jne 0x5aa1
+5A92  E8 1E 2B                call 0x85b3
+5A95  BB C4 36                mov bx, 0x36c4
+5A98  B8 28 0D                mov ax, 0xd28
+5A9B  E8 20 FE                call 0x58be
+5A9E  E8 61 FE                call 0x5902
+5AA1  C3                      ret
+
+===== 5AA2h-5AB4h =====
+Reason: direct CALL targets from 3C87h and 3E19h; Setup configuration selector
+5AA2  B8 01 00                mov ax, 1
+5AA5  8A 0E 87 E1             mov cl, byte ptr [0xe187]
+5AA9  80 F9 0A                cmp cl, 0xa
+5AAC  73 06                   jae 0x5ab4
+5AAE  D3 E0                   shl ax, cl
+5AB0  23 06 82 82             and ax, word ptr [0x8282]
+5AB4  C3                      ret
+
+===== 5AB5h-5AEBh =====
+Reason: direct CALL targets from 4797h and 4B8Dh; Setup record-copy helper
+5AB5  56                      push si
+5AB6  57                      push di
+5AB7  1E                      push ds
+5AB8  1E                      push ds
+5AB9  07                      pop es
+5ABA  BF 11 E4                mov di, 0xe411
+5ABD  3C 2F                   cmp al, 0x2f
+5ABF  74 12                   je 0x5ad3
+5AC1  0E                      push cs
+5AC2  1F                      pop ds
+5AC3  B4 10                   mov ah, 0x10
+5AC5  F6 E4                   mul ah
+5AC7  05 F1 E3                add ax, 0xe3f1
+5ACA  8B F0                   mov si, ax
+5ACC  B9 10 00                mov cx, 0x10
+5ACF  F3 A4                   rep movsb byte ptr es:[di], byte ptr [si]
+5AD1  EB 15                   jmp 0x5ae8
+5AD3  BE 1B E0                mov si, 0xe01b
+5AD6  0A D2                   or dl, dl
+5AD8  74 03                   je 0x5add
+5ADA  83 C6 09                add si, 9
+5ADD  A5                      movsw word ptr es:[di], word ptr [si]
+5ADE  A4                      movsb byte ptr es:[di], byte ptr [si]
+5ADF  AB                      stosw word ptr es:[di], ax
+5AE0  A5                      movsw word ptr es:[di], word ptr [si]
+5AE1  AA                      stosb byte ptr es:[di], al
+5AE2  A4                      movsb byte ptr es:[di], byte ptr [si]
+5AE3  AB                      stosw word ptr es:[di], ax
+5AE4  AA                      stosb byte ptr es:[di], al
+5AE5  A5                      movsw word ptr es:[di], word ptr [si]
+5AE6  A4                      movsb byte ptr es:[di], byte ptr [si]
+5AE7  AA                      stosb byte ptr es:[di], al
+5AE8  1F                      pop ds
+5AE9  5F                      pop di
+5AEA  5E                      pop si
+5AEB  C3                      ret
+
+===== 5AECh-5B7Bh =====
+Reason: direct CALL target from 5076h; drive/configuration state update helper
+5AEC  56                      push si
+5AED  57                      push di
+5AEE  1E                      push ds
+5AEF  1E                      push ds
+5AF0  07                      pop es
+5AF1  50                      push ax
+5AF2  FE C8                   dec al
+5AF4  74 11                   je 0x5b07
+5AF6  A0 12 E0                mov al, byte ptr [0xe012]
+5AF9  A2 92 E0                mov byte ptr [0xe092], al
+5AFC  BE 19 E0                mov si, 0xe019
+5AFF  BF 99 E0                mov di, 0xe099
+5B02  B9 14 00                mov cx, 0x14
+5B05  F3 A4                   rep movsb byte ptr es:[di], byte ptr [si]
+5B07  58                      pop ax
+5B08  A2 8A E1                mov byte ptr [0xe18a], al
+5B0B  04 80                   add al, 0x80
+5B0D  8A D0                   mov dl, al
+5B0F  E8 22 50                call 0xab34
+5B12  8A 26 8A E1             mov ah, byte ptr [0xe18a]
+5B16  3C 0E                   cmp al, 0xe
+5B18  77 15                   ja 0x5b2f
+5B1A  FE CC                   dec ah
+5B1C  74 0B                   je 0x5b29
+5B1E  51                      push cx
+5B1F  B1 04                   mov cl, 4
+5B21  D2 E0                   shl al, cl
+5B23  59                      pop cx
+5B24  A2 12 E0                mov byte ptr [0xe012], al
+5B27  EB 4F                   jmp 0x5b78
+5B29  08 06 12 E0             or byte ptr [0xe012], al
+5B2D  EB 49                   jmp 0x5b78
+5B2F  FE CC                   dec ah
+5B31  9C                      pushf
+5B32  74 0A                   je 0x5b3e
+5B34  C6 06 12 E0 F0          mov byte ptr [0xe012], 0xf0
+5B39  A2 19 E0                mov byte ptr [0xe019], al
+5B3C  EB 08                   jmp 0x5b46
+5B3E  80 0E 12 E0 0F          or byte ptr [0xe012], 0xf
+5B43  A2 1A E0                mov byte ptr [0xe01a], al
+5B46  3C 2F                   cmp al, 0x2f
+5B48  74 03                   je 0x5b4d
+5B4A  9D                      popf
+5B4B  EB 2B                   jmp 0x5b78
+5B4D  33 F6                   xor si, si
+5B4F  9D                      popf
+5B50  78 03                   js 0x5b55
+5B52  BE 09 00                mov si, 9
+5B55  89 8C 1B E0             mov word ptr [si - 0x1fe5], cx
+5B59  88 B4 1D E0             mov byte ptr [si - 0x1fe3], dh
+5B5D  C7 84 1E E0 FF FF       mov word ptr [si - 0x1fe2], 0xffff
+5B63  32 D2                   xor dl, dl
+5B65  80 FE 08                cmp dh, 8
+5B68  76 02                   jbe 0x5b6c
+5B6A  B2 08                   mov dl, 8
+5B6C  88 94 20 E0             mov byte ptr [si - 0x1fe0], dl
+5B70  89 8C 21 E0             mov word ptr [si - 0x1fdf], cx
+5B74  88 9C 23 E0             mov byte ptr [si - 0x1fdd], bl
+5B78  1F                      pop ds
+5B79  5F                      pop di
+5B7A  5E                      pop si
+5B7B  C3                      ret
+
+===== 5B7Ch-5BD4h =====
+Reason: direct CALL target from 508Fh; configuration-shadow update helper
+5B7C  56                      push si
+5B7D  57                      push di
+5B7E  1E                      push ds
+5B7F  50                      push ax
+5B80  04 43                   add al, 0x43
+5B82  A2 52 3C                mov byte ptr [0x3c52], al
+5B85  BB 3C 3C                mov bx, 0x3c3c
+5B88  E8 CE FD                call 0x5959
+5B8B  3C 59                   cmp al, 0x59
+5B8D  58                      pop ax
+5B8E  74 41                   je 0x5bd1
+5B90  FE C8                   dec al
+5B92  A0 92 E0                mov al, byte ptr [0xe092]
+5B95  8A 1E 12 E0             mov bl, byte ptr [0xe012]
+5B99  74 0D                   je 0x5ba8
+5B9B  24 F0                   and al, 0xf0
+5B9D  80 E3 0F                and bl, 0xf
+5BA0  BE 19 00                mov si, 0x19
+5BA3  B9 1B 00                mov cx, 0x1b
+5BA6  EB 0B                   jmp 0x5bb3
+5BA8  24 0F                   and al, 0xf
+5BAA  80 E3 F0                and bl, 0xf0
+5BAD  BE 1A 00                mov si, 0x1a
+5BB0  B9 24 00                mov cx, 0x24
+5BB3  0A C3                   or al, bl
+5BB5  A2 12 E0                mov byte ptr [0xe012], al
+5BB8  8A 84 80 E0             mov al, byte ptr [si - 0x1f80]
+5BBC  88 84 00 E0             mov byte ptr [si - 0x2000], al
+5BC0  1E                      push ds
+5BC1  07                      pop es
+5BC2  BE 80 E0                mov si, 0xe080
+5BC5  BF 00 E0                mov di, 0xe000
+5BC8  03 F1                   add si, cx
+5BCA  03 F9                   add di, cx
+5BCC  B9 09 00                mov cx, 9
+5BCF  F3 A4                   rep movsb byte ptr es:[di], byte ptr [si]
+5BD1  1F                      pop ds
+5BD2  5F                      pop di
+5BD3  5E                      pop si
+5BD4  C3                      ret
+
+===== 5BD5h-5BF7h =====
+Reason: direct CALL target from 486Dh; multiply/divide conversion helper
+5BD5  A0 1F E4                mov al, byte ptr [0xe41f]
+5BD8  F6 26 13 E4             mul byte ptr [0xe413]
+5BDC  F7 26 11 E4             mul word ptr [0xe411]
+5BE0  B9 00 08                mov cx, 0x800
+5BE3  3B D1                   cmp dx, cx
+5BE5  72 04                   jb 0x5beb
+5BE7  B8 FF FF                mov ax, 0xffff
+5BEA  C3                      ret
+5BEB  F7 F1                   div cx
+5BED  D1 E9                   shr cx, 1
+5BEF  3B D1                   cmp dx, cx
+5BF1  72 04                   jb 0x5bf7
+5BF3  40                      inc ax
+5BF4  75 01                   jne 0x5bf7
+5BF6  48                      dec ax
+5BF7  C3                      ret
+
+===== 5BF8h-5C01h =====
+Reason: direct JMP target from DA9Fh; stack-threaded POST memory-test launcher
+5BF8  B0 20                   mov al, 0x20
+5BFA  E6 80                   out 0x80, al
+5BFC  BC 02 5C                mov sp, 0x5c02
+5BFF  E9 A7 99                jmp 0xf5a9
+
+===== 5C04h-5C1Dh =====
+Reason: crafted return target from F5A9h; low-memory alias/pattern test
+5C04  33 FF                   xor di, di
+5C06  BE 01 00                mov si, 1
+5C09  B0 FF                   mov al, 0xff
+5C0B  8B DF                   mov bx, di
+5C0D  89 05                   mov word ptr [di], ax
+5C0F  89 45 02                mov word ptr [di + 2], ax
+5C12  32 05                   xor al, byte ptr [di]
+5C14  75 14                   jne 0x5c2a
+5C16  0B FF                   or di, di
+5C18  74 23                   je 0x5c3d
+5C1A  D1 EF                   shr di, 1
+5C1C  EB F4                   jmp 0x5c12
+
+===== 5C1Eh-5C23h =====
+Reason: POST memory-test error trampoline through F5A9h
+5C1E  BC 24 5C                mov sp, 0x5c24
+5C21  E9 FC F8                jmp 0x5520
+
+===== 5C26h-5C4Ah =====
+Reason: crafted return continuation after 5520h diagnostic helper
+5C26  EB 42                   jmp 0x5c6a
+5C28  8B FB                   mov di, bx
+5C2A  8B F0                   mov si, ax
+5C2C  EB 09                   jmp 0x5c37
+5C2E  83 EF 02                sub di, 2
+5C31  EB F7                   jmp 0x5c2a
+5C33  8B FE                   mov di, si
+5C35  8B 35                   mov si, word ptr [di]
+5C37  BD 03 00                mov bp, 3
+5C3A  E9 68 98                jmp 0xf4a5
+5C3D  88 07                   mov byte ptr [bx], al
+5C3F  32 07                   xor al, byte ptr [bx]
+5C41  75 E5                   jne 0x5c28
+5C43  8B FE                   mov di, si
+5C45  D1 E6                   shl si, 1
+5C47  0B FF                   or di, di
+5C49  75 BE                   jne 0x5c09
+
+===== 5C4Bh-5C55h =====
+Reason: POST code 21h and diagnostic trampoline
+5C4B  B0 21                   mov al, 0x21
+5C4D  E6 80                   out 0x80, al
+5C4F  90                      nop
+5C50  BC 56 5C                mov sp, 0x5c56
+5C53  E9 53 99                jmp 0xf5a9
+
+===== 5C58h-5C65h =====
+Reason: crafted return continuation after F5A9h diagnostic helper
+5C58  0B ED                   or bp, bp
+5C5A  78 C2                   js 0x5c1e
+5C5C  B0 22                   mov al, 0x22
+5C5E  E6 80                   out 0x80, al
+5C60  BC 66 5C                mov sp, 0x5c66
+5C63  E9 C4 F8                jmp 0x552a
+
+===== 5C68h-5D22h =====
+Reason: crafted return continuation after 552Ah; POST keyboard/controller initialization
+5C68  75 C4                   jne 0x5c2e
+5C6A  B0 23                   mov al, 0x23
+5C6C  E6 80                   out 0x80, al
+5C6E  33 C0                   xor ax, ax
+5C70  8E C0                   mov es, ax
+5C72  B0 40                   mov al, 0x40
+5C74  8E D8                   mov ds, ax
+5C76  B0 30                   mov al, 0x30
+5C78  8E D0                   mov ss, ax
+5C7A  BC 00 01                mov sp, 0x100
+5C7D  E8 DE BE                call 0x1b5e
+5C80  E4 60                   in al, 0x60
+5C82  E3 00                   jcxz 0x5c84
+5C84  E3 00                   jcxz 0x5c86
+5C86  E6 80                   out 0x80, al
+5C88  E3 00                   jcxz 0x5c8a
+5C8A  E3 00                   jcxz 0x5c8c
+5C8C  F7 C5 00 10             test bp, 0x1000
+5C90  75 67                   jne 0x5cf9
+5C92  B0 A1                   mov al, 0xa1
+5C94  E6 64                   out 0x64, al
+5C96  B9 01 00                mov cx, 1
+5C99  E8 66 99                call 0xf602
+5C9C  74 2C                   je 0x5cca
+5C9E  E4 60                   in al, 0x60
+5CA0  04 C8                   add al, 0xc8
+5CA2  74 55                   je 0x5cf9
+5CA4  04 F2                   add al, 0xf2
+5CA6  75 22                   jne 0x5cca
+5CA8  2E F6 06 80 82 10       test byte ptr cs:[0x8280], 0x10
+5CAE  75 1A                   jne 0x5cca
+5CB0  EB 14                   jmp 0x5cc6
+5CB2  E6 64                   out 0x64, al
+5CB4  B9 01 00                mov cx, 1
+5CB7  E8 48 99                call 0xf602
+5CBA  74 0A                   je 0x5cc6
+5CBC  E4 60                   in al, 0x60
+5CBE  E3 00                   jcxz 0x5cc0
+5CC0  E3 00                   jcxz 0x5cc2
+5CC2  FE C0                   inc al
+5CC4  74 04                   je 0x5cca
+5CC6  81 CD 00 00             or bp, 0
+5CCA  B0 21                   mov al, 0x21
+5CCC  E6 64                   out 0x64, al
+5CCE  B9 01 00                mov cx, 1
+5CD1  E8 2E 99                call 0xf602
+5CD4  74 1A                   je 0x5cf0
+5CD6  E4 60                   in al, 0x60
+5CD8  B4 61                   mov ah, 0x61
+5CDA  86 C4                   xchg ah, al
+5CDC  8B F0                   mov si, ax
+5CDE  F6 D4                   not ah
+5CE0  8B F8                   mov di, ax
+5CE2  E8 3D 99                call 0xf622
+5CE5  75 09                   jne 0x5cf0
+5CE7  8B C7                   mov ax, di
+5CE9  B0 21                   mov al, 0x21
+5CEB  E8 CE 98                call 0xf5bc
+5CEE  74 04                   je 0x5cf4
+5CF0  81 CD 00 00             or bp, 0
+5CF4  8B C6                   mov ax, si
+5CF6  E8 29 99                call 0xf622
+5CF9  F7 C5 00 20             test bp, 0x2000
+5CFD  74 08                   je 0x5d07
+5CFF  B0 30                   mov al, 0x30
+5D01  E8 4D 99                call 0xf651
+5D04  E9 FD 78                jmp 0xd604
+5D07  81 E5 FF EF             and bp, 0xefff
+5D0B  B0 FF                   mov al, 0xff
+5D0D  E6 64                   out 0x64, al
+5D0F  B0 24                   mov al, 0x24
+5D11  E6 80                   out 0x80, al
+5D13  B9 78 00                mov cx, 0x78
+5D16  B8 97 EA                mov ax, 0xea97
+5D19  8C CB                   mov bx, cs
+5D1B  33 FF                   xor di, di
+5D1D  AB                      stosw word ptr es:[di], ax
+5D1E  93                      xchg bx, ax
+5D1F  AB                      stosw word ptr es:[di], ax
+5D20  93                      xchg bx, ax
+5D21  E2 FA                   loop 0x5d1d
+
+===== 5D23h-5D4Dh =====
+Reason: POST IVT/BDA initialization continuation; installs interrupt-vector offset table
+5D23  26 C7 06 7E 00 00 00    mov word ptr es:[0x7e], 0
+5D2A  BF 80 01                mov di, 0x180
+5D2D  B9 10 00                mov cx, 0x10
+5D30  33 C0                   xor ax, ax
+5D32  F3 AB                   rep stosw word ptr es:[di], ax
+5D34  33 FF                   xor di, di
+5D36  BE E3 FE                mov si, 0xfee3
+5D39  B9 20 00                mov cx, 0x20
+5D3C  2E A5                   movsw word ptr es:[di], word ptr cs:[si]
+5D3E  47                      inc di
+5D3F  47                      inc di
+5D40  E2 FA                   loop 0x5d3c
+5D42  BF C0 01                mov di, 0x1c0
+5D45  B9 08 00                mov cx, 8
+5D48  2E A5                   movsw word ptr es:[di], word ptr cs:[si]
+5D4A  47                      inc di
+5D4B  47                      inc di
+5D4C  E2 FA                   loop 0x5d48
+
+===== 5D4Eh-5D9Bh =====
+Reason: POST CMOS/IVT/PIC initialization continuation
+5D4E  B0 25                   mov al, 0x25
+5D50  E6 80                   out 0x80, al
+5D52  E8 84 98                call 0xf5d9
+5D55  A2 12 00                mov byte ptr [0x12], al
+5D58  A8 20                   test al, 0x20
+5D5A  75 40                   jne 0x5d9c
+5D5C  BF 20 00                mov di, 0x20
+5D5F  B8 44 1E                mov ax, 0x1e44
+5D62  AB                      stosw word ptr es:[di], ax
+5D63  8C C8                   mov ax, cs
+5D65  AB                      stosw word ptr es:[di], ax
+5D66  B0 FE                   mov al, 0xfe
+5D68  E6 21                   out 0x21, al
+5D6A  B8 B8 00                mov ax, 0xb8
+5D6D  E8 24 91                call 0xee94
+5D70  8B F8                   mov di, ax
+5D72  B8 B8 00                mov ax, 0xb8
+5D75  E8 25 91                call 0xee9d
+5D78  B0 8E                   mov al, 0x8e
+5D7A  E8 17 91                call 0xee94
+5D7D  A8 C0                   test al, 0xc0
+5D7F  75 1B                   jne 0x5d9c
+5D81  B8 BE BF                mov ax, 0xbfbe
+5D84  E8 0D 91                call 0xee94
+5D87  86 C4                   xchg ah, al
+5D89  E8 08 91                call 0xee94
+5D8C  2B C7                   sub ax, di
+5D8E  50                      push ax
+5D8F  B0 BE                   mov al, 0xbe
+5D91  E8 09 91                call 0xee9d
+5D94  58                      pop ax
+5D95  86 C4                   xchg ah, al
+5D97  B0 BF                   mov al, 0xbf
+5D99  E8 01 91                call 0xee9d
+
+===== 5D9Ch-5E36h =====
+Reason: POST configuration and controller initialization continuation
+5D9C  B0 26                   mov al, 0x26
+5D9E  E6 80                   out 0x80, al
+5DA0  2E A0 56 82             mov al, byte ptr cs:[0x8256]
+5DA4  0A C0                   or al, al
+5DA6  74 05                   je 0x5dad
+5DA8  80 26 16 00 BF          and byte ptr [0x16], 0xbf
+5DAD  C6 06 84 00 18          mov byte ptr [0x84], 0x18
+5DB2  80 0E 10 00 31          or byte ptr [0x10], 0x31
+5DB7  B0 27                   mov al, 0x27
+5DB9  E6 80                   out 0x80, al
+5DBB  1E                      push ds
+5DBC  06                      push es
+5DBD  55                      push bp
+5DBE  E8 9E BD                call 0x1b5f
+5DC1  5D                      pop bp
+5DC2  07                      pop es
+5DC3  1F                      pop ds
+5DC4  B0 F0                   mov al, 0xf0
+5DC6  E6 80                   out 0x80, al
+5DC8  E8 E8 32                call 0x90b3
+5DCB  B0 F1                   mov al, 0xf1
+5DCD  E6 80                   out 0x80, al
+5DCF  E8 E1 32                call 0x90b3
+5DD2  B0 F2                   mov al, 0xf2
+5DD4  E6 80                   out 0x80, al
+5DD6  E8 DA 32                call 0x90b3
+5DD9  B0 28                   mov al, 0x28
+5DDB  E6 80                   out 0x80, al
+5DDD  B8 07 00                mov ax, 7
+5DE0  CD 10                   int 0x10
+5DE2  B0 29                   mov al, 0x29
+5DE4  E6 80                   out 0x80, al
+5DE6  80 26 10 00 CF          and byte ptr [0x10], 0xcf
+5DEB  B8 01 00                mov ax, 1
+5DEE  CD 10                   int 0x10
+5DF0  B0 2A                   mov al, 0x2a
+5DF2  E6 80                   out 0x80, al
+5DF4  E8 B2 97                call 0xf5a9
+5DF7  0B ED                   or bp, bp
+5DF9  79 06                   jns 0x5e01
+5DFB  C7 06 72 00 34 12       mov word ptr [0x72], 0x1234
+5E01  B0 2B                   mov al, 0x2b
+5E03  E6 80                   out 0x80, al
+5E05  E8 58 BD                call 0x1b60
+5E08  74 19                   je 0x5e23
+5E0A  B0 2C                   mov al, 0x2c
+5E0C  E6 80                   out 0x80, al
+5E0E  BB 00 C0                mov bx, 0xc000
+5E11  E8 C5 98                call 0xf6d9
+5E14  81 FB 00 C8             cmp bx, 0xc800
+5E18  72 F7                   jb 0x5e11
+5E1A  FA                      cli
+5E1B  FC                      cld
+5E1C  B0 2D                   mov al, 0x2d
+5E1E  E6 80                   out 0x80, al
+5E20  E8 D3 BD                call 0x1bf6
+5E23  B0 2E                   mov al, 0x2e
+5E25  E6 80                   out 0x80, al
+5E27  B0 8D                   mov al, 0x8d
+5E29  E6 70                   out 0x70, al
+5E2B  E8 7B 97                call 0xf5a9
+5E2E  8C C8                   mov ax, cs
+5E30  26 39 06 42 00          cmp word ptr es:[0x42], ax
+5E35  74 06                   je 0x5e3d
+
+===== 5E37h-5E3Ch =====
+Reason: direct CALL target from the 5E2Eh ROM-segment check failure path
+5E37  E8 2B 01                call 0x5f65
+5E3A  E9 D5 00                jmp 0x5f12
+
+===== 5E3Dh-5E87h =====
+Reason: POST video-memory/adapter selection continuation
+5E3D  A0 12 00                mov al, byte ptr [0x12]
+5E40  24 40                   and al, 0x40
+5E42  BB 00 B8                mov bx, 0xb800
+5E45  74 04                   je 0x5e4b
+5E47  B0 30                   mov al, 0x30
+5E49  B7 B0                   mov bh, 0xb0
+5E4B  08 06 10 00             or byte ptr [0x10], al
+5E4F  B0 2F                   mov al, 0x2f
+5E51  E6 80                   out 0x80, al
+5E53  E8 51 01                call 0x5fa7
+5E56  75 17                   jne 0x5e6f
+5E58  B0 30                   mov al, 0x30
+5E5A  E6 80                   out 0x80, al
+5E5C  B4 08                   mov ah, 8
+5E5E  80 C2 02                add dl, 2
+5E61  E8 34 97                call 0xf598
+5E64  E3 09                   jcxz 0x5e6f
+5E66  B4 01                   mov ah, 1
+5E68  E8 2D 97                call 0xf598
+5E6B  E3 02                   jcxz 0x5e6f
+5E6D  EB 47                   jmp 0x5eb6
+5E6F  80 36 10 00 30          xor byte ptr [0x10], 0x30
+5E74  A0 10 00                mov al, byte ptr [0x10]
+5E77  24 30                   and al, 0x30
+5E79  B7 B8                   mov bh, 0xb8
+5E7B  74 02                   je 0x5e7f
+5E7D  B7 B0                   mov bh, 0xb0
+5E7F  B0 31                   mov al, 0x31
+5E81  E6 80                   out 0x80, al
+5E83  E8 21 01                call 0x5fa7
+5E86  75 17                   jne 0x5e9f
+
+===== 5F65h-5FA6h =====
+Reason: direct CALL target from 5E37h; opaque diagnostic/check helper entry
+5F65  B0 94                   mov al, 0x94
+5F67  E8 2A 8F                call 0xee94
+5F6A  EB 0D                   jmp 0x5f79
+5F6C  B0 94                   mov al, 0x94
+5F6E  E8 23 8F                call 0xee94
+5F71  24 30                   and al, 0x30
+5F73  74 08                   je 0x5f7d
+5F75  32 06 10 00             xor al, byte ptr [0x10]
+5F79  24 30                   and al, 0x30
+5F7B  74 10                   je 0x5f8d
+5F7D  83 CD 40                or bp, 0x40
+5F80  B8 8E 8E                mov ax, 0x8e8e
+5F83  E8 0E 8F                call 0xee94
+5F86  0C 20                   or al, 0x20
+5F88  86 C4                   xchg ah, al
+5F8A  E8 10 8F                call 0xee9d
+5F8D  C3                      ret
+5F8E  E8 B9 95                call 0xf54a
+5F91  E8 B6 95                call 0xf54a
+5F94  B9 00 80                mov cx, 0x8000
+5F97  E8 A2 89                call 0xe93c
+5F9A  E8 D4 95                call 0xf571
+5F9D  B9 00 30                mov cx, 0x3000
+5FA0  E8 99 89                call 0xe93c
+5FA3  4B                      dec bx
+5FA4  75 F4                   jne 0x5f9a
+5FA6  C3                      ret
+
+===== 5FA7h-5FE3h =====
+Reason: direct CALL targets from 5E53h and 5E83h; opaque status/check helper entry
+5FA7  33 C0                   xor ax, ax
+5FA9  CD 10                   int 0x10
+5FAB  8B 16 63 00             mov dx, word ptr [0x63]
+5FAF  80 C2 04                add dl, 4
+5FB2  A0 65 00                mov al, byte ptr [0x65]
+5FB5  24 37                   and al, 0x37
+5FB7  EE                      out dx, al
+5FB8  06                      push es
+5FB9  51                      push cx
+5FBA  8E C3                   mov es, bx
+5FBC  B7 08                   mov bh, 8
+5FBE  E8 6C F5                call 0x552d
+5FC1  9F                      lahf
+5FC2  50                      push ax
+5FC3  33 C0                   xor ax, ax
+5FC5  CD 10                   int 0x10
+5FC7  33 FF                   xor di, di
+5FC9  B9 28 00                mov cx, 0x28
+5FCC  B8 20 70                mov ax, 0x7020
+5FCF  F3 AB                   rep stosw word ptr es:[di], ax
+5FD1  58                      pop ax
+5FD2  9E                      sahf
+5FD3  59                      pop cx
+5FD4  07                      pop es
+5FD5  C3                      ret
+5FD6  B8 8E 8E                mov ax, 0x8e8e
+5FD9  E8 B8 8E                call 0xee94
+5FDC  24 FE                   and al, 0xfe
+5FDE  86 C4                   xchg ah, al
+5FE0  E8 BA 8E                call 0xee9d
+5FE3  C3                      ret
 
 ===== FA4Eh-FA64h =====
 Reason: POST-called complement-check routine; direct stack-threaded entry from E34Dh/E350h
