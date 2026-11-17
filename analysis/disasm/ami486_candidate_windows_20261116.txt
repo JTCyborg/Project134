@@ -14563,15 +14563,14 @@ Reason: alternate memory scan entry reached by the 26BCh indirect continuation
 26E9  8C D8                   mov ax, ds
 26EB  05 00 10                add ax, 0x1000
 
-===== 27CCh-27DBh =====
+===== 27CCh-27D9h =====
 Reason: crafted-return continuation after the 29BBh memory test; tests returned ZF
 27CC  0F 84 0E 00             je 0x27de
 27D0  81 CD 00 40             or bp, 0x4000
 27D4  BC DA 27                mov sp, 0x27da
 27D7  E9 A9 65                jmp 0x8d83
-27DA  DC 27                   fsub qword ptr [bx]
 
-===== 27DCh-27F3h =====
+===== 27DCh-27F1h =====
 Reason: crafted-return continuation after the 8D83h memory-test error helper
 27DC  EB 22                   jmp 0x2800
 27DE  8C D8                   mov ax, ds
@@ -14582,16 +14581,13 @@ Reason: crafted-return continuation after the 8D83h memory-test error helper
 27EB  90                      nop
 27EC  BC F2 27                mov sp, 0x27f2
 27EF  E9 A2 C6                jmp 0xee94
-27F2  F4                      hlt
-27F3  27                      daa
 
-===== 27F4h-27FFh =====
+===== 27F4h-27FDh =====
 Reason: crafted-return continuation after CMOS B3h read through EE94h
 27F4  0C 01                   or al, 1
 27F6  86 C4                   xchg ah, al
 27F8  BC FE 27                mov sp, 0x27fe
 27FB  E9 9F C6                jmp 0xee9d
-27FE  00 28                   add byte ptr [bx + si], ch
 
 ===== 2800h-287Fh =====
 Reason: crafted-return continuation after CMOS B3h write through EE9Dh
