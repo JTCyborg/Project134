@@ -61,3 +61,17 @@ The editor reads/writes a RAM working image at `DS:E000`; this is not direct ALi
 - Trace the callback tables supplied through `E195` and identify which flagged records invoke them.
 - Trace the commit/apply path after leaving Setup to determine how the `E000` working image is converted into CMOS writes and ALi1429 indexed-register writes.
 - Decode the option-label translation data reached through `E197`, including the full strings for the multi-choice records.
+
+
+## Byte-aligned navigation/rendering extension — 2026-11-17
+
+Detailed follow-on report: [AMI486_SETUP_EDITOR_RENDERING_EXTENSION_20261117.md](AMI486_SETUP_EDITOR_RENDERING_EXTENSION_20261117.md).
+
+The extended raw-byte pass resolves the paths after the earlier 0D34h–0E12h summary:
+
+- `0D84h` is the aligned event-code selector reached from the branch at `0D7Fh`. Its exact AX dispatch values and destinations are tabulated in the extension report; these values are not assigned PC key names without further evidence.
+- `0E19h` is the decrement/wrap helper; `0E47h` is the increment/wrap helper. Their direct callers are `0DE5h` and `0DEBh`.
+- State-variable roles are refined: `E18C` is the absolute selected visible-record index, while `E185` is the on-screen row within the visible viewport. `E18E` is the total visible-record count and `E18D` the visible-row count. The wrap/clamp behavior in 0E19h/0E47h proves this distinction.
+- `0E7Ch` draws one record label and its translated selected-option text; callers include `0D0Bh, 0D3Ah, 0D46h, 60BFh`. `E1A5` selects the highlighted item.
+- `0EE2h–10DEh` is the option-list/auxiliary-description renderer called at `0DFDh`. It reads the record option count at +1Fh, flag bit 7 at +1Eh, and the option/tail area beginning at +20h; its RET is at 10DEh. The instruction at 0FFFh crosses the 1000h boundary, so 1000h is not a new entry.
+- Seed alignment corrections: `0CFEh` begins a five-byte MOV; `0D00h` is inside it. The decrement helper begins at `0E19h`, not 0E1Ah.
