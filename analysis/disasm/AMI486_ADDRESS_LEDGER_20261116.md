@@ -361,12 +361,13 @@ The updated generator also removes the redundant 2D00h and misaligned 2D80h expl
 
 ### Current reproducible candidate footprint
 
-The regenerated manifest reports 255 code windows and 58 data ranges (313 headers). A byte-mask recomputation from the generated listing yields:
-- code-window bytes: 14,331;
-- data-range bytes: 9,261;
+The regenerated manifest reports 330 code windows and 64 data ranges (394 headers). A byte-mask recomputation from the generated listing yields:
+- unique code-window bytes: 19,883;
+- unique data-range bytes: 9,302;
 - overlap: 113;
-- union: 23,479 bytes (35.83%);
-- touched 256-byte pages: 121/256.
+- union: 29,072 bytes (44.36%);
+- touched 256-byte pages: 141/256;
+- fully covered 256-byte pages: 73/256.
 
 Do not interpret 44.36% as BIOS semantic completion. The code windows are independent linear decodes; the data ranges include confirmed strings/tables and some mixed blocks whose internal table consumers remain open.
 
