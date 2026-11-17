@@ -38,7 +38,7 @@ This is a confirmed overlapping code/data view: the table bytes are also decoded
 - at 1000:0000, repeated F3F7h words followed by CBh;
 - at 1000:0800, repeated F3F6h words followed by CBh.
 
-It calls 9033h to measure the two far-call execution paths with PIT channel 2, records 40 samples at F000:0000h, averages them, stores the average at F800h, divides 236Eh by that value and selects a timing bucket. It clears the 64 KiB temporary area at ES:0000h before restoring ES/DS.
+It calls 9033h to measure the two far-call execution paths with PIT channel 2, records 40 samples at 1000:F000h, averages them, stores the average at F800h, divides 236Eh by that value and selects a timing bucket. It clears the 64 KiB temporary area at ES:0000h before restoring ES/DS.
 
 The instruction words are executable timing payload, not ordinary text or pointer data. The routine is consistent with a CPU execution-time classifier; the exact marketing speed label represented by each bucket is not established.
 
