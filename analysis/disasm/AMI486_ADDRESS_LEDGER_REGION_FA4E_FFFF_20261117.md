@@ -62,13 +62,36 @@ Do not decode this block as a single 16-bit instruction stream. The reset-linear
 
 - `FE71h–FEA0h`: 48-byte structured blob following the three-byte JMP at FE6Eh–FE70h. It is not part of the FA6Eh–FE6Dh 1-KiB bitmap block. Its exact role is unresolved.
 - `FEA1h–FEA7h`: bytes `01 06 06 92 E9 3F EE`; preserve as a separate short data/control record candidate.
-- `FEA8h–FEE3h`: zero-filled area; classify as padding/reserved bytes unless an incoming reference proves otherwise.
+- `FEA8h–FEE2h`: zero-filled area before the IVT offset table; classify as padding/reserved bytes.
 
-## 5. FEE4h–FF4Fh mixed upper-ROM table region
+## 5. FEE3h–FF32h POST interrupt-vector offset table
 
-This interval contains many repeated `97 EA` byte pairs, short far-jump-shaped sequences, and interspersed zero bytes. The linear decoder emits far JMP instructions at several offsets, but no exclusive instruction alignment or caller provenance has been established for the whole block.
+The POST routine at 5D1Dh first writes a common IVT entry to 120 vectors: offset EA97h and segment CS. It then copies 32 words from CS:FEE3h into the offset half of IVT vectors 00h–1Fh (stride four bytes), and eight more words from CS:FF23h into vectors 70h–77h. The segment half remains CS. The table is therefore exactly 40 little-endian offset words, not executable code.
 
-Classification: **mixed dispatch/relocation data candidate**. Do not label every decoded far JMP as executable code. The region needs a separate consumer/xref pass before individual entries can be named.
+| Vector | Offset | Vector | Offset |
+|---:|---:|---:|---:|
+| 00h | EA97h | 10h | F065h |
+| 01h | EA97h | 11h | F84Dh |
+| 02h | E2C3h | 12h | F841h |
+| 03h | EA97h | 13h | EC59h |
+| 04h | EA97h | 14h | E739h |
+| 05h | FF54h | 15h | F859h |
+| 06h | EB43h | 16h | E82Eh |
+| 07h | EAEBh | 17h | EFD2h |
+| 08h | FEA5h | 18h | E000h |
+| 09h | E987h | 19h | E6F2h |
+| 0Ah | EA97h | 1Ah | FE6Eh |
+| 0Bh | EA97h | 1Bh | FF53h |
+| 0Ch | EA97h | 1Ch | FF53h |
+| 0Dh | EA97h | 1Dh | F0A4h |
+| 0Eh | EF57h | 1Eh | EFC7h |
+| 0Fh | FF53h | 1Fh | 0000h |
+| 70h | EA42h | 74h | EA97h |
+| 71h | EED2h | 75h | EEDBh |
+| 72h | EA97h | 76h | E845h |
+| 73h | EA97h | 77h | 90B1h |
+
+FEE3h–FF32h is 80 bytes (40 words). FEE3h–FF22h supplies vectors 00h–1Fh; FF23h–FF32h supplies vectors 70h–77h. FF33h–FF4Fh is zero-filled padding.
 
 ## 6. FF50h–FF6Fh identification text and adjacent fields
 
@@ -101,7 +124,8 @@ The adjacent bytes FF BCh–FFC6h are FFh fill. The block FFC7h–FFEFh duplicat
 | FA6Eh–FE6Dh | 1-KiB bitmap/glyph table candidate, 128 × 8-byte records | Medium-high |
 | FE71h–FEA0h | Structured data blob | Medium |
 | FEA1h–FEA7h / FEA8h–FEE3h | Short record plus zero-filled area | Medium |
-| FEE4h–FF4Fh | Mixed dispatch/relocation data candidate | Low-medium |
+| FEE3h–FF32h | 40-word POST IVT offset table | High |
+| FF33h–FF4Fh | Zero-filled padding | High |
 | FF50h–FF6Fh | Embedded identification/contact text and fields | High |
 | FF70h–FFBBh | 76-byte comparison data | High |
 | FF BCh–FFC6h | FFh fill | High |
@@ -112,8 +136,8 @@ The adjacent bytes FF BCh–FFC6h are FFh fill. The block FFC7h–FFEFh duplicat
 
 Open tasks:
 1. Find the consumer of the bitmap block and prove its glyph index/encoding.
-2. Trace all incoming references into FEE2h–FF4Fh and classify each table entry individually.
-3. Determine whether FE71h–FEA0h is a pointer table, compressed/encoded data, or another checksum/relocation block.
+2. The FEE3h–FF32h table consumer is mapped: POST copies 40 offset words into IVT vectors 00h–1Fh and 70h–77h; individual handler semantics remain a separate task.
+3. Determine the consumer and semantics of the FE71h–FEA0h structured blob and FEA1h–FEA7h record.
 4. FA4Eh and FE6Eh seeds plus the confirmed bitmap/data ranges have been added to the candidate generator. GitHub Actions completed successfully: 733 candidate windows and 223 data ranges. The generator manifest does not calculate the byte-union mask, so the next-gap ranking still needs a separate mask recomputation.
 5. Compare the POST complement-check routine with the matching source-level initialization flow in `docs/627.10`; source is architectural evidence only and must not be copied into the independent implementation.
 
