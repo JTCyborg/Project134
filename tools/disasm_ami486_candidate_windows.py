@@ -80,7 +80,7 @@ LIMITS.update({
 })
 
 LIMITS.update({
-    0x8328: 0x06, 0x832E: 0x4A,
+    0x8300: 0x06, 0x8306: 0x20, 0x8326: 0x52,
 })
 
 LIMITS.update({
@@ -159,7 +159,7 @@ DATA_RANGES = [
     (0x3446, 0x345E, "12-entry Setup main-menu handler pointer table", "words"),
     (0x3C5C, 0x3C5E, "Two zero-byte alignment padding before the BIOS Setup main-menu entry", "hexascii"),
     (0x0294, 0x02A4, "Eight-word internal selector/dispatch table with offsets 029Ch, 0288h, 029Ch, 0288h, 0294h, 028Eh, 0294h, 028Eh; consumer semantics unresolved", "words"),
-    (0x81EE, 0x8328, "Advanced CMOS/CPU-profile data block: board configuration words, COM/LPT I/O base addresses, and pointers to CPU/cache profile records around 19A2h-19AFh", "hexascii"),
+    (0x81EE, 0x8326, "Advanced CMOS/CPU-profile data block: board configuration words, COM/LPT I/O base addresses, and pointers to CPU/cache profile records around 19A2h-19AFh; ends before executable entry 8326h", "hexascii"),
     (0x0B2D, 0x0BE1, "45-entry CMOS Setup descriptor/handler table; final record 8300h/CA3Eh overlaps the Advanced CMOS handler entry at 0BDEh", "words"),
     (0x345C, 0x3473, "AMI BIOS Setup Utilities title string", "ascii"),
     (0x3473, 0x3474, "Setup title-to-key-legend control prefix", "hexascii"),
@@ -1176,8 +1176,9 @@ SEEDS.extend([
 
 
 SEEDS.extend([
-    (0x8328, "wrapper entry preserving BX around CPU-profile/CMOS 8Eh configuration helper"),
-    (0x832E, "CPU clock/cache profile selector: walks 32-byte records rooted at CS:82C6h and updates CMOS register 8Eh"),
+    (0x8300, "wrapper entry: preserves BX around CPU-profile/CMOS 8Eh configuration helper"),
+    (0x8306, "CPU-profile selector: compares the incoming AL index and selects the B7D0h profile-record path"),
+    (0x8326, "CPU/cache profile-record walker: starts from CS:82C6h or alternate BX entry, advances 20h-byte records and updates CMOS register 8Eh"),
 ])
 
 
