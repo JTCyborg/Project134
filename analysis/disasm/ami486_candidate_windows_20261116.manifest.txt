@@ -1,6 +1,6 @@
 Target: ami486.bin
 ROM size: 65536 bytes
-Candidate windows: 897
+Candidate windows: 896
 Data ranges: 248
 Unique code-window bytes: 44454
 Unique data-range bytes: 20515
@@ -24,5 +24,5 @@ Decoder: Capstone x86 16-bit
 Relative near-branch targets normalized to 16-bit IP.
 Known tables and strings are emitted separately as data.
 Interpretation: independently seeded linear windows only; no CFG or entry-point proof.
-Range-mask source: tools/disasm_ami486_candidate_windows.py at pending update.
-Status: projected after adding 83AEh and 83C1h helper windows; the generator has not yet been executed and the per-window Capstone listing has not yet been regenerated.
+Range-mask source: tools/disasm_ami486_candidate_windows.py at pending corrected update.
+Status: projected after merging 83AEh-83FFh into one exact candidate window; the previous Capstone listing must be regenerated because it contains a misaligned 83C1h seed.
