@@ -663,3 +663,12 @@ Detailed map: [AMI486_ADDRESS_LEDGER_REGION_0236_03D3_20261117.md](AMI486_ADDRES
 Mapped the video display type field (options at 769Dh), keyboard-test Installed/Not Installed field (77D7h), an Enabled/Disabled bit-6 option, and four fixed-disk type nibble selectors at 02DBh/02F1h/0319h/0351h. The shared disk-type chooser at 0367h supports fixed types 01h–46h and user-defined type 47h, with geometry fields for the custom type. The 0294h–02A3h eight-word block is retained as an unresolved dispatch/offset table, not linear code. The Standard CMOS Setup handler at 00ECh dispatches through the 16-entry table at 0AF5h; four entries point into this region.
 
 GitHub Actions run 44086705207 passed: 851 windows / 240 data ranges, 61,702 covered bytes (94.15%), 61 uncovered intervals. The next largest uncovered interval is 81EEh–8377h (394 bytes).
+
+
+## 32. Advanced CMOS CPU/cache profile data — 81EEh–8377h (2026-11-17)
+
+Detailed map: [AMI486_ADDRESS_LEDGER_REGION_81EE_8377_20261117.md](AMI486_ADDRESS_LEDGER_REGION_81EE_8377_20261117.md).
+
+Classified 81EEh–8327h as structured board/CPU-profile data, including COM/LPT I/O base addresses and pointers into records around 19A2h–19AFh. Those records contain the strings “20 KB CACHE MEMORY”, “MHz CPU Clock” and “MHz DX2 CPU”. Mapped the BX-preserving wrapper at 8328h and the 832Eh helper, which walks 32-byte CPU profile records rooted at CS:82C6h and updates CMOS register 8Eh. Exact per-record CPU frequency mapping and the indirect caller remain open.
+
+GitHub Actions run 44086995346 passed: 853 windows / 241 data ranges, 62,096 covered bytes (94.75%), 60 uncovered intervals. The next largest uncovered interval is 0B2Dh–0C7Ch (336 bytes).
