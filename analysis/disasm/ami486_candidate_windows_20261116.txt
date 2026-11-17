@@ -13849,7 +13849,7 @@ Reason: memory-test skip/success continuation
 2869  BF 6F 28                mov di, 0x286f
 286C  E9 8C 65                jmp 0x8dfb
 
-===== 2850h-28AFh =====
+===== 2850h-28EFh =====
 Reason: POST memory setup helper called from 1EC8h
 2850  B8 03 C5                mov ax, 0xc503
 2853  E8 86 65                call 0x8ddc
@@ -13887,8 +13887,36 @@ Reason: POST memory setup helper called from 1EC8h
 28A9  EB 31                   jmp 0x28dc
 28AB  90                      nop
 28AC  3C 50                   cmp al, 0x50
-28AE  0F              db 0x0F
-28AF  85              db 0x85
+28AE  0F 85 05 00             jne 0x28b7
+28B2  B3 50                   mov bl, 0x50
+28B4  EB 26                   jmp 0x28dc
+28B6  90                      nop
+28B7  3C 40                   cmp al, 0x40
+28B9  0F 85 05 00             jne 0x28c2
+28BD  B3 10                   mov bl, 0x10
+28BF  EB 1B                   jmp 0x28dc
+28C1  90                      nop
+28C2  3C 30                   cmp al, 0x30
+28C4  0F 85 05 00             jne 0x28cd
+28C8  B3 40                   mov bl, 0x40
+28CA  EB 10                   jmp 0x28dc
+28CC  90                      nop
+28CD  3C 20                   cmp al, 0x20
+28CF  0F 85 05 00             jne 0x28d8
+28D3  B3 00                   mov bl, 0
+28D5  EB 05                   jmp 0x28dc
+28D7  90                      nop
+28D8  E8 A8 64                call 0x8d83
+28DB  C3                      ret
+28DC  BF E2 28                mov di, 0x28e2
+28DF  E9 DC FD                jmp 0x26be
+28E2  B8 18 18                mov ax, 0x1818
+28E5  E8 E7 64                call 0x8dcf
+28E8  24 8D                   and al, 0x8d
+28EA  0A C3                   or al, bl
+28EC  86 E0                   xchg al, ah
+28EE  E8              db 0xE8
+28EF  EB              db 0xEB
 
 ===== 29BBh-2A3Ah =====
 Reason: second-stage memory test: 32-KiB read pass and 16-KiB fill/verify/clear
@@ -13957,6 +13985,436 @@ Reason: CMOS B6h.0 AUTO Config selector used by POST and CPU-speed display
 2A09  0A C0                   or al, al
 2A0B  0F              db 0x0F
 2A0C  85              db 0x85
+
+===== 24AEh-253Dh =====
+Reason: conditional continuation of the 24A4h CMOS/ALi feature probe
+24AE  8D 36 88 20             lea si, [0x2088]
+24B2  8B FE                   mov di, si
+24B4  33 D2                   xor dx, dx
+24B6  B8 10 11                mov ax, 0x1110
+24B9  E8 13 69                call 0x8dcf
+24BC  86 E0                   xchg al, ah
+24BE  E8 0E 69                call 0x8dcf
+24C1  8B D8                   mov bx, ax
+24C3  25 0F 0F                and ax, 0xf0f
+24C6  81 E3 F0 F0             and bx, 0xf0f0
+24CA  8B D0                   mov dx, ax
+24CC  80 FC 0F                cmp ah, 0xf
+24CF  B4 00                   mov ah, 0
+24D1  0F 84 0C 00             je 0x24e1
+24D5  C1 EA 08                shr dx, 8
+24D8  03 F2                   add si, dx
+24DA  2E 8A 24                mov ah, byte ptr cs:[si]
+24DD  33 D2                   xor dx, dx
+24DF  8B F7                   mov si, di
+24E1  8B D3                   mov dx, bx
+24E3  80 FF F0                cmp bh, 0xf0
+24E6  B7 00                   mov bh, 0
+24E8  0F 84 0C 00             je 0x24f8
+24EC  C1 EA 0C                shr dx, 0xc
+24EF  03 F2                   add si, dx
+24F1  2E 8A 3C                mov bh, byte ptr cs:[si]
+24F4  33 D2                   xor dx, dx
+24F6  8B F7                   mov si, di
+24F8  02 E7                   add ah, bh
+24FA  8A D0                   mov dl, al
+24FC  3C 0F                   cmp al, 0xf
+24FE  B0 00                   mov al, 0
+2500  0F 84 09 00             je 0x250d
+2504  03 F2                   add si, dx
+2506  2E 8A 04                mov al, byte ptr cs:[si]
+2509  33 D2                   xor dx, dx
+250B  8B F7                   mov si, di
+250D  8A D3                   mov dl, bl
+250F  80 FB F0                cmp bl, 0xf0
+2512  B3 00                   mov bl, 0
+2514  0F 84 08 00             je 0x2520
+2518  C0 EA 04                shr dl, 4
+251B  03 F2                   add si, dx
+251D  2E 8A 1C                mov bl, byte ptr cs:[si]
+2520  02 C3                   add al, bl
+2522  02 E0                   add ah, al
+2524  B0 15                   mov al, 0x15
+2526  E8 B3 68                call 0x8ddc
+2529  B8 12 12                mov ax, 0x1212
+252C  E8 A0 68                call 0x8dcf
+252F  0C 04                   or al, 4
+2531  86 E0                   xchg al, ah
+2533  E8 A6 68                call 0x8ddc
+2536  C3                      ret
+2537  E8 8A 00                call 0x25c4
+253A  BE B5 87                mov si, 0x87b5
+253D  03              db 0x03
+
+===== 24E1h-2560h =====
+Reason: branch continuation in the ALi indexed-register/profile initialization sequence
+24E1  8B D3                   mov dx, bx
+24E3  80 FF F0                cmp bh, 0xf0
+24E6  B7 00                   mov bh, 0
+24E8  0F 84 0C 00             je 0x24f8
+24EC  C1 EA 0C                shr dx, 0xc
+24EF  03 F2                   add si, dx
+24F1  2E 8A 3C                mov bh, byte ptr cs:[si]
+24F4  33 D2                   xor dx, dx
+24F6  8B F7                   mov si, di
+24F8  02 E7                   add ah, bh
+24FA  8A D0                   mov dl, al
+24FC  3C 0F                   cmp al, 0xf
+24FE  B0 00                   mov al, 0
+2500  0F 84 09 00             je 0x250d
+2504  03 F2                   add si, dx
+2506  2E 8A 04                mov al, byte ptr cs:[si]
+2509  33 D2                   xor dx, dx
+250B  8B F7                   mov si, di
+250D  8A D3                   mov dl, bl
+250F  80 FB F0                cmp bl, 0xf0
+2512  B3 00                   mov bl, 0
+2514  0F 84 08 00             je 0x2520
+2518  C0 EA 04                shr dl, 4
+251B  03 F2                   add si, dx
+251D  2E 8A 1C                mov bl, byte ptr cs:[si]
+2520  02 C3                   add al, bl
+2522  02 E0                   add ah, al
+2524  B0 15                   mov al, 0x15
+2526  E8 B3 68                call 0x8ddc
+2529  B8 12 12                mov ax, 0x1212
+252C  E8 A0 68                call 0x8dcf
+252F  0C 04                   or al, 4
+2531  86 E0                   xchg al, ah
+2533  E8 A6 68                call 0x8ddc
+2536  C3                      ret
+2537  E8 8A 00                call 0x25c4
+253A  BE B5 87                mov si, 0x87b5
+253D  03 F0                   add si, ax
+253F  B8 02 02                mov ax, 0x202
+2542  E8 8A 68                call 0x8dcf
+2545  A8 08                   test al, 8
+2547  0F 84 09 00             je 0x2554
+254B  46                      inc si
+254C  2E AD                   lodsw ax, word ptr cs:[si]
+254E  80 E4 07                and ah, 7
+2551  EB 05                   jmp 0x2558
+2553  90                      nop
+2554  2E AD                   lodsw ax, word ptr cs:[si]
+2556  22 E0                   and ah, al
+2558  8A FC                   mov bh, ah
+255A  B8 20 20                mov ax, 0x2020
+255D  E8 6F 68                call 0x8dcf
+2560  24              db 0x24
+
+===== 2536h-2555h =====
+Reason: branch target from the 24ABh optional chipset setup path
+2536  C3                      ret
+2537  E8 8A 00                call 0x25c4
+253A  BE B5 87                mov si, 0x87b5
+253D  03 F0                   add si, ax
+253F  B8 02 02                mov ax, 0x202
+2542  E8 8A 68                call 0x8dcf
+2545  A8 08                   test al, 8
+2547  0F 84 09 00             je 0x2554
+254B  46                      inc si
+254C  2E AD                   lodsw ax, word ptr cs:[si]
+254E  80 E4 07                and ah, 7
+2551  EB 05                   jmp 0x2558
+2553  90                      nop
+2554  2E AD                   lodsw ax, word ptr cs:[si]
+
+===== 25C4h-2643h =====
+Reason: shared AUTO Config index-selection helper called by 2537h/256Ah/2588h/25A6h
+25C4  B8 B3 B3                mov ax, 0xb3b3
+25C7  E8 CA C8                call 0xee94
+25CA  A8 04                   test al, 4
+25CC  0F 85 45 00             jne 0x2615
+25D0  0F 01 E0                smsw ax
+25D3  0A E4                   or ah, ah
+25D5  0F 85 3C 00             jne 0x2615
+25D9  1E                      push ds
+25DA  BB 40 00                mov bx, 0x40
+25DD  8E DB                   mov ds, bx
+25DF  A0 E2 00                mov al, byte ptr [0xe2]
+25E2  1F                      pop ds
+25E3  24 07                   and al, 7
+25E5  3C 05                   cmp al, 5
+25E7  0F 85 16 00             jne 0x2601
+25EB  B8 B3 B3                mov ax, 0xb3b3
+25EE  E8 A3 C8                call 0xee94
+25F1  A8 02                   test al, 2
+25F3  0F 84 0A 00             je 0x2601
+25F7  B8 07 00                mov ax, 7
+25FA  B1 14                   mov cl, 0x14
+25FC  F6 E9                   imul cl
+25FE  EB 28                   jmp 0x2628
+2600  90                      nop
+2601  1E                      push ds
+2602  BB 40 00                mov bx, 0x40
+2605  8E DB                   mov ds, bx
+2607  A0 E2 00                mov al, byte ptr [0xe2]
+260A  1F                      pop ds
+260B  80 E4 00                and ah, 0
+260E  B1 14                   mov cl, 0x14
+2610  F6 E9                   imul cl
+2612  EB 14                   jmp 0x2628
+2614  90                      nop
+2615  1E                      push ds
+2616  BB 40 00                mov bx, 0x40
+2619  8E DB                   mov ds, bx
+261B  A0 E2 00                mov al, byte ptr [0xe2]
+261E  1F                      pop ds
+261F  80 E4 00                and ah, 0
+2622  04 06                   add al, 6
+2624  B1 14                   mov cl, 0x14
+2626  F6 E9                   imul cl
+2628  C3                      ret
+2629  8C DA                   mov dx, ds
+262B  33 DB                   xor bx, bx
+262D  2B F6                   sub si, si
+262F  8E DB                   mov ds, bx
+2631  B9 00 80                mov cx, 0x8000
+2634  F3 AD                   rep lodsw ax, word ptr [si]
+2636  2B F6                   sub si, si
+2638  81 FB 00 80             cmp bx, 0x8000
+263C  81 C3 00 10             add bx, 0x1000
+2640  75 ED                   jne 0x262f
+2642  8E DA                   mov ds, dx
+
+===== 2601h-2630h =====
+Reason: branch continuation in the 25C4h CMOS B3h AUTO Config selector
+2601  1E                      push ds
+2602  BB 40 00                mov bx, 0x40
+2605  8E DB                   mov ds, bx
+2607  A0 E2 00                mov al, byte ptr [0xe2]
+260A  1F                      pop ds
+260B  80 E4 00                and ah, 0
+260E  B1 14                   mov cl, 0x14
+2610  F6 E9                   imul cl
+2612  EB 14                   jmp 0x2628
+2614  90                      nop
+2615  1E                      push ds
+2616  BB 40 00                mov bx, 0x40
+2619  8E DB                   mov ds, bx
+261B  A0 E2 00                mov al, byte ptr [0xe2]
+261E  1F                      pop ds
+261F  80 E4 00                and ah, 0
+2622  04 06                   add al, 6
+2624  B1 14                   mov cl, 0x14
+2626  F6 E9                   imul cl
+2628  C3                      ret
+2629  8C DA                   mov dx, ds
+262B  33 DB                   xor bx, bx
+262D  2B F6                   sub si, si
+262F  8E DB                   mov ds, bx
+
+===== 2615h-2644h =====
+Reason: shared alternate return path in the 25C4h AUTO Config selector
+2615  1E                      push ds
+2616  BB 40 00                mov bx, 0x40
+2619  8E DB                   mov ds, bx
+261B  A0 E2 00                mov al, byte ptr [0xe2]
+261E  1F                      pop ds
+261F  80 E4 00                and ah, 0
+2622  04 06                   add al, 6
+2624  B1 14                   mov cl, 0x14
+2626  F6 E9                   imul cl
+2628  C3                      ret
+2629  8C DA                   mov dx, ds
+262B  33 DB                   xor bx, bx
+262D  2B F6                   sub si, si
+262F  8E DB                   mov ds, bx
+2631  B9 00 80                mov cx, 0x8000
+2634  F3 AD                   rep lodsw ax, word ptr [si]
+2636  2B F6                   sub si, si
+2638  81 FB 00 80             cmp bx, 0x8000
+263C  81 C3 00 10             add bx, 0x1000
+2640  75 ED                   jne 0x262f
+2642  8E DA                   mov ds, dx
+2644  FF              db 0xFF
+
+===== 26D6h-2715h =====
+Reason: post-memory-test helper continuation after the protected-mode memory scan
+26D6  1E                      push ds
+26D7  56                      push si
+26D8  33 C0                   xor ax, ax
+26DA  B8 00 07                mov ax, 0x700
+26DD  8E D8                   mov ds, ax
+26DF  BB 02 00                mov bx, 2
+26E2  33 F6                   xor si, si
+26E4  B9 00 80                mov cx, 0x8000
+26E7  F3 AD                   rep lodsw ax, word ptr [si]
+26E9  8C D8                   mov ax, ds
+26EB  05 00 10                add ax, 0x1000
+26EE  8E D8                   mov ds, ax
+26F0  4B                      dec bx
+26F1  80 FB 00                cmp bl, 0
+26F4  75 EC                   jne 0x26e2
+26F6  5E                      pop si
+26F7  1F                      pop ds
+26F8  C3                      ret
+26F9  FA                      cli
+26FA  2E A0 18 B5             mov al, byte ptr cs:[0xb518]
+26FE  E8 FF 5B                call 0x8300
+2701  75 03                   jne 0x2706
+2703  E9 49 01                jmp 0x284f
+2706  1E                      push ds
+2707  06                      push es
+2708  FF 36 67 00             push word ptr [0x67]
+270C  FF 36 69 00             push word ptr [0x69]
+2710  89 26 67 00             mov word ptr [0x67], sp
+2714  8C              db 0x8C
+2715  16                      push ss
+
+===== 27A0h-27FFh =====
+Reason: aligned continuation of the protected-mode memory-pattern loop
+27A0  67 66 8B 9E 00 20 00 00 mov ebx, dword ptr [esi + 0x2000]
+27A8  67 66 3B 06             cmp eax, dword ptr [esi]
+27AC  0F 85 06 00             jne 0x27b6
+27B0  66 83 C6 04             add esi, 4
+27B4  E2 BC                   loop 0x2772
+27B6  0B C9                   or cx, cx
+27B8  0F 85 14 00             jne 0x27d0
+27BC  B8 00 10                mov ax, 0x1000
+27BF  8E D8                   mov ds, ax
+27C1  8E C0                   mov es, ax
+27C3  90                      nop
+27C4  BC CA 27                mov sp, 0x27ca
+27C7  E9 F1 01                jmp 0x29bb
+27CA  CC                      int3
+27CB  27                      daa
+27CC  0F 84 0E 00             je 0x27de
+27D0  81 CD 00 40             or bp, 0x4000
+27D4  BC DA 27                mov sp, 0x27da
+27D7  E9 A9 65                jmp 0x8d83
+27DA  DC 27                   fsub qword ptr [bx]
+27DC  EB 22                   jmp 0x2800
+27DE  8C D8                   mov ax, ds
+27E0  05 00 04                add ax, 0x400
+27E3  3D 00 90                cmp ax, 0x9000
+27E6  75 D7                   jne 0x27bf
+27E8  B8 B3 B3                mov ax, 0xb3b3
+27EB  90                      nop
+27EC  BC F2 27                mov sp, 0x27f2
+27EF  E9 A2 C6                jmp 0xee94
+27F2  F4                      hlt
+27F3  27                      daa
+27F4  0C 01                   or al, 1
+27F6  86 C4                   xchg ah, al
+27F8  BC FE 27                mov sp, 0x27fe
+27FB  E9 9F C6                jmp 0xee9d
+27FE  00 28                   add byte ptr [bx + si], ch
+
+===== 27B0h-27EFh =====
+Reason: fall-through continuation after the 27A8h memory comparison
+27B0  66 83 C6 04             add esi, 4
+27B4  E2 BC                   loop 0x2772
+27B6  0B C9                   or cx, cx
+27B8  0F 85 14 00             jne 0x27d0
+27BC  B8 00 10                mov ax, 0x1000
+27BF  8E D8                   mov ds, ax
+27C1  8E C0                   mov es, ax
+27C3  90                      nop
+27C4  BC CA 27                mov sp, 0x27ca
+27C7  E9 F1 01                jmp 0x29bb
+27CA  CC                      int3
+27CB  27                      daa
+27CC  0F 84 0E 00             je 0x27de
+27D0  81 CD 00 40             or bp, 0x4000
+27D4  BC DA 27                mov sp, 0x27da
+27D7  E9 A9 65                jmp 0x8d83
+27DA  DC 27                   fsub qword ptr [bx]
+27DC  EB 22                   jmp 0x2800
+27DE  8C D8                   mov ax, ds
+27E0  05 00 04                add ax, 0x400
+27E3  3D 00 90                cmp ax, 0x9000
+27E6  75 D7                   jne 0x27bf
+27E8  B8 B3 B3                mov ax, 0xb3b3
+27EB  90                      nop
+27EC  BC F2 27                mov sp, 0x27f2
+27EF  E9              db 0xE9
+
+===== 27B6h-27E5h =====
+Reason: mismatch branch target in the protected-mode memory-pattern test
+27B6  0B C9                   or cx, cx
+27B8  0F 85 14 00             jne 0x27d0
+27BC  B8 00 10                mov ax, 0x1000
+27BF  8E D8                   mov ds, ax
+27C1  8E C0                   mov es, ax
+27C3  90                      nop
+27C4  BC CA 27                mov sp, 0x27ca
+27C7  E9 F1 01                jmp 0x29bb
+27CA  CC                      int3
+27CB  27                      daa
+27CC  0F 84 0E 00             je 0x27de
+27D0  81 CD 00 40             or bp, 0x4000
+27D4  BC DA 27                mov sp, 0x27da
+27D7  E9 A9 65                jmp 0x8d83
+27DA  DC 27                   fsub qword ptr [bx]
+27DC  EB 22                   jmp 0x2800
+27DE  8C D8                   mov ax, ds
+27E0  05 00 04                add ax, 0x400
+27E3  3D 00 90                cmp ax, 0x9000
+
+===== 28DCh-291Bh =====
+Reason: common chipset-configuration continuation in the 2850h POST helper
+28DC  BF E2 28                mov di, 0x28e2
+28DF  E9 DC FD                jmp 0x26be
+28E2  B8 18 18                mov ax, 0x1818
+28E5  E8 E7 64                call 0x8dcf
+28E8  24 8D                   and al, 0x8d
+28EA  0A C3                   or al, bl
+28EC  86 E0                   xchg al, ah
+28EE  E8 EB 64                call 0x8ddc
+28F1  C3                      ret
+28F2  FA                      cli
+28F3  B8 00 9C                mov ax, 0x9c00
+28F6  8E D8                   mov ds, ax
+28F8  33 F6                   xor si, si
+28FA  B9 00 20                mov cx, 0x2000
+28FD  F3 AD                   rep lodsw ax, word ptr [si]
+28FF  8C D8                   mov ax, ds
+2901  80 EC 04                sub ah, 4
+2904  80 FC 1C                cmp ah, 0x1c
+2907  73 ED                   jae 0x28f6
+2909  8E D8                   mov ds, ax
+290B  BF 11 29                mov di, 0x2911
+290E  EB 5B                   jmp 0x296b
+2910  90                      nop
+2911  8B D3                   mov dx, bx
+2913  33 ED                   xor bp, bp
+2915  BF 1B 29                mov di, 0x291b
+2918  EB 51                   jmp 0x296b
+291A  90                      nop
+291B  2B              db 0x2B
+
+===== 28F2h-2931h =====
+Reason: direct CALL target from the 2893h POST configuration path
+28F2  FA                      cli
+28F3  B8 00 9C                mov ax, 0x9c00
+28F6  8E D8                   mov ds, ax
+28F8  33 F6                   xor si, si
+28FA  B9 00 20                mov cx, 0x2000
+28FD  F3 AD                   rep lodsw ax, word ptr [si]
+28FF  8C D8                   mov ax, ds
+2901  80 EC 04                sub ah, 4
+2904  80 FC 1C                cmp ah, 0x1c
+2907  73 ED                   jae 0x28f6
+2909  8E D8                   mov ds, ax
+290B  BF 11 29                mov di, 0x2911
+290E  EB 5B                   jmp 0x296b
+2910  90                      nop
+2911  8B D3                   mov dx, bx
+2913  33 ED                   xor bp, bp
+2915  BF 1B 29                mov di, 0x291b
+2918  EB 51                   jmp 0x296b
+291A  90                      nop
+291B  2B DA                   sub bx, dx
+291D  0F 89 02 00             jns 0x2923
+2921  F7 DB                   neg bx
+2923  80 FF 01                cmp bh, 1
+2926  0F 82 0D 00             jb 0x2937
+292A  45                      inc bp
+292B  8C D8                   mov ax, ds
+292D  80 C4 04                add ah, 4
+2930  80              db 0x80
+2931  FC                      cld
 
 ===== 88F0h-8907h =====
 Reason: stack-return continuation after the 8921h arithmetic/flag probe
