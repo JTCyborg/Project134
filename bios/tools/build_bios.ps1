@@ -91,12 +91,13 @@ $nasmPath = Resolve-NasmExecutable -RequestedPath $NasmExe
 Write-Host "Project134 BIOS build"
 Write-Host "NASM:   $nasmPath"
 Write-Host "Source: $sourcePath"
+Write-Host "Include: $includePath"
 Write-Host "Output: $outputPath"
 Write-Host "Size:   $RomSize bytes"
 
 New-Item -ItemType Directory -Path $outputDirectory -Force | Out-Null
 
-& $nasmPath -f bin "-DROM_SIZE=$RomSize" -o $outputPath $sourcePath
+& $nasmPath -f bin "-I$includePath" "-DROM_SIZE=$RomSize" -o $outputPath $sourcePath
 if ($LASTEXITCODE -ne 0) {
     throw "NASM failed with exit code $LASTEXITCODE"
 }
