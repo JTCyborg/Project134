@@ -141,6 +141,6 @@ The separate RET stubs at 1B5Eh/1B5Fh and 1C4Eh/1C4Fh, plus the 1E9Ah status stu
 
 ## 10. Candidate-mask result
 
-The latest successful generator run covers the former 19F8h–20FFh gap completely: **no uncovered bytes remain in that interval**. The global candidate mask contains 582 code windows and 153 data ranges, covering 46,985/65,536 bytes (71.69%) with 121 overlap bytes, 66 uncovered intervals, 210 pages touched and 135 fully covered pages.
+The latest successful generator run covers the former 19F8h–20FFh gap completely: **no uncovered bytes remain in that interval**. The global candidate mask contains 597 code windows and 153 data ranges, covering 46,985/65,536 bytes (71.69%) with 121 overlap bytes, 66 uncovered intervals, 210 pages touched and 135 fully covered pages.
 
 This is a seeded code/data inspection mask, not a whole-ROM semantic-completion percentage. The next largest uncovered interval is CA16h–D0FFh (1,770 bytes).
