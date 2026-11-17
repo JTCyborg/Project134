@@ -1238,3 +1238,6 @@ A raw-byte check of the 6616h calendar routine exposed a Capstone alias issue in
 
 
 The 00EFh screen routine's direct callees are being expanded as separate candidate entries: numeric-field editor helpers 0538h/0566h/0577h/084Fh, keyboard helper 08CDh, grid renderer 086Fh, numeric field helpers 0970h/098Eh and panel helper 5802h. These are direct call targets from the already byte-aligned 03D4h/0A15h/05EBh/622Bh/3E3Fh streams; regenerated output will be used to map their contracts.
+
+
+The 03D4h editor/helper chain exposes three further direct callees: 04B0h (field-record update), 56AEh (keyboard event path), and 5821h (display update). These are now separate candidate seeds to complete the renderer/editor call graph.
