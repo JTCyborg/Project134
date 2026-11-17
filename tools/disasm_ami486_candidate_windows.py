@@ -214,7 +214,7 @@ DATA_RANGES = [
     (0x55E8, 0x55EC, "Video text segment B800h and UI attribute constants", "hexascii"),
     (0x6164, 0x6176, "18-byte Setup viewport/calendar layout lookup table; role unresolved", "hexascii"),
     (0x6176, 0x6194, "Setup calendar/header box-drawing pattern", "hexascii"),
-    (0x6194, 0x61B2, "Weekday names and vertical-border separators", "hexascii"),
+    (0x6194, 0x622B, "calendar display template: weekday names, blank day cells and box-drawing grid borders; code renderer begins at 622Bh", "hexascii"),
     (0x188E, 0x18E5, "Four POST resource-conflict messages (parallel, serial, floppy and hard disk)", "ascii"),
     (0x19B0, 0x19CA, "POST cache/CPU timing threshold lookup bytes preceding the display labels", "hexascii"),
     (0x19CA, 0x19FB, "POST cache-memory and CPU-clock display strings including final CR/LF/NUL", "hexascii"),
