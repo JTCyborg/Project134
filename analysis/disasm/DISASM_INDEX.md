@@ -1230,3 +1230,8 @@ The raw 6616h stream has been checked through its RET at 6757h. It reads and val
 
 
 The temporary IVT/calendar-refresh analysis is documented in [AMI486_TEMPORARY_IVT_CALENDAR_REFRESH_20261117.md](AMI486_TEMPORARY_IVT_CALENDAR_REFRESH_20261117.md). The screen routine's 0210h call is 62BDh, not 6220h. The current generated candidate listing has 243 code windows and 57 data ranges; the 6616h extended-window regeneration remains pending.
+
+
+## 16-bit mnemonic normalization — 2026-11-17
+
+A raw-byte check of the 6616h calendar routine exposed a Capstone alias issue in CS_MODE_16: unprefixed opcode 98h must be CBW and unprefixed 99h must be CWD, but the current candidate listing emitted CWDE/CDQ. There are 31 such candidate-window occurrences. Both the candidate generator and full-linear workflow now normalize these exact unprefixed opcodes; 66h-prefixed forms are left unchanged. The regenerated listings must be checked before considering the fix complete.
