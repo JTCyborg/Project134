@@ -6,7 +6,7 @@ ROM: `ami486.bin`, 65,536 bytes
 ROM SHA-256: `91fd62ce3ccb0b79b42f5fd6c6a7262ed52824b8ade917181b8a12267fec003b`  
 Candidate decoder: Capstone x86, 16-bit mode  
 Generator: `tools/disasm_ami486_candidate_windows.py`  
-Generated candidate listing SHA/blob: `dc3b5ceec6c7d049f8b6ac931020429453f5f3b7` (before the final 8B11h boundary extension); latest regenerated listing is recorded in the index.
+Generated candidate listing SHA/blob at this report revision: `dc3b5ceec6c7d049f8b6ac931020429453f5f3b7`.
 
 ## 1. Region result
 
@@ -140,7 +140,7 @@ Confirmed stack-return words in this stream include:
 
 ### 6.3 8A04h–8A1Fh — CMOS 8Fh / reset continuation
 
-Entry from `D612h`. The code tests the PE bit using SMSW. On the PE-set path it selects CMOS index 8Fh through port 70h, writes zero through port 71h, and jumps to `8AD5h`. The alternate path jumps back to POST continuations at `D615h`/`D724h`. The two JCXZ instructions are zero-displacement timing/padding instructions, not table data.
+Entry from `D612h`. The code tests the PE bit using SMSW. On the PE-set path it selects CMOS index 8Fh through port 70h, writes zero through port 71h, and jumps to `8AD5h`. The branch target at `8A1Ah` jumps to `D615h`; the adjacent `8A1Dh` is a separate alternate JMP to `D724h`, not fall-through from the `8A1Ah` jump. The two JCXZ instructions are zero-displacement timing/padding instructions, not table data.
 
 ### 6.4 8A20h–8A74h — CMOS B3h-selected ALi profile
 
@@ -265,7 +265,7 @@ Unresolved:
 
 Latest generated candidate mask:
 - 678 code windows;
-- 204 data ranges;
+- 205 data ranges;
 - 34,292 unique code-window bytes;
 - 16,419 unique data-range bytes;
 - 213 overlap bytes;
