@@ -1460,12 +1460,11 @@ SEEDS.extend([
 
 
 LIMITS.update({
-    0x83AE: 0x13, 0x83C1: 0x3F,
+    0x83AE: 0x52,
 })
 
 SEEDS.extend([
-    (0x83AE, "zero-selector fallback resolver: substitutes the word at CS:B7ECh when AL is zero, otherwise zero-extends AL; direct callers 2E84h, 2EC4h and 86F2h; zero path shares the common tail at 83F7h"),
-    (0x83C1, "indexed variable-length descriptor lookup through the table pointer at CS:82C6h; traverses 20h-byte records and optional word lists, then returns descriptor bytes +1Ch/+1Dh; no direct near-CALL xref found"),
+    (0x83AE, "selector-to-descriptor resolver: AL=0 returns the default word at CS:B7ECh; otherwise normalizes the selector at the 55h bank boundary and walks 20h-byte variable-length descriptors through CS:[82C6h]; direct callers 2E84h, 2EC4h and 86F2h"),
 ])
 
 def main():
