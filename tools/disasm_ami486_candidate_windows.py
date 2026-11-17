@@ -76,6 +76,13 @@ LIMITS.update({0xFA4E: 0x17, 0xFE6E: 0x03})
 # Main POST continuation and bounded helper entries in 1364h–188Dh.
 # Fixed-disk parameter continuation, embedded data, and keyboard-controller helpers.
 LIMITS.update({
+    0x0236: 0x5E, 0x026F: 0x19, 0x0288: 0x06, 0x028E: 0x06,
+    0x02A4: 0x130, 0x02BA: 0x21, 0x02DB: 0x22, 0x02F1: 0x0C,
+    0x02FD: 0x1C, 0x0319: 0x38, 0x0351: 0x16, 0x0367: 0x51,
+    0x03B8: 0x1C,
+})
+
+LIMITS.update({
     0x3C5E: 0x1E1,
 })
 
@@ -143,6 +150,7 @@ DATA_RANGES = [
     (0x3444, 0x3446, "Separate pointer to the Do Not Write exit string", "words"),
     (0x3446, 0x345E, "12-entry Setup main-menu handler pointer table", "words"),
     (0x3C5C, 0x3C5E, "Two zero-byte alignment padding before the BIOS Setup main-menu entry", "hexascii"),
+    (0x0294, 0x02A4, "Eight-word internal selector/dispatch table with offsets 029Ch, 0288h, 029Ch, 0288h, 0294h, 028Eh, 0294h, 028Eh; consumer semantics unresolved", "words"),
     (0x345C, 0x3473, "AMI BIOS Setup Utilities title string", "ascii"),
     (0x3473, 0x3474, "Setup title-to-key-legend control prefix", "hexascii"),
     (0x3474, 0x34AB, "Setup keyboard navigation legend", "hexascii"),
@@ -1148,6 +1156,23 @@ SEEDS = [
     (0x1BF0, "option-ROM scan invalid-candidate helper: advances BX by 0080h, restores DS and returns"),
     (0x1E9A, "OR SP,SP / RET status-success stub between POST callback entries"),
 ]
+
+SEEDS.extend([
+    (0x0236, "Standard CMOS Setup field handler: video display type bits in BP+14h; options text at 769Dh"),
+    (0x026F, "Standard CMOS Setup keyboard-test field handler; options text at 77D7h and BP+14h flag bit 2"),
+    (0x0288, "Installed/Enabled option selector entry using text at 74F6h"),
+    (0x028E, "Disabled option selector entry using text at 7502h"),
+    (0x02A4, "Standard CMOS Setup option-bit update helper for BP+14h"),
+    (0x02BA, "shared Installed/Enabled/Disabled option input loop; reads key and returns selected option"),
+    (0x02DB, "hard-disk type selector for high nibble of BP+10h"),
+    (0x02F1, "alternate hard-disk type selector for low nibble of BP+10h"),
+    (0x02FD, "hard-disk type selector setup for high nibble of BP+12h"),
+    (0x0319, "indirect field-handler entry for third hard-disk type nibble; uses selector at 0383h"),
+    (0x0351, "indirect field-handler entry for fourth hard-disk type nibble"),
+    (0x0367, "common fixed-disk type chooser; supports fixed types 01h-46h and user-defined type 47"),
+    (0x03B8, "alternate entry in fixed-disk type chooser for wrapping/adjusting the selected type"),
+])
+
 
 SEEDS.extend([
     (0x3C5E, "direct JMP target from 2F21h; BIOS Setup main-menu loop, 12 option labels and function-pointer dispatch"),
