@@ -1001,6 +1001,7 @@ SEEDS = [
     (0xD74C, "alternate POST status-04h path; checks 8042 status and equipment signature"),
     (0xD777, "POST status-06h path; computes the CS:0000h word checksum and polls the 8042"),
     (0xD79A, "POST 8042 status/data polling loop and command handshake"),
+    (0xD7B3, "8042 keyboard-controller self-test command path; ends before crafted return word at D7D8h"),
     (0xD7DA, "stack-return continuation after F659h; POST status-08h path"),
     (0xD7E6, "stack-return continuation after F60Fh; checks the 8042 response and feature flag"),
     (0xD808, "stack-return continuation after F659h; reads and checks 8042 response"),
