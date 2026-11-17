@@ -1369,3 +1369,55 @@ The AH byte is preserved from the caller and repeated in the two STOSW high-byte
 At the 4797h call site inside 475Ch, DX is loaded from the zero-extended E189h index before AL is replaced by the selector. Therefore AH=00h at this call, and the seven fill bytes are exactly `2F 00 2F 2F 00 2F 2F`.
 
 At the 4B8Dh call site, AL is loaded from local [BP-1] and DL from E421h, but AH is inherited from the preceding call at 4B81h (target 09EBh). Its exact value must be traced through that helper before assigning the seven fill bytes for this path.
+
+## 09EBh helper and the 4B8Dh caller: AH resolved
+
+The helper at 09EBh is now traced byte-for-byte. Its first instruction is `CALL 09C1h` (bytes `E8 D3 FF`; next IP 09EEh plus signed displacement -002Dh = 09C1h). The target is a small BIOS video helper:
+
+```asm
+09C1  PUSH BX
+09C2  PUSH DX
+09C3  MOV DX,AX
+09C5  MOV AH,02
+09C7  MOV BH,00
+09C9  INT 10h
+09CB  POP DX
+09CC  POP BX
+09CD  RET
+```
+
+It positions the cursor using the caller's AX (INT 10h/AH=02h) and restores BX and DX. Back in 09EBh:
+
+```asm
+09EB  CALL 09C1
+09EE  PUSH BX
+09EF  MOV BH,00
+09F1  MOV AX,0A20
+09F4  MOV CX,DX
+09F6  INT 10h
+09F8  POP AX
+09F9  JMP 09FD
+09FB  MOV AH,00       ; alternate entry only; skipped by the JMP above
+09FD  MOV CX,000A
+0A00  XOR DX,DX
+0A02  DIV CX
+0A04  OR AX,AX
+0A06  JZ 0A0D
+0A08  PUSH DX
+0A09  CALL 0A00
+0A0C  POP DX
+0A0D  MOV AX,DX
+0A0F  OR AX,0E30
+0A12  INT 10h
+0A14  RET
+```
+
+The `POP AX` at 09F8h loads the saved BX value into AX. The following code repeatedly divides that value by ten and emits its decimal digits using INT 10h/AH=0Eh (the final `OR AX,0E30h` makes AH=0Eh and AL=30h..39h). The recursive 0A00h path preserves each remainder on the stack; it does not alter the caller's saved geometry selector in BX. The `MOV AH,00` at 09FBh is not executed on the normal 09EBh entry because 09F9h jumps directly to 09FDh.
+
+At the 4B81h call site, the preceding instructions establish BX as follows: `MOV BL,[E421h]`; `SUB BH,BH`; `MOV BL,[BX+E1ADh]`. Thus BH is zero and BL is the mapped selector. The helper 09C1h preserves BX, and 09EBh's decimal conversion eventually returns with AH=0Eh. The caller then executes `MOV DL,[E421h]`, `SUB DH,DH`, and `MOV AL,[BP-1]`; none changes AH before `CALL 5AB5h` at 4B8Dh.
+
+Consequently, when AL=2Fh at this second call site, 5AB5h's seven fill bytes are exactly:
+
+`2F 0E 2F 2F 0E 2F 2F`
+
+This completes the AH data-flow proof for both currently identified 5AB5h call sites: 4797h supplies AH=00h; 4B8Dh supplies AH=0Eh. The helper's visible purpose is also clear: position the cursor from E180h, write a two-character blank field (CX is caller DX=0002h), then print the mapped selector from E1ADh as decimal text. The code evidence establishes this display behavior; it does not by itself establish the semantic meaning of every selector value.
