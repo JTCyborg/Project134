@@ -236,6 +236,6 @@ Two previously under-described regions now have byte-backed reports:
 - `analysis/disasm/AMI486_SETUP_EDITOR_RENDERING_EXTENSION_20261117.md`: extends phase 12 through 10DEh; confirms event-code dispatch at 0D84h, previous/next helpers at 0E19h/0E47h, item renderer at 0E7Ch and option-list renderer at 0EE2h–10DEh. E18Ch is the absolute selected-record index; E185 is the viewport row.
 - `analysis/disasm/AMI486_POST_SUMMARY_DISPLAY_20261117.md`: maps POST summary display from 3F4Ah/3F7Bh, CPU identification at 4142h, numeric processor/Weitek path at 41E4h/421Eh, device formatting and the box-drawing/string data at 4231h–45FFh.
 - Setup pointer-table boundaries are now separated: short caption pointers 318Ch–31A3h (12 entries), long-description pointers 342Eh–3443h (11 entries), extra no-write pointer 3444h, handler pointers 3446h–345Bh (11 entries).
-- Candidate generator: 187 seeded code windows, 41 data ranges, 15,639-byte union across 79 pages (sampling footprint only; not semantic completion).
+- Candidate generator: 187 seeded code windows, 35 deduplicated data ranges, 15,639-byte union across 79 pages (sampling footprint only; not semantic completion).
 
 **Phase 97 remains unstarted.** The next work is still to classify uncovered/ambiguous byte ranges, trace indirect entries and validate alternate streams. Work selection must be driven by the address ledger, not phase-number progression.
