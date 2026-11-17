@@ -1193,3 +1193,12 @@ The 2100h raw-byte correction is recorded in AMI486_ADDRESS_LEDGER_20261116.md: 
 - Setup data boundaries are distinct: 3044h–318Bh short captions; 318Ch–31A3h 12 caption pointers; 31A4h–342Dh long descriptions; 342Eh–3443h 11 long-description pointers; 3444h–3445h separate Do Not Write pointer; 3446h–345Bh 11 handler pointers.
 - Current candidate artifact: 187 unique seeded code windows plus 35 deduplicated data ranges; byte-mask union 15,639 bytes across 79 pages (11,414 code-window bytes, 4,319 data-range bytes, 94 overlap). This is a sampling footprint, not semantic coverage.
 - Do not start phase 97. Continue from the address ledger's unresolved ranges and cross-reference gaps.
+
+
+## Candidate address/data map update — 2026-11-17
+
+The Capstone candidate generator now emits 221 code windows and 56 explicit data ranges. Recomputed union is 20,658/65,536 bytes (31.52%) across 105 pages; this is only a seeded inspection footprint, not semantic coverage. See AMI486_ADDRESS_LEDGER_20261116.md section 11 for the newly classified strings, labels, embedded pointer tables and OEM identity block.
+
+Newly mapped data regions include POST conflict strings (188Eh–18E4h), cache/CPU labels (19CAh–19F7h), Setup exit prompts (2F24h–2F65h), Setup legends (3624h–381Bh), hard-disk utility strings/tables (3900h–3C5Bh), load-default prompts (59C0h–5A4Bh), POST throughput label (7145h–714Dh), POST/help/error text and lookup data (732Bh–7CE8h), AMI/OEM identity block (8000h–81EDh), and ASCII lookup bytes (B528h–B55Eh).
+
+The 2D11h timing benchmark candidate is now seeded at its aligned byte stream; 2D00h redundant and 2D80h misaligned sample seeds were removed. Its actual runtime entry remains unproven; do not infer reachability from the seed alone.
