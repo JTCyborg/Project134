@@ -481,3 +481,14 @@ The generated candidate artifact now emits all confirmed tables separately:
 Current byte-mask metrics: 386 code windows, 74 data ranges, 22,989 unique code-window bytes, 13,084 unique data-range bytes, 113 overlap bytes, 35,960-byte union (54.87%), 169 pages touched and 98 pages fully covered. Candidate listing blob SHA: 64c64b7250b8c9271635f38230a89a43a71b34ec.
 
 The largest remaining contiguous uncovered intervals are D65Bh–E400h (3,494 bytes), E865h–F52Dh (3,273 bytes), 697Dh–7144h (1,992 bytes), 19F8h–20FFh (1,800 bytes) and CA16h–D0FFh (1,770 bytes). The next work item is D65Bh–E400h; first determine whether it is code, tables or mixed data before adding seeds.
+
+
+## 14. POST CMOS 8Fh / CMOS 8Eh and protected-mode data — 2026-11-17
+
+Byte-backed report: [AMI486_ADDRESS_LEDGER_REGION_D655_E3FF_20261117.md](AMI486_ADDRESS_LEDGER_REGION_D655_E3FF_20261117.md).
+
+The previous D65Bh–E400h candidate-mask gap is now classified into aligned POST code, stack-return data, a CMOS 8Fh selector table, zero padding, ROM strings, descriptor-like records and a separate POST chipset-port stream. D65Bh itself is not an entry: it lies inside the instruction beginning at D657h. The D6A8h–D6BDh table is the eleven-word D6A2h indirect-jump table already examined in phases 51–52. DAA2h–DFFFh is verified zero padding.
+
+A new direct transfer was found: D8FEh prepares the stack return to D906h; D906h emits POST status 0Fh and directly JMPs to 8400h. The 8400h routine is therefore a confirmed non-table entry into the CMOS 8Eh initialization path. It clears CMOS registers 8Eh–FFh, restores the 32-byte 8Eh–ADh block from the ROM table at 820Eh and merges additional table-driven fields. Its `AND BP,FFC7h` clears bits 3–5 but preserves BP.13, so the BP.13 producer remains unresolved. Phase 52 and the index have been corrected accordingly.
+
+The candidate-window generator now records all identified D7xx–DAxx stack-return words separately from code, adds aligned continuation seeds, and classifies the E000h–E3FFh strings, opaque block, descriptor-like arrays, parameter block and zero padding. The latest successful generated mask is 440 code windows / 120 data ranges, 39,603 unique union bytes (60.43%), 183 pages touched and 109 fully covered. This is a seeded candidate footprint only, not a whole-ROM semantic percentage.
