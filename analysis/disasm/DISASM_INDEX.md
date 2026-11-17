@@ -1276,5 +1276,19 @@ Report: [AMI486_ADDRESS_LEDGER_REGION_D655_E3FF_20261117.md](AMI486_ADDRESS_LEDG
 - The D7xx–DAA1h stream performs POST 8042, CMOS, chipset and PIT checks. Stack-return words are emitted as separate data ranges.
 - DAA2h–DFFFh is 1,374 zero bytes. E000h/E005h are entry stubs; E05Bh is the reset entry target; E160h–E25Fh and E260h–E2BFh are separately classified descriptor-like/parameter blocks.
 - New direct entry: the stack-return continuation D906h executes `JMP 8400h`. This corrects phase 52's former unresolved dynamic-entry note; it does not contradict phase 51's table-target statement. The 8400h path clears/restores CMOS 8Eh–FFh and preserves BP.13.
-- Candidate generator: 440 code windows, 120 data ranges; 24,435 unique code-window bytes, 15,285 unique data-range bytes, 117 overlap bytes, 39,603-byte union (60.43%), 183 pages touched and 109 fully covered. These are seeded inspection masks, not semantic-completion percentages.
+- Candidate generator: 508 code windows, 136 data ranges; 27,247 unique code-window bytes, 15,754 unique data-range bytes, 117 overlap bytes, 42,884-byte union (65.44%), 195 pages touched and 118 fully covered. These are seeded inspection masks, not semantic-completion percentages.
 - Largest remaining uncovered intervals now begin E865h–F52Dh (3,273 bytes), 697Dh–7144h (1,992 bytes), 19F8h–20FFh (1,800 bytes), CA16h–D0FFh (1,770 bytes), and 873Ch–8DCEh (1,683 bytes).
+
+
+## Interrupt/CMOS/diagnostic region E862h–F52Dh — 2026-11-17
+
+Report: [AMI486_ADDRESS_LEDGER_REGION_E862_F52D_20261117.md](AMI486_ADDRESS_LEDGER_REGION_E862_F52D_20261117.md).
+
+- E862h is a delay helper; E88Eh/E8C8h/E902h/E93Ch/E966h are bounded port/PIT polling helpers. External callers to E93Ch and E966h are recorded in the report.
+- E98Ah/E9A2h form a parity/channel-check diagnostic path, supported by the ON/OFF BOARD PARITY ERROR strings and address formatter.
+- EA42h is an RTC interrupt-handler candidate; EA97h reads PIC ISR state; EAEBh/EB43h decode saved instruction bytes and route the 0F05h path to EB65h, a protected-mode-assisted special-instruction handler.
+- EC5Ch, ECE7h, ED1Bh and ED3Dh cover printer/status, timer/floppy timeout and INT 1Ah-compatible RTC/time-date services. EE94h/EE9Dh are CMOS indexed read/write helpers; EEE7h/EEEFh handle POST/PIC programming.
+- F068h clears CR0.PE and returns through the E2B8h IDT pointer to reset entry E05Bh. F10Dh–F302h covers CMOS Setup validation/editor; F371h is the encoded “EVALUATION COPY, NOT FOR SALE” message; F3DBh/F419h validate video/ROM signatures; F4A5h/F50Dh are fatal diagnostic paths.
+- The E87Bh and F0A3h tables, EFC7h–F041h opaque block and several interrupt-vector installations remain unresolved.
+- Current candidate mask: 508 code windows, 136 data ranges; 27,247 unique code bytes, 15,754 unique data bytes, 117 overlap bytes, 42,884-byte union (65.44%), 195 pages touched, 118 fully covered. These are inspection masks, not semantic completion.
+- Largest remaining uncovered intervals: 697Dh–7144h (1,992 bytes), 19F8h–20FFh (1,800 bytes), CA16h–D0FFh (1,770 bytes), 873Ch–8DCEh (1,683 bytes), FA53h–FFFFh (1,453 bytes).
