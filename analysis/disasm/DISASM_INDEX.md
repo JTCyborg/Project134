@@ -1317,3 +1317,15 @@ Report: [AMI486_ADDRESS_LEDGER_REGION_19B0_23CE_20261117.md](AMI486_ADDRESS_LEDG
 - Focused byte map and correction: [AMI486_ADDRESS_LEDGER_REGION_19F8_20FB_20261117.md](AMI486_ADDRESS_LEDGER_REGION_19F8_20FB_20261117.md). The broader subsystem overview remains [AMI486_ADDRESS_LEDGER_REGION_19B0_23CE_20261117.md](AMI486_ADDRESS_LEDGER_REGION_19B0_23CE_20261117.md).
 - Current candidate mask: 597 code windows, 154 data ranges, 31,189 unique code bytes, 15,829 unique data bytes, 117 overlap bytes, 46,901-byte union (71.57%), 69 uncovered intervals, 210 pages touched and 133 fully covered. This is not semantic completion.
 - Next largest uncovered interval: CA16h–D0FFh (1,770 bytes).
+
+
+## INT 13h diskette / drive-parameter subsystem — 2026-11-17
+
+Detailed map: [AMI486_ADDRESS_LEDGER_REGION_CA15_D103_20261117.md](AMI486_ADDRESS_LEDGER_REGION_CA15_D103_20261117.md).
+
+- The former CA16h–D0FFh gap (1,770 bytes) is mapped as INT 13h drive-parameter/media logic, diskette parameter tables, controller detection, per-drive status, FDC motor/readiness and INT 1Eh geometry checks.
+- CA15h is the aligned fall-through entry; CA17h is a confirmed branch target. CAA7h–CAB0h is a five-word geometry array (2709h, 4F0Fh, 4F09h, 4F12h, 4F24h); CAB1h–CABAh is the matching five-word parameter-pointer array (CABBh, C8CAh, CAD5h, CAE2h, CAFCh).
+- CABBh–CB08h contains six 13-byte parameter records. C8CAh is a 13-byte parameter-table view that overlaps executable code after CALL D0D9h at C8C7h.
+- CB09h and CBF8h are coherent candidate entries but have no direct near xref in the linear listing; their dispatch provenance remains unresolved.
+- D058h is a floppy motor/readiness helper; D0D9h reads the INT 1Eh table through IVT offset 0078h and ends at D103h, including POP AX/RET.
+- Candidate seeds/data ranges have been added to `tools/disasm_ami486_candidate_windows.py`; the updated generated-mask metrics are recorded after the workflow completes.
