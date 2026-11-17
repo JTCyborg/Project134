@@ -1252,7 +1252,7 @@ The screen-renderer helper map is documented in AMI486_SCREEN_RENDERER_HELPERS_2
 - Timing calibration / INT 15h services: [AMI486_ADDRESS_LEDGER_REGION_8E89_93F7_20261117.md](AMI486_ADDRESS_LEDGER_REGION_8E89_93F7_20261117.md).
 - Candidate generator includes the new bounded code windows and separately emitted pointer tables. GitHub Actions completed successfully for generator commit 661e6521e13a9880e951838dd3c4e2c9a8fe4bf2.
 - Current artifact: 386 code windows, 74 data ranges; 22,989 unique code-window bytes, 13,084 unique data bytes, 113 overlap, 35,960-byte union (54.87%), 169 pages touched, 98 pages fully covered. Candidate listing blob SHA: 64c64b7250b8c9271635f38230a89a43a71b34ec.
-- Next uncovered interval selected by subsystem continuity and reference density: 93F8h–9FFFh. Larger queued intervals include B7B1h–C5F9h, D65Bh–E400h, E865h–F52Dh and 81EEh–8DCEh.
+- Historical queue at the 2026-11-16 snapshot: 93F8h–9FFFh was selected next; later address-ledger expansions mapped E865h–F52Dh and D697Dh–D7144h, so this earlier queue is not the current gap ranking.
 
 
 ## Further address-ledger expansion — 2026-11-17
@@ -1277,7 +1277,7 @@ Report: [AMI486_ADDRESS_LEDGER_REGION_D655_E3FF_20261117.md](AMI486_ADDRESS_LEDG
 - DAA2h–DFFFh is 1,374 zero bytes. E000h/E005h are entry stubs; E05Bh is the reset entry target; E160h–E25Fh and E260h–E2BFh are separately classified descriptor-like/parameter blocks.
 - New direct entry: the stack-return continuation D906h executes `JMP 8400h`. This corrects phase 52's former unresolved dynamic-entry note; it does not contradict phase 51's table-target statement. The 8400h path clears/restores CMOS 8Eh–FFh and preserves BP.13.
 - Candidate generator: 541 code windows, 140 data ranges; 29,460 unique code-window bytes, 15,775 unique data-range bytes, 117 overlap bytes, 45,118-byte union (68.84%), 203 pages touched and 125 fully covered. These are seeded inspection masks, not semantic-completion percentages.
-- Largest remaining uncovered intervals now begin E865h–F52Dh (3,273 bytes), 697Dh–7144h (1,992 bytes), 19F8h–20FFh (1,800 bytes), CA16h–D0FFh (1,770 bytes), and 873Ch–8DCEh (1,683 bytes).
+- Largest remaining uncovered intervals in the current mask: 19F8h–20FFh (1,800 bytes), CA16h–D0FFh (1,770 bytes), 873Ch–8DCEh (1,683 bytes), FA53h–FFFFh (1,453 bytes), and 244Eh–29F5h (1,448 bytes).
 
 
 ## Interrupt/CMOS/diagnostic region E862h–F52Dh — 2026-11-17
@@ -1290,7 +1290,7 @@ Report: [AMI486_ADDRESS_LEDGER_REGION_E862_F52D_20261117.md](AMI486_ADDRESS_LEDG
 - EC5Ch, ECE7h, ED1Bh and ED3Dh cover printer/status, timer/floppy timeout and INT 1Ah-compatible RTC/time-date services. EE94h/EE9Dh are CMOS indexed read/write helpers; EEE7h/EEEFh handle POST/PIC programming.
 - F068h clears CR0.PE and returns through the E2B8h IDT pointer to reset entry E05Bh. F10Dh–F302h covers CMOS Setup validation/editor; F371h is the encoded “EVALUATION COPY, NOT FOR SALE” message; F3DBh/F419h validate video/ROM signatures; F4A5h/F50Dh are fatal diagnostic paths.
 - The E87Bh and F0A3h tables, EFC7h–F041h opaque block and several interrupt-vector installations remain unresolved.
-- Current candidate mask: 508 code windows, 136 data ranges; 27,247 unique code bytes, 15,754 unique data bytes, 117 overlap bytes, 42,884-byte union (65.44%), 195 pages touched, 118 fully covered. These are inspection masks, not semantic completion.
+- Current candidate mask: 541 code windows, 140 data ranges; 29,460 unique code bytes, 15,775 unique data bytes, 117 overlap bytes, 45,118-byte union (68.84%), 203 pages touched, 125 fully covered. These are inspection masks, not semantic completion.
 - Largest remaining uncovered intervals: 19F8h–20FFh (1,800 bytes), CA16h–D0FFh (1,770 bytes), 873Ch–8DCEh (1,683 bytes), FA53h–FFFFh (1,453 bytes), 244Eh–29F5h (1,448 bytes).
 
 
