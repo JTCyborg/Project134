@@ -173,3 +173,11 @@ The called helpers include explicit writes to the CGA-compatible mode-control po
 The F1E2h caller then saves registers and performs a larger startup sequence: copies a 64-byte block from region E000h to a stack-local buffer, calls helper routines around F309h and F10Ah, and proceeds into further platform initialization. Later in this same block it invokes INT 1Ah functions 02h and 04h (RTC time and date), then continues into disk/boot preparation. Thus the CMOS[B3h] branch feeds into a broader platform startup path that includes display setup and RTC services.
 
 **Caution:** the 3D8h writes and E19x variable use establish video initialization, but the exact chipset/adapter model and complete CRTC register table still need a dedicated decode. Do not claim a specific VGA/CGA card from these ports alone.
+
+## Decode correction for F1E2h / F1E4h overlap
+
+Correction to the preceding F1E2h note: the CPU continuation established by the synthetic return address is F1E2h, not F1E4h. Starting at F1E2h, bytes `38 0E E8 A6` decode as `CMP BYTE PTR [A6E8h],CL`; the bytes E8 A6 65 are therefore also a possible overlapping CALL encoding only when decoding from F1E4h. There is no independent evidence that execution enters F1E4h on this path. The earlier claim that the CMOS[B3h] continuation calls 578Dh is withdrawn.
+
+The 578Dh routine is independently called from numerous other ROM locations (including 0159h, 0FD9h, 3E52h, 3F28h, 48CAh, 4990h, 49D7h, 4A29h, 4BF0h, 4D05h, 4EFEh, 4FE2h, 5066h, and 597Dh), so its video-configuration behavior remains valid as a separate finding. It must not be attributed to the F1E2h continuation without proving an alternate entry.
+
+The F1E2h continuation instead proceeds through an overlapping instruction stream beginning with the CMP above, then pushes registers, allocates a 40h-byte stack frame, and copies 20h words from DS:E000h to the stack-local ES:DI buffer. It calls offsets F309h and F108h, both of which require entry-point-aware decoding (F309h is inside the bytes of a nearby INT 16h instruction when decoded from F300h). Their exact semantics are not yet established. The later visible INT 1Ah calls for functions 02h and 04h read RTC time/date. The remainder of this continuation is still under analysis.
