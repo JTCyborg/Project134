@@ -1420,6 +1420,15 @@ SEEDS.extend([
     (0x71A0, "Setup/POST metric display routine with BP frame; formats the E1AFh value and positions the output using E3C6h/E3C7h"),
 ])
 
+LIMITS.update({
+    0x3E3F: 0x5A, 0x3E99: 0x59, 0x3EF2: 0x58,
+})
+
+SEEDS.extend([
+    (0x3E99, "Setup value-input/parser routine: obtains field text, loops over colon and space delimiters, and stores parsed characters"),
+    (0x3EF2, "Setup metric/value formatter: converts the input value, positions the cursor, and displays the formatted result"),
+])
+
 def main():
     rom = ROM_PATH.read_bytes()
     if len(rom) != 65536:
