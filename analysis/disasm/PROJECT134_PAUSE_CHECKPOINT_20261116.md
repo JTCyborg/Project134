@@ -243,7 +243,7 @@ Two previously under-described regions now have byte-backed reports:
 
 ## Address-ledger continuation — 2026-11-17
 
-The Capstone candidate generator has been expanded: 222 code windows, 57 data ranges. Recomputed candidate footprint is 21,224/65,536 bytes (32.39%) across 108 pages, comprising 12,140 code-window bytes, 9,197 data-range bytes and 113 overlap bytes. This is a sampling footprint only, not semantic coverage.
+The Capstone candidate generator has been expanded: 243 code windows, 57 data ranges. Recomputed candidate footprint is 23,064/65,536 bytes (35.19%) across 121 pages, comprising 13,980 code-window bytes, 9,197 data-range bytes and 113 overlap bytes. This is a sampling footprint only, not semantic coverage.
 
 New text/table classifications are documented in AMI486_ADDRESS_LEDGER_20261116.md section 11. The 2D11h timing benchmark is now an aligned candidate window; its runtime entry and stack precondition remain unresolved. The next step remains range-driven reconciliation of unclassified bytes and alternate entries, not a numbered phase.
 
@@ -260,4 +260,9 @@ The low-ROM 00EFh candidate seed is generated through 0235h, including the align
 
 The generated candidate window 00EFh–0235h is now byte-aligned through RET. The report AMI486_LOW_ROM_SETUP_VIDEO_ENTRY_20261117.md documents the display/cursor preservation path and the 0AF5h callback-record walker. No direct near CALL/JMP entry or literal 00EFh pointer was found; incoming stack convention remains unresolved.
 
-Current generated candidate footprint: 222 code windows, 57 data ranges, 12,140 code-window bytes, 9,197 data-range bytes, 113 overlap bytes, 21,224-byte union (32.39%) across 108 pages. This remains a sampling footprint, not semantic completion.
+Current generated candidate footprint: 243 code windows, 57 data ranges, 13,980 code-window bytes, 9,197 data-range bytes, 113 overlap bytes, 23,064-byte union (35.19%) across 121 pages. This remains a sampling footprint, not semantic completion.
+
+
+## Temporary IVT/calendar refresh — 2026-11-17
+
+Report: AMI486_TEMPORARY_IVT_CALENDAR_REFRESH_20261117.md. 626Bh installs temporary INT 10h/1Ah/1Ch handlers; 62BDh restores the previous vectors. INT 1Ch uses BDA ticks and an active-handler counter to trigger 6616h calendar refresh when safe. Raw 6616h code is verified through RET at 6757h; the generator source requests a 0142h window, but the generated listing still shows 0080h, so regeneration remains open.
