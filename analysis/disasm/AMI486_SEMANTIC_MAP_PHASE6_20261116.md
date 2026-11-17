@@ -72,9 +72,10 @@ The wrapper at 85B3:
 4. Calls 85CB (zero-entry table, so no entries are changed).
 5. Saves AX.
 6. Calls 85D6 (dynamic table or its five-entry fallback).
-7. Restores AX and returns.
+7. Restores AX.
+8. Falls through into 85C0h, which loads CX=[8882h]=76 and SI=8750h, then jumps to the common worker at 85FEh. The suffix is processed before the routine returns at 862Fh.
 
-Thus 85B3 applies the five-entry prefix and then the optional runtime-selected table using the same input AL mode. The middle 85CB call is a no-op under the current built-in count of zero; it may be a retained hook for a patched/alternate BIOS data set, but that is not proven.
+Thus 85B3 applies the five-entry prefix, the zero-count 85CB slot, the optional runtime table selected by 85D6, and then the 76-entry suffix. In the stock ROM, 85CB is a no-op and 85D6 also processes no entries because 82B0h=0; the wrapper therefore applies all 81 built-in records. The middle 85CB call may be a retained hook for a patched/alternate BIOS data set, but that is not proven.
 
 A call site at 84FE invokes 85B3 with AL=1 after copying a 30h-byte configuration block from CS:8210 to E010. This is a concrete initialization path that applies value-A entries to the configuration window.
 
@@ -86,7 +87,7 @@ A second call site at 5A92 invokes 85B3 after the E187-related checks and an add
 - E187 chooses one of four table slices by exact numeric value.
 - The built-in slices have counts 5, 76 and 0.
 - E187=4 chooses the optional runtime table path.
-- 85B3 applies the five-entry prefix followed by the optional table.
+- 85B3 applies the five-entry prefix, the optional 85CB/85D6 slots, then falls through to the 76-entry suffix; the stock path processes all 81 built-in records.
 - AL=1/2 selects record byte +2/+3; AL=0 copies masked bits from the source window.
 - 84FE calls 85B3 with AL=1 after copying the 8210h block.
 
@@ -117,3 +118,8 @@ A second call site at 5A92 invokes 85B3 after the E187-related checks and an add
 The phase-6 statement that 85D6 falls back to the five-entry built-in table when `CS:[82B0]` is zero was incorrect. The routine zeroes CX before reading the selector; when selector is zero, DEC BL branches around the count lookup, CX remains zero, and the common worker exits immediately. The five-entry table is selected only by the separate 85F5 routine.
 
 The stock ROM initializes `82B0=00h`, `82C0=0000h`, and `82C2=0000h`, so 85D6 is a no-op in the unpatched image. See [phase 8](AMI486_SEMANTIC_MAP_PHASE8_20261116.md) for the byte-level verification and corrected call-path summary.
+
+
+## Audit correction — 85B3h falls through into the 76-record suffix (2026-11-17)
+
+The earlier description in section 4 that 85B3h returns after the 85D6h call is incorrect. At 85BFh, POP AX is followed by 85C0h PUSH SI; there is no RET at 85BFh. Execution falls through into the 85C0h worker, loads the 76-entry count from 8882h and base 8750h, and returns only at 862Fh. This is a second caller of the 76-record suffix in addition to the direct E187h=2 Setup dispatch. In the stock ROM, the 85D6h optional table is empty (phase 8 correction), so the 85B3h wrapper processes 5 + 0 + 0 + 76 = 81 records. See `AMI486_ADDRESS_LEDGER_REGION_873C_8DCE_20261117.md`.
