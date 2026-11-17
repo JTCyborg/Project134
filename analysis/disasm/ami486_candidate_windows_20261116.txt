@@ -17341,8 +17341,8 @@ C77A  EB 03                   jmp 0xc77f
 C77C  C6 07 15                mov byte ptr [bx], 0x15
 C77F  0A              db 0x0A
 
-===== C780h-C7FFh =====
-Reason: diskette BIOS dispatch continuation
+===== C780h-C8AFh =====
+Reason: diskette BIOS dispatch/transfer continuation: extends through 0C8AFh, with internal branch target 0C814h and near-JMP path to 0C8DBh
 C780  E4 75                   in al, 0x75
 C782  9C                      pushf
 C783  C6 06 41 00 00          mov byte ptr [0x41], 0
@@ -17400,7 +17400,83 @@ C7F7  32 F6                   xor dh, dh
 C7F9  03 F2                   add si, dx
 C7FB  80 3C 00                cmp byte ptr [si], 0
 C7FE  5A                      pop dx
-C7FF  75              db 0x75
+C7FF  75 13                   jne 0xc814
+C801  50                      push ax
+C802  E8 B0 0B                call 0xd3b5
+C805  74 05                   je 0xc80c
+C807  58                      pop ax
+C808  B4 80                   mov ah, 0x80
+C80A  EB DD                   jmp 0xc7e9
+C80C  0A C0                   or al, al
+C80E  58                      pop ax
+C80F  74 F7                   je 0xc808
+C811  C6 04 02                mov byte ptr [si], 2
+C814  BF 3F 00                mov di, 0x3f
+C817  80 25 7F                and byte ptr [di], 0x7f
+C81A  80 FC 03                cmp ah, 3
+C81D  75 03                   jne 0xc822
+C81F  80 0D 80                or byte ptr [di], 0x80
+C822  56                      push si
+C823  E8 8F 0B                call 0xd3b5
+C826  75 07                   jne 0xc82f
+C828  3C 01                   cmp al, 1
+C82A  75 03                   jne 0xc82f
+C82C  C6 04 93                mov byte ptr [si], 0x93
+C82F  E8 26 08                call 0xd058
+C832  E8 CF 08                call 0xd104
+C835  5E                      pop si
+C836  73 0E                   jae 0xc846
+C838  E8 9E 08                call 0xd0d9
+C83B  EB AC                   jmp 0xc7e9
+C83D  3C 03                   cmp al, 3
+C83F  75 EE                   jne 0xc82f
+C841  C6 04 97                mov byte ptr [si], 0x97
+C844  EB E9                   jmp 0xc82f
+C846  F6 04 10                test byte ptr [si], 0x10
+C849  75 07                   jne 0xc852
+C84B  E8 81 0B                call 0xd3cf
+C84E  72 E8                   jb 0xc838
+C850  EB 03                   jmp 0xc855
+C852  E8 95 0C                call 0xd4ea
+C855  BE 90 00                mov si, 0x90
+C858  52                      push dx
+C859  32 F6                   xor dh, dh
+C85B  03 F2                   add si, dx
+C85D  5A                      pop dx
+C85E  B8 03 AF                mov ax, 0xaf03
+C861  80 3C D7                cmp byte ptr [si], 0xd7
+C864  74 0A                   je 0xc870
+C866  B8 03 DF                mov ax, 0xdf03
+C869  80 3C 17                cmp byte ptr [si], 0x17
+C86C  75 02                   jne 0xc870
+C86E  B4 BF                   mov ah, 0xbf
+C870  8B F0                   mov si, ax
+C872  BF 02 00                mov di, 2
+C875  B5 03                   mov ch, 3
+C877  80 0E 3E 00 80          or byte ptr [0x3e], 0x80
+C87C  E8 97 09                call 0xd216
+C87F  72 B7                   jb 0xc838
+C881  8B 46 12                mov ax, word ptr [bp + 0x12]
+C884  32 E4                   xor ah, ah
+C886  1E                      push ds
+C887  33 F6                   xor si, si
+C889  8E DE                   mov ds, si
+C88B  C5 36 78 00             lds si, ptr [0x78]
+C88F  8A 4C 03                mov cl, byte ptr [si + 3]
+C892  D2 E0                   shl al, cl
+C894  B1 80                   mov cl, 0x80
+C896  F6 E1                   mul cl
+C898  1F                      pop ds
+C899  48                      dec ax
+C89A  8B C8                   mov cx, ax
+C89C  E8 F8 08                call 0xd197
+C89F  73 05                   jae 0xc8a6
+C8A1  8B 4E 10                mov cx, word ptr [bp + 0x10]
+C8A4  EB 92                   jmp 0xc838
+C8A6  8B 46 12                mov ax, word ptr [bp + 0x12]
+C8A9  80 FC 02                cmp ah, 2
+C8AC  75 04                   jne 0xc8b2
+C8AE  B4 46                   mov ah, 0x46
 
 ===== C8B0h-C92Fh =====
 Reason: diskette DMA transfer dispatch path
