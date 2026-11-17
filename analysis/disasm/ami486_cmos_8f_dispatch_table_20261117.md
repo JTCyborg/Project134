@@ -659,3 +659,18 @@ The code at `6D94h` (not `6D93h`; `6D91–6D93` are `CLC; JMP 6D8Ch`) establishe
 This is now stronger evidence of a disk-format/fill operation: a three-byte repeating pattern is prepared in the same buffer later supplied to the confirmed `INT 13h AH=05h` write path. However, two things remain unresolved: how the `6D94h` routine is entered (no direct near-CALL xref or far CALL immediate target found; it may be reached through a dispatch/jump table), and whether its CHS state progression corresponds to the hard-disk UI's explicit Y/N confirmation path. Do not yet state that the menu confirmation is linked.
 
 Correction to the previous buffer-size wording: the loop does 171 three-byte stores and the final store touches `E3B8h`; it is inaccurate to describe the written range as ending at `E3B7h`.
+
+
+### Confirmed caller loop tying pattern generation to repeated AH=05h writes
+
+A control-flow scan found two actual near-CALL references to the routine entry `6D94h`: `6D2Ch` and `6F12h`. The second callsite is especially important because it is part of the same loop that subsequently calls the confirmed AH=05h writer:
+
+- At `6EF0h` onward, code initializes state `[E3C0h]=1`, clears a region beginning at `E3D0h` using a count from `E41Fh`, then loads a 3-byte record from `DS:[SI]` / `DS:[SI+2]` (`BX=[SI]`, `AL=[SI+2]`).
+- It saves the working registers and pushes the record-derived values as arguments, then `CALL 6D94h` at `6F12h`.
+- After the call it checks the carry/status state (including `SS:[B9E3h]`), restores the saved register set, and calls `6F75h` at `6F23h`.
+- `6F75h` calls the helper at `6F3Eh`, prepares CHS, sets `BX=E1B8h`, `AH=05h`, `AL=[E41Fh]`, then calls `6C15h` -> `INT 13h` at `6C1Fh`.
+- On success, the caller advances `SI` by 3 and loops back to process the next record. Thus the records are not just a static fill table: they drive repeated prepare/write iterations.
+
+The first caller, `6D2Ch`, is in the `6CF0h–6D8xh` state/geometry path and also invokes `6D94h`; its arguments and role are still being decoded. The entry `6D94h` takes two stack arguments into SI and DI, sets CX=3, and calls the pattern generator `6FAEh`, which fills the write buffer with the selected three-byte repeating pattern. It then processes retry/abort and track-state variables.
+
+This is now strong evidence that the ROM contains a low-level disk formatting/write-track workflow: record-driven repeated calls to `INT 13h AH=05h`, with a synthesized repeating fill pattern. What remains unproven is the final UI linkage: the explicit hard-disk warning/confirmation string and Y/N handler have not yet been connected by a verified call path to the `6D94h / 6EF0h` sequence. Keep that distinction in the documentation.
