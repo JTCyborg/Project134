@@ -57,6 +57,10 @@ Words: 00EC, 0BDE, 0C05, 0C2C, 0C53, 5A7A, 5A7A, F1C8, 5038, 4628, 2F67, 2F76
 Reason: Two zero-byte alignment padding before the BIOS Setup main-menu entry
 3C5C  00 00                                           ..
 
+===== DATA 0294h-02A3h =====
+Reason: Eight-word internal selector/dispatch table with offsets 029Ch, 0288h, 029Ch, 0288h, 0294h, 028Eh, 0294h, 028Eh; consumer semantics unresolved
+Words: 029C, 0288, 029C, 0288, 0294, 028E, 0294, 028E
+
 ===== DATA 345Ch-3472h =====
 Reason: AMI BIOS Setup Utilities title string
 ASCII: 'v/BIOS SETUP UTILITIES\x00'
@@ -27913,6 +27917,364 @@ Reason: option-ROM scan invalid-candidate helper: advances BX by 0080h, restores
 1BF0  81 C3 80 00             add bx, 0x80
 1BF4  1F                      pop ds
 1BF5  C3                      ret
+
+===== 0236h-0293h =====
+Reason: Standard CMOS Setup field handler: video display type bits in BP+14h; options text at 769Dh
+0236  8A 46 14                mov al, byte ptr [bp + 0x14]
+0239  24 30                   and al, 0x30
+023B  F6 46 14 08             test byte ptr [bp + 0x14], 8
+023F  75 02                   jne 0x243
+0241  B0 40                   mov al, 0x40
+0243  C0 C0 04                rol al, 4
+0246  BE CB 0A                mov si, 0xacb
+0249  E8 61 08                call 0xaad
+024C  8B DE                   mov bx, si
+024E  BE 9D 76                mov si, 0x769d
+0251  BA 16 0C                mov dx, 0xc16
+0254  E8 5D 03                call 0x5b4
+0257  9C                      pushf
+0258  80 66 14 F7             and byte ptr [bp + 0x14], 0xf7
+025C  0A C0                   or al, al
+025E  74 04                   je 0x264
+0260  80 4E 14 08             or byte ptr [bp + 0x14], 8
+0264  24 30                   and al, 0x30
+0266  80 66 14 CF             and byte ptr [bp + 0x14], 0xcf
+026A  08 46 14                or byte ptr [bp + 0x14], al
+026D  9D                      popf
+026E  C3                      ret
+026F  BF 14 00                mov di, 0x14
+0272  BE D7 77                mov si, 0x77d7
+0275  BA 16 0D                mov dx, 0xd16
+0278  B0 04                   mov al, 4
+027A  EB 00                   jmp 0x27c
+027C  84 03                   test byte ptr [bp + di], al
+027E  BB AD 0B                mov bx, 0xbad
+0281  74 21                   je 0x2a4
+0283  BB A5 0B                mov bx, 0xba5
+0286  EB 1C                   jmp 0x2a4
+0288  BE F6 74                mov si, 0x74f6
+028B  EB 2D                   jmp 0x2ba
+028D  90                      nop
+028E  BE 02 75                mov si, 0x7502
+0291  EB 27                   jmp 0x2ba
+0293  90                      nop
+
+===== 026Fh-0287h =====
+Reason: Standard CMOS Setup keyboard-test field handler; options text at 77D7h and BP+14h flag bit 2
+026F  BF 14 00                mov di, 0x14
+0272  BE D7 77                mov si, 0x77d7
+0275  BA 16 0D                mov dx, 0xd16
+0278  B0 04                   mov al, 4
+027A  EB 00                   jmp 0x27c
+027C  84 03                   test byte ptr [bp + di], al
+027E  BB AD 0B                mov bx, 0xbad
+0281  74 21                   je 0x2a4
+0283  BB A5 0B                mov bx, 0xba5
+0286  EB 1C                   jmp 0x2a4
+
+===== 0288h-028Dh =====
+Reason: Installed/Enabled option selector entry using text at 74F6h
+0288  BE F6 74                mov si, 0x74f6
+028B  EB 2D                   jmp 0x2ba
+028D  90                      nop
+
+===== 028Eh-0293h =====
+Reason: Disabled option selector entry using text at 7502h
+028E  BE 02 75                mov si, 0x7502
+0291  EB 27                   jmp 0x2ba
+0293  90                      nop
+
+===== 02A4h-03D3h =====
+Reason: Standard CMOS Setup option-bit update helper for BP+14h
+02A4  57                      push di
+02A5  50                      push ax
+02A6  E8 0B 03                call 0x5b4
+02A9  59                      pop cx
+02AA  5F                      pop di
+02AB  9C                      pushf
+02AC  F6 D1                   not cl
+02AE  20 0B                   and byte ptr [bp + di], cl
+02B0  0A C0                   or al, al
+02B2  74 04                   je 0x2b8
+02B4  F6 D1                   not cl
+02B6  08 0B                   or byte ptr [bp + di], cl
+02B8  9D                      popf
+02B9  C3                      ret
+02BA  56                      push si
+02BB  E8 91 05                call 0x84f
+02BE  E8 0C 06                call 0x8cd
+02C1  5E                      pop si
+02C2  56                      push si
+02C3  9C                      pushf
+02C4  E8 9B 05                call 0x862
+02C7  80 FC 3C                cmp ah, 0x3c
+02CA  74 0B                   je 0x2d7
+02CC  80 FC 3D                cmp ah, 0x3d
+02CF  74 06                   je 0x2d7
+02D1  9D                      popf
+02D2  2E 8A 04                mov al, byte ptr cs:[si]
+02D5  5E                      pop si
+02D6  C3                      ret
+02D7  9D                      popf
+02D8  5E                      pop si
+02D9  EB DF                   jmp 0x2ba
+02DB  8A 46 10                mov al, byte ptr [bp + 0x10]
+02DE  C0 E8 04                shr al, 4
+02E1  BA 16 0A                mov dx, 0xa16
+02E4  E8 BC 02                call 0x5a3
+02E7  9C                      pushf
+02E8  80 66 10 0F             and byte ptr [bp + 0x10], 0xf
+02EC  C0 E0 04                shl al, 4
+02EF  EB 0E                   jmp 0x2ff
+02F1  8A 46 10                mov al, byte ptr [bp + 0x10]
+02F4  BA 16 0B                mov dx, 0xb16
+02F7  E8 A9 02                call 0x5a3
+02FA  9C                      pushf
+02FB  80 66 10 F0             and byte ptr [bp + 0x10], 0xf0
+02FF  50                      push ax
+0300  8A 66 10                mov ah, byte ptr [bp + 0x10]
+0303  08 46 10                or byte ptr [bp + 0x10], al
+0306  80 66 14 3F             and byte ptr [bp + 0x14], 0x3f
+030A  0A C0                   or al, al
+030C  74 08                   je 0x316
+030E  0A E4                   or ah, ah
+0310  74 04                   je 0x316
+0312  80 4E 14 40             or byte ptr [bp + 0x14], 0x40
+0316  58                      pop ax
+0317  9D                      popf
+0318  C3                      ret
+0319  C7 46 06 00 00          mov word ptr [bp + 6], 0
+031E  8A 46 12                mov al, byte ptr [bp + 0x12]
+0321  C0 E8 04                shr al, 4
+0324  24 0F                   and al, 0xf
+0326  3C 0F                   cmp al, 0xf
+0328  75 03                   jne 0x32d
+032A  8A 46 19                mov al, byte ptr [bp + 0x19]
+032D  BA 16 08                mov dx, 0x816
+0330  E8 50 00                call 0x383
+0333  9C                      pushf
+0334  3C 0F                   cmp al, 0xf
+0336  73 10                   jae 0x348
+0338  C0 E0 04                shl al, 4
+033B  80 66 12 0F             and byte ptr [bp + 0x12], 0xf
+033F  08 46 12                or byte ptr [bp + 0x12], al
+0342  C6 46 19 00             mov byte ptr [bp + 0x19], 0
+0346  9D                      popf
+0347  C3                      ret
+0348  80 4E 12 F0             or byte ptr [bp + 0x12], 0xf0
+034C  88 46 19                mov byte ptr [bp + 0x19], al
+034F  9D                      popf
+0350  C3                      ret
+0351  C7 46 06 09 00          mov word ptr [bp + 6], 9
+0356  8A 46 12                mov al, byte ptr [bp + 0x12]
+0359  24 0F                   and al, 0xf
+035B  3C 0F                   cmp al, 0xf
+035D  75 03                   jne 0x362
+035F  8A 46 1A                mov al, byte ptr [bp + 0x1a]
+0362  BA 16 09                mov dx, 0x916
+0365  E8 1B 00                call 0x383
+0368  9C                      pushf
+0369  3C 0F                   cmp al, 0xf
+036B  73 0D                   jae 0x37a
+036D  80 66 12 F0             and byte ptr [bp + 0x12], 0xf0
+0371  08 46 12                or byte ptr [bp + 0x12], al
+0374  C6 46 1A 00             mov byte ptr [bp + 0x1a], 0
+0378  9D                      popf
+0379  C3                      ret
+037A  80 4E 12 0F             or byte ptr [bp + 0x12], 0xf
+037E  88 46 1A                mov byte ptr [bp + 0x1a], al
+0381  9D                      popf
+0382  C3                      ret
+0383  C6 46 09 FF             mov byte ptr [bp + 9], 0xff
+0387  89 56 04                mov word ptr [bp + 4], dx
+038A  BE 50 77                mov si, 0x7750
+038D  E8 50 02                call 0x5e0
+0390  88 46 08                mov byte ptr [bp + 8], al
+0393  E8 48 00                call 0x3de
+0396  8A 46 08                mov al, byte ptr [bp + 8]
+0399  9C                      pushf
+039A  73 33                   jae 0x3cf
+039C  74 31                   je 0x3cf
+039E  80 FC 01                cmp ah, 1
+03A1  74 2C                   je 0x3cf
+03A3  9D                      popf
+03A4  80 FC 49                cmp ah, 0x49
+03A7  74 18                   je 0x3c1
+03A9  80 FC 3C                cmp ah, 0x3c
+03AC  74 E2                   je 0x390
+03AE  80 FC 3D                cmp ah, 0x3d
+03B1  74 DD                   je 0x390
+03B3  FE C0                   inc al
+03B5  3C 0F                   cmp al, 0xf
+03B7  74 FA                   je 0x3b3
+03B9  3C 30                   cmp al, 0x30
+03BB  75 D3                   jne 0x390
+03BD  B0 00                   mov al, 0
+03BF  EB CF                   jmp 0x390
+03C1  FE C8                   dec al
+03C3  3C 0F                   cmp al, 0xf
+03C5  74 FA                   je 0x3c1
+03C7  3C FF                   cmp al, 0xff
+03C9  75 C5                   jne 0x390
+03CB  B0 2F                   mov al, 0x2f
+03CD  EB C1                   jmp 0x390
+03CF  E8 19 02                call 0x5eb
+03D2  9D                      popf
+03D3  C3                      ret
+
+===== 02BAh-02DAh =====
+Reason: shared Installed/Enabled/Disabled option input loop; reads key and returns selected option
+02BA  56                      push si
+02BB  E8 91 05                call 0x84f
+02BE  E8 0C 06                call 0x8cd
+02C1  5E                      pop si
+02C2  56                      push si
+02C3  9C                      pushf
+02C4  E8 9B 05                call 0x862
+02C7  80 FC 3C                cmp ah, 0x3c
+02CA  74 0B                   je 0x2d7
+02CC  80 FC 3D                cmp ah, 0x3d
+02CF  74 06                   je 0x2d7
+02D1  9D                      popf
+02D2  2E 8A 04                mov al, byte ptr cs:[si]
+02D5  5E                      pop si
+02D6  C3                      ret
+02D7  9D                      popf
+02D8  5E                      pop si
+02D9  EB DF                   jmp 0x2ba
+
+===== 02DBh-02FCh =====
+Reason: hard-disk type selector for high nibble of BP+10h
+02DB  8A 46 10                mov al, byte ptr [bp + 0x10]
+02DE  C0 E8 04                shr al, 4
+02E1  BA 16 0A                mov dx, 0xa16
+02E4  E8 BC 02                call 0x5a3
+02E7  9C                      pushf
+02E8  80 66 10 0F             and byte ptr [bp + 0x10], 0xf
+02EC  C0 E0 04                shl al, 4
+02EF  EB 0E                   jmp 0x2ff
+02F1  8A 46 10                mov al, byte ptr [bp + 0x10]
+02F4  BA 16 0B                mov dx, 0xb16
+02F7  E8 A9 02                call 0x5a3
+02FA  9C                      pushf
+02FB  80              db 0x80
+02FC  66              db 0x66
+
+===== 02F1h-02FCh =====
+Reason: alternate hard-disk type selector for low nibble of BP+10h
+02F1  8A 46 10                mov al, byte ptr [bp + 0x10]
+02F4  BA 16 0B                mov dx, 0xb16
+02F7  E8 A9 02                call 0x5a3
+02FA  9C                      pushf
+02FB  80              db 0x80
+02FC  66              db 0x66
+
+===== 02FDh-0318h =====
+Reason: hard-disk type selector setup for high nibble of BP+12h
+02FD  10 F0                   adc al, dh
+02FF  50                      push ax
+0300  8A 66 10                mov ah, byte ptr [bp + 0x10]
+0303  08 46 10                or byte ptr [bp + 0x10], al
+0306  80 66 14 3F             and byte ptr [bp + 0x14], 0x3f
+030A  0A C0                   or al, al
+030C  74 08                   je 0x316
+030E  0A E4                   or ah, ah
+0310  74 04                   je 0x316
+0312  80 4E 14 40             or byte ptr [bp + 0x14], 0x40
+0316  58                      pop ax
+0317  9D                      popf
+0318  C3                      ret
+
+===== 0319h-0350h =====
+Reason: indirect field-handler entry for third hard-disk type nibble; uses selector at 0383h
+0319  C7 46 06 00 00          mov word ptr [bp + 6], 0
+031E  8A 46 12                mov al, byte ptr [bp + 0x12]
+0321  C0 E8 04                shr al, 4
+0324  24 0F                   and al, 0xf
+0326  3C 0F                   cmp al, 0xf
+0328  75 03                   jne 0x32d
+032A  8A 46 19                mov al, byte ptr [bp + 0x19]
+032D  BA 16 08                mov dx, 0x816
+0330  E8 50 00                call 0x383
+0333  9C                      pushf
+0334  3C 0F                   cmp al, 0xf
+0336  73 10                   jae 0x348
+0338  C0 E0 04                shl al, 4
+033B  80 66 12 0F             and byte ptr [bp + 0x12], 0xf
+033F  08 46 12                or byte ptr [bp + 0x12], al
+0342  C6 46 19 00             mov byte ptr [bp + 0x19], 0
+0346  9D                      popf
+0347  C3                      ret
+0348  80 4E 12 F0             or byte ptr [bp + 0x12], 0xf0
+034C  88 46 19                mov byte ptr [bp + 0x19], al
+034F  9D                      popf
+0350  C3                      ret
+
+===== 0351h-0366h =====
+Reason: indirect field-handler entry for fourth hard-disk type nibble
+0351  C7 46 06 09 00          mov word ptr [bp + 6], 9
+0356  8A 46 12                mov al, byte ptr [bp + 0x12]
+0359  24 0F                   and al, 0xf
+035B  3C 0F                   cmp al, 0xf
+035D  75 03                   jne 0x362
+035F  8A 46 1A                mov al, byte ptr [bp + 0x1a]
+0362  BA 16 09                mov dx, 0x916
+0365  E8              db 0xE8
+0366  1B              db 0x1B
+
+===== 0367h-03B7h =====
+Reason: common fixed-disk type chooser; supports fixed types 01h-46h and user-defined type 47
+0367  00 9C 3C 0F             add byte ptr [si + 0xf3c], bl
+036B  73 0D                   jae 0x37a
+036D  80 66 12 F0             and byte ptr [bp + 0x12], 0xf0
+0371  08 46 12                or byte ptr [bp + 0x12], al
+0374  C6 46 1A 00             mov byte ptr [bp + 0x1a], 0
+0378  9D                      popf
+0379  C3                      ret
+037A  80 4E 12 0F             or byte ptr [bp + 0x12], 0xf
+037E  88 46 1A                mov byte ptr [bp + 0x1a], al
+0381  9D                      popf
+0382  C3                      ret
+0383  C6 46 09 FF             mov byte ptr [bp + 9], 0xff
+0387  89 56 04                mov word ptr [bp + 4], dx
+038A  BE 50 77                mov si, 0x7750
+038D  E8 50 02                call 0x5e0
+0390  88 46 08                mov byte ptr [bp + 8], al
+0393  E8 48 00                call 0x3de
+0396  8A 46 08                mov al, byte ptr [bp + 8]
+0399  9C                      pushf
+039A  73 33                   jae 0x3cf
+039C  74 31                   je 0x3cf
+039E  80 FC 01                cmp ah, 1
+03A1  74 2C                   je 0x3cf
+03A3  9D                      popf
+03A4  80 FC 49                cmp ah, 0x49
+03A7  74 18                   je 0x3c1
+03A9  80 FC 3C                cmp ah, 0x3c
+03AC  74 E2                   je 0x390
+03AE  80 FC 3D                cmp ah, 0x3d
+03B1  74 DD                   je 0x390
+03B3  FE C0                   inc al
+03B5  3C 0F                   cmp al, 0xf
+03B7  74              db 0x74
+
+===== 03B8h-03D3h =====
+Reason: alternate entry in fixed-disk type chooser for wrapping/adjusting the selected type
+03B8  FA                      cli
+03B9  3C 30                   cmp al, 0x30
+03BB  75 D3                   jne 0x390
+03BD  B0 00                   mov al, 0
+03BF  EB CF                   jmp 0x390
+03C1  FE C8                   dec al
+03C3  3C 0F                   cmp al, 0xf
+03C5  74 FA                   je 0x3c1
+03C7  3C FF                   cmp al, 0xff
+03C9  75 C5                   jne 0x390
+03CB  B0 2F                   mov al, 0x2f
+03CD  EB C1                   jmp 0x390
+03CF  E8 19 02                call 0x5eb
+03D2  9D                      popf
+03D3  C3                      ret
 
 ===== 3C5Eh-3E3Eh =====
 Reason: direct JMP target from 2F21h; BIOS Setup main-menu loop, 12 option labels and function-pointer dispatch
