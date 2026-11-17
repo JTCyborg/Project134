@@ -361,3 +361,24 @@ Cross-references refine the menu handler interpretation:
 - The warning/confirmation strings around 3982h–39C0h and status/error strings around 39C8h–3A28h show that this UI belongs to a hard-disk destructive-operation utility, but the actual sector/track formatting engine has not yet been isolated. A scan for literal `INT 13h` instructions in 4EE7h–53FFh found none; disk I/O may be performed through an indirect BIOS wrapper or a helper outside that range.
 
 Thus the safe conclusion is: marker 0Ah opens the hard-disk format/geometry interface; the identified 4EE7h routine gathers cylinder/head input. Do not yet claim which INT 13h services or physical write pattern performs the format.
+
+### Remaining menu handlers: counter reset and selected-entry removal
+
+The two previously unclassified menu-table handlers are now traced at instruction level:
+
+- Handler index 3, entry 4E5Fh, is exactly `MOV WORD PTR [E423h],0000h; RET`. It clears the menu's E423h state/counter. This is a reset/clear action, not a disk-format command.
+- Handler index 2, entry 4E2Eh, is a selected-entry edit/removal path:
+  - Calls the overlapping entry at 4E64h (the byte at 4E64h is part of a different instruction stream; do not decode the handler solely from linear fall-through).
+  - If returned AL is 1Bh (Escape), returns without applying the edit.
+  - Otherwise reads E427h as the selected entry index, derives an offset using the fixed entry stride, and calls the helper at 578Dh/adjacent display code to refresh the selected row.
+  - It updates the E423h/E427h counters and loops through the list bounds, including comparisons against the active entry count at E425h/E427h.
+  - The exact semantic label of this action (delete, shift, or replace selected geometry entry) is not proven from the control flow alone. It is clearly list-entry maintenance, not the low-level track-writing engine.
+- The 4E64h address is an overlapping entry: byte 4E64h is `00 C3` (ADD BL,AL), while the handler body beginning at 4E65h starts `PUSH SI`. Keep the entry-point distinction in the disassembly listing.
+
+The four-entry menu table at 393Dh can now be summarized:
+0 -> 4DE7h (cylinder input)
+1 -> 4E1Fh (head input)
+2 -> 4E2Eh (selected-entry/list maintenance; exact UI label unresolved)
+3 -> 4E5Fh (clear E423h counter/state)
+
+No evidence in these handlers identifies the actual physical format/write routine. The next useful step is to follow the helper chain after the confirmation/status prompts in the 4Fxx–52xx region and identify any indirect disk-service dispatch, rather than treating these menu callbacks as the formatter itself.
