@@ -14583,6 +14583,121 @@ FA4E  60                      pushaw
 FA4F  BE 70 FF                mov si, 0xff70
 FA52  B9              db 0xB9
 
+===== 29F6h-2AB2h =====
+Reason: far callback target at index 3 of the Advanced Setup callback table B7B2h
+29F6  06                      push es
+29F7  56                      push si
+29F8  57                      push di
+29F9  33 DB                   xor bx, bx
+29FB  8A 1E 36 E0             mov bl, byte ptr [0xe036]
+29FF  80 26 36 E0 FE          and byte ptr [0xe036], 0xfe
+2A04  80 26 66 E0 00          and byte ptr [0xe066], 0
+2A09  0A C0                   or al, al
+2A0B  0F 85 20 00             jne 0x2a2f
+2A0F  F6 C3 01                test bl, 1
+2A12  0F 84 13 00             je 0x2a29
+2A16  80 0E 66 E0 01          or byte ptr [0xe066], 1
+2A1B  EB 1A                   jmp 0x2a37
+2A1D  90                      nop
+2A1E  80 0E 36 E0 01          or byte ptr [0xe036], 1
+2A23  B8 71 B5                mov ax, 0xb571
+2A26  E9 86 00                jmp 0x2aaf
+2A29  B8 68 B5                mov ax, 0xb568
+2A2C  E9 80 00                jmp 0x2aaf
+2A2F  02 C3                   add al, bl
+2A31  24 01                   and al, 1
+2A33  08 06 36 E0             or byte ptr [0xe036], al
+2A37  1E                      push ds
+2A38  B8 40 00                mov ax, 0x40
+2A3B  8E D8                   mov ds, ax
+2A3D  BE A9 87                mov si, 0x87a9
+2A40  03 36 E6 00             add si, word ptr [0xe6]
+2A44  2E AD                   lodsw ax, word ptr cs:[si]
+2A46  22 E0                   and ah, al
+2A48  8A FC                   mov bh, ah
+2A4A  83 C6 02                add si, 2
+2A4D  2E AD                   lodsw ax, word ptr cs:[si]
+2A4F  22 E0                   and ah, al
+2A51  8A DC                   mov bl, ah
+2A53  83 C6 02                add si, 2
+2A56  2E AD                   lodsw ax, word ptr cs:[si]
+2A58  22 E0                   and ah, al
+2A5A  8A F4                   mov dh, ah
+2A5C  83 C6 02                add si, 2
+2A5F  B8 02 02                mov ax, 0x202
+2A62  E8 6A 63                call 0x8dcf
+2A65  A8 08                   test al, 8
+2A67  0F 84 0B 00             je 0x2a76
+2A6B  46                      inc si
+2A6C  2E AD                   lodsw ax, word ptr cs:[si]
+2A6E  80 E4 07                and ah, 7
+2A71  8A D4                   mov dl, ah
+2A73  EB 07                   jmp 0x2a7c
+2A75  90                      nop
+2A76  2E AD                   lodsw ax, word ptr cs:[si]
+2A78  22 E0                   and ah, al
+2A7A  8A D4                   mov dl, ah
+2A7C  1F                      pop ds
+2A7D  80 26 46 E0 F0          and byte ptr [0xe046], 0xf0
+2A82  80 26 47 E0 7C          and byte ptr [0xe047], 0x7c
+2A87  80 26 49 E0 9F          and byte ptr [0xe049], 0x9f
+2A8C  80 26 50 E0 F8          and byte ptr [0xe050], 0xf8
+2A91  08 3E 46 E0             or byte ptr [0xe046], bh
+2A95  08 1E 47 E0             or byte ptr [0xe047], bl
+2A99  08 36 49 E0             or byte ptr [0xe049], dh
+2A9D  08 16 50 E0             or byte ptr [0xe050], dl
+2AA1  33 C0                   xor ax, ax
+2AA3  F6 06 66 E0 01          test byte ptr [0xe066], 1
+2AA8  0F 84 03 00             je 0x2aaf
+2AAC  E9 6F FF                jmp 0x2a1e
+2AAF  5F                      pop di
+2AB0  5E                      pop si
+2AB1  07                      pop es
+2AB2  CB                      retf
+
+===== 86DBh-873Bh =====
+Reason: far callback target at index 2 of the Advanced Setup callback table B7B2h
+86DB  50                      push ax
+86DC  33 FF                   xor di, di
+86DE  8C C8                   mov ax, cs
+86E0  3D 00 F0                cmp ax, 0xf000
+86E3  75 09                   jne 0x86ee
+86E5  F6 06 AA E1 01          test byte ptr [0xe1aa], 1
+86EA  75 02                   jne 0x86ee
+86EC  F7 D7                   not di
+86EE  2E A0 2C B5             mov al, byte ptr cs:[0xb52c]
+86F2  E8 B9 FC                call 0x83ae
+86F5  8B F0                   mov si, ax
+86F7  83 E6 7F                and si, 0x7f
+86FA  5B                      pop bx
+86FB  8A FC                   mov bh, ah
+86FD  8C C8                   mov ax, cs
+86FF  0B FF                   or di, di
+8701  74 0D                   je 0x8710
+8703  3D 00 F0                cmp ax, 0xf000
+8706  75 08                   jne 0x8710
+8708  F6 D7                   not bh
+870A  20 BC 00 E0             and byte ptr [si - 0x2000], bh
+870E  F6 D7                   not bh
+8710  0A DB                   or bl, bl
+8712  74 13                   je 0x8727
+8714  0B FF                   or di, di
+8716  74 1C                   je 0x8734
+8718  3D 00 F0                cmp ax, 0xf000
+871B  75 17                   jne 0x8734
+871D  BB AD 7C                mov bx, 0x7cad
+8720  E8 CF B7                call 0x3ef2
+8723  B8 02 00                mov ax, 2
+8726  CB                      retf
+8727  B8 71 B5                mov ax, 0xb571
+872A  84 BC 00 E0             test byte ptr [si - 0x2000], bh
+872E  75 03                   jne 0x8733
+8730  B8 68 B5                mov ax, 0xb568
+8733  CB                      retf
+8734  30 BC 00 E0             xor byte ptr [si - 0x2000], bh
+8738  B8 01 00                mov ax, 1
+873B  CB                      retf
+
 ===== 9870h-98C2h =====
 Reason: INT 10h video-BIOS dispatcher; special-cases AH=02h/03h/05h/0Eh and indexes table at 9848h
 9870  FB                      sti
