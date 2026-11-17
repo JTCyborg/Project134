@@ -372,9 +372,9 @@ def main():
                 b = ins.bytes
                 mnemonic = ins.mnemonic
                 # In 16-bit mode, unprefixed 98h/99h are CBW/CWD, not CWDE/CDQ.
-                if b == b"\\x98":
+                if b == b"\x98":
                     mnemonic = "cbw"
-                elif b == b"\\x99":
+                elif b == b"\x99":
                     mnemonic = "cwd"
                 relative = (
                     b[0] in (0xE8, 0xE9, 0xEB)
