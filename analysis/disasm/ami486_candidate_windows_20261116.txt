@@ -14573,57 +14573,12 @@ Reason: crafted-return continuation after CMOS B3h read through EE94h
 27F8  BC FE 27                mov sp, 0x27fe
 27FB  E9 9F C6                jmp 0xee9d
 
-===== 2800h-287Fh =====
+===== 2800h-2809h =====
 Reason: crafted-return continuation after CMOS B3h write through EE9Dh
 2800  B8 19 19                mov ax, 0x1919
 2803  90                      nop
 2804  BC 0A 28                mov sp, 0x280a
 2807  E9 C5 65                jmp 0x8dcf
-280A  0C 28                   or al, 0x28
-280C  0C 03                   or al, 3
-280E  86 E0                   xchg al, ah
-2810  BC 16 28                mov sp, 0x2816
-2813  E9 C6 65                jmp 0x8ddc
-2816  18 28                   sbb byte ptr [bx + si], ch
-2818  BF 1E 28                mov di, 0x281e
-281B  E9 68 FE                jmp 0x2686
-281E  B8 19 19                mov ax, 0x1919
-2821  90                      nop
-2822  BC 28 28                mov sp, 0x2828
-2825  E9 A7 65                jmp 0x8dcf
-2828  2A 28                   sub ch, byte ptr [bx + si]
-282A  24 FC                   and al, 0xfc
-282C  86 E0                   xchg al, ah
-282E  BC 34 28                mov sp, 0x2834
-2831  E9 A8 65                jmp 0x8ddc
-2834  36 28 B8 40 00          sub byte ptr ss:[bx + si + 0x40], bh
-2839  8E D8                   mov ds, ax
-283B  E6 80                   out 0x80, al
-283D  8E 16 69 00             mov ss, word ptr [0x69]
-2841  8B 26 67 00             mov sp, word ptr [0x67]
-2845  8F 06 69 00             pop word ptr [0x69]
-2849  8F 06 67 00             pop word ptr [0x67]
-284D  07                      pop es
-284E  1F                      pop ds
-284F  C3                      ret
-2850  B8 03 C5                mov ax, 0xc503
-2853  E8 86 65                call 0x8ddc
-2856  BF 5C 28                mov di, 0x285c
-2859  E9 56 64                jmp 0x8cb2
-285C  B8 19 19                mov ax, 0x1919
-285F  BF 65 28                mov di, 0x2865
-2862  E9 88 65                jmp 0x8ded
-2865  0C 03                   or al, 3
-2867  86 E0                   xchg al, ah
-2869  BF 6F 28                mov di, 0x286f
-286C  E9 8C 65                jmp 0x8dfb
-286F  B8 18 43                mov ax, 0x4318
-2872  BF 78 28                mov di, 0x2878
-2875  E9 83 65                jmp 0x8dfb
-2878  BF 7E 28                mov di, 0x287e
-287B  E9 08 FE                jmp 0x2686
-287E  B8              db 0xB8
-287F  19              db 0x19
 
 ===== 2911h-2940h =====
 Reason: indirect continuation selected by the 28F2h memory scan
