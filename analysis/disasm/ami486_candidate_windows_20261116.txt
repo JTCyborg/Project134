@@ -16,15 +16,15 @@ Words: 3044, 305A, 3070, 3089, 30A2, 30C1, 30E9, 3115, 3127, 313F, 3153, 316C
 Reason: Setup menu descriptions and help strings
 ASCII: 'Standard CMOS Setup for Changing Time, Date, Hard Disk Type, etc.\x00Advanced CMOS Setup for Configuring System Options\x00Advanced CHIPSET Setup for Configuring the CHIPSET Registers\x00Power Management Setup for Configuring Power Management Registers\x00Peripheral Management Setup for Configuring Peripheral Registers\x00Load BIOS Setup Default Values for Advanced CMOS and Advanced CHIPSET Setup\x00Load Power-On Default Values for Advanced CMOS and Advanced CHIPSET Setup\x00Change the User Password stored in the CMOS\x00Auto Detection of Hard Disk Type\x00Format the Hard Disk, Auto Interleave Detection and Media Analysis\x00Do Not Write the settings to the CMOS and Exit\x00'
 
-===== DATA 342Eh-3457h =====
+===== DATA 342Eh-3455h =====
 Reason: Setup menu string-pointer and graphic metadata block
 342E  A4 31 E6 31 19 32 56 32 98 32 D9 32 25 33 6F 33 .1.1.2V2.2.2%3o3
 343E  9B 33 BC 33 06 34 FF 33 EC 00 DE 0B 05 0C 2C 0C .3.3.4.3......,.
-344E  53 0C 7A 5A 7A 5A C8 F1 38 50                   S.zZzZ..8P
+344E  53 0C 7A 5A 7A 5A C8 F1                         S.zZzZ..
 
-===== DATA 3458h-3473h =====
+===== DATA 3456h-3473h =====
 Reason: AMI BIOS Setup Utilities title text
-ASCII: '(Fg/v/BIOS SETUP UTILITIES\x00�'
+ASCII: '8P(Fg/v/BIOS SETUP UTILITIES\x00�'
 
 ===== DATA 3474h-34AAh =====
 Reason: Setup keyboard navigation legend
@@ -236,8 +236,10 @@ Words: B6FB, B700, B708, B70F, B717, B71C, B724, B729, B731, B736, B73E, B745, B
 Reason: Setup option labels: clock, speed, cache, wait states and timing
 ASCII: 'Reserved\x00Disabled\x00Enabled\x00Absent\x00Present\x00Low\x00High\x00Off\x00On\x00No\x00Yes\x00Setup\x00Always\x000:300\x00DOS 1KB\x00A:, C:\x00C:, A:\x00250\x00500\x00750\x001000\x0030\x0024\x0020\x0015\x0012\x0010\x008\x006\x00Video\x00Main\x00Both\x00Slow\x00Normal\x00Fast\x00Fastest\x002t\x003t\x004t\x006t\x008t\x00WB\x00WT\x007.19MHz\x0014.32MHz\x0028.64MHz\x00CLK2\x00CLK2 /2\x00CLK2 /3\x00CLK2 /4\x00CLK2 /5\x00CLK2 /6\x00CLK2 /8\x00CLK2 /10\x00CLK2 /12\x00ATCLK\x00ATCLK/2\x00ATCLK2\x00ATCLK2/2\x00ATCLK2/4\x00ATCLK2/8\x00OSC\x00CLKIO\x0064KB\x00128KB\x000 WS\x001 WS\x002 WS\x003 WS\x000 ns\x001 ns\x002 ns\x003 ns\x000 us\x000.25 us\x000.5 us\x000.75 us\x001 us\x001.25 us\x001.5u\x001.75 us\x002 us\x002.25 us\x002.5 us\x002.75 us\x003 us\x003.25 us\x003.5 us\x003.75 us\x0015u \x0030u\x0060u\x00120u\x000 CLK2\x001 CLK2\x002 CLK2\x003 CLK2\x001st T2\x00T1 end\x00SYN.\x00Bypass\x00'
 
-===== 0C80h-0CFFh =====
-Reason: caller context and entry-alignment scan for E1xx Setup state helpers
+===== 0C7Dh-0CFFh =====
+Reason: direct CALL target at 0C79h; Setup item-list initializer prologue
+0C7D  55                      push bp
+0C7E  8B EC                   mov bp, sp
 0C80  53                      push bx
 0C81  E8 C9 54                call 0x614d
 0C84  A0 8E E1                mov al, byte ptr [0xe18e]
