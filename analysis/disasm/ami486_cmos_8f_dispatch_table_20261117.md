@@ -717,3 +717,16 @@ The latest byte-level pass narrows the provenance but also corrects an overstate
 - The code at `6A60h) writes a 16-bit value to `E1B5h` and an 8-bit value to `E1B7h`, after comparisons against stack-supplied bounds. On the failure path it clears both. This is consistent with a bounded numeric-entry helper, but a direct CALL xref to `6A60h` was not found in the current static scan; its entry/caller context still needs confirmation. Therefore the earlier wording that it is definitively the shared UI input procedure should be treated as provisional.
 
 For the `6D94h` caller, `E1B5h` and `E1B7h` are indeed passed as arguments, but their exact semantic labels are not yet established. `E1B2h` is passed as another argument and is better characterized as a derived geometry/range bound. Next step is to follow the dispatch/entry path into `6A60h` and trace the values from the UI handlers `4DE7h/4E1Fh` through `4EE7h` and their helper calls.
+
+
+### Follow-up: separate geometry setup from UI rendering; no direct entry to 6A60h found
+
+A fresh pass over `4D80h–5050h` and `68E0h–6AD0h` establishes the following:
+
+- `4EE7h` is a field/UI construction and validation routine, not evidence by itself of the numeric-entry routine that writes `E1B5h/E1B7h`. It calls display/layout helpers at `578Dh`, `5862h`, and `58D3h`, then assembles values from the current geometry/state and calls lower-level helpers. No direct CALL from this routine to `6A60h` or `69D0h` exists.
+- The block at `6930h` initializes the geometry/state fields when `[E1ABh]` is zero: it clears `E1AFh`, `E1B1h`, `E1B5h`, and `E1B7h`, then clears `[E1B9h]` and `[E1BDh]`. It sets `E1B2h=[E411h]-1` and `E1B4h=[E413h]-1`. This is a confirmed initialization path, not a UI keystroke path.
+- `69D0h` begins a separate stack-frame routine (`ENTER 0010h` is not used; it has `PUSH BP / MOV BP,SP / SUB SP,0010h`). Its body consumes stack arguments at `[BP+4]` and `[BP+6]`, works with the buffer at `E1B8h), and manipulates display/record data. The static near-CALL scan found no direct CALL to `69D0h`.
+- `6A60h` writes `[BP+0Ah]` to `E1B5h` and `[BP+08]` (low byte) to `E1B7h`, after comparisons against `[BP+08]` and `[BP+0Ah]` bounds. Its rejection path clears both fields. The direct near-CALL scan still finds no CALL to `6A60h`; this address is therefore a local/indirect entry candidate, not yet a proven standalone function entry.
+- The bytes at `6A53h` form a short flag/state-return path (`POPF; [E3B9h]=1; CLC; JMP` backward), immediately before the `6A60h` comparison/store block. This adjacency cautions against assigning an independent procedure boundary at `6A60h` without tracing incoming branches or indirect dispatch.
+
+Consequently, the previous hypothesis that `6A60h` is the common UI numeric-input handler remains unproven. The reliable conclusions are limited to its writes and bounds checks, the initialization at `6930h`, and the separate display/record work at `4EE7h` and `69D0h`. Next investigation should target indirect/far dispatch and branch predecessors for `69D0h`/`6A60h`, then correlate those with the destructive-confirmation UI state machine; the UI-to-`6D94h` link is still not established.
