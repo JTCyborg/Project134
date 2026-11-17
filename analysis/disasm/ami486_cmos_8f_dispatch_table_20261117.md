@@ -788,3 +788,18 @@ Therefore, at the callee the four arguments are exactly `[BP+4]=E1B5h`, `[BP+6]=
 The other direct caller at `6AF9h` builds its arguments from a record currently addressed through `SI`: it pushes the record's byte at `[SI+2]` (zero-extended), the word at `[SI]`, plus the current loop/index registers. It then calls `69D1h` and removes ten argument bytes. This is consistent with the same worker being used both for a table-driven record path and for a geometry-derived setup path.
 
 The return handling at `6BB8h` is also now clearer: the caller executes `PUSHF; POP AX; ADD SP,000Ah; PUSH AX; POPF`, then branches on carry. Thus the callee's CF is deliberately preserved across stack cleanup and is a meaningful status result, not incidental flag state. The subsequent checks of `[E3B9h]` select additional helper/error handling. The exact semantic meaning of CF and of the E3B9h substate remains to be decoded from the callee's exits and the helper calls it makes.
+
+
+### 69D1h disk-write result handling and abort key
+
+A byte-accurate decode of the worker body establishes the following sequence:
+
+1. The worker prepares the BIOS disk-write-track request. It loads the drive number from `[E421h]`, derives the CHS register encoding from the caller-supplied `SI` and `CX` values, sets `AH=05h`, loads `AL=[E41Fh]`, and calls `6C15h`. The wrapper at `6C15h` reaches `INT 13h` at `6C1Fh`.
+2. Immediately after the INT 13h call, the worker restores saved `CX` and `BX`, then executes `PUSHF` and calls `6CA0h`.
+3. `6CA0h` is a keyboard-abort poll: it checks with `INT 16h, AH=01h`; if a key is pending, it reads it with `INT 16h, AH=00h`. It returns CF set only when the read character is ESC (`1Bh`); otherwise it returns CF clear. If no key is pending, it returns CF clear without blocking.
+4. If the keyboard helper reports ESC, the worker restores the original INT 13h flags with `POPF`, sets `[E3B9h]=1Bh`, sets CF, and routes to its common exit/restore path. Thus ESC is an explicit abort condition and is distinguished from a BIOS disk error.
+5. If no ESC was detected, the worker restores the saved INT 13h flags and tests the original carry flag. CF clear enters the success path; CF set enters the retry/error-response path.
+
+The success path increments its local attempt/index register and checks whether it has reached two attempts. If another pass is needed it calls `6A93h`; otherwise it enters the response/cleanup path. The error path also uses the keyboard/response helpers and preserves a status in `[E3B9h]`. The full meanings of response characters and the precise retry policy are not yet established; do not label the non-ESC response keys as Retry/Ignore without tracing the helper at `6A93h` and the subsequent caller logic.
+
+This clarifies the CF contract: `6CA0h` reports keyboard ESC in its own CF, while the worker deliberately restores the earlier INT 13h flags before deciding whether the disk operation succeeded. The outer caller's saved-CF test therefore receives the worker's disk/abort status, not the keyboard helper's transient flags.
