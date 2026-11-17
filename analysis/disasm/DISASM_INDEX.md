@@ -1315,7 +1315,7 @@ Report: [AMI486_ADDRESS_LEDGER_REGION_19B0_23CE_20261117.md](AMI486_ADDRESS_LEDG
 - The LGDT pseudo-descriptor at 2068h loads limit 0017h and 24-bit base 0F2070h; GDT selectors 0008h and 0010h are flat 4-GiB and 64-KiB data segments respectively. 20DAh loads ES=0008h; AX=4410h is an ALi index/value pair, not a segment selector.
 - The return word at 20FAh is 20FCh. The memory probe starts at 20FCh with MOV DL,FFh; its first ES:66-prefixed dword store begins at 20FEh, so 2100h is inside that instruction and not a separate entry.
 - Focused byte map and correction: [AMI486_ADDRESS_LEDGER_REGION_19F8_20FB_20261117.md](AMI486_ADDRESS_LEDGER_REGION_19F8_20FB_20261117.md). The broader subsystem overview remains [AMI486_ADDRESS_LEDGER_REGION_19B0_23CE_20261117.md](AMI486_ADDRESS_LEDGER_REGION_19B0_23CE_20261117.md).
-- Current candidate mask: 597 code windows, 154 data ranges, 31,189 unique code bytes, 15,829 unique data bytes, 117 overlap bytes, 46,901-byte union (71.57%), 69 uncovered intervals, 210 pages touched and 133 fully covered. This is not semantic completion.
+- Historical candidate-mask snapshot after the POST/cache region and before the INT 13h diskette expansion: 597 code windows, 154 data ranges, 31,189 unique code bytes, 15,829 unique data bytes, 117 overlap bytes, 46,901-byte union (71.57%), 69 uncovered intervals, 210 pages touched and 133 fully covered. Superseded by section 18.
 - Next largest uncovered interval: CA16h–D0FFh (1,770 bytes).
 
 
@@ -1328,4 +1328,4 @@ Detailed map: [AMI486_ADDRESS_LEDGER_REGION_CA15_D103_20261117.md](AMI486_ADDRES
 - CABBh–CB08h contains six 13-byte parameter records. C8CAh is a 13-byte parameter-table view that overlaps executable code after CALL D0D9h at C8C7h.
 - CB09h and CBF8h are coherent candidate entries but have no direct near xref in the linear listing; their dispatch provenance remains unresolved.
 - D058h is a floppy motor/readiness helper; D0D9h reads the INT 1Eh table through IVT offset 0078h and ends at D103h, including POP AX/RET.
-- Candidate seeds/data ranges have been added to `tools/disasm_ami486_candidate_windows.py`; the updated generated-mask metrics are recorded after the workflow completes.
+- Candidate seeds/data ranges have been added to `tools/disasm_ami486_candidate_windows.py`. Latest generated mask: 610 code windows, 163 data ranges, 32,861 unique code bytes, 15,940 unique data bytes, 130 overlap bytes, 48,671-byte union (74.27%), 68 uncovered intervals, 216 pages touched and 140 fully covered. This is not semantic completion. The former CA16h–D0FFh gap is fully covered; next largest gap is 873Ch–8DCEh (1,683 bytes).
