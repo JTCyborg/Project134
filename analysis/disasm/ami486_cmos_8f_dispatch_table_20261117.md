@@ -1019,3 +1019,54 @@ The table E1ADh is also written by the routine around 47A2h: after deriving an i
 The producer path at 47A2h derives its destination index from the value at E189h (through sign/zero extension and a lookup at E019h) and its stored value from a stack-local byte derived from E012h. The full user-interface meaning of E189h, E012h, and the E019h lookup table is not yet established. Do not label E1ADh entries as drive A/B or fixed-disk types until those source fields and the menu path are decoded.
 
 The ROM bytes were not modified; this is documentation-only analysis.
+
+### Correction and full byte-level semantics of 475Ch (E1ADh producer)
+
+A fresh instruction-boundary pass corrects the earlier shorthand that the value stored in E1ADh is simply derived from E012h. The exact path is conditional and may substitute a per-index value from E019h:
+
+```asm
+475C  PUSH BP
+475D  MOV BP,SP
+475F  SUB SP,0002h
+4762  PUSH SI
+4763  MOV AL,[E012h]
+4766  MOV [BP-1],AL
+4769  CMP BYTE [E189h],00h
+476E  JNE 4775h
+4770  MOV CL,04h
+4772  SHL BYTE [BP-1],CL
+4775  AND BYTE [BP-1],0Fh
+4779  JZ 479Ah
+477C  CMP BYTE [BP-1],0Fh
+4780  JNE 478Eh
+4782  MOV AL,[E189h]
+4785  CBW
+4786  MOV BX,AX
+4788  MOV AL,[BX+E019h]
+478C  MOV [BP-1],AL
+478E  MOV AL,[E189h]
+4791  CBW
+4792  MOV DX,AX
+4794  MOV AL,[BP-1]
+4797  CALL 5AB5h
+479A  MOV AL,[E189h]
+479D  CBW
+479E  MOV BX,AX
+47A0  MOV AL,[BP-1]
+47A3  MOV [BX+E1ADh],AL
+```
+
+The exact semantics established by these bytes:
+
+- E189h is the index used for both E019h lookup and E1ADh destination. It is not the value read from E019h.
+- The initial candidate comes from E012h. If E189h is zero, the candidate is shifted left by four; in all cases it is then masked to its low nibble.
+- If that masked candidate is zero, the routine branches directly to the E1ADh write with zero; it does not call 5AB5h.
+- If the candidate is 0Fh, it is replaced with byte [E019h + E189h].
+- Otherwise the masked candidate is retained.
+- For every nonzero candidate, 5AB5h is called with AL=candidate and DX=E189h before E1ADh[E189h] is updated.
+
+Thus the mapping byte is not always a plain nibble from E012h: the 0Fh value is an escape/sentinel that selects a per-index replacement from E019h. Calling E019h a lookup *array* is justified by the indexed memory access, but its user-visible meaning remains unknown.
+
+The two direct calls from the parent region to 475Ch are at 4729h and 4730h; another call is at 5089h. The parent at 4729h clears E189h, calls this routine, increments E189h, and calls it again, indicating a repeated per-index initialization pass. The exact loop bounds and meaning of E189h still require tracing the complete parent and the 5089h caller.
+
+The previous note's claim that the E019h lookup participates in deriving the E1ADh *destination* was incorrect. It only supplies the replacement *value* in the 0Fh case. ROM bytes remain unchanged; this is a documentation correction and extension.
