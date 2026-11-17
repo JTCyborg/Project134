@@ -254,6 +254,257 @@ Reason: Weekday names and vertical-border separators
 6194  00 BA 53 75 6E B3 4D 6F 6E B3 54 75 65 B3 57 65 ..Sun.Mon.Tue.We
 61A4  64 B3 54 68 75 B3 46 72 69 B3 53 61 74 BA       d.Thu.Fri.Sat.
 
+===== DATA 188Eh-18E4h =====
+Reason: Four POST resource-conflict messages (parallel, serial, floppy and hard disk)
+ASCII: 'Parallel Port Conflict\r\n\x00Serial Port Conflict\r\n\x00Floppy Conflict\r\n\x00Hard Disk Conflict\r\n\x00'
+
+===== DATA 19B0h-19C9h =====
+Reason: POST cache/CPU timing threshold lookup bytes preceding the display labels
+19B0  20 00 80 00 00 01 00 02 40 00 00 01 00 02 00 04  .......@.......
+19C0  00 00 10 14 19 21 28 32 42 20                   .....!(2B 
+
+===== DATA 19CAh-19F7h =====
+Reason: POST cache-memory and CPU-clock display strings
+ASCII: 'KB CACHE MEMORY\r\n\x00MHz CPU Clock\r\n\x00MHz DX2 CPU '
+
+===== DATA 2F24h-2F65h =====
+Reason: Setup exit confirmation prompts: write CMOS or quit without saving
+ASCII: 'Write to CMOS and Exit (Y/N) ?\x00Want to Quit Without Saving (Y/N) ?'
+
+===== DATA 3624h-36A3h =====
+Reason: Setup secondary keyboard legend and F-key option captions with control bytes
+3624  B5 20 45 53 43 3A 45 78 69 74 20 20 19 1A 18 1B . ESC:Exit  ....
+3634  3A 53 65 6C 20 20 28 43 74 72 6C 29 50 75 2F 50 :Sel  (Ctrl)Pu/P
+3644  64 3A 4D 6F 64 69 66 79 20 20 46 31 3A 48 65 6C d:Modify  F1:Hel
+3654  70 20 20 46 32 2F 46 33 3A 43 6F 6C 6F 72 20 C6 p  F2/F3:Color .
+3664  00 B5 20 46 35 3A 4F 6C 64 20 56 61 6C 75 65 73 .. F5:Old Values
+3674  20 20 46 36 3A 42 49 4F 53 20 53 65 74 75 70 20   F6:BIOS Setup 
+3684  44 65 66 61 75 6C 74 73 20 20 20 46 37 3A 50 6F Defaults   F7:Po
+3694  77 65 72 2D 4F 6E 20 44 65 66 61 75 6C 74 73 20 wer-On Defaults 
+
+===== DATA 37C3h-3805h =====
+Reason: Setup option-page legends, control prefixes and border fill bytes
+37C3  B5 20 45 53 43 3A 45 78 69 74 20 20 20 19 1A 18 . ESC:Exit   ...
+37D3  1B 3A 53 65 6C 20 20 20 46 32 2F 46 33 3A 43 6F .:Sel   F2/F3:Co
+37E3  6C 6F 72 20 C6 00 CD CD CD CD CD CD CD B5 20 45 lor .......... E
+37F3  53 43 3A 45 78 69 74 20 20 20 19 1A 18 1B 3A 53 SC:Exit   ....:S
+3803  65 6C 20                                        el 
+
+===== DATA 3806h-381Bh =====
+Reason: Setup menu border fill, terminator and disk-utility exit legend
+3806  C6 CD CD CD CD CD CD CD 00 B5 20 45 53 43 3A 45 .......... ESC:E
+3816  78 69 74 20 C6 00                               xit ..
+
+===== DATA 3900h-3C5Bh =====
+Reason: Hard-disk utility strings and embedded menu/error pointer tables
+3900  79 00 52 65 76 69 73 65 20 61 6E 20 45 6E 74 72 y.Revise an Entr
+3910  79 00 44 65 6C 65 74 65 20 61 6E 20 45 6E 74 72 y.Delete an Entr
+3920  79 00 43 6C 65 61 72 20 42 61 64 20 54 72 6B 20 y.Clear Bad Trk 
+3930  4C 69 73 74 00 F5 38 02 39 12 39 22 39 E7 4D 1F List..8.9.9"9.M.
+3940  4E 2E 4E 5F 4E 45 6E 74 65 72 20 43 79 6C 69 6E N.N_NEnter Cylin
+3950  64 65 72 20 23 20 3A 00 45 6E 74 65 72 20 48 65 der # :.Enter He
+3960  61 64 20 23 20 3A 00 45 6E 74 72 79 20 50 72 65 ad # :.Entry Pre
+3970  73 65 6E 74 2E 20 45 6E 74 65 72 20 41 67 61 69 sent. Enter Agai
+3980  6E 00 41 6C 6C 20 44 61 74 61 20 6F 6E 20 53 70 n.All Data on Sp
+3990  65 63 69 66 69 65 64 00 48 61 72 64 64 69 73 6B ecified.Harddisk
+39A0  20 77 69 6C 6C 20 62 65 20 4C 4F 53 54 00 57 61  will be LOST.Wa
+39B0  6E 74 20 74 6F 20 43 6F 6E 74 69 6E 75 65 20 28 nt to Continue (
+39C0  59 2F 4E 29 20 3F 00 53 74 61 74 75 73 00 48 69 Y/N) ?.Status.Hi
+39D0  74 20 3C 45 53 43 3E 20 69 66 20 59 6F 75 20 57 t <ESC> if You W
+39E0  61 6E 74 20 74 6F 20 41 62 6F 72 74 00 55 73 65 ant to Abort.Use
+39F0  72 20 42 72 65 61 6B 00 4F 70 65 72 61 74 69 6F r Break.Operatio
+3A00  6E 20 43 6F 6D 70 6C 65 74 65 64 00 46 41 54 41 n Completed.FATA
+3A10  4C 20 45 52 52 4F 52 20 3A 20 42 61 64 20 48 61 L ERROR : Bad Ha
+3A20  72 64 20 44 69 73 6B 00 48 61 72 64 20 44 69 73 rd Disk.Hard Dis
+3A30  6B 20 43 6F 6E 74 72 6F 6C 6C 65 72 20 46 61 69 k Controller Fai
+3A40  6C 75 72 65 00 43 3A 20 48 61 72 64 20 44 69 73 lure.C: Hard Dis
+3A50  6B 20 44 72 69 76 65 20 46 61 69 6C 75 72 65 00 k Drive Failure.
+3A60  0C 3A 28 3A 45 3A 49 6E 74 65 72 6C 65 61 76 65 .:(:E:Interleave
+3A70  20 2D 20 54 72 61 6E 73 66 65 72 20 52 61 74 65  - Transfer Rate
+3A80  00 2D 2D 2D 2D 2D 2D 3E 00 4F 70 74 69 6D 75 6D .------>.Optimum
+3A90  20 49 6E 74 65 72 6C 65 61 76 65 20 3D 20 20 00  Interleave =  .
+3AA0  2A 2A 2A 20 45 52 52 4F 52 20 2A 2A 2A 00 55 6E *** ERROR ***.Un
+3AB0  64 65 66 69 6E 65 64 20 45 72 72 6F 72 20 2D 20 defined Error - 
+3AC0  43 6F 6D 6D 61 6E 64 20 41 62 6F 72 74 65 64 00 Command Aborted.
+3AD0  41 64 64 72 65 73 73 20 4D 61 72 6B 20 4E 6F 74 Address Mark Not
+3AE0  20 46 6F 75 6E 64 00 52 65 71 75 65 73 74 65 64  Found.Requested
+3AF0  20 53 65 63 74 6F 72 20 4E 6F 74 20 46 6F 75 6E  Sector Not Foun
+3B00  64 00 52 65 73 65 74 20 46 61 69 6C 65 64 00 44 d.Reset Failed.D
+3B10  72 69 76 65 20 50 61 72 61 6D 65 74 65 72 20 41 rive Parameter A
+3B20  63 74 69 76 69 74 79 20 46 61 69 6C 65 64 00 42 ctivity Failed.B
+3B30  61 64 20 53 65 63 74 6F 72 20 46 6C 61 67 20 44 ad Sector Flag D
+3B40  65 63 74 65 63 74 65 64 00 42 61 64 20 45 43 43 ectected.Bad ECC
+3B50  20 6F 6E 20 44 69 73 6B 20 52 65 61 64 00 45 43  on Disk Read.EC
+3B60  43 20 43 6F 72 72 65 63 74 65 64 20 44 61 74 61 C Corrected Data
+3B70  20 45 72 72 6F 72 00 43 6F 6E 74 72 6F 6C 6C 65  Error.Controlle
+3B80  72 20 68 61 73 20 46 61 69 6C 65 64 00 53 65 65 r has Failed.See
+3B90  6B 20 4F 70 65 72 61 74 69 6F 6E 20 46 61 69 6C k Operation Fail
+3BA0  65 64 00 41 74 74 61 63 68 6D 65 6E 74 20 46 61 ed.Attachment Fa
+3BB0  69 6C 65 64 20 74 6F 20 52 65 73 70 6F 6E 64 00 iled to Respond.
+3BC0  44 72 69 76 65 20 4E 6F 74 20 52 65 61 64 79 00 Drive Not Ready.
+3BD0  57 72 69 74 65 20 46 61 75 6C 74 20 6F 6E 20 53 Write Fault on S
+3BE0  65 6C 65 63 74 65 64 20 44 72 69 76 65 00 AE 3A elected Drive..:
+3BF0  D0 3A E7 3A 02 3B 0F 3B 2F 3B 49 3B 5E 3B 77 3B .:.:.;.;/;I;^;w;
+3C00  8D 3B A3 3B C0 3B D0 3B 41 62 6F 72 74 2C 20 52 .;.;.;.;Abort, R
+3C10  65 74 72 79 2C 20 49 67 6E 6F 72 65 20 3F 00 20 etry, Ignore ?. 
+3C20  41 75 74 6F 20 44 65 74 65 63 74 69 6F 6E 20 69 Auto Detection i
+3C30  6E 20 50 72 6F 67 72 65 73 73 20 00 41 63 63 65 n Progress .Acce
+3C40  70 74 20 50 61 72 61 6D 65 74 65 72 73 20 66 6F pt Parameters fo
+3C50  72 20 00 3A 20 28 59 2F 4E 29 20 3F             r .: (Y/N) ?
+
+===== DATA 59C0h-59C5h =====
+Reason: Three-word pointer table for Setup load-value confirmation prompts
+Words: 59C6, 59E3, 5A19
+
+===== DATA 59C6h-5A4Bh =====
+Reason: Setup load-original/default-values confirmation prompts
+ASCII: 'Load Original Values (Y/N) ?\x00Load BIOS Setup Default Values from ROM Table (Y/N) ?\x00Load Power-On Default Values from ROM Table (Y/N) ?'
+
+===== DATA 7145h-714Dh =====
+Reason: Inline POST memory-throughput unit label (not NUL terminated)
+ASCII: 'KB/sec ms'
+
+===== DATA 732Bh-737Eh =====
+Reason: POST summary navigation legend, box-drawing fill and CR/LF control bytes
+732B  58 C3 00 B5 20 45 53 43 3A 45 78 69 74 20 19 1A X... ESC:Exit ..
+733B  18 1B 3A 53 65 6C 65 63 74 20 46 32 2F 46 33 3A ..:Select F2/F3:
+734B  43 6F 6C 6F 72 20 50 55 2F 50 44 3A 4D 6F 64 69 Color PU/PD:Modi
+735B  66 79 20 C6 CD CD CD CD CD CD CD CD CD CD CD CD fy .............
+736B  CD CD CD CD CD CD CD CD CD CD CD CD CD CD CD CD ................
+737B  CD CD 00 0D                                     ....
+
+===== DATA 7380h-78B5h =====
+Reason: POST summary, device labels, Setup help, calendar names and adjacent pointer tables
+7380  53 59 53 54 45 4D 20 48 41 4C 54 45 44 00 05 00 SYSTEM HALTED...
+7390  BA 20 44 61 74 65 20 28 6D 6E 2F 64 61 74 65 2F . Date (mn/date/
+73A0  79 65 61 72 29 3A 20 20 20 20 20 20 20 20 20 20 year):          
+73B0  20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20                 
+73C0  20 20 20 20 20 42 61 73 65 20 4D 65 6D 6F 72 79      Base Memory
+73D0  20 3A 0D 0A BA 20 54 69 6D 65 20 28 68 6F 75 72  :... Time (hour
+73E0  2F 6D 69 6E 2F 73 65 63 29 3A 20 20 20 20 20 20 /min/sec):      
+73F0  20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20                 
+7400  20 20 20 20 20 20 20 20 20 45 78 74 2E 20 4D 65          Ext. Me
+7410  6D 6F 72 79 20 3A 0D 0A BA 0D 0A BA 20 48 61 72 mory :...... Har
+7420  64 20 44 69 73 6B 20 43 3A 20 54 79 70 65 20 20 d Disk C: Type  
+7430  3A 0D 0A BA 20 48 61 72 64 20 44 69 73 6B 20 44 :... Hard Disk D
+7440  3A 20 54 79 70 65 20 20 3A 0D 0A BA 20 46 6C 6F : Type  :... Flo
+7450  70 70 79 20 44 72 69 76 65 20 41 3A 20 20 20 20 ppy Drive A:    
+7460  3A 0D 0A BA 20 46 6C 6F 70 70 79 20 44 72 69 76 :... Floppy Driv
+7470  65 20 42 3A 20 20 20 20 3A 0D 0A BA 20 50 72 69 e B:    :... Pri
+7480  6D 61 72 79 20 44 69 73 70 6C 61 79 20 20 20 20 mary Display    
+7490  3A 0D 0A BA 20 4B 65 79 62 6F 61 72 64 20 20 20 :... Keyboard   
+74A0  20 20 20 20 20 20 20 20 3A 0D 0A 00 20 43 79 6C         :... Cyl
+74B0  6E 20 20 48 65 61 64 20 20 57 50 63 6F 6D 20 4C n  Head  WPcom L
+74C0  5A 6F 6E 65 20 53 65 63 74 20 20 53 69 7A 65 20 Zone Sect  Size 
+74D0  20 20 20 00 20 49 6E 73 74 61 6C 6C 65 64 20 20    . Installed  
+74E0  20 20 20 00 01 20 4E 6F 74 20 49 6E 73 74 61 6C    .. Not Instal
+74F0  6C 65 64 20 00 00 20 45 6E 61 62 6C 65 64 20 20 led .. Enabled  
+7500  00 01 20 44 69 73 61 62 6C 65 64 20 00 00 20 57 .. Disabled .. W
+7510  65 69 74 65 6B 00 20 49 6E 73 74 61 6C 6C 65 64 eitek. Installed
+7520  2C 57 65 69 74 65 6B 00 20 33 36 30 20 20 4B 42 ,Weitek. 360  KB
+7530  2C 20 35 AC 22 20 20 00 01 20 31 2E 32 20 20 4D , 5."  .. 1.2  M
+7540  42 2C 20 35 AC 22 20 20 00 02 20 37 32 30 20 20 B, 5."  .. 720  
+7550  4B 42 2C 20 33 AB 22 20 20 00 03 20 31 2E 34 34 KB, 3."  .. 1.44
+7560  20 4D 42 2C 20 33 AB 22 20 20 00 04 20 32 2E 38  MB, 3."  .. 2.8
+7570  38 20 4D 42 2C 20 33 AB 22 20 20 00 05 20 4D 6F 8 MB, 3."  .. Mo
+7580  6E 6F 63 68 72 6F 6D 65 20 20 20 20 00 31 20 43 nochrome    .1 C
+7590  6F 6C 6F 72 20 38 30 78 32 35 20 20 20 00 21 20 olor 80x25   .! 
+75A0  43 6F 6C 6F 72 20 34 30 78 32 35 20 20 20 00 11 Color 40x25   ..
+75B0  20 56 47 41 2F 50 47 41 2F 45 47 41 20 20 20 00  VGA/PGA/EGA   .
+75C0  01 20 34 37 20 3D 20 55 53 45 52 20 54 59 50 45 . 47 = USER TYPE
+75D0  20 00 20 4D 6F 6E 74 68 20 3A 20 4A 61 6E 2C 20  . Month : Jan, 
+75E0  46 65 62 2C 2E 2E 2E 2E 2E 44 65 63 0D 0A 20 44 Feb,.....Dec.. D
+75F0  61 74 65 20 20 3A 20 30 31 2C 20 30 32 2C 20 30 ate  : 01, 02, 0
+7600  33 2C 2E 2E 2E 33 31 0D 0A 20 59 65 61 72 20 20 3,...31.. Year  
+7610  3A 20 31 39 30 31 2C 20 31 39 30 32 2C 2E 2E 2E : 1901, 1902,...
+7620  32 30 39 39 00 20 54 69 6D 65 20 69 73 20 32 34 2099. Time is 24
+7630  20 68 6F 75 72 20 66 6F 72 6D 61 74 3A 2D 0D 0A  hour format:-..
+7640  20 48 6F 75 72 3A 28 30 30 2D 32 33 29 2C 20 4D  Hour:(00-23), M
+7650  69 6E 75 74 65 3A 28 30 30 2D 35 39 29 2C 20 53 inute:(00-59), S
+7660  65 63 6F 6E 64 3A 28 30 30 2D 35 39 29 0D 0A 20 econd:(00-59).. 
+7670  28 31 3A 33 30 20 41 4D 20 3D 20 30 31 3A 33 30 (1:30 AM = 01:30
+7680  3A 30 30 29 2C 20 20 20 28 31 3A 33 30 20 50 4D :00),   (1:30 PM
+7690  20 3D 20 31 33 3A 33 30 3A 30 30 29 00 20 4F 70  = 13:30:00). Op
+76A0  74 69 6F 6E 73 3A 2D 0D 0A 20 4D 6F 6E 6F 63 68 tions:-.. Monoch
+76B0  72 6F 6D 65 2C 20 20 20 43 6F 6C 6F 72 20 34 30 rome,   Color 40
+76C0  78 32 35 2C 0D 0A 20 56 47 41 2F 50 47 41 2F 45 x25,.. VGA/PGA/E
+76D0  47 41 2C 20 20 43 6F 6C 6F 72 20 38 30 78 32 35 GA,  Color 80x25
+76E0  2C 20 20 4E 6F 74 20 49 6E 73 74 61 6C 6C 65 64 ,  Not Installed
+76F0  00 20 4F 70 74 69 6F 6E 73 3A 2D 0D 0A 20 33 36 . Options:-.. 36
+7700  30 20 20 4B 42 20 35 AC 22 2C 20 31 2E 32 20 20 0  KB 5.", 1.2  
+7710  4D 42 20 35 AC 22 2C 20 20 37 32 30 20 4B 42 20 MB 5.",  720 KB 
+7720  33 AB 22 2C 0D 0A 20 31 2E 34 34 20 4D 42 20 33 3.",.. 1.44 MB 3
+7730  AB 22 2C 20 32 2E 38 38 20 4D 42 20 33 AB 22 2C .", 2.88 MB 3.",
+7740  20 20 4E 6F 74 20 49 6E 73 74 61 6C 6C 65 64 00   Not Installed.
+7750  20 46 49 58 45 44 20 74 79 70 65 20 3D 20 30 31  FIXED type = 01
+7760  2E 2E 2E 34 36 2C 20 55 53 45 52 20 64 65 66 69 ...46, USER defi
+7770  6E 65 64 20 74 79 70 65 20 3D 20 34 37 2C 0D 0A ned type = 47,..
+7780  20 46 6F 72 20 74 79 70 65 20 34 37 20 45 6E 74  For type 47 Ent
+7790  65 72 3A 20 43 79 6C 6E 2C 48 65 61 64 2C 57 50 er: Cyln,Head,WP
+77A0  63 6F 6D 2C 4C 5A 6F 6E 65 2C 53 65 63 2C 0D 0A com,LZone,Sec,..
+77B0  20 28 57 50 63 6F 6D 20 69 73 20 30 20 66 6F 72  (WPcom is 0 for
+77C0  20 41 4C 4C 2C 20 20 36 35 35 33 35 20 66 6F 72  ALL,  65535 for
+77D0  20 4E 4F 4E 45 29 00 20 4F 70 74 69 6F 6E 73 3A  NONE). Options:
+77E0  2D 0D 0A 20 49 6E 73 74 61 6C 6C 65 64 20 20 20 -.. Installed   
+77F0  20 20 3A 20 54 65 73 74 20 6B 65 79 62 6F 61 72   : Test keyboar
+7800  64 0D 0A 20 4E 6F 74 20 49 6E 73 74 61 6C 6C 65 d.. Not Installe
+7810  64 20 3A 20 44 6F 20 6E 6F 74 20 74 65 73 74 20 d : Do not test 
+7820  6B 65 79 62 6F 61 72 64 00 53 75 6E 00 4D 6F 6E keyboard.Sun.Mon
+7830  00 54 75 65 00 57 65 64 00 54 68 75 00 46 72 69 .Tue.Wed.Thu.Fri
+7840  00 53 61 74 00 4A 61 6E 00 46 65 62 00 4D 61 72 .Sat.Jan.Feb.Mar
+7850  00 41 70 72 00 4D 61 79 00 4A 75 6E 00 4A 75 6C .Apr.May.Jun.Jul
+7860  00 41 75 67 00 53 65 70 00 4F 63 74 00 4E 6F 76 .Aug.Sep.Oct.Nov
+7870  00 44 65 63 00 00 B6 78 C7 78 D5 78 E3 78 FA 78 .Dec...x.x.x.x.x
+7880  16 79 2C 79 47 79 61 79 82 79 91 79 A4 79 00 00 .y,yGyay.y.y.y..
+7890  00 00 63 7A 00 00 BE 79 D5 79 EC 79 FB 79 0A 7A ..cz...y.y.y.y.z
+78A0  1B 7A 2C 7A 00 00 45 7A 54 7A 00 00 00 00 00 00 .z,z..EzTz......
+78B0  00 00 63 7A 00 00                               ..cz..
+
+===== DATA 78B6h-7CE8h =====
+Reason: POST error messages, boot/password prompts and keyboard-controller warning strings
+ASCII: 'CH-2 timer error\x00INTR #1 error\x00INTR #2 error\x00CMOS battery state low\x00CMOS system options not set\x00CMOS checksum failure\x00CMOS display type mismatch\x00Display switch not proper\x00Keyboard is locked ... Unlock it\x00Keyboard error\x00KB/Interface error\x00CMOS memory size mismatch\x00FDD controller failure\x00HDD controller failure\x00C: drive error\x00D: drive error\x00C: drive failure\x00D: drive failure\x00CMOS time & date not set\x00A: drive error\x00B: drive error\x00CACHE MEMORY BAD, DO NOT ENABLE CACHE !\x00RUN SETUP UTILITY\x00Press <F1> to RESUME\x008042 GATE-A20 ERROR\x00 ADDRESS LINE SHORT !\x00 KB OK\x00DMA #2 ERROR\x00DMA #1 ERROR\x00DMA ERROR\x00INTR #1 ERROR\x00NO ROM BASIC\x00  DISKETTE BOOT FAILURE\x00  INVALID BOOT DISKETTE\x00  DRIVE NOT READY ERROR\x00Insert BOOT diskette in A:\r\nPress any key when ready \x00Enter  ROM  Password  : \x00Enter CURRENT Password: \x00Enter  NEW  Password  : \x00Re-Enter NEW Password : \x00Password Now Enabled    \x00Password Now Disabled   \x00ERROR, Press Any Key....\x00� Use Maximum 6 ASCII Characters, ESC:Exit �\x00Hit <DEL>, If you want to run SETUP\x00WAIT......\r\n\x00Incompatible Keyboard Controller. Option can not be Enabled.'
+
+===== DATA 8000h-81EDh =====
+Reason: AMI BIOS identification, OEM ID/configuration strings and padded banner data
+8000  28 41 41 4D 4D 49 49 42 42 49 49 4F 4F 53 53 29 (AAMMIIBBIIOOSS)
+8010  30 34 2F 30 34 2F 39 33 28 43 29 31 39 39 33 20 04/04/93(C)1993 
+8020  41 6D 65 72 69 63 61 6E 20 4D 65 67 61 74 72 65 American Megatre
+8030  6E 64 73 20 49 6E 63 2E 2C 20 41 6C 6C 20 52 69 nds Inc., All Ri
+8040  67 68 74 73 20 52 65 73 65 72 76 65 64 00 00 00 ghts Reserved...
+8050  28 43 29 31 39 39 33 20 41 6D 65 72 69 63 61 6E (C)1993 American
+8060  20 4D 65 67 61 74 72 65 6E 64 73 20 49 6E 63 2E  Megatrends Inc.
+8070  2C 00 00 00 00 00 00 00 34 30 2D 30 32 30 46 2D ,.......40-020F-
+8080  30 30 31 31 33 33 2D 30 30 31 30 31 31 31 31 2D 001133-00101111-
+8090  30 34 30 34 39 33 2D 41 4C 49 31 34 32 39 00 00 040493-ALI1429..
+80A0  30 30 30 2D 31 2D 30 30 30 30 2D 30 30 2D 30 30 000-1-0000-00-00
+80B0  2D 30 30 30 30 2D 30 30 2D 30 30 2D 30 30 30 00 -0000-00-00-000.
+80C0  00 00 00 00 00 00 00 00 30 30 30 2D 30 2D 30 30 ........000-0-00
+80D0  30 30 2D 30 30 2D 30 30 2D 30 30 30 30 2D 30 30 00-00-00-0000-00
+80E0  2D 30 30 2D 30 30 2D 32 00 00 00 00 00 00 00 00 -00-00-2........
+80F0  20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20                 
+8100  41 4D 49 42 49 4F 53 20 28 43 29 31 39 39 33 20 AMIBIOS (C)1993 
+8110  41 6D 65 72 69 63 61 6E 20 4D 65 67 61 74 72 65 American Megatre
+8120  6E 64 73 20 49 6E 63 2E 2C 20 20 20 20 20 20 20 nds Inc.,       
+8130  20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20                 
+8140  20 20 20 20 20 20 20 20 20 20 20 20 20 20 0D 0A               ..
+8150  20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20                 
+8160  20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20                 
+8170  20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20                 
+8180  20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20                 
+8190  20 20 20 20 20 20 20 20 20 20 20 20 20 20 0D 0A               ..
+81A0  20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20                 
+81B0  20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20                 
+81C0  20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20                 
+81D0  20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20                 
+81E0  20 20 20 20 20 20 20 20 20 20 20 20 20 20                     
+
+===== DATA B528h-B55Eh =====
+Reason: ASCII character/glyph lookup bytes preceding Setup option labels
+B528  20 21 22 23 24 25 26 27 28 29 2A 2B 2C 2D 2E 2F  !"#$%&'()*+,-./
+B538  30 31 32 33 34 35 36 37 38 39 3A 3B 3C 3D 3E 3F 0123456789:;<=>?
+B548  40 41 42 43 44 45 46 47 48 49 4A 4B 4C 4D 4E 4F @ABCDEFGHIJKLMNO
+B558  50 51 52 53 54 52 02                            PQRSTR.
+
 ===== 56F1h-5730h =====
 Reason: text-mode cell-offset helper: DI=(row*80+column)*2
 56F1  53                      push bx
@@ -7623,16 +7874,8 @@ Reason: Setup timing-label selector; reads pointer table at 2CAFh
 2D4C  59                      pop cx
 2D4D  E2 F6                   loop 0x2d45
 
-===== 2D00h-2D7Fh =====
-Reason: unreferenced page sample; classify raw code/data
-2D00  C0 E0 04                shl al, 4
-2D03  08 06 52 E0             or byte ptr [0xe052], al
-2D07  D0 E3                   shl bl, 1
-2D09  03 F3                   add si, bx
-2D0B  2E 8B 04                mov ax, word ptr cs:[si]
-2D0E  5F                      pop di
-2D0F  5E                      pop si
-2D10  CB                      retf
+===== 2D11h-2DF4h =====
+Reason: stack-threaded memory/timing benchmark candidate; entry precondition unresolved
 2D11  00 1E 06 FA             add byte ptr [0xfa06], bl
 2D15  B8 00 10                mov ax, 0x1000
 2D18  8E C0                   mov es, ax
@@ -7684,11 +7927,8 @@ Reason: unreferenced page sample; classify raw code/data
 2D77  3D C2 01                cmp ax, 0x1c2
 2D7A  76 6B                   jbe 0x2de7
 2D7C  BB 05 00                mov bx, 5
-2D7F  3D              db 0x3D
-
-===== 2D80h-2DFFh =====
-Reason: unreferenced page sample; classify raw code/data
-2D80  26 02 76 63             add dh, byte ptr es:[bp + 0x63]
+2D7F  3D 26 02                cmp ax, 0x226
+2D82  76 63                   jbe 0x2de7
 2D84  BB 06 00                mov bx, 6
 2D87  3D BC 02                cmp ax, 0x2bc
 2D8A  76 5B                   jbe 0x2de7
@@ -7734,15 +7974,9 @@ Reason: unreferenced page sample; classify raw code/data
 2DF2  07                      pop es
 2DF3  1F                      pop ds
 2DF4  C3                      ret
-2DF5  FA                      cli
-2DF6  E4 61                   in al, 0x61
-2DF8  A2 04 F8                mov byte ptr [0xf804], al
-2DFB  E8 5A 00                call 0x2e58
-2DFE  BB              db 0xBB
-2DFF  FF              db 0xFF
 
 ===== 2DF5h-2E74h =====
-Reason: timer/port-61 measurement helper
+Reason: PIT channel-2 timing measurement helper
 2DF5  FA                      cli
 2DF6  E4 61                   in al, 0x61
 2DF8  A2 04 F8                mov byte ptr [0xf804], al
