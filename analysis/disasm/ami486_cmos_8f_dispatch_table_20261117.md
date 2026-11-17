@@ -349,3 +349,15 @@ The main handler uses E185h as the selected menu index and dispatches through th
 ### Saved frame value at physical 00400h, refined
 
 The 4D4Dh menu handler ends with `MOV SP,BP; POP BP; RET`. Therefore the value loaded into BP from SS:0100h (physical 00400h) is the caller's saved frame pointer for this UI dispatch. It is a temporary frame/stack linkage value, not the COM1 base used semantically by this routine. The producer is still unresolved; no direct absolute store to offset 0000h was found in the first static opcode-pattern scan.
+
+### Refined handler roles: 4EE7h is numeric input, not the destructive disk operation
+
+Cross-references refine the menu handler interpretation:
+
+- The table at 393Dh points to 4DE7h, 4E1Fh, 4E2Eh, and 4E5Fh.
+- 4DE7h calls 4EE7h at 4E09h; 4E1Fh calls 4EE7h at 4E2Ah.
+- 4EE7h has a conventional BP stack frame and local 6-byte workspace. It displays the prompts using string pointers 3945h (`Enter Cylinder # :`) and 3958h (`Enter Head # :`), and calls the established video/text helpers at 578Dh, 5862h, and 58D3h. It is therefore the shared numeric-entry/input routine for cylinder/head parameters.
+- The 4DE7h and 4E1Fh handlers are the two menu actions that invoke this common entry routine. The other handlers 4E2Eh and 4E5Fh remain to be classified in detail.
+- The warning/confirmation strings around 3982h–39C0h and status/error strings around 39C8h–3A28h show that this UI belongs to a hard-disk destructive-operation utility, but the actual sector/track formatting engine has not yet been isolated. A scan for literal `INT 13h` instructions in 4EE7h–53FFh found none; disk I/O may be performed through an indirect BIOS wrapper or a helper outside that range.
+
+Thus the safe conclusion is: marker 0Ah opens the hard-disk format/geometry interface; the identified 4EE7h routine gathers cylinder/head input. Do not yet claim which INT 13h services or physical write pattern performs the format.
