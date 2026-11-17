@@ -437,3 +437,40 @@ F570  RET
 This is a stack-sensitive entry, not an ordinary callable subroutine: it consumes the near-call return IP as the value sent to port `61h`, then returns using the next word on the stack. Consequently the call at `5006h` must be analyzed together with the caller's stack frame; it is not a disk-controller command. The surrounding `F56Ah` entry is a different instruction stream, beginning with `CALL F93Ch`, so linear decoding across `F56Dh` would also be misleading.
 
 The helpers reached from `4FD0h` therefore remain UI/record-maintenance or platform-I/O support. This pass still does not identify a physical format-track/write command. Continue by tracing the caller's stack setup around `4FD0h` and the service dispatch reached after the Y/N confirmation path; do not infer that port `61h` is a disk data port.
+
+
+### Correction: exact CALL target at 500Ah and PC-speaker/beeper sequence
+
+The previous note incorrectly assigned the `POP AX / OUT 61h,AL` entry at `F56Dh` to the CALL at `500Ah`. Recalculation using 16-bit near-relative arithmetic gives:
+
+- `5007h: CALL 58BEh` (bytes `E8 B4 08`).
+- `500Ah: CALL F571h` (bytes `E8 64 A5`), **not** `F56Dh`.
+
+The actual `F571h` sequence is:
+
+```asm
+F571  MOV AL,B6h
+F573  OUT 43h,AL
+F575  JMP short $+2       ; delay
+F577  JMP short $+2       ; delay
+F579  MOV AL,05h
+F57B  OUT 42h,AL
+F57D  JMP short $+2
+F57F  JMP short $+2
+F581  OUT 42h,AL
+F583  IN  AL,61h
+F585  PUSH AX
+F586  JMP short $+2
+F588  JMP short $+2
+F58A  OR  AL,03h
+F58C  OUT 61h,AL
+F58E  MOV CX,0020h
+F591  CALL F93Ch
+F594  POP AX
+F595  OUT 61h,AL
+F597  RET
+```
+
+This is a PIT channel-2 / port-61h speaker-gate sequence (beep/tone timing), not a disk command. The `F56Dh` entry remains a separate stack-sensitive `POP AX; OUT 61h,AL; RET` sequence, but it is not the target of the `500Ah` call. The routine at `3E3Fh`, reached from `5040h`, also belongs to the menu/display support chain; its visible prologue and calls build/display UI data and do not establish a disk write.
+
+This correction supersedes the earlier statement that `5006h` called `F56Dh`; that address/call attribution was wrong. The physical format/write path remains unresolved.
