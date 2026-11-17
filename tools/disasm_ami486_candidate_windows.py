@@ -76,6 +76,22 @@ DATA_RANGES = [
 ]
 
 SEEDS = [
+    (0x3E3F, "direct CALL target from 00EFh screen-presentation stream"),
+    (0x0995, "direct CALL target from 00EFh screen-presentation stream"),
+    (0xF52E, "direct CALL target from 00EFh screen-presentation stream"),
+    (0x622B, "direct CALL target from 00EFh screen-presentation stream"),
+    (0x09CE, "direct CALL target from 00EFh screen-presentation stream"),
+    (0x05EB, "direct CALL target from 00EFh screen-presentation stream"),
+    (0x08C8, "direct CALL target from 00EFh screen-presentation stream"),
+    (0x0A15, "direct CALL target from 00EFh screen-presentation stream"),
+    (0x0597, "direct CALL target from 00EFh screen-presentation stream"),
+    (0x03D4, "direct CALL target from 00EFh screen-presentation stream"),
+    (0x0AAD, "direct CALL target from 00EFh screen-presentation stream"),
+    (0x0862, "direct CALL target from 00EFh screen-presentation stream"),
+    (0x626B, "direct CALL target from 00EFh screen-presentation stream"),
+    (0x099D, "direct CALL target from 00EFh screen-presentation stream"),
+    (0x6220, "direct CALL target from 00EFh screen-presentation stream"),
+    (0x09C1, "direct CALL target from 00EFh screen-presentation stream"),
     (0x00EF, "low-ROM executable-looking stream after the AMI copyright block; entry xrefs unresolved"),
     (0x56F1, "text-mode cell-offset helper: DI=(row*80+column)*2"),
     (0x5702, "video-mode helper: OUT 3D8h,21h and load ES from [55E8h]"),
