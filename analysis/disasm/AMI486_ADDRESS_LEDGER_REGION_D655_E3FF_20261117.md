@@ -180,3 +180,36 @@ The candidate-window generator now includes:
 The generated candidate manifest is the reproducibility check for the updated window/data counts. These bounded windows are not a complete CFG. The caller of E2C6h, the purpose of the E160h descriptor array, and the remaining continuation after the 8400h CMOS restore path still need investigation.
 
 **This region extension is not a numbered phase and does not claim whole-ROM semantic completion.**
+
+
+## 9. POST 8042 keyboard-controller self-test command at D7B3h–D7D7h
+
+The POST stream at D79Ah polls the 8042 status/data ports and emits checkpoint 07h to port 80h at D7ABh. The aligned continuation at D7B3h then performs the following:
+
+~~~asm
+D7B3  MOV AL,0AAh
+D7B5  XCHG BX,BX
+D7B7  XCHG BX,BX
+D7B9  XCHG BX,BX
+D7BB  XCHG BX,BX
+D7BD  XCHG BX,BX
+D7BF  XCHG BX,BX
+D7C1  XCHG BX,BX
+D7C3  NOP
+D7C4  JMP D7C6h
+D7C6  OUT 64h,AL
+D7C8  IN AL,64h
+D7CA  XOR DI,DI
+D7CC  TEST AL,01h
+D7CE  JE D7D1h
+D7D0  DEC DI
+D7D1  NOP
+D7D2  MOV SP,D7D8h
+D7D5  JMP F659h
+~~~
+
+The command byte AAh is sent to the 8042 command port 64h, which is the keyboard-controller self-test command. The repeated XCHG BX,BX instructions do not change architectural state and provide an explicit delay sequence. The routine then reads port 64h and records whether status bit 0 is set: DI remains 0000h when clear and becomes FFFFh when set.
+
+It sets SP=D7D8h and transfers to F659h, the shared keyboard-controller input-buffer wait helper. The crafted return word at D7D8h–D7D9h is D7DAh, so the helper returns to the status-08h continuation at D7DAh. The stack word remains data, not an opcode.
+
+This closes the 37-byte candidate-mask hole D7B3h–D7D7h. The generator now has a bounded seed at D7B3h with length 25h, ending immediately before the D7D8h return word. The command sequence and status-bit test are byte-confirmed; this note does not infer the full controller self-test result protocol from this one status read.
