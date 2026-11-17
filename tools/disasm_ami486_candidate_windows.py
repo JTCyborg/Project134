@@ -76,6 +76,10 @@ LIMITS.update({0xFA4E: 0x17, 0xFE6E: 0x03})
 # Main POST continuation and bounded helper entries in 1364h–188Dh.
 # Fixed-disk parameter continuation, embedded data, and keyboard-controller helpers.
 LIMITS.update({
+    0x3C5E: 0x1E1,
+})
+
+LIMITS.update({
     0x066B: 0x1F, 0x068A: 0x12, 0x069C: 0x12, 0x06AE: 0x1B,
     0x06C9: 0x68, 0x0731: 0x13, 0x0744: 0x05, 0x0749: 0x22,
     0x076B: 0xA4, 0x080F: 0x36, 0x0845: 0x0A,
@@ -137,7 +141,8 @@ DATA_RANGES = [
     (0x31A4, 0x342E, "Setup menu descriptions and help strings", "ascii"),
     (0x342E, 0x3444, "11-entry Setup long-description pointer table", "words"),
     (0x3444, 0x3446, "Separate pointer to the Do Not Write exit string", "words"),
-    (0x3446, 0x345C, "11-entry Setup main-menu handler pointer table", "words"),
+    (0x3446, 0x345E, "12-entry Setup main-menu handler pointer table", "words"),
+    (0x3C5C, 0x3C5E, "Two zero-byte alignment padding before the BIOS Setup main-menu entry", "hexascii"),
     (0x345C, 0x3473, "AMI BIOS Setup Utilities title string", "ascii"),
     (0x3473, 0x3474, "Setup title-to-key-legend control prefix", "hexascii"),
     (0x3474, 0x34AB, "Setup keyboard navigation legend", "hexascii"),
@@ -1143,6 +1148,11 @@ SEEDS = [
     (0x1BF0, "option-ROM scan invalid-candidate helper: advances BX by 0080h, restores DS and returns"),
     (0x1E9A, "OR SP,SP / RET status-success stub between POST callback entries"),
 ]
+
+SEEDS.extend([
+    (0x3C5E, "direct JMP target from 2F21h; BIOS Setup main-menu loop, 12 option labels and function-pointer dispatch"),
+])
+
 
 SEEDS.extend([
     (0x066B, "indirect-entry candidate: Setup structure byte-field editor at BP-relative offset 1Dh; uses numeric renderer 749h"),
