@@ -14583,6 +14583,1383 @@ FA4E  60                      pushaw
 FA4F  BE 70 FF                mov si, 0xff70
 FA52  B9              db 0xB9
 
+===== 9870h-98C2h =====
+Reason: INT 10h video-BIOS dispatcher; special-cases AH=02h/03h/05h/0Eh and indexes table at 9848h
+9870  FB                      sti
+9871  FC                      cld
+9872  80 FC 0E                cmp ah, 0xe
+9875  74 40                   je 0x98b7
+9877  80 FC 02                cmp ah, 2
+987A  74 3E                   je 0x98ba
+987C  80 FC 03                cmp ah, 3
+987F  74 3C                   je 0x98bd
+9881  80 FC 05                cmp ah, 5
+9884  74 3A                   je 0x98c0
+9886  60                      pushaw
+9887  1E                      push ds
+9888  06                      push es
+9889  80 FC 13                cmp ah, 0x13
+988C  77 25                   ja 0x98b3
+988E  50                      push ax
+988F  8A C4                   mov al, ah
+9891  98                      cbw
+9892  8B F8                   mov di, ax
+9894  B8 40 00                mov ax, 0x40
+9897  8E D8                   mov ds, ax
+9899  74 10                   je 0x98ab
+989B  A0 10 00                mov al, byte ptr [0x10]
+989E  24 30                   and al, 0x30
+98A0  3C 30                   cmp al, 0x30
+98A2  B8 00 B0                mov ax, 0xb000
+98A5  74 02                   je 0x98a9
+98A7  B4 B8                   mov ah, 0xb8
+98A9  8E C0                   mov es, ax
+98AB  58                      pop ax
+98AC  D1 E7                   shl di, 1
+98AE  2E FF 95 48 98          call word ptr cs:[di - 0x67b8]
+98B3  07                      pop es
+98B4  1F                      pop ds
+98B5  61                      popaw
+98B6  CF                      iret
+98B7  E9 67 06                jmp 0x9f21
+98BA  E9 EB 00                jmp 0x99a8
+98BD  E9 3B 01                jmp 0x99fb
+98C0  E9 F8 01                jmp 0x9abb
+
+===== 98C3h-999Eh =====
+Reason: INT 10h AH=00h set-video-mode handler
+98C3  C6 06 84 00 18          mov byte ptr [0x84], 0x18
+98C8  8C C2                   mov dx, es
+98CA  80 FE B0                cmp dh, 0xb0
+98CD  BA D4 03                mov dx, 0x3d4
+98D0  75 05                   jne 0x98d7
+98D2  BA B4 03                mov dx, 0x3b4
+98D5  B0 07                   mov al, 7
+98D7  89 16 63 00             mov word ptr [0x63], dx
+98DB  A2 49 00                mov byte ptr [0x49], al
+98DE  B4 3F                   mov ah, 0x3f
+98E0  3C 06                   cmp al, 6
+98E2  74 02                   je 0x98e6
+98E4  B4 30                   mov ah, 0x30
+98E6  88 26 66 00             mov byte ptr [0x66], ah
+98EA  8A E0                   mov ah, al
+98EC  BB F4 F0                mov bx, 0xf0f4
+98EF  2E D7                   xlatb
+98F1  A2 65 00                mov byte ptr [0x65], al
+98F4  24 37                   and al, 0x37
+98F6  83 C2 04                add dx, 4
+98F9  EE                      out dx, al
+98FA  83 EA 04                sub dx, 4
+98FD  B0 28                   mov al, 0x28
+98FF  F6 C4 02                test ah, 2
+9902  74 02                   je 0x9906
+9904  B0 50                   mov al, 0x50
+9906  8A DC                   mov bl, ah
+9908  98                      cbw
+9909  A3 4A 00                mov word ptr [0x4a], ax
+990C  B8 00 08                mov ax, 0x800
+990F  80 FB 01                cmp bl, 1
+9912  76 10                   jbe 0x9924
+9914  B8 00 10                mov ax, 0x1000
+9917  80 FB 03                cmp bl, 3
+991A  76 08                   jbe 0x9924
+991C  80 FB 07                cmp bl, 7
+991F  74 03                   je 0x9924
+9921  B8 00 40                mov ax, 0x4000
+9924  A3 4C 00                mov word ptr [0x4c], ax
+9927  33 C0                   xor ax, ax
+9929  A3 4E 00                mov word ptr [0x4e], ax
+992C  A2 62 00                mov byte ptr [0x62], al
+992F  BF 50 00                mov di, 0x50
+9932  B9 08 00                mov cx, 8
+9935  89 05                   mov word ptr [di], ax
+9937  47                      inc di
+9938  47                      inc di
+9939  E2 FA                   loop 0x9935
+993B  53                      push bx
+993C  06                      push es
+993D  8E C1                   mov es, cx
+993F  26 C4 36 74 00          les si, ptr es:[0x74]
+9944  80 FB 06                cmp bl, 6
+9947  75 02                   jne 0x994b
+9949  FE CB                   dec bl
+994B  D0 EB                   shr bl, 1
+994D  C0 E3 04                shl bl, 4
+9950  32 FF                   xor bh, bh
+9952  03 F3                   add si, bx
+9954  B9 10 00                mov cx, 0x10
+9957  8A C7                   mov al, bh
+9959  EE                      out dx, al
+995A  E3 00                   jcxz 0x995c
+995C  42                      inc dx
+995D  26 8A 04                mov al, byte ptr es:[si]
+9960  46                      inc si
+9961  EE                      out dx, al
+9962  E3 00                   jcxz 0x9964
+9964  FE C7                   inc bh
+9966  4A                      dec dx
+9967  E2 EE                   loop 0x9957
+9969  26 8B 44 FA             mov ax, word ptr es:[si - 6]
+996D  86 C4                   xchg ah, al
+996F  A3 60 00                mov word ptr [0x60], ax
+9972  07                      pop es
+9973  5B                      pop bx
+9974  B9 00 08                mov cx, 0x800
+9977  B8 20 07                mov ax, 0x720
+997A  80 FB 07                cmp bl, 7
+997D  74 0A                   je 0x9989
+997F  B9 00 20                mov cx, 0x2000
+9982  80 FB 03                cmp bl, 3
+9985  76 02                   jbe 0x9989
+9987  33 C0                   xor ax, ax
+9989  33 FF                   xor di, di
+998B  FA                      cli
+998C  FC                      cld
+998D  F3 AB                   rep stosw word ptr es:[di], ax
+998F  FB                      sti
+9990  A0 65 00                mov al, byte ptr [0x65]
+9993  83 C2 04                add dx, 4
+9996  EE                      out dx, al
+9997  E3 00                   jcxz 0x9999
+9999  A0 66 00                mov al, byte ptr [0x66]
+999C  42                      inc dx
+999D  EE                      out dx, al
+999E  C3                      ret
+
+===== 999Fh-99A7h =====
+Reason: INT 10h AH=01h set cursor shape
+999F  89 0E 60 00             mov word ptr [0x60], cx
+99A3  B0 0A                   mov al, 0xa
+99A5  EB 3A                   jmp 0x99e1
+99A7  90                      nop
+
+===== 99A8h-99FAh =====
+Reason: INT 10h AH=02h set cursor position
+99A8  1E                      push ds
+99A9  50                      push ax
+99AA  53                      push bx
+99AB  51                      push cx
+99AC  52                      push dx
+99AD  B8 40 00                mov ax, 0x40
+99B0  8E D8                   mov ds, ax
+99B2  8A C7                   mov al, bh
+99B4  8A DF                   mov bl, bh
+99B6  32 FF                   xor bh, bh
+99B8  D1 E3                   shl bx, 1
+99BA  89 97 50 00             mov word ptr [bx + 0x50], dx
+99BE  3A 06 62 00             cmp al, byte ptr [0x62]
+99C2  75 03                   jne 0x99c7
+99C4  E8 06 00                call 0x99cd
+99C7  5A                      pop dx
+99C8  59                      pop cx
+99C9  5B                      pop bx
+99CA  58                      pop ax
+99CB  1F                      pop ds
+99CC  CF                      iret
+99CD  8A C6                   mov al, dh
+99CF  F6 26 4A 00             mul byte ptr [0x4a]
+99D3  32 F6                   xor dh, dh
+99D5  03 C2                   add ax, dx
+99D7  8B 0E 4E 00             mov cx, word ptr [0x4e]
+99DB  D1 E9                   shr cx, 1
+99DD  03 C8                   add cx, ax
+99DF  B0 0E                   mov al, 0xe
+99E1  8B 16 63 00             mov dx, word ptr [0x63]
+99E5  EE                      out dx, al
+99E6  E3 00                   jcxz 0x99e8
+99E8  42                      inc dx
+99E9  86 C5                   xchg ch, al
+99EB  EE                      out dx, al
+99EC  FE C5                   inc ch
+99EE  E3 00                   jcxz 0x99f0
+99F0  4A                      dec dx
+99F1  86 C5                   xchg ch, al
+99F3  EE                      out dx, al
+99F4  E3 00                   jcxz 0x99f6
+99F6  42                      inc dx
+99F7  86 C1                   xchg cl, al
+99F9  EE                      out dx, al
+99FA  C3                      ret
+
+===== 99FBh-9A12h =====
+Reason: INT 10h AH=03h get cursor position
+99FB  1E                      push ds
+99FC  53                      push bx
+99FD  8A DF                   mov bl, bh
+99FF  32 FF                   xor bh, bh
+9A01  D1 E3                   shl bx, 1
+9A03  BA 40 00                mov dx, 0x40
+9A06  8E DA                   mov ds, dx
+9A08  8B 97 50 00             mov dx, word ptr [bx + 0x50]
+9A0C  8B 0E 60 00             mov cx, word ptr [0x60]
+9A10  5B                      pop bx
+9A11  1F                      pop ds
+9A12  CF                      iret
+
+===== 9A13h-9ABAh =====
+Reason: INT 10h AH=04h read light-pen position
+9A13  8B EC                   mov bp, sp
+9A15  8B 16 63 00             mov dx, word ptr [0x63]
+9A19  83 C2 06                add dx, 6
+9A1C  8B F2                   mov si, dx
+9A1E  EC                      in al, dx
+9A1F  A8 04                   test al, 4
+9A21  B4 00                   mov ah, 0
+9A23  74 03                   je 0x9a28
+9A25  E9 8B 00                jmp 0x9ab3
+9A28  A8 02                   test al, 2
+9A2A  75 03                   jne 0x9a2f
+9A2C  E9 88 00                jmp 0x9ab7
+9A2F  83 EA 06                sub dx, 6
+9A32  B0 10                   mov al, 0x10
+9A34  B5 11                   mov ch, 0x11
+9A36  EE                      out dx, al
+9A37  E3 00                   jcxz 0x9a39
+9A39  E3 00                   jcxz 0x9a3b
+9A3B  42                      inc dx
+9A3C  EC                      in al, dx
+9A3D  86 C5                   xchg ch, al
+9A3F  4A                      dec dx
+9A40  E3 00                   jcxz 0x9a42
+9A42  E3 00                   jcxz 0x9a44
+9A44  EE                      out dx, al
+9A45  E3 00                   jcxz 0x9a47
+9A47  E3 00                   jcxz 0x9a49
+9A49  42                      inc dx
+9A4A  EC                      in al, dx
+9A4B  86 C1                   xchg cl, al
+9A4D  A1 4E 00                mov ax, word ptr [0x4e]
+9A50  D1 E8                   shr ax, 1
+9A52  2B C8                   sub cx, ax
+9A54  A0 49 00                mov al, byte ptr [0x49]
+9A57  BB FC F0                mov bx, 0xf0fc
+9A5A  2E D7                   xlatb
+9A5C  2B C8                   sub cx, ax
+9A5E  79 02                   jns 0x9a62
+9A60  33 C9                   xor cx, cx
+9A62  8A 26 49 00             mov ah, byte ptr [0x49]
+9A66  80 FC 04                cmp ah, 4
+9A69  72 04                   jb 0x9a6f
+9A6B  80 FC 07                cmp ah, 7
+9A6E  F5                      cmc
+9A6F  A0 4A 00                mov al, byte ptr [0x4a]
+9A72  91                      xchg cx, ax
+9A73  72 02                   jb 0x9a77
+9A75  B1 28                   mov cl, 0x28
+9A77  F6 F1                   div cl
+9A79  8A E8                   mov ch, al
+9A7B  86 C4                   xchg ah, al
+9A7D  8B D0                   mov dx, ax
+9A7F  98                      cbw
+9A80  8B D8                   mov bx, ax
+9A82  8A 26 49 00             mov ah, byte ptr [0x49]
+9A86  80 FC 04                cmp ah, 4
+9A89  72 04                   jb 0x9a8f
+9A8B  80 FC 07                cmp ah, 7
+9A8E  F5                      cmc
+9A8F  72 11                   jb 0x9aa2
+9A91  D0 E5                   shl ch, 1
+9A93  C0 EE 02                shr dh, 2
+9A96  80 FC 06                cmp ah, 6
+9A99  75 0A                   jne 0x9aa5
+9A9B  D0 E2                   shl dl, 1
+9A9D  C1 E3 04                shl bx, 4
+9AA0  EB 06                   jmp 0x9aa8
+9AA2  C0 E5 03                shl ch, 3
+9AA5  C1 E3 03                shl bx, 3
+9AA8  89 56 10                mov word ptr [bp + 0x10], dx
+9AAB  88 6E 13                mov byte ptr [bp + 0x13], ch
+9AAE  89 5E 0E                mov word ptr [bp + 0xe], bx
+9AB1  B4 01                   mov ah, 1
+9AB3  8B D6                   mov dx, si
+9AB5  42                      inc dx
+9AB6  EE                      out dx, al
+9AB7  88 66 15                mov byte ptr [bp + 0x15], ah
+9ABA  C3                      ret
+
+===== 9ABBh-9AE9h =====
+Reason: INT 10h AH=05h select active display page
+9ABB  1E                      push ds
+9ABC  50                      push ax
+9ABD  53                      push bx
+9ABE  51                      push cx
+9ABF  52                      push dx
+9AC0  BA 40 00                mov dx, 0x40
+9AC3  8E DA                   mov ds, dx
+9AC5  A2 62 00                mov byte ptr [0x62], al
+9AC8  98                      cbw
+9AC9  8B D8                   mov bx, ax
+9ACB  F7 26 4C 00             mul word ptr [0x4c]
+9ACF  A3 4E 00                mov word ptr [0x4e], ax
+9AD2  D1 E8                   shr ax, 1
+9AD4  8B C8                   mov cx, ax
+9AD6  B0 0C                   mov al, 0xc
+9AD8  E8 06 FF                call 0x99e1
+9ADB  D1 E3                   shl bx, 1
+9ADD  8B 97 50 00             mov dx, word ptr [bx + 0x50]
+9AE1  E8 E9 FE                call 0x99cd
+9AE4  5A                      pop dx
+9AE5  59                      pop cx
+9AE6  5B                      pop bx
+9AE7  58                      pop ax
+9AE8  1F                      pop ds
+9AE9  CF                      iret
+
+===== 9AEAh-9C4Ah =====
+Reason: INT 10h AH=06h scroll-window-up entry into shared scroll engine
+9AEA  32 DB                   xor bl, bl
+9AEC  EB 05                   jmp 0x9af3
+9AEE  B3 FF                   mov bl, 0xff
+9AF0  8B F2                   mov si, dx
+9AF2  FD                      std
+9AF3  1E                      push ds
+9AF4  53                      push bx
+9AF5  2B D1                   sub dx, cx
+9AF7  81 C2 01 01             add dx, 0x101
+9AFB  52                      push dx
+9AFC  50                      push ax
+9AFD  8A 26 49 00             mov ah, byte ptr [0x49]
+9B01  80 FC 04                cmp ah, 4
+9B04  72 04                   jb 0x9b0a
+9B06  80 FC 07                cmp ah, 7
+9B09  F5                      cmc
+9B0A  BA 28 00                mov dx, 0x28
+9B0D  73 20                   jae 0x9b2f
+9B0F  80 FC 02                cmp ah, 2
+9B12  74 05                   je 0x9b19
+9B14  80 FC 03                cmp ah, 3
+9B17  75 12                   jne 0x9b2b
+9B19  BA DA 03                mov dx, 0x3da
+9B1C  51                      push cx
+9B1D  33 C9                   xor cx, cx
+9B1F  EC                      in al, dx
+9B20  A8 08                   test al, 8
+9B22  E1 FB                   loope 0x9b1f
+9B24  59                      pop cx
+9B25  B0 25                   mov al, 0x25
+9B27  BA D8 03                mov dx, 0x3d8
+9B2A  EE                      out dx, al
+9B2B  8B 16 4A 00             mov dx, word ptr [0x4a]
+9B2F  8B EA                   mov bp, dx
+9B31  D1 E5                   shl bp, 1
+9B33  22 DB                   and bl, bl
+9B35  74 04                   je 0x9b3b
+9B37  F7 DD                   neg bp
+9B39  8B CE                   mov cx, si
+9B3B  8A 26 49 00             mov ah, byte ptr [0x49]
+9B3F  80 FC 04                cmp ah, 4
+9B42  72 04                   jb 0x9b48
+9B44  80 FC 07                cmp ah, 7
+9B47  F5                      cmc
+9B48  91                      xchg cx, ax
+9B49  8A CA                   mov cl, dl
+9B4B  8B D0                   mov dx, ax
+9B4D  73 16                   jae 0x9b65
+9B4F  8A C6                   mov al, dh
+9B51  F6 26 4A 00             mul byte ptr [0x4a]
+9B55  32 F6                   xor dh, dh
+9B57  03 C2                   add ax, dx
+9B59  D1 E0                   shl ax, 1
+9B5B  03 06 4E 00             add ax, word ptr [0x4e]
+9B5F  8B F8                   mov di, ax
+9B61  58                      pop ax
+9B62  5A                      pop dx
+9B63  EB 2D                   jmp 0x9b92
+9B65  8A C6                   mov al, dh
+9B67  F6 26 4A 00             mul byte ptr [0x4a]
+9B6B  C1 E0 02                shl ax, 2
+9B6E  32 F6                   xor dh, dh
+9B70  03 C2                   add ax, dx
+9B72  8B F8                   mov di, ax
+9B74  58                      pop ax
+9B75  5A                      pop dx
+9B76  C0 E6 02                shl dh, 2
+9B79  80 FD 06                cmp ch, 6
+9B7C  74 09                   je 0x9b87
+9B7E  D1 E7                   shl di, 1
+9B80  D0 E2                   shl dl, 1
+9B82  22 DB                   and bl, bl
+9B84  74 01                   je 0x9b87
+9B86  47                      inc di
+9B87  22 DB                   and bl, bl
+9B89  74 04                   je 0x9b8f
+9B8B  81 C7 F0 00             add di, 0xf0
+9B8F  C0 E0 02                shl al, 2
+9B92  06                      push es
+9B93  1F                      pop ds
+9B94  8A FE                   mov bh, dh
+9B96  0A C0                   or al, al
+9B98  74 68                   je 0x9c02
+9B9A  2A F0                   sub dh, al
+9B9C  74 64                   je 0x9c02
+9B9E  8A F8                   mov bh, al
+9BA0  F6 E1                   mul cl
+9BA2  D1 E0                   shl ax, 1
+9BA4  22 DB                   and bl, bl
+9BA6  74 02                   je 0x9baa
+9BA8  F7 D8                   neg ax
+9BAA  8B F7                   mov si, di
+9BAC  03 F0                   add si, ax
+9BAE  32 E4                   xor ah, ah
+9BB0  86 E5                   xchg ch, ah
+9BB2  80 FC 04                cmp ah, 4
+9BB5  72 04                   jb 0x9bbb
+9BB7  80 FC 07                cmp ah, 7
+9BBA  F5                      cmc
+9BBB  53                      push bx
+9BBC  72 55                   jb 0x9c13
+9BBE  8B C6                   mov ax, si
+9BC0  8B DF                   mov bx, di
+9BC2  8A CA                   mov cl, dl
+9BC4  F3 A4                   rep movsb byte ptr es:[di], byte ptr [si]
+9BC6  8B FB                   mov di, bx
+9BC8  8B F0                   mov si, ax
+9BCA  81 C6 00 20             add si, 0x2000
+9BCE  81 C7 00 20             add di, 0x2000
+9BD2  8A CA                   mov cl, dl
+9BD4  F3 A4                   rep movsb byte ptr es:[di], byte ptr [si]
+9BD6  8B FB                   mov di, bx
+9BD8  8B F0                   mov si, ax
+9BDA  03 F5                   add si, bp
+9BDC  03 FD                   add di, bp
+9BDE  FE CE                   dec dh
+9BE0  75 DC                   jne 0x9bbe
+9BE2  5B                      pop bx
+9BE3  58                      pop ax
+9BE4  8A C4                   mov al, ah
+9BE6  8A F7                   mov dh, bh
+9BE8  8B DF                   mov bx, di
+9BEA  8A CA                   mov cl, dl
+9BEC  F3 AA                   rep stosb byte ptr es:[di], al
+9BEE  8B FB                   mov di, bx
+9BF0  81 C7 00 20             add di, 0x2000
+9BF4  8A CA                   mov cl, dl
+9BF6  F3 AA                   rep stosb byte ptr es:[di], al
+9BF8  8B FB                   mov di, bx
+9BFA  03 FD                   add di, bp
+9BFC  FE CE                   dec dh
+9BFE  75 E8                   jne 0x9be8
+9C00  1F                      pop ds
+9C01  C3                      ret
+9C02  32 E4                   xor ah, ah
+9C04  86 E5                   xchg ch, ah
+9C06  80 FC 04                cmp ah, 4
+9C09  72 04                   jb 0x9c0f
+9C0B  80 FC 07                cmp ah, 7
+9C0E  F5                      cmc
+9C0F  73 D2                   jae 0x9be3
+9C11  EB 15                   jmp 0x9c28
+9C13  8B C6                   mov ax, si
+9C15  8B DF                   mov bx, di
+9C17  8A CA                   mov cl, dl
+9C19  F3 A5                   rep movsw word ptr es:[di], word ptr [si]
+9C1B  8B FB                   mov di, bx
+9C1D  8B F0                   mov si, ax
+9C1F  03 F5                   add si, bp
+9C21  03 FD                   add di, bp
+9C23  FE CE                   dec dh
+9C25  75 EC                   jne 0x9c13
+9C27  5B                      pop bx
+9C28  58                      pop ax
+9C29  B0 20                   mov al, 0x20
+9C2B  8A F7                   mov dh, bh
+9C2D  8B DF                   mov bx, di
+9C2F  8A CA                   mov cl, dl
+9C31  F3 AB                   rep stosw word ptr es:[di], ax
+9C33  8B FB                   mov di, bx
+9C35  03 FD                   add di, bp
+9C37  FE CE                   dec dh
+9C39  75 F2                   jne 0x9c2d
+9C3B  1F                      pop ds
+9C3C  80 3E 49 00 07          cmp byte ptr [0x49], 7
+9C41  74 07                   je 0x9c4a
+9C43  A0 65 00                mov al, byte ptr [0x65]
+9C46  BA D8 03                mov dx, 0x3d8
+9C49  EE                      out dx, al
+9C4A  C3                      ret
+
+===== 9AEEh-9C4Ah =====
+Reason: INT 10h AH=07h scroll-window-down entry into shared scroll engine
+9AEE  B3 FF                   mov bl, 0xff
+9AF0  8B F2                   mov si, dx
+9AF2  FD                      std
+9AF3  1E                      push ds
+9AF4  53                      push bx
+9AF5  2B D1                   sub dx, cx
+9AF7  81 C2 01 01             add dx, 0x101
+9AFB  52                      push dx
+9AFC  50                      push ax
+9AFD  8A 26 49 00             mov ah, byte ptr [0x49]
+9B01  80 FC 04                cmp ah, 4
+9B04  72 04                   jb 0x9b0a
+9B06  80 FC 07                cmp ah, 7
+9B09  F5                      cmc
+9B0A  BA 28 00                mov dx, 0x28
+9B0D  73 20                   jae 0x9b2f
+9B0F  80 FC 02                cmp ah, 2
+9B12  74 05                   je 0x9b19
+9B14  80 FC 03                cmp ah, 3
+9B17  75 12                   jne 0x9b2b
+9B19  BA DA 03                mov dx, 0x3da
+9B1C  51                      push cx
+9B1D  33 C9                   xor cx, cx
+9B1F  EC                      in al, dx
+9B20  A8 08                   test al, 8
+9B22  E1 FB                   loope 0x9b1f
+9B24  59                      pop cx
+9B25  B0 25                   mov al, 0x25
+9B27  BA D8 03                mov dx, 0x3d8
+9B2A  EE                      out dx, al
+9B2B  8B 16 4A 00             mov dx, word ptr [0x4a]
+9B2F  8B EA                   mov bp, dx
+9B31  D1 E5                   shl bp, 1
+9B33  22 DB                   and bl, bl
+9B35  74 04                   je 0x9b3b
+9B37  F7 DD                   neg bp
+9B39  8B CE                   mov cx, si
+9B3B  8A 26 49 00             mov ah, byte ptr [0x49]
+9B3F  80 FC 04                cmp ah, 4
+9B42  72 04                   jb 0x9b48
+9B44  80 FC 07                cmp ah, 7
+9B47  F5                      cmc
+9B48  91                      xchg cx, ax
+9B49  8A CA                   mov cl, dl
+9B4B  8B D0                   mov dx, ax
+9B4D  73 16                   jae 0x9b65
+9B4F  8A C6                   mov al, dh
+9B51  F6 26 4A 00             mul byte ptr [0x4a]
+9B55  32 F6                   xor dh, dh
+9B57  03 C2                   add ax, dx
+9B59  D1 E0                   shl ax, 1
+9B5B  03 06 4E 00             add ax, word ptr [0x4e]
+9B5F  8B F8                   mov di, ax
+9B61  58                      pop ax
+9B62  5A                      pop dx
+9B63  EB 2D                   jmp 0x9b92
+9B65  8A C6                   mov al, dh
+9B67  F6 26 4A 00             mul byte ptr [0x4a]
+9B6B  C1 E0 02                shl ax, 2
+9B6E  32 F6                   xor dh, dh
+9B70  03 C2                   add ax, dx
+9B72  8B F8                   mov di, ax
+9B74  58                      pop ax
+9B75  5A                      pop dx
+9B76  C0 E6 02                shl dh, 2
+9B79  80 FD 06                cmp ch, 6
+9B7C  74 09                   je 0x9b87
+9B7E  D1 E7                   shl di, 1
+9B80  D0 E2                   shl dl, 1
+9B82  22 DB                   and bl, bl
+9B84  74 01                   je 0x9b87
+9B86  47                      inc di
+9B87  22 DB                   and bl, bl
+9B89  74 04                   je 0x9b8f
+9B8B  81 C7 F0 00             add di, 0xf0
+9B8F  C0 E0 02                shl al, 2
+9B92  06                      push es
+9B93  1F                      pop ds
+9B94  8A FE                   mov bh, dh
+9B96  0A C0                   or al, al
+9B98  74 68                   je 0x9c02
+9B9A  2A F0                   sub dh, al
+9B9C  74 64                   je 0x9c02
+9B9E  8A F8                   mov bh, al
+9BA0  F6 E1                   mul cl
+9BA2  D1 E0                   shl ax, 1
+9BA4  22 DB                   and bl, bl
+9BA6  74 02                   je 0x9baa
+9BA8  F7 D8                   neg ax
+9BAA  8B F7                   mov si, di
+9BAC  03 F0                   add si, ax
+9BAE  32 E4                   xor ah, ah
+9BB0  86 E5                   xchg ch, ah
+9BB2  80 FC 04                cmp ah, 4
+9BB5  72 04                   jb 0x9bbb
+9BB7  80 FC 07                cmp ah, 7
+9BBA  F5                      cmc
+9BBB  53                      push bx
+9BBC  72 55                   jb 0x9c13
+9BBE  8B C6                   mov ax, si
+9BC0  8B DF                   mov bx, di
+9BC2  8A CA                   mov cl, dl
+9BC4  F3 A4                   rep movsb byte ptr es:[di], byte ptr [si]
+9BC6  8B FB                   mov di, bx
+9BC8  8B F0                   mov si, ax
+9BCA  81 C6 00 20             add si, 0x2000
+9BCE  81 C7 00 20             add di, 0x2000
+9BD2  8A CA                   mov cl, dl
+9BD4  F3 A4                   rep movsb byte ptr es:[di], byte ptr [si]
+9BD6  8B FB                   mov di, bx
+9BD8  8B F0                   mov si, ax
+9BDA  03 F5                   add si, bp
+9BDC  03 FD                   add di, bp
+9BDE  FE CE                   dec dh
+9BE0  75 DC                   jne 0x9bbe
+9BE2  5B                      pop bx
+9BE3  58                      pop ax
+9BE4  8A C4                   mov al, ah
+9BE6  8A F7                   mov dh, bh
+9BE8  8B DF                   mov bx, di
+9BEA  8A CA                   mov cl, dl
+9BEC  F3 AA                   rep stosb byte ptr es:[di], al
+9BEE  8B FB                   mov di, bx
+9BF0  81 C7 00 20             add di, 0x2000
+9BF4  8A CA                   mov cl, dl
+9BF6  F3 AA                   rep stosb byte ptr es:[di], al
+9BF8  8B FB                   mov di, bx
+9BFA  03 FD                   add di, bp
+9BFC  FE CE                   dec dh
+9BFE  75 E8                   jne 0x9be8
+9C00  1F                      pop ds
+9C01  C3                      ret
+9C02  32 E4                   xor ah, ah
+9C04  86 E5                   xchg ch, ah
+9C06  80 FC 04                cmp ah, 4
+9C09  72 04                   jb 0x9c0f
+9C0B  80 FC 07                cmp ah, 7
+9C0E  F5                      cmc
+9C0F  73 D2                   jae 0x9be3
+9C11  EB 15                   jmp 0x9c28
+9C13  8B C6                   mov ax, si
+9C15  8B DF                   mov bx, di
+9C17  8A CA                   mov cl, dl
+9C19  F3 A5                   rep movsw word ptr es:[di], word ptr [si]
+9C1B  8B FB                   mov di, bx
+9C1D  8B F0                   mov si, ax
+9C1F  03 F5                   add si, bp
+9C21  03 FD                   add di, bp
+9C23  FE CE                   dec dh
+9C25  75 EC                   jne 0x9c13
+9C27  5B                      pop bx
+9C28  58                      pop ax
+9C29  B0 20                   mov al, 0x20
+9C2B  8A F7                   mov dh, bh
+9C2D  8B DF                   mov bx, di
+9C2F  8A CA                   mov cl, dl
+9C31  F3 AB                   rep stosw word ptr es:[di], ax
+9C33  8B FB                   mov di, bx
+9C35  03 FD                   add di, bp
+9C37  FE CE                   dec dh
+9C39  75 F2                   jne 0x9c2d
+9C3B  1F                      pop ds
+9C3C  80 3E 49 00 07          cmp byte ptr [0x49], 7
+9C41  74 07                   je 0x9c4a
+9C43  A0 65 00                mov al, byte ptr [0x65]
+9C46  BA D8 03                mov dx, 0x3d8
+9C49  EE                      out dx, al
+9C4A  C3                      ret
+
+===== 9AF3h-9C4Ah =====
+Reason: shared INT 10h scroll-window engine
+9AF3  1E                      push ds
+9AF4  53                      push bx
+9AF5  2B D1                   sub dx, cx
+9AF7  81 C2 01 01             add dx, 0x101
+9AFB  52                      push dx
+9AFC  50                      push ax
+9AFD  8A 26 49 00             mov ah, byte ptr [0x49]
+9B01  80 FC 04                cmp ah, 4
+9B04  72 04                   jb 0x9b0a
+9B06  80 FC 07                cmp ah, 7
+9B09  F5                      cmc
+9B0A  BA 28 00                mov dx, 0x28
+9B0D  73 20                   jae 0x9b2f
+9B0F  80 FC 02                cmp ah, 2
+9B12  74 05                   je 0x9b19
+9B14  80 FC 03                cmp ah, 3
+9B17  75 12                   jne 0x9b2b
+9B19  BA DA 03                mov dx, 0x3da
+9B1C  51                      push cx
+9B1D  33 C9                   xor cx, cx
+9B1F  EC                      in al, dx
+9B20  A8 08                   test al, 8
+9B22  E1 FB                   loope 0x9b1f
+9B24  59                      pop cx
+9B25  B0 25                   mov al, 0x25
+9B27  BA D8 03                mov dx, 0x3d8
+9B2A  EE                      out dx, al
+9B2B  8B 16 4A 00             mov dx, word ptr [0x4a]
+9B2F  8B EA                   mov bp, dx
+9B31  D1 E5                   shl bp, 1
+9B33  22 DB                   and bl, bl
+9B35  74 04                   je 0x9b3b
+9B37  F7 DD                   neg bp
+9B39  8B CE                   mov cx, si
+9B3B  8A 26 49 00             mov ah, byte ptr [0x49]
+9B3F  80 FC 04                cmp ah, 4
+9B42  72 04                   jb 0x9b48
+9B44  80 FC 07                cmp ah, 7
+9B47  F5                      cmc
+9B48  91                      xchg cx, ax
+9B49  8A CA                   mov cl, dl
+9B4B  8B D0                   mov dx, ax
+9B4D  73 16                   jae 0x9b65
+9B4F  8A C6                   mov al, dh
+9B51  F6 26 4A 00             mul byte ptr [0x4a]
+9B55  32 F6                   xor dh, dh
+9B57  03 C2                   add ax, dx
+9B59  D1 E0                   shl ax, 1
+9B5B  03 06 4E 00             add ax, word ptr [0x4e]
+9B5F  8B F8                   mov di, ax
+9B61  58                      pop ax
+9B62  5A                      pop dx
+9B63  EB 2D                   jmp 0x9b92
+9B65  8A C6                   mov al, dh
+9B67  F6 26 4A 00             mul byte ptr [0x4a]
+9B6B  C1 E0 02                shl ax, 2
+9B6E  32 F6                   xor dh, dh
+9B70  03 C2                   add ax, dx
+9B72  8B F8                   mov di, ax
+9B74  58                      pop ax
+9B75  5A                      pop dx
+9B76  C0 E6 02                shl dh, 2
+9B79  80 FD 06                cmp ch, 6
+9B7C  74 09                   je 0x9b87
+9B7E  D1 E7                   shl di, 1
+9B80  D0 E2                   shl dl, 1
+9B82  22 DB                   and bl, bl
+9B84  74 01                   je 0x9b87
+9B86  47                      inc di
+9B87  22 DB                   and bl, bl
+9B89  74 04                   je 0x9b8f
+9B8B  81 C7 F0 00             add di, 0xf0
+9B8F  C0 E0 02                shl al, 2
+9B92  06                      push es
+9B93  1F                      pop ds
+9B94  8A FE                   mov bh, dh
+9B96  0A C0                   or al, al
+9B98  74 68                   je 0x9c02
+9B9A  2A F0                   sub dh, al
+9B9C  74 64                   je 0x9c02
+9B9E  8A F8                   mov bh, al
+9BA0  F6 E1                   mul cl
+9BA2  D1 E0                   shl ax, 1
+9BA4  22 DB                   and bl, bl
+9BA6  74 02                   je 0x9baa
+9BA8  F7 D8                   neg ax
+9BAA  8B F7                   mov si, di
+9BAC  03 F0                   add si, ax
+9BAE  32 E4                   xor ah, ah
+9BB0  86 E5                   xchg ch, ah
+9BB2  80 FC 04                cmp ah, 4
+9BB5  72 04                   jb 0x9bbb
+9BB7  80 FC 07                cmp ah, 7
+9BBA  F5                      cmc
+9BBB  53                      push bx
+9BBC  72 55                   jb 0x9c13
+9BBE  8B C6                   mov ax, si
+9BC0  8B DF                   mov bx, di
+9BC2  8A CA                   mov cl, dl
+9BC4  F3 A4                   rep movsb byte ptr es:[di], byte ptr [si]
+9BC6  8B FB                   mov di, bx
+9BC8  8B F0                   mov si, ax
+9BCA  81 C6 00 20             add si, 0x2000
+9BCE  81 C7 00 20             add di, 0x2000
+9BD2  8A CA                   mov cl, dl
+9BD4  F3 A4                   rep movsb byte ptr es:[di], byte ptr [si]
+9BD6  8B FB                   mov di, bx
+9BD8  8B F0                   mov si, ax
+9BDA  03 F5                   add si, bp
+9BDC  03 FD                   add di, bp
+9BDE  FE CE                   dec dh
+9BE0  75 DC                   jne 0x9bbe
+9BE2  5B                      pop bx
+9BE3  58                      pop ax
+9BE4  8A C4                   mov al, ah
+9BE6  8A F7                   mov dh, bh
+9BE8  8B DF                   mov bx, di
+9BEA  8A CA                   mov cl, dl
+9BEC  F3 AA                   rep stosb byte ptr es:[di], al
+9BEE  8B FB                   mov di, bx
+9BF0  81 C7 00 20             add di, 0x2000
+9BF4  8A CA                   mov cl, dl
+9BF6  F3 AA                   rep stosb byte ptr es:[di], al
+9BF8  8B FB                   mov di, bx
+9BFA  03 FD                   add di, bp
+9BFC  FE CE                   dec dh
+9BFE  75 E8                   jne 0x9be8
+9C00  1F                      pop ds
+9C01  C3                      ret
+9C02  32 E4                   xor ah, ah
+9C04  86 E5                   xchg ch, ah
+9C06  80 FC 04                cmp ah, 4
+9C09  72 04                   jb 0x9c0f
+9C0B  80 FC 07                cmp ah, 7
+9C0E  F5                      cmc
+9C0F  73 D2                   jae 0x9be3
+9C11  EB 15                   jmp 0x9c28
+9C13  8B C6                   mov ax, si
+9C15  8B DF                   mov bx, di
+9C17  8A CA                   mov cl, dl
+9C19  F3 A5                   rep movsw word ptr es:[di], word ptr [si]
+9C1B  8B FB                   mov di, bx
+9C1D  8B F0                   mov si, ax
+9C1F  03 F5                   add si, bp
+9C21  03 FD                   add di, bp
+9C23  FE CE                   dec dh
+9C25  75 EC                   jne 0x9c13
+9C27  5B                      pop bx
+9C28  58                      pop ax
+9C29  B0 20                   mov al, 0x20
+9C2B  8A F7                   mov dh, bh
+9C2D  8B DF                   mov bx, di
+9C2F  8A CA                   mov cl, dl
+9C31  F3 AB                   rep stosw word ptr es:[di], ax
+9C33  8B FB                   mov di, bx
+9C35  03 FD                   add di, bp
+9C37  FE CE                   dec dh
+9C39  75 F2                   jne 0x9c2d
+9C3B  1F                      pop ds
+9C3C  80 3E 49 00 07          cmp byte ptr [0x49], 7
+9C41  74 07                   je 0x9c4a
+9C43  A0 65 00                mov al, byte ptr [0x65]
+9C46  BA D8 03                mov dx, 0x3d8
+9C49  EE                      out dx, al
+9C4A  C3                      ret
+
+===== 9C4Bh-9D36h =====
+Reason: INT 10h AH=08h read character/attribute at cursor
+9C4B  8B EC                   mov bp, sp
+9C4D  8A 26 49 00             mov ah, byte ptr [0x49]
+9C51  80 FC 07                cmp ah, 7
+9C54  74 05                   je 0x9c5b
+9C56  80 FC 04                cmp ah, 4
+9C59  73 56                   jae 0x9cb1
+9C5B  8A DF                   mov bl, bh
+9C5D  32 FF                   xor bh, bh
+9C5F  D1 E3                   shl bx, 1
+9C61  8B 97 50 00             mov dx, word ptr [bx + 0x50]
+9C65  8A C6                   mov al, dh
+9C67  F6 26 4A 00             mul byte ptr [0x4a]
+9C6B  32 F6                   xor dh, dh
+9C6D  03 C2                   add ax, dx
+9C6F  D1 E0                   shl ax, 1
+9C71  D1 EB                   shr bx, 1
+9C73  93                      xchg bx, ax
+9C74  F7 26 4C 00             mul word ptr [0x4c]
+9C78  03 C3                   add ax, bx
+9C7A  8B F0                   mov si, ax
+9C7C  FA                      cli
+9C7D  FC                      cld
+9C7E  80 3E 49 00 07          cmp byte ptr [0x49], 7
+9C83  74 26                   je 0x9cab
+9C85  80 3E 49 00 02          cmp byte ptr [0x49], 2
+9C8A  72 1F                   jb 0x9cab
+9C8C  8B 16 63 00             mov dx, word ptr [0x63]
+9C90  83 C2 06                add dx, 6
+9C93  33 C9                   xor cx, cx
+9C95  FB                      sti
+9C96  FC                      cld
+9C97  FA                      cli
+9C98  FC                      cld
+9C99  EC                      in al, dx
+9C9A  A8 08                   test al, 8
+9C9C  75 0D                   jne 0x9cab
+9C9E  A8 01                   test al, 1
+9CA0  E0 F3                   loopne 0x9c95
+9CA2  33 C9                   xor cx, cx
+9CA4  EC                      in al, dx
+9CA5  E3 00                   jcxz 0x9ca7
+9CA7  A8 09                   test al, 9
+9CA9  E1 F9                   loope 0x9ca4
+9CAB  26 AD                   lodsw ax, word ptr es:[si]
+9CAD  FB                      sti
+9CAE  E9 80 00                jmp 0x9d31
+9CB1  BF 08 00                mov di, 8
+9CB4  2B E7                   sub sp, di
+9CB6  F7 DF                   neg di
+9CB8  BB 00 20                mov bx, 0x2000
+9CBB  8B 16 50 00             mov dx, word ptr [0x50]
+9CBF  8A C6                   mov al, dh
+9CC1  F6 26 4A 00             mul byte ptr [0x4a]
+9CC5  C1 E0 02                shl ax, 2
+9CC8  32 F6                   xor dh, dh
+9CCA  03 C2                   add ax, dx
+9CCC  8B F0                   mov si, ax
+9CCE  80 3E 49 00 06          cmp byte ptr [0x49], 6
+9CD3  8C C1                   mov cx, es
+9CD5  8E D9                   mov ds, cx
+9CD7  74 13                   je 0x9cec
+9CD9  D1 E6                   shl si, 1
+9CDB  8B 04                   mov ax, word ptr [si]
+9CDD  E8 70 03                call 0xa050
+9CE0  8B 00                   mov ax, word ptr [bx + si]
+9CE2  83 C6 50                add si, 0x50
+9CE5  E8 68 03                call 0xa050
+9CE8  75 F1                   jne 0x9cdb
+9CEA  EB 0F                   jmp 0x9cfb
+9CEC  8A 04                   mov al, byte ptr [si]
+9CEE  88 03                   mov byte ptr [bp + di], al
+9CF0  47                      inc di
+9CF1  8A 00                   mov al, byte ptr [bx + si]
+9CF3  83 C6 50                add si, 0x50
+9CF6  88 03                   mov byte ptr [bp + di], al
+9CF8  47                      inc di
+9CF9  75 F1                   jne 0x9cec
+9CFB  8C D7                   mov di, ss
+9CFD  8E DF                   mov ds, di
+9CFF  8C CF                   mov di, cs
+9D01  8E C7                   mov es, di
+9D03  BF 6E FA                mov di, 0xfa6e
+9D06  32 C0                   xor al, al
+9D08  8B F4                   mov si, sp
+9D0A  B9 08 00                mov cx, 8
+9D0D  FA                      cli
+9D0E  FC                      cld
+9D0F  F3 A6                   repe cmpsb byte ptr [si], byte ptr es:[di]
+9D11  FB                      sti
+9D12  74 1D                   je 0x9d31
+9D14  FE C0                   inc al
+9D16  74 19                   je 0x9d31
+9D18  03 F9                   add di, cx
+9D1A  3C 80                   cmp al, 0x80
+9D1C  75 EA                   jne 0x9d08
+9D1E  33 C0                   xor ax, ax
+9D20  8E C0                   mov es, ax
+9D22  26 C4 3E 7C 00          les di, ptr es:[0x7c]
+9D27  8C C1                   mov cx, es
+9D29  0B CF                   or cx, di
+9D2B  74 04                   je 0x9d31
+9D2D  B0 80                   mov al, 0x80
+9D2F  EB D7                   jmp 0x9d08
+9D31  89 46 14                mov word ptr [bp + 0x14], ax
+9D34  8B E5                   mov sp, bp
+9D36  C3                      ret
+
+===== 9D37h-9DACh =====
+Reason: INT 10h AH=09h write character and attribute
+9D37  8A 26 49 00             mov ah, byte ptr [0x49]
+9D3B  80 FC 07                cmp ah, 7
+9D3E  74 05                   je 0x9d45
+9D40  80 FC 04                cmp ah, 4
+9D43  73 74                   jae 0x9db9
+9D45  8A E3                   mov ah, bl
+9D47  50                      push ax
+9D48  8A DF                   mov bl, bh
+9D4A  32 FF                   xor bh, bh
+9D4C  D1 E3                   shl bx, 1
+9D4E  8B 97 50 00             mov dx, word ptr [bx + 0x50]
+9D52  8A C6                   mov al, dh
+9D54  F6 26 4A 00             mul byte ptr [0x4a]
+9D58  32 F6                   xor dh, dh
+9D5A  03 C2                   add ax, dx
+9D5C  D1 E0                   shl ax, 1
+9D5E  D1 EB                   shr bx, 1
+9D60  93                      xchg bx, ax
+9D61  F7 26 4C 00             mul word ptr [0x4c]
+9D65  03 C3                   add ax, bx
+9D67  8B F8                   mov di, ax
+9D69  58                      pop ax
+9D6A  80 3E 49 00 07          cmp byte ptr [0x49], 7
+9D6F  74 07                   je 0x9d78
+9D71  80 3E 49 00 02          cmp byte ptr [0x49], 2
+9D76  73 0A                   jae 0x9d82
+9D78  FA                      cli
+9D79  FC                      cld
+9D7A  AB                      stosw word ptr es:[di], ax
+9D7B  49                      dec cx
+9D7C  74 02                   je 0x9d80
+9D7E  F3 AB                   rep stosw word ptr es:[di], ax
+9D80  FB                      sti
+9D81  C3                      ret
+9D82  8B D8                   mov bx, ax
+9D84  8B F1                   mov si, cx
+9D86  8B 16 63 00             mov dx, word ptr [0x63]
+9D8A  83 C2 06                add dx, 6
+9D8D  33 C9                   xor cx, cx
+9D8F  FB                      sti
+9D90  FC                      cld
+9D91  FA                      cli
+9D92  FC                      cld
+9D93  EC                      in al, dx
+9D94  A8 08                   test al, 8
+9D96  75 0D                   jne 0x9da5
+9D98  A8 01                   test al, 1
+9D9A  E0 F3                   loopne 0x9d8f
+9D9C  33 C9                   xor cx, cx
+9D9E  EC                      in al, dx
+9D9F  E3 00                   jcxz 0x9da1
+9DA1  A8 09                   test al, 9
+9DA3  E1 F9                   loope 0x9d9e
+9DA5  8B C3                   mov ax, bx
+9DA7  AB                      stosw word ptr es:[di], ax
+9DA8  FB                      sti
+9DA9  4E                      dec si
+9DAA  75 E1                   jne 0x9d8d
+9DAC  C3                      ret
+
+===== 9DADh-9ED3h =====
+Reason: INT 10h AH=0Ah write character only
+9DAD  8A 26 49 00             mov ah, byte ptr [0x49]
+9DB1  80 FC 07                cmp ah, 7
+9DB4  74 05                   je 0x9dbb
+9DB6  80 FC 04                cmp ah, 4
+9DB9  73 65                   jae 0x9e20
+9DBB  50                      push ax
+9DBC  8A DF                   mov bl, bh
+9DBE  32 FF                   xor bh, bh
+9DC0  D1 E3                   shl bx, 1
+9DC2  8B 97 50 00             mov dx, word ptr [bx + 0x50]
+9DC6  8A C6                   mov al, dh
+9DC8  F6 26 4A 00             mul byte ptr [0x4a]
+9DCC  32 F6                   xor dh, dh
+9DCE  03 C2                   add ax, dx
+9DD0  D1 E0                   shl ax, 1
+9DD2  D1 EB                   shr bx, 1
+9DD4  93                      xchg bx, ax
+9DD5  F7 26 4C 00             mul word ptr [0x4c]
+9DD9  03 C3                   add ax, bx
+9DDB  8B F8                   mov di, ax
+9DDD  58                      pop ax
+9DDE  80 3E 49 00 07          cmp byte ptr [0x49], 7
+9DE3  74 07                   je 0x9dec
+9DE5  80 3E 49 00 02          cmp byte ptr [0x49], 2
+9DEA  73 08                   jae 0x9df4
+9DEC  FA                      cli
+9DED  FC                      cld
+9DEE  AA                      stosb byte ptr es:[di], al
+9DEF  47                      inc di
+9DF0  E2 FC                   loop 0x9dee
+9DF2  FB                      sti
+9DF3  C3                      ret
+9DF4  8A D8                   mov bl, al
+9DF6  8B F1                   mov si, cx
+9DF8  8B 16 63 00             mov dx, word ptr [0x63]
+9DFC  83 C2 06                add dx, 6
+9DFF  33 C9                   xor cx, cx
+9E01  FB                      sti
+9E02  FC                      cld
+9E03  FA                      cli
+9E04  FC                      cld
+9E05  EC                      in al, dx
+9E06  A8 08                   test al, 8
+9E08  75 0D                   jne 0x9e17
+9E0A  A8 01                   test al, 1
+9E0C  E0 F3                   loopne 0x9e01
+9E0E  33 C9                   xor cx, cx
+9E10  EC                      in al, dx
+9E11  E3 00                   jcxz 0x9e13
+9E13  A8 09                   test al, 9
+9E15  E1 F9                   loope 0x9e10
+9E17  8A C3                   mov al, bl
+9E19  AA                      stosb byte ptr es:[di], al
+9E1A  FB                      sti
+9E1B  47                      inc di
+9E1C  4E                      dec si
+9E1D  75 E0                   jne 0x9dff
+9E1F  C3                      ret
+9E20  55                      push bp
+9E21  8B E9                   mov bp, cx
+9E23  50                      push ax
+9E24  25 7F 00                and ax, 0x7f
+9E27  C1 E0 03                shl ax, 3
+9E2A  50                      push ax
+9E2B  8B 16 50 00             mov dx, word ptr [0x50]
+9E2F  8A C6                   mov al, dh
+9E31  F6 26 4A 00             mul byte ptr [0x4a]
+9E35  C1 E0 02                shl ax, 2
+9E38  32 F6                   xor dh, dh
+9E3A  03 C2                   add ax, dx
+9E3C  8B F8                   mov di, ax
+9E3E  BE 6E FA                mov si, 0xfa6e
+9E41  8A 36 49 00             mov dh, byte ptr [0x49]
+9E45  8A D3                   mov dl, bl
+9E47  0E                      push cs
+9E48  1F                      pop ds
+9E49  58                      pop ax
+9E4A  5B                      pop bx
+9E4B  22 DB                   and bl, bl
+9E4D  79 08                   jns 0x9e57
+9E4F  33 F6                   xor si, si
+9E51  8E DE                   mov ds, si
+9E53  C5 36 7C 00             lds si, ptr [0x7c]
+9E57  03 F0                   add si, ax
+9E59  80 FE 06                cmp dh, 6
+9E5C  74 43                   je 0x9ea1
+9E5E  D1 E7                   shl di, 1
+9E60  8A C2                   mov al, dl
+9E62  24 03                   and al, 3
+9E64  32 F6                   xor dh, dh
+9E66  0A F0                   or dh, al
+9E68  C0 E0 02                shl al, 2
+9E6B  75 F9                   jne 0x9e66
+9E6D  B9 04 00                mov cx, 4
+9E70  8A 04                   mov al, byte ptr [si]
+9E72  46                      inc si
+9E73  E8 F1 01                call 0xa067
+9E76  79 03                   jns 0x9e7b
+9E78  26 33 05                xor ax, word ptr es:[di]
+9E7B  26 89 05                mov word ptr es:[di], ax
+9E7E  8A 04                   mov al, byte ptr [si]
+9E80  46                      inc si
+9E81  E8 E3 01                call 0xa067
+9E84  79 05                   jns 0x9e8b
+9E86  26 33 85 00 20          xor ax, word ptr es:[di + 0x2000]
+9E8B  26 89 85 00 20          mov word ptr es:[di + 0x2000], ax
+9E90  83 C7 50                add di, 0x50
+9E93  E2 DB                   loop 0x9e70
+9E95  81 EF 3E 01             sub di, 0x13e
+9E99  83 EE 08                sub si, 8
+9E9C  4D                      dec bp
+9E9D  75 CE                   jne 0x9e6d
+9E9F  5D                      pop bp
+9EA0  C3                      ret
+9EA1  D0 E2                   shl dl, 1
+9EA3  9F                      lahf
+9EA4  B9 04 00                mov cx, 4
+9EA7  8A 04                   mov al, byte ptr [si]
+9EA9  46                      inc si
+9EAA  9E                      sahf
+9EAB  73 03                   jae 0x9eb0
+9EAD  26 32 05                xor al, byte ptr es:[di]
+9EB0  26 88 05                mov byte ptr es:[di], al
+9EB3  8A 04                   mov al, byte ptr [si]
+9EB5  46                      inc si
+9EB6  9E                      sahf
+9EB7  73 05                   jae 0x9ebe
+9EB9  26 32 85 00 20          xor al, byte ptr es:[di + 0x2000]
+9EBE  26 88 85 00 20          mov byte ptr es:[di + 0x2000], al
+9EC3  83 C7 50                add di, 0x50
+9EC6  E2 DF                   loop 0x9ea7
+9EC8  81 EF 3F 01             sub di, 0x13f
+9ECC  83 EE 08                sub si, 8
+9ECF  4D                      dec bp
+9ED0  75 D2                   jne 0x9ea4
+9ED2  5D                      pop bp
+9ED3  C3                      ret
+
+===== 9ED4h-9EF8h =====
+Reason: INT 10h AH=0Bh set palette/color select
+9ED4  A0 66 00                mov al, byte ptr [0x66]
+9ED7  22 FF                   and bh, bh
+9ED9  74 0B                   je 0x9ee6
+9EDB  0C 20                   or al, 0x20
+9EDD  F6 C3 01                test bl, 1
+9EE0  75 0B                   jne 0x9eed
+9EE2  24 DF                   and al, 0xdf
+9EE4  EB 07                   jmp 0x9eed
+9EE6  24 E0                   and al, 0xe0
+9EE8  80 E3 1F                and bl, 0x1f
+9EEB  0A C3                   or al, bl
+9EED  A2 66 00                mov byte ptr [0x66], al
+9EF0  8B 16 63 00             mov dx, word ptr [0x63]
+9EF4  83 C2 05                add dx, 5
+9EF7  EE                      out dx, al
+9EF8  C3                      ret
+
+===== 9EF9h-9F15h =====
+Reason: INT 10h AH=0Ch write graphics pixel
+9EF9  8A D8                   mov bl, al
+9EFB  E8 1A 01                call 0xa018
+9EFE  8A E3                   mov ah, bl
+9F00  22 DD                   and bl, ch
+9F02  22 E4                   and ah, ah
+9F04  79 04                   jns 0x9f0a
+9F06  32 C3                   xor al, bl
+9F08  EB 06                   jmp 0x9f10
+9F0A  F6 D5                   not ch
+9F0C  22 C5                   and al, ch
+9F0E  0A C3                   or al, bl
+9F10  D2 C8                   ror al, cl
+9F12  26 88 04                mov byte ptr es:[si], al
+9F15  C3                      ret
+
+===== 9F16h-9F20h =====
+Reason: INT 10h AH=0Dh read graphics pixel
+9F16  E8 FF 00                call 0xa018
+9F19  22 C5                   and al, ch
+9F1B  8B EC                   mov bp, sp
+9F1D  88 46 14                mov byte ptr [bp + 0x14], al
+9F20  C3                      ret
+
+===== 9F21h-9F69h =====
+Reason: INT 10h AH=0Eh teletype output
+9F21  1E                      push ds
+9F22  50                      push ax
+9F23  53                      push bx
+9F24  51                      push cx
+9F25  52                      push dx
+9F26  50                      push ax
+9F27  B8 40 00                mov ax, 0x40
+9F2A  8E D8                   mov ds, ax
+9F2C  B4 03                   mov ah, 3
+9F2E  8A 3E 62 00             mov bh, byte ptr [0x62]
+9F32  CD 10                   int 0x10
+9F34  58                      pop ax
+9F35  3C 0D                   cmp al, 0xd
+9F37  76 0F                   jbe 0x9f48
+9F39  B4 0A                   mov ah, 0xa
+9F3B  E8 9B 00                call 0x9fd9
+9F3E  B4 02                   mov ah, 2
+9F40  CD 10                   int 0x10
+9F42  5A                      pop dx
+9F43  59                      pop cx
+9F44  5B                      pop bx
+9F45  58                      pop ax
+9F46  1F                      pop ds
+9F47  CF                      iret
+9F48  74 16                   je 0x9f60
+9F4A  3C 08                   cmp al, 8
+9F4C  74 14                   je 0x9f62
+9F4E  3C 07                   cmp al, 7
+9F50  74 09                   je 0x9f5b
+9F52  3C 0A                   cmp al, 0xa
+9F54  75 E3                   jne 0x9f39
+9F56  E8 8F 00                call 0x9fe8
+9F59  EB E3                   jmp 0x9f3e
+9F5B  E8 EC 55                call 0xf54a
+9F5E  EB E2                   jmp 0x9f42
+9F60  32 D2                   xor dl, dl
+9F62  22 D2                   and dl, dl
+9F64  74 D8                   je 0x9f3e
+9F66  FE CA                   dec dl
+9F68  EB D4                   jmp 0x9f3e
+
+===== 9F6Ah-9F7Ch =====
+Reason: INT 10h AH=0Fh return current video mode
+9F6A  A0 49 00                mov al, byte ptr [0x49]
+9F6D  8A 26 4A 00             mov ah, byte ptr [0x4a]
+9F71  8B EC                   mov bp, sp
+9F73  89 46 14                mov word ptr [bp + 0x14], ax
+9F76  A0 62 00                mov al, byte ptr [0x62]
+9F79  88 46 0F                mov byte ptr [bp + 0xf], al
+9F7C  C3                      ret
+
+===== 9F7Dh-9F7Dh =====
+Reason: INT 10h unsupported-service RET stub for AH=10h..12h
+9F7D  C3                      ret
+
+===== 9F7Eh-A017h =====
+Reason: INT 10h AH=13h write string
+9F7E  3C 04                   cmp al, 4
+9F80  73 56                   jae 0x9fd8
+9F82  E3 54                   jcxz 0x9fd8
+9F84  98                      cbw
+9F85  8B F8                   mov di, ax
+9F87  8B F3                   mov si, bx
+9F89  32 DB                   xor bl, bl
+9F8B  86 DF                   xchg bh, bl
+9F8D  87 DE                   xchg si, bx
+9F8F  D1 E6                   shl si, 1
+9F91  FF B4 50 00             push word ptr [si + 0x50]
+9F95  B4 02                   mov ah, 2
+9F97  CD 10                   int 0x10
+9F99  26 8A 46 00             mov al, byte ptr es:[bp]
+9F9D  45                      inc bp
+9F9E  3C 08                   cmp al, 8
+9FA0  74 0C                   je 0x9fae
+9FA2  3C 0D                   cmp al, 0xd
+9FA4  74 08                   je 0x9fae
+9FA6  3C 07                   cmp al, 7
+9FA8  74 04                   je 0x9fae
+9FAA  3C 0A                   cmp al, 0xa
+9FAC  75 0A                   jne 0x9fb8
+9FAE  B4 0E                   mov ah, 0xe
+9FB0  CD 10                   int 0x10
+9FB2  8B 94 50 00             mov dx, word ptr [si + 0x50]
+9FB6  EB 11                   jmp 0x9fc9
+9FB8  83 FF 01                cmp di, 1
+9FBB  76 05                   jbe 0x9fc2
+9FBD  26 8A 5E 00             mov bl, byte ptr es:[bp]
+9FC1  45                      inc bp
+9FC2  B4 09                   mov ah, 9
+9FC4  51                      push cx
+9FC5  E8 11 00                call 0x9fd9
+9FC8  59                      pop cx
+9FC9  B4 02                   mov ah, 2
+9FCB  CD 10                   int 0x10
+9FCD  E2 CA                   loop 0x9f99
+9FCF  5A                      pop dx
+9FD0  D1 EF                   shr di, 1
+9FD2  72 04                   jb 0x9fd8
+9FD4  B4 02                   mov ah, 2
+9FD6  CD 10                   int 0x10
+9FD8  C3                      ret
+9FD9  B9 01 00                mov cx, 1
+9FDC  CD 10                   int 0x10
+9FDE  FE C2                   inc dl
+9FE0  3A 16 4A 00             cmp dl, byte ptr [0x4a]
+9FE4  75 31                   jne 0xa017
+9FE6  32 D2                   xor dl, dl
+9FE8  FE C6                   inc dh
+9FEA  80 FE 19                cmp dh, 0x19
+9FED  75 28                   jne 0xa017
+9FEF  FE CE                   dec dh
+9FF1  80 3E 49 00 07          cmp byte ptr [0x49], 7
+9FF6  74 09                   je 0xa001
+9FF8  80 3E 49 00 04          cmp byte ptr [0x49], 4
+9FFD  B4 00                   mov ah, 0
+9FFF  73 04                   jae 0xa005
+A001  B4 08                   mov ah, 8
+A003  CD 10                   int 0x10
+A005  53                      push bx
+A006  52                      push dx
+A007  33 C9                   xor cx, cx
+A009  8A 16 4A 00             mov dl, byte ptr [0x4a]
+A00D  FE CA                   dec dl
+A00F  BB 01 06                mov bx, 0x601
+A012  93                      xchg bx, ax
+A013  CD 10                   int 0x10
+A015  5A                      pop dx
+A016  5B                      pop bx
+A017  C3                      ret
+
+===== 9FD9h-A017h =====
+Reason: shared INT 10h character-output and cursor-wrap helper
+9FD9  B9 01 00                mov cx, 1
+9FDC  CD 10                   int 0x10
+9FDE  FE C2                   inc dl
+9FE0  3A 16 4A 00             cmp dl, byte ptr [0x4a]
+9FE4  75 31                   jne 0xa017
+9FE6  32 D2                   xor dl, dl
+9FE8  FE C6                   inc dh
+9FEA  80 FE 19                cmp dh, 0x19
+9FED  75 28                   jne 0xa017
+9FEF  FE CE                   dec dh
+9FF1  80 3E 49 00 07          cmp byte ptr [0x49], 7
+9FF6  74 09                   je 0xa001
+9FF8  80 3E 49 00 04          cmp byte ptr [0x49], 4
+9FFD  B4 00                   mov ah, 0
+9FFF  73 04                   jae 0xa005
+A001  B4 08                   mov ah, 8
+A003  CD 10                   int 0x10
+A005  53                      push bx
+A006  52                      push dx
+A007  33 C9                   xor cx, cx
+A009  8A 16 4A 00             mov dl, byte ptr [0x4a]
+A00D  FE CA                   dec dl
+A00F  BB 01 06                mov bx, 0x601
+A012  93                      xchg bx, ax
+A013  CD 10                   int 0x10
+A015  5A                      pop dx
+A016  5B                      pop bx
+A017  C3                      ret
+
+===== 9FE8h-A017h =====
+Reason: INT 10h cursor line-advance alternate helper entry
+9FE8  FE C6                   inc dh
+9FEA  80 FE 19                cmp dh, 0x19
+9FED  75 28                   jne 0xa017
+9FEF  FE CE                   dec dh
+9FF1  80 3E 49 00 07          cmp byte ptr [0x49], 7
+9FF6  74 09                   je 0xa001
+9FF8  80 3E 49 00 04          cmp byte ptr [0x49], 4
+9FFD  B4 00                   mov ah, 0
+9FFF  73 04                   jae 0xa005
+A001  B4 08                   mov ah, 8
+A003  CD 10                   int 0x10
+A005  53                      push bx
+A006  52                      push dx
+A007  33 C9                   xor cx, cx
+A009  8A 16 4A 00             mov dl, byte ptr [0x4a]
+A00D  FE CA                   dec dl
+A00F  BB 01 06                mov bx, 0x601
+A012  93                      xchg bx, ax
+A013  CD 10                   int 0x10
+A015  5A                      pop dx
+A016  5B                      pop bx
+A017  C3                      ret
+
 ===== 93F8h-949Eh =====
 Reason: feature-gated 8042 auxiliary-device initialization path; exact entry/vector provenance unresolved
 93F8  50                      push ax
