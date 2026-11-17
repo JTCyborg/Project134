@@ -1421,3 +1421,28 @@ Consequently, when AL=2Fh at this second call site, 5AB5h's seven fill bytes are
 `2F 0E 2F 2F 0E 2F 2F`
 
 This completes the AH data-flow proof for both currently identified 5AB5h call sites: 4797h supplies AH=00h; 4B8Dh supplies AH=0Eh. The helper's visible purpose is also clear: position the cursor from E180h, write a two-character blank field (CX is caller DX=0002h), then print the mapped selector from E1ADh as decimal text. The code evidence establishes this display behavior; it does not by itself establish the semantic meaning of every selector value.
+
+## Custom 9-byte HDD parameter records at DS:E01B and DS:E024
+
+The producer is the `5AECh` worker, not ROM data at file offset E01Bh. This distinction matters: `DS:E01B` and `DS:E024` are runtime RAM addresses. The ROM byte at file offset E01Bh belongs to an unrelated text string; it is not either runtime record. The second record is selected by adding nine to SI in 5AB5h (`ADD SI,9`), so there need not be a separate immediate reference to E024h.
+
+When `AB34h` returns AL=2Fh (no matching preset geometry), the worker at 5AECh saves the drive index from E18Ah, passes DL=80h+drive to AB34h, then uses the returned registers to build a custom parameter record. The IDENTIFY data path obtains cylinders in AX from buffer offset +02h, heads in CL from +06h, and sectors/track in BL from +0Ch; DH is set from CL. In the no-preset-match path AB34h sets CX=AX (cylinder count) and AL=2Fh. Thus the values consumed by the record writer are CX=cylinders, DH=head count, and BL=sectors per track.
+
+At 5B4Dh–5B77h, SI is zero for drive index 0 and nine for drive index 1. The code writes the following exact layout at DS:E01B+SI:
+
+| Offset | Width | Written value | Meaning |
+|---:|---:|---|---|
+| +0 | word | CX | Cylinder count |
+| +2 | byte | DH | Number of heads |
+| +3 | word | FFFFh | Write-precompensation cylinder sentinel |
+| +5 | byte | 00h if DH<=8, otherwise 08h | Disk parameter-table control byte |
+| +6 | word | CX | Landing-zone cylinder |
+| +8 | byte | BL | Sectors per track |
+
+The stores are directly visible in the instructions: `MOV [SI+E01B],CX`; `MOV [SI+E01D],DH`; `MOV word [SI+E01E],FFFFh`; a head-count-dependent 0/8 value to `[SI+E020]`; `MOV [SI+E021],CX`; and `MOV [SI+E023],BL`. This is the compact nine-byte IBM-compatible fixed-disk parameter-table layout (cylinders, heads, write precomp, control, landing zone, sectors/track), rather than an opaque arbitrary payload.
+
+Therefore the two runtime records are:
+- Drive 0: `DS:E01B..E023`
+- Drive 1: `DS:E024..E02C`
+
+The earlier 5B7Ch shadow/live copy is consistent with this: it transfers exactly nine bytes per drive from E09B..E0A3 / E0A4..E0AC into E01B..E023 / E024..E02C. The 5AB5h special branch then expands the selected nine-byte DPT record into the destination buffer and inserts the seven caller-derived fill bytes already documented above.
