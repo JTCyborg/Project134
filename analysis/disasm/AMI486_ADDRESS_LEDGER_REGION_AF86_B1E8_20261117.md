@@ -57,4 +57,4 @@ The helper implementations at B1F5h/B20Eh/B221h/B253h/B25Fh/B26Ah/B3CCh/B3D2h/B3
 
 The candidate generator now completes the split near-JMP at AF84h and adds bounded entries for AF87h, AF8Ah, AF8Dh, B1DFh and B1E4h. No data range is assigned within AF86h–B1E8h; the interval is executable code.
 
-The CI run for this generator update is the verification gate. The updated manifest will determine the next largest uncovered interval and exact global coverage.
+GitHub Actions run 44085161932 completed successfully. The manifest reports 825 candidate windows, 238 data ranges, 40,335 unique code-window bytes, 19,703 unique data-range bytes, 293 overlap bytes, and a 59,745-byte union (91.16%). There are 65 uncovered intervals; the next largest is 10DFh–131Eh (576 bytes).
