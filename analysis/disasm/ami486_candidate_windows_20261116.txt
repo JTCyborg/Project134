@@ -228,6 +228,558 @@ Words: B6FB, B700, B708, B70F, B717, B71C, B724, B729, B731, B736, B73E, B745, B
 Reason: Setup option labels: clock, speed, cache, wait states and timing
 ASCII: 'Reserved\x00Disabled\x00Enabled\x00Absent\x00Present\x00Low\x00High\x00Off\x00On\x00No\x00Yes\x00Setup\x00Always\x000:300\x00DOS 1KB\x00A:, C:\x00C:, A:\x00250\x00500\x00750\x001000\x0030\x0024\x0020\x0015\x0012\x0010\x008\x006\x00Video\x00Main\x00Both\x00Slow\x00Normal\x00Fast\x00Fastest\x002t\x003t\x004t\x006t\x008t\x00WB\x00WT\x007.19MHz\x0014.32MHz\x0028.64MHz\x00CLK2\x00CLK2 /2\x00CLK2 /3\x00CLK2 /4\x00CLK2 /5\x00CLK2 /6\x00CLK2 /8\x00CLK2 /10\x00CLK2 /12\x00ATCLK\x00ATCLK/2\x00ATCLK2\x00ATCLK2/2\x00ATCLK2/4\x00ATCLK2/8\x00OSC\x00CLKIO\x0064KB\x00128KB\x000 WS\x001 WS\x002 WS\x003 WS\x000 ns\x001 ns\x002 ns\x003 ns\x000 us\x000.25 us\x000.5 us\x000.75 us\x001 us\x001.25 us\x001.5u\x001.75 us\x002 us\x002.25 us\x002.5 us\x002.75 us\x003 us\x003.25 us\x003.5 us\x003.75 us\x0015u \x0030u\x0060u\x00120u\x000 CLK2\x001 CLK2\x002 CLK2\x003 CLK2\x001st T2\x00T1 end\x00SYN.\x00Bypass\x00'
 
+===== 578Dh-580Ch =====
+Reason: direct CALL target from the Setup option-list renderer; panel/text helper
+578D  57                      push di
+578E  A3 99 E1                mov word ptr [0xe199], ax
+5791  89 16 9B E1             mov word ptr [0xe19b], dx
+5795  89 1E 9D E1             mov word ptr [0xe19d], bx
+5799  E8 66 FF                call 0x5702
+579C  B0 00                   mov al, 0
+579E  E8 88 FF                call 0x5729
+57A1  8A C8                   mov cl, al
+57A3  E8 AB FF                call 0x5751
+57A6  8A D0                   mov dl, al
+57A8  B0 01                   mov al, 1
+57AA  E8 7C FF                call 0x5729
+57AD  8A F0                   mov dh, al
+57AF  E8 B9 FF                call 0x576b
+57B2  E8 A9 FF                call 0x575e
+57B5  8A C8                   mov cl, al
+57B7  8A F0                   mov dh, al
+57B9  B2 20                   mov dl, 0x20
+57BB  FE 06 9A E1             inc byte ptr [0xe19a]
+57BF  A0 9A E1                mov al, byte ptr [0xe19a]
+57C2  3A 06 9C E1             cmp al, byte ptr [0xe19c]
+57C6  73 05                   jae 0x57cd
+57C8  E8 A0 FF                call 0x576b
+57CB  EB EE                   jmp 0x57bb
+57CD  B0 02                   mov al, 2
+57CF  E8 57 FF                call 0x5729
+57D2  8A C8                   mov cl, al
+57D4  E8 7A FF                call 0x5751
+57D7  8A D0                   mov dl, al
+57D9  B0 03                   mov al, 3
+57DB  E8 4B FF                call 0x5729
+57DE  8A F0                   mov dh, al
+57E0  E8 88 FF                call 0x576b
+57E3  5F                      pop di
+57E4  E9 2A FF                jmp 0x5711
+57E7  E8 18 FF                call 0x5702
+57EA  33 C9                   xor cx, cx
+57EC  8A CE                   mov cl, dh
+57EE  2A CC                   sub cl, ah
+57F0  41                      inc cx
+57F1  32 F6                   xor dh, dh
+57F3  2A D0                   sub dl, al
+57F5  42                      inc dx
+57F6  E8 F8 FE                call 0x56f1
+57F9  A0 9F E1                mov al, byte ptr [0xe19f]
+57FC  C3                      ret
+57FD  32 F6                   xor dh, dh
+57FF  03 D0                   add dx, ax
+5801  4A                      dec dx
+5802  57                      push di
+5803  E8 E1 FF                call 0x57e7
+5806  8A E0                   mov ah, al
+5808  B0 20                   mov al, 0x20
+580A  51                      push cx
+580B  57                      push di
+580C  8B              db 0x8B
+
+===== 57FDh-587Ch =====
+Reason: direct CALL target from the Setup single-item renderer; coordinate/text helper
+57FD  32 F6                   xor dh, dh
+57FF  03 D0                   add dx, ax
+5801  4A                      dec dx
+5802  57                      push di
+5803  E8 E1 FF                call 0x57e7
+5806  8A E0                   mov ah, al
+5808  B0 20                   mov al, 0x20
+580A  51                      push cx
+580B  57                      push di
+580C  8B CA                   mov cx, dx
+580E  F3 AB                   rep stosw word ptr es:[di], ax
+5810  5F                      pop di
+5811  81 C7 A0 00             add di, 0xa0
+5815  59                      pop cx
+5816  E2 F2                   loop 0x580a
+5818  5F                      pop di
+5819  E9 F5 FE                jmp 0x5711
+581C  32 F6                   xor dh, dh
+581E  03 D0                   add dx, ax
+5820  4A                      dec dx
+5821  57                      push di
+5822  E8 C2 FF                call 0x57e7
+5825  8A D8                   mov bl, al
+5827  51                      push cx
+5828  57                      push di
+5829  8B CA                   mov cx, dx
+582B  47                      inc di
+582C  26 8A 05                mov al, byte ptr es:[di]
+582F  24 88                   and al, 0x88
+5831  0A C3                   or al, bl
+5833  A8 08                   test al, 8
+5835  74 04                   je 0x583b
+5837  0A 06 EA 55             or al, byte ptr [0x55ea]
+583B  AA                      stosb byte ptr es:[di], al
+583C  E2 ED                   loop 0x582b
+583E  5F                      pop di
+583F  81 C7 A0 00             add di, 0xa0
+5843  59                      pop cx
+5844  E2 E1                   loop 0x5827
+5846  5F                      pop di
+5847  E9 C7 FE                jmp 0x5711
+584A  89 1E 9D E1             mov word ptr [0xe19d], bx
+584E  E8 B1 FE                call 0x5702
+5851  E8 9D FE                call 0x56f1
+5854  B1 0A                   mov cl, 0xa
+5856  E8 C3 FE                call 0x571c
+5859  AA                      stosb byte ptr es:[di], al
+585A  47                      inc di
+585B  33 C9                   xor cx, cx
+585D  8A CA                   mov cl, dl
+585F  49                      dec cx
+5860  49                      dec cx
+5861  C3                      ret
+5862  57                      push di
+5863  E8 E4 FF                call 0x584a
+5866  E3 07                   jcxz 0x586f
+5868  E8 E6 FE                call 0x5751
+586B  AA                      stosb byte ptr es:[di], al
+586C  47                      inc di
+586D  E2 FC                   loop 0x586b
+586F  B1 0D                   mov cl, 0xd
+5871  E8 A8 FE                call 0x571c
+5874  AA                      stosb byte ptr es:[di], al
+5875  47                      inc di
+5876  5F                      pop di
+5877  E9 97 FE                jmp 0x5711
+587A  57                      push di
+587B  E8              db 0xE8
+587C  CC                      int3
+
+===== 5862h-58E1h =====
+Reason: direct CALL target from Setup/menu renderers; phase-42 caller cross-reference
+5862  57                      push di
+5863  E8 E4 FF                call 0x584a
+5866  E3 07                   jcxz 0x586f
+5868  E8 E6 FE                call 0x5751
+586B  AA                      stosb byte ptr es:[di], al
+586C  47                      inc di
+586D  E2 FC                   loop 0x586b
+586F  B1 0D                   mov cl, 0xd
+5871  E8 A8 FE                call 0x571c
+5874  AA                      stosb byte ptr es:[di], al
+5875  47                      inc di
+5876  5F                      pop di
+5877  E9 97 FE                jmp 0x5711
+587A  57                      push di
+587B  E8 CC FF                call 0x584a
+587E  E3 0B                   jcxz 0x588b
+5880  E8 DB FE                call 0x575e
+5883  81 C7 9E 00             add di, 0x9e
+5887  AA                      stosb byte ptr es:[di], al
+5888  47                      inc di
+5889  E2 F8                   loop 0x5883
+588B  81 C7 9E 00             add di, 0x9e
+588F  EB DE                   jmp 0x586f
+5891  50                      push ax
+5892  A0 9F E1                mov al, byte ptr [0xe19f]
+5895  A2 A0 E1                mov byte ptr [0xe1a0], al
+5898  0A 06 EA 55             or al, byte ptr [0x55ea]
+589C  A2 9F E1                mov byte ptr [0xe19f], al
+589F  58                      pop ax
+58A0  C3                      ret
+58A1  80 0E 9F E1 80          or byte ptr [0xe19f], 0x80
+58A6  E8 15 00                call 0x58be
+58A9  80 26 9F E1 7F          and byte ptr [0xe19f], 0x7f
+58AE  C3                      ret
+58AF  E8 DF FF                call 0x5891
+58B2  E8 1E 00                call 0x58d3
+58B5  8A 16 A0 E1             mov dl, byte ptr [0xe1a0]
+58B9  88 16 9F E1             mov byte ptr [0xe19f], dl
+58BD  C3                      ret
+58BE  E8 D0 FF                call 0x5891
+58C1  E8 02 00                call 0x58c6
+58C4  EB EF                   jmp 0x58b5
+58C6  53                      push bx
+58C7  50                      push ax
+58C8  E8 5F 00                call 0x592a
+58CB  D1 E8                   shr ax, 1
+58CD  8B D0                   mov dx, ax
+58CF  58                      pop ax
+58D0  2B C2                   sub ax, dx
+58D2  5B                      pop bx
+58D3  56                      push si
+58D4  57                      push di
+58D5  E8 2A FE                call 0x5702
+58D8  8B F3                   mov si, bx
+58DA  E8 14 FE                call 0x56f1
+58DD  8A 26 9F E1             mov ah, byte ptr [0xe19f]
+58E1  AC                      lodsb al, byte ptr [si]
+
+===== 58AFh-58CEh =====
+Reason: direct CALL target for unselected/alternate text output
+58AF  E8 DF FF                call 0x5891
+58B2  E8 1E 00                call 0x58d3
+58B5  8A 16 A0 E1             mov dl, byte ptr [0xe1a0]
+58B9  88 16 9F E1             mov byte ptr [0xe19f], dl
+58BD  C3                      ret
+58BE  E8 D0 FF                call 0x5891
+58C1  E8 02 00                call 0x58c6
+58C4  EB EF                   jmp 0x58b5
+58C6  53                      push bx
+58C7  50                      push ax
+58C8  E8 5F 00                call 0x592a
+58CB  D1 E8                   shr ax, 1
+58CD  8B D0                   mov dx, ax
+
+===== 58BEh-58EDh =====
+Reason: direct CALL target for record-associated/footer text output
+58BE  E8 D0 FF                call 0x5891
+58C1  E8 02 00                call 0x58c6
+58C4  EB EF                   jmp 0x58b5
+58C6  53                      push bx
+58C7  50                      push ax
+58C8  E8 5F 00                call 0x592a
+58CB  D1 E8                   shr ax, 1
+58CD  8B D0                   mov dx, ax
+58CF  58                      pop ax
+58D0  2B C2                   sub ax, dx
+58D2  5B                      pop bx
+58D3  56                      push si
+58D4  57                      push di
+58D5  E8 2A FE                call 0x5702
+58D8  8B F3                   mov si, bx
+58DA  E8 14 FE                call 0x56f1
+58DD  8A 26 9F E1             mov ah, byte ptr [0xe19f]
+58E1  AC                      lodsb al, byte ptr [si]
+58E2  0A C0                   or al, al
+58E4  74 03                   je 0x58e9
+58E6  AB                      stosw word ptr es:[di], ax
+58E7  EB F8                   jmp 0x58e1
+58E9  5F                      pop di
+58EA  5E                      pop si
+58EB  E9 23 FE                jmp 0x5711
+
+===== 58D3h-58F2h =====
+Reason: direct CALL target for selected/highlighted text output
+58D3  56                      push si
+58D4  57                      push di
+58D5  E8 2A FE                call 0x5702
+58D8  8B F3                   mov si, bx
+58DA  E8 14 FE                call 0x56f1
+58DD  8A 26 9F E1             mov ah, byte ptr [0xe19f]
+58E1  AC                      lodsb al, byte ptr [si]
+58E2  0A C0                   or al, al
+58E4  74 03                   je 0x58e9
+58E6  AB                      stosw word ptr es:[di], ax
+58E7  EB F8                   jmp 0x58e1
+58E9  5F                      pop di
+58EA  5E                      pop si
+58EB  E9 23 FE                jmp 0x5711
+58EE  57                      push di
+58EF  E8 10 FE                call 0x5702
+58F2  8A              db 0x8A
+
+===== 58EEh-590Dh =====
+Reason: direct CALL target for Setup label separator/colon output
+58EE  57                      push di
+58EF  E8 10 FE                call 0x5702
+58F2  8A 26 9F E1             mov ah, byte ptr [0xe19f]
+58F6  50                      push ax
+58F7  8B C2                   mov ax, dx
+58F9  E8 F5 FD                call 0x56f1
+58FC  58                      pop ax
+58FD  AB                      stosw word ptr es:[di], ax
+58FE  5F                      pop di
+58FF  E9 0F FE                jmp 0x5711
+5902  B4 01                   mov ah, 1
+5904  CD 16                   int 0x16
+5906  9C                      pushf
+5907  32 E4                   xor ah, ah
+5909  CD 16                   int 0x16
+590B  9D                      popf
+590C  75 F4                   jne 0x5902
+
+===== 5902h-5961h =====
+Reason: Setup input/event read helper; direct callers 0D3Dh and 10D6h
+5902  B4 01                   mov ah, 1
+5904  CD 16                   int 0x16
+5906  9C                      pushf
+5907  32 E4                   xor ah, ah
+5909  CD 16                   int 0x16
+590B  9D                      popf
+590C  75 F4                   jne 0x5902
+590E  0A C0                   or al, al
+5910  74 03                   je 0x5915
+5912  32 E4                   xor ah, ah
+5914  C3                      ret
+5915  8A C4                   mov al, ah
+5917  B4 01                   mov ah, 1
+5919  C3                      ret
+591A  E8 E5 FF                call 0x5902
+591D  3D 61 00                cmp ax, 0x61
+5920  72 07                   jb 0x5929
+5922  3D 7A 00                cmp ax, 0x7a
+5925  77 02                   ja 0x5929
+5927  24 DF                   and al, 0xdf
+5929  C3                      ret
+592A  51                      push cx
+592B  1E                      push ds
+592C  07                      pop es
+592D  87 DF                   xchg di, bx
+592F  B9 FF FF                mov cx, 0xffff
+5932  32 C0                   xor al, al
+5934  F2 AE                   repne scasb al, byte ptr es:[di]
+5936  87 DF                   xchg di, bx
+5938  F7 D1                   not cx
+593A  49                      dec cx
+593B  8B C1                   mov ax, cx
+593D  59                      pop cx
+593E  C3                      ret
+593F  57                      push di
+5940  1E                      push ds
+5941  07                      pop es
+5942  8B FB                   mov di, bx
+5944  8B CA                   mov cx, dx
+5946  F3 AA                   rep stosb byte ptr es:[di], al
+5948  5F                      pop di
+5949  C3                      ret
+594A  56                      push si
+594B  57                      push di
+594C  1E                      push ds
+594D  07                      pop es
+594E  8B F3                   mov si, bx
+5950  8B F8                   mov di, ax
+5952  8B CA                   mov cx, dx
+5954  F3 A4                   rep movsb byte ptr es:[di], byte ptr [si]
+5956  5F                      pop di
+5957  5E                      pop si
+5958  C3                      ret
+5959  A0 A3 E1                mov al, byte ptr [0xe1a3]
+595C  A2 9F E1                mov byte ptr [0xe19f], al
+595F  53                      push bx
+5960  E8              db 0xE8
+5961  C7              db 0xC7
+
+===== 592Ah-5969h =====
+Reason: NUL-terminated string length helper used by option-list renderer
+592A  51                      push cx
+592B  1E                      push ds
+592C  07                      pop es
+592D  87 DF                   xchg di, bx
+592F  B9 FF FF                mov cx, 0xffff
+5932  32 C0                   xor al, al
+5934  F2 AE                   repne scasb al, byte ptr es:[di]
+5936  87 DF                   xchg di, bx
+5938  F7 D1                   not cx
+593A  49                      dec cx
+593B  8B C1                   mov ax, cx
+593D  59                      pop cx
+593E  C3                      ret
+593F  57                      push di
+5940  1E                      push ds
+5941  07                      pop es
+5942  8B FB                   mov di, bx
+5944  8B CA                   mov cx, dx
+5946  F3 AA                   rep stosb byte ptr es:[di], al
+5948  5F                      pop di
+5949  C3                      ret
+594A  56                      push si
+594B  57                      push di
+594C  1E                      push ds
+594D  07                      pop es
+594E  8B F3                   mov si, bx
+5950  8B F8                   mov di, ax
+5952  8B CA                   mov cx, dx
+5954  F3 A4                   rep movsb byte ptr es:[di], byte ptr [si]
+5956  5F                      pop di
+5957  5E                      pop si
+5958  C3                      ret
+5959  A0 A3 E1                mov al, byte ptr [0xe1a3]
+595C  A2 9F E1                mov byte ptr [0xe19f], al
+595F  53                      push bx
+5960  E8 C7 FF                call 0x592a
+5963  8B D0                   mov dx, ax
+5965  D1 E8                   shr ax, 1
+5967  2D 26 0C                sub ax, 0xc26
+
+===== 5FE9h-6028h =====
+Reason: Setup list reset/position helper; direct callers 0D03h and 0D34h
+5FE9  8B 1E 91 E1             mov bx, word ptr [0xe191]
+5FED  89 1E 8F E1             mov word ptr [0xe18f], bx
+5FF1  F6 47 1C 80             test byte ptr [bx + 0x1c], 0x80
+5FF5  75 03                   jne 0x5ffa
+5FF7  E8 0E 00                call 0x6008
+5FFA  8A 0E 8C E1             mov cl, byte ptr [0xe18c]
+5FFE  32 ED                   xor ch, ch
+6000  E3 05                   jcxz 0x6007
+6002  E8 03 00                call 0x6008
+6005  E2 FB                   loop 0x6002
+6007  C3                      ret
+6008  8B 1E 8F E1             mov bx, word ptr [0xe18f]
+600C  E8 15 00                call 0x6024
+600F  3B 1E 93 E1             cmp bx, word ptr [0xe193]
+6013  72 04                   jb 0x6019
+6015  33 DB                   xor bx, bx
+6017  EB 06                   jmp 0x601f
+6019  F6 47 1C 80             test byte ptr [bx + 0x1c], 0x80
+601D  74 ED                   je 0x600c
+601F  89 1E 8F E1             mov word ptr [0xe18f], bx
+6023  C3                      ret
+6024  F6 47 1E 80             test byte ptr [bx + 0x1e], 0x80
+6028  9C                      pushf
+
+===== 6008h-6047h =====
+Reason: Setup visible-record advance helper; direct caller 0D12h
+6008  8B 1E 8F E1             mov bx, word ptr [0xe18f]
+600C  E8 15 00                call 0x6024
+600F  3B 1E 93 E1             cmp bx, word ptr [0xe193]
+6013  72 04                   jb 0x6019
+6015  33 DB                   xor bx, bx
+6017  EB 06                   jmp 0x601f
+6019  F6 47 1C 80             test byte ptr [bx + 0x1c], 0x80
+601D  74 ED                   je 0x600c
+601F  89 1E 8F E1             mov word ptr [0xe18f], bx
+6023  C3                      ret
+6024  F6 47 1E 80             test byte ptr [bx + 0x1e], 0x80
+6028  9C                      pushf
+6029  02 5F 1F                add bl, byte ptr [bx + 0x1f]
+602C  80 D7 00                adc bh, 0
+602F  83 C3 20                add bx, 0x20
+6032  9D                      popf
+6033  74 09                   je 0x603e
+6035  E8 F2 F8                call 0x592a
+6038  80 3F 00                cmp byte ptr [bx], 0
+603B  75 F8                   jne 0x6035
+603D  43                      inc bx
+603E  C3                      ret
+603F  8B 1E 8F E1             mov bx, word ptr [0xe18f]
+6043  8A 47 1C                mov al, byte ptr [bx + 0x1c]
+6046  24 7F                   and al, 0x7f
+
+===== 6115h-6154h =====
+Reason: Setup option-code to display-string resolver; direct caller 0EBDh
+6115  33 C0                   xor ax, ax
+6117  E8 78 FF                call 0x6092
+611A  E8 22 FF                call 0x603f
+611D  03 D8                   add bx, ax
+611F  8A 47 20                mov al, byte ptr [bx + 0x20]
+6122  32 E4                   xor ah, ah
+6124  8B C8                   mov cx, ax
+6126  8B 1E 97 E1             mov bx, word ptr [0xe197]
+612A  83 C3 02                add bx, 2
+612D  E3 05                   jcxz 0x6134
+612F  E8 F8 F7                call 0x592a
+6132  E2 FB                   loop 0x612f
+6134  8B C3                   mov ax, bx
+6136  C3                      ret
+6137  A0 85 E1                mov al, byte ptr [0xe185]
+613A  98                      cwde
+613B  B1 12                   mov cl, 0x12
+613D  F6 F1                   div cl
+613F  33 D2                   xor dx, dx
+6141  8A F4                   mov dh, ah
+6143  B1 27                   mov cl, 0x27
+6145  F6 E1                   mul cl
+6147  03 C2                   add ax, dx
+6149  05 02 04                add ax, 0x402
+614C  C3                      ret
+614D  C6 06 8E E1 00          mov byte ptr [0xe18e], 0
+6152  E8 8F FE                call 0x5fe4
+
+===== 6122h-6161h =====
+Reason: character/auxiliary text output helper; direct callers 1076h and 10B6h
+6122  32 E4                   xor ah, ah
+6124  8B C8                   mov cx, ax
+6126  8B 1E 97 E1             mov bx, word ptr [0xe197]
+612A  83 C3 02                add bx, 2
+612D  E3 05                   jcxz 0x6134
+612F  E8 F8 F7                call 0x592a
+6132  E2 FB                   loop 0x612f
+6134  8B C3                   mov ax, bx
+6136  C3                      ret
+6137  A0 85 E1                mov al, byte ptr [0xe185]
+613A  98                      cwde
+613B  B1 12                   mov cl, 0x12
+613D  F6 F1                   div cl
+613F  33 D2                   xor dx, dx
+6141  8A F4                   mov dh, ah
+6143  B1 27                   mov cl, 0x27
+6145  F6 E1                   mul cl
+6147  03 C2                   add ax, dx
+6149  05 02 04                add ax, 0x402
+614C  C3                      ret
+614D  C6 06 8E E1 00          mov byte ptr [0xe18e], 0
+6152  E8 8F FE                call 0x5fe4
+6155  FE 06 8E E1             inc byte ptr [0xe18e]
+6159  E8 AC FE                call 0x6008
+615C  83 3E 8F E1 00          cmp word ptr [0xe18f], 0
+6161  75              db 0x75
+
+===== 6137h-6176h =====
+Reason: Setup viewport-row to screen-coordinate helper; direct caller 0E95h
+6137  A0 85 E1                mov al, byte ptr [0xe185]
+613A  98                      cwde
+613B  B1 12                   mov cl, 0x12
+613D  F6 F1                   div cl
+613F  33 D2                   xor dx, dx
+6141  8A F4                   mov dh, ah
+6143  B1 27                   mov cl, 0x27
+6145  F6 E1                   mul cl
+6147  03 C2                   add ax, dx
+6149  05 02 04                add ax, 0x402
+614C  C3                      ret
+614D  C6 06 8E E1 00          mov byte ptr [0xe18e], 0
+6152  E8 8F FE                call 0x5fe4
+6155  FE 06 8E E1             inc byte ptr [0xe18e]
+6159  E8 AC FE                call 0x6008
+615C  83 3E 8F E1 00          cmp word ptr [0xe18f], 0
+6161  75 F2                   jne 0x6155
+6163  C3                      ret
+6164  04 02                   add al, 2
+6166  00 05                   add byte ptr [di], al
+6168  03 01                   add ax, word ptr [bx + di]
+616A  06                      push es
+616B  00 03                   add byte ptr [bp + di], al
+616D  03 06 01 04             add ax, word ptr [0x401]
+6171  06                      push es
+6172  02 05                   add al, byte ptr [di]
+6174  00 03                   add byte ptr [bp + di], al
+6176  05              db 0x05
+
+===== 614Dh-618Ch =====
+Reason: Setup visible-record count helper; direct caller 0C81h
+614D  C6 06 8E E1 00          mov byte ptr [0xe18e], 0
+6152  E8 8F FE                call 0x5fe4
+6155  FE 06 8E E1             inc byte ptr [0xe18e]
+6159  E8 AC FE                call 0x6008
+615C  83 3E 8F E1 00          cmp word ptr [0xe18f], 0
+6161  75 F2                   jne 0x6155
+6163  C3                      ret
+6164  04 02                   add al, 2
+6166  00 05                   add byte ptr [di], al
+6168  03 01                   add ax, word ptr [bx + di]
+616A  06                      push es
+616B  00 03                   add byte ptr [bp + di], al
+616D  03 06 01 04             add ax, word ptr [0x401]
+6171  06                      push es
+6172  02 05                   add al, byte ptr [di]
+6174  00 03                   add byte ptr [bp + di], al
+6176  05 C9 CD                add ax, 0xcdc9
+6179  CD CD                   int 0xcd
+617B  D1 CD                   ror bp, 1
+617D  CD CD                   int 0xcd
+617F  D1 CD                   ror bp, 1
+6181  CD CD                   int 0xcd
+6183  D1 CD                   ror bp, 1
+6185  CD CD                   int 0xcd
+6187  D1 CD                   ror bp, 1
+6189  CD CD                   int 0xcd
+618B  D1 CD                   ror bp, 1
+
 ===== 0C7Dh-0CFFh =====
 Reason: direct CALL target at 0C79h; Setup item-list initializer prologue
 0C7D  55                      push bp
@@ -782,7 +1334,7 @@ Reason: second stack-frame routine in E1xx state/menu rendering cluster
 10DD  5D                      pop bp
 10DE  C3                      ret
 
-===== 60BBh-613Ah =====
+===== 60BBh-60FAh =====
 Reason: direct CALL site and caller context for E1xx state/menu helper at 0E7Ch
 60BB  50                      push ax
 60BC  A0 A5 E1                mov al, byte ptr [0xe1a5]
@@ -813,35 +1365,6 @@ Reason: direct CALL site and caller context for E1xx state/menu helper at 0E7Ch
 60F5  33 D2                   xor dx, dx
 60F7  F7 F1                   div cx
 60F9  8B C2                   mov ax, dx
-60FB  5A                      pop dx
-60FC  53                      push bx
-60FD  03 D8                   add bx, ax
-60FF  80 7F 20 00             cmp byte ptr [bx + 0x20], 0
-6103  5B                      pop bx
-6104  75 09                   jne 0x610f
-6106  80 FA FF                cmp dl, 0xff
-6109  74 E0                   je 0x60eb
-610B  B2 01                   mov dl, 1
-610D  EB DC                   jmp 0x60eb
-610F  E8 54 FF                call 0x6066
-6112  B0 01                   mov al, 1
-6114  C3                      ret
-6115  33 C0                   xor ax, ax
-6117  E8 78 FF                call 0x6092
-611A  E8 22 FF                call 0x603f
-611D  03 D8                   add bx, ax
-611F  8A 47 20                mov al, byte ptr [bx + 0x20]
-6122  32 E4                   xor ah, ah
-6124  8B C8                   mov cx, ax
-6126  8B 1E 97 E1             mov bx, word ptr [0xe197]
-612A  83 C3 02                add bx, 2
-612D  E3 05                   jcxz 0x6134
-612F  E8 F8 F7                call 0x592a
-6132  E2 FB                   loop 0x612f
-6134  8B C3                   mov ax, bx
-6136  C3                      ret
-6137  A0 85 E1                mov al, byte ptr [0xe185]
-613A  98                      cwde
 
 ===== 3F4Ah-3F56h =====
 Reason: direct CALL wrapper for POST summary frame renderer; prints bottom border on return
