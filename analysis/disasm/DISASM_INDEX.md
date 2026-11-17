@@ -1074,7 +1074,7 @@ Detailed report: [AMI486_STORAGE_AND_DISPATCH_REGIONS_20261116.md](AMI486_STORAG
 - D100h–D5FFh is the independent floppy controller/DMA subsystem using 03F2h/03F4h/03F5h/03F7h and DMA ports 0Ch/0Bh/05h/04h.
 - AD00h–AE5Fh is keyboard translation data candidate; AE60h onward includes INT 15h AH=4Fh keyboard intercept handling.
 - F92Ah–F935h is the six-entry INT 14h serial-service table; F977h is the AH=03h status entry overlapping the F936h initialization stream. F8E7h INT 14h vector installation remains unresolved.
-- Historical candidate-window snapshot: 168 code windows plus 18 data ranges (186 headers; 10,700-byte union). The current generated artifact has 243 code windows and 57 data ranges (300 headers; 23,064-byte union across 121 pages). This is a selected-window footprint, not semantic coverage; see AMI486_ADDRESS_LEDGER_20261116.md section 11.
+- Historical candidate-window snapshot: 168 code windows plus 18 data ranges (186 headers; 10,700-byte union). The current generated artifact has 255 code windows and 58 data ranges (313 headers; 23,479-byte union across 121 pages). This is a selected-window footprint, not semantic coverage; see AMI486_ADDRESS_LEDGER_20261116.md section 11.
 
 Do not merge ATA, FDC, keyboard and F9xx dispatch code into one subsystem.
 
@@ -1191,13 +1191,13 @@ The 2100h raw-byte correction is recorded in AMI486_ADDRESS_LEDGER_20261116.md: 
 - [AMI486_SETUP_EDITOR_RENDERING_EXTENSION_20261117.md](AMI486_SETUP_EDITOR_RENDERING_EXTENSION_20261117.md) extends phase 12 with byte-aligned 0D84h event dispatch, 0E19h/0E47h selection wrap helpers, 0E7Ch single-item rendering, and the 0EE2h–10DEh option-list/auxiliary-description renderer. It refines E18Ch as absolute selected-record index and E185 as on-screen row.
 - [AMI486_POST_SUMMARY_DISPLAY_20261117.md](AMI486_POST_SUMMARY_DISPLAY_20261117.md) maps the 3F4Ah/3F7Bh POST summary frame and fields, CPU/numeric-processor selection, floppy/HDD/display formatting, BDA COM/LPT enumeration and decimal/line-rendering helpers.
 - Setup data boundaries are distinct: 3044h–318Bh short captions; 318Ch–31A3h 12 caption pointers; 31A4h–342Dh long descriptions; 342Eh–3443h 11 long-description pointers; 3444h–3445h separate Do Not Write pointer; 3446h–345Bh 11 handler pointers.
-- Previous candidate artifact: 187 code windows plus 35 data ranges, 15,639-byte union. Superseded by the current 243-window/57-range artifact (23,064-byte union across 121 pages). This is a sampling footprint, not semantic coverage.
+- Previous candidate artifact: 187 code windows plus 35 data ranges, 15,639-byte union. Superseded by the current 255-window/58-range artifact (23,479-byte union across 121 pages). This is a sampling footprint, not semantic coverage.
 - Do not start phase 97. Continue from the address ledger's unresolved ranges and cross-reference gaps.
 
 
 ## Candidate address/data map update — 2026-11-17
 
-The Capstone candidate generator now emits 243 code windows and 57 explicit data ranges (300 headers). Recomputed union is 23,064/65,536 bytes (35.19%) across 121 pages: 13,980 code-window bytes, 9,197 data-range bytes, 113 overlap bytes. This is only a seeded inspection footprint, not semantic coverage. See AMI486_ADDRESS_LEDGER_20261116.md section 11 for the newly classified strings, labels, embedded pointer tables and OEM identity block.
+The Capstone candidate generator now emits 255 code windows and 58 explicit data ranges (313 headers). Recomputed union is 23,479/65,536 bytes (35.83%) across 121 pages: 14,331 code-window bytes, 9,261 data-range bytes, 113 overlap bytes. This is only a seeded inspection footprint, not semantic coverage. See AMI486_ADDRESS_LEDGER_20261116.md section 11 for the newly classified strings, labels, embedded pointer tables and OEM identity block.
 
 Newly mapped data regions include POST conflict strings (188Eh–18E4h), cache/CPU labels (19CAh–19F7h), Setup exit prompts (2F24h–2F65h), Setup legends (3624h–381Bh), hard-disk utility strings/tables (3900h–3C5Bh), load-default prompts (59C0h–5A4Bh), POST throughput label (7145h–714Dh), POST/help/error text and lookup data (732Bh–7CE8h), AMI/OEM identity block (8000h–81EDh), and ASCII lookup bytes (B528h–B55Eh).
 
