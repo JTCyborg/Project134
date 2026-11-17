@@ -1429,6 +1429,14 @@ SEEDS.extend([
     (0x3EF2, "Setup metric/value formatter: converts the input value, positions the cursor, and displays the formatted result"),
 ])
 
+LIMITS.update({
+    0xAC00: 0x5B,
+})
+
+DATA_RANGES.extend([
+    (0xAC5B, 0xAD00, "keyboard scan-code translation table referenced by MOV BX,AC60h at B031h; leading bytes AC5Bh-AC5Fh are table prefix/header", "hexascii"),
+])
+
 def main():
     rom = ROM_PATH.read_bytes()
     if len(rom) != 65536:
