@@ -1290,7 +1290,7 @@ Report: [AMI486_ADDRESS_LEDGER_REGION_E862_F52D_20261117.md](AMI486_ADDRESS_LEDG
 - EC5Ch, ECE7h, ED1Bh and ED3Dh cover printer/status, timer/floppy timeout and INT 1Ah-compatible RTC/time-date services. EE94h/EE9Dh are CMOS indexed read/write helpers; EEE7h/EEEFh handle POST/PIC programming.
 - F068h clears CR0.PE and returns through the E2B8h IDT pointer to reset entry E05Bh. F10Dh–F302h covers CMOS Setup validation/editor; F371h is the encoded “EVALUATION COPY, NOT FOR SALE” message; F3DBh/F419h validate video/ROM signatures; F4A5h/F50Dh are fatal diagnostic paths.
 - The E87Bh and F0A3h tables, EFC7h–F041h opaque block and several interrupt-vector installations remain unresolved.
-- Current candidate mask: 597 code windows, 153 data ranges; 31,279 unique code bytes, 15,827 unique data bytes, 121 overlap bytes, 46,985-byte union (71.69%), 210 pages touched, 135 fully covered. These are inspection masks, not semantic completion.
+- Historical candidate-mask snapshot at the time of this region report: 597 code windows, 153 data ranges; 31,279 unique code bytes, 15,827 unique data bytes, 121 overlap bytes, 46,985-byte union (71.69%), 210 pages touched, 135 fully covered. Superseded by the updated 597-window/154-data-range mask in section 17.
 - Historical gap ranking before the 19B0h–23CEh expansion; 19F8h–20FFh is now fully covered. Current largest gaps are CA16h–D0FFh (1,770 bytes), 873Ch–8DCEh (1,683 bytes), 2436h–29F5h (1,472 bytes), FA53h–FFFFh (1,453 bytes), and 5A4Ch–5FE3h (1,432 bytes).
 
 
