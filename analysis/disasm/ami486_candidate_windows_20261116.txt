@@ -84,6 +84,10 @@ Reason: Advanced CMOS/CPU-profile data block: board configuration words, COM/LPT
 830E  E4 BB 5D B5 81 EB 08 B5 3B C3 BB D0 B7 72 12 BB ..].....;....r..
 831E  5D B5 81 EB 08 B5 2B C3 2E 8B                   ].....+...
 
+===== DATA 0B2Dh-0BE0h =====
+Reason: 45-entry CMOS Setup descriptor/handler table; final record 8300h/CA3Eh overlaps the Advanced CMOS handler entry at 0BDEh
+Words: 0B25, 0351, 0B35, 02F1, 0B2D, 02DB, 0B3D, 0236, 0B35, 02F1, 0B45, 026F, 0B3D, 0236, 0AED, 6373, 0B75, 0626, 0B55, 060E, 0B4D, 064A, 0B5D, 0614, 0B55, 060E, 0B65, 061A, 0B5D, 0614, 0B6D, 0620, 0B65, 061A, 0B75, 0626, 0B6D, 0620, 0B4D, 064A, 0B9D, 0638, 0B85, 063E, 0B7D, 064A, 0B8D, 0632, 0B85, 063E, 0B95, 062C, 0B8D, 0632, 0B9D, 0638, 0B95, 062C, 0B7D, 064A, 0BAD, 0644, 0BAD, 0644, 0BA5, 064A, 0BA5, 064A, 0BD5, 06AE, 0BBD, 066B, 0BB5, 0650, 0BC5, 068A, 0BBD, 066B, 0BCD, 069C, 0BC5, 068A, 0BD5, 06AE, 0BCD, 069C, 0BB5, 0650, 8300, CA3E
+
 ===== DATA 345Ch-3472h =====
 Reason: AMI BIOS Setup Utilities title string
 ASCII: 'v/BIOS SETUP UTILITIES\x00'
@@ -27940,6 +27944,61 @@ Reason: option-ROM scan invalid-candidate helper: advances BX by 0080h, restores
 1BF0  81 C3 80 00             add bx, 0x80
 1BF4  1F                      pop ds
 1BF5  C3                      ret
+
+===== 0BDEh-0C03h =====
+Reason: Advanced CMOS Setup main-menu handler from menu table at 3446h; flag-dependent I/O setup then calls shared page engine 0C7Ch
+0BDE  83 3E CA B7 00          cmp word ptr [0xb7ca], 0
+0BE3  74 1F                   je 0xc04
+0BE5  C7 06 91 E1 D0 B7       mov word ptr [0xe191], 0xb7d0
+0BEB  C7 06 93 E1 54 BD       mov word ptr [0xe193], 0xbd54
+0BF1  A1 92 82                mov ax, word ptr [0x8292]
+0BF4  A3 97 E1                mov word ptr [0xe197], ax
+0BF7  C7 06 95 E1 B2 B7       mov word ptr [0xe195], 0xb7b2
+0BFD  8D 1E 5B 30             lea bx, [0x305b]
+0C01  E8 79 00                call 0xc7d
+
+===== 0C04h-0C2Ah =====
+Reason: Advanced CMOS page initializer gated by B7CCh; prepares E191h/E193h/E195h/E197h and calls 0C7Ch
+0C04  C3                      ret
+0C05  83 3E CC B7 00          cmp word ptr [0xb7cc], 0
+0C0A  74 1F                   je 0xc2b
+0C0C  C7 06 91 E1 54 BD       mov word ptr [0xe191], 0xbd54
+0C12  C7 06 93 E1 F9 C5       mov word ptr [0xe193], 0xc5f9
+0C18  A1 92 82                mov ax, word ptr [0x8292]
+0C1B  A3 97 E1                mov word ptr [0xe197], ax
+0C1E  C7 06 95 E1 B2 B7       mov word ptr [0xe195], 0xb7b2
+0C24  8D 1E 71 30             lea bx, [0x3071]
+0C28  E8 52 00                call 0xc7d
+
+===== 0C2Bh-0C51h =====
+Reason: Advanced CMOS page initializer gated by B7CEh; prepares E191h/E193h/E195h/E197h and calls 0C7Ch
+0C2B  C3                      ret
+0C2C  83 3E CE B7 00          cmp word ptr [0xb7ce], 0
+0C31  74 1F                   je 0xc52
+0C33  C7 06 91 E1 F9 C5       mov word ptr [0xe191], 0xc5f9
+0C39  C7 06 93 E1 F9 C5       mov word ptr [0xe193], 0xc5f9
+0C3F  A1 92 82                mov ax, word ptr [0x8292]
+0C42  A3 97 E1                mov word ptr [0xe197], ax
+0C45  C7 06 95 E1 B2 B7       mov word ptr [0xe195], 0xb7b2
+0C4B  8D 1E 8A 30             lea bx, [0x308a]
+0C4F  E8 2B 00                call 0xc7d
+
+===== 0C52h-0C7Bh =====
+Reason: CPU clock/cache profile page initializer; loads profile pointers at 82C6h-82CEh and calls 0C7Ch
+0C52  C3                      ret
+0C53  A1 C6 82                mov ax, word ptr [0x82c6]
+0C56  A3 91 E1                mov word ptr [0xe191], ax
+0C59  8B 0E C8 82             mov cx, word ptr [0x82c8]
+0C5D  89 0E 93 E1             mov word ptr [0xe193], cx
+0C61  2B C8                   sub cx, ax
+0C63  F7 C1 E0 FF             test cx, 0xffe0
+0C67  74 13                   je 0xc7c
+0C69  A1 BC 82                mov ax, word ptr [0x82bc]
+0C6C  A3 97 E1                mov word ptr [0xe197], ax
+0C6F  A1 D2 82                mov ax, word ptr [0x82d2]
+0C72  A3 95 E1                mov word ptr [0xe195], ax
+0C75  8B 1E CE 82             mov bx, word ptr [0x82ce]
+0C79  E8 01 00                call 0xc7d
 
 ===== 8328h-832Dh =====
 Reason: wrapper entry preserving BX around CPU-profile/CMOS 8Eh configuration helper
