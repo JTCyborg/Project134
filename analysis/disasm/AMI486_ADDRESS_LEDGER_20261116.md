@@ -707,3 +707,11 @@ Detailed map: [AMI486_ADDRESS_LEDGER_REGION_5E3D_5F65_20261117.md](AMI486_ADDRES
 Extended the 5E3Dh POST video/adapter window across the split conditional branch at 5E86h–5E88h. The main stream selects B000h/B800h video memory, updates BDA video-state bits, tests CMOS 8Eh, invokes BIOS video/cursor services, emits POST codes 2Fh–3Bh and jumps to 509Eh. The unconditional short JMP at 5E6Dh also targets 5EB6h, which overlaps the displacement byte of the linear CALL at 5EB4h. Added 5EB6h as a separate alternate decode stream rather than forcing one instruction alignment.
 
 Generator update: b9d2e85c35663cf6138cfb1ef6a2496e31cb1e7a. The latest generated manifest still predates this update. Based on the previous projected union of 62,887 bytes, this 221-byte extension gives a projected union of 63,108/65,536 bytes (96.30%) and 56 uncovered intervals. The next largest remaining interval is expected to be 18E5h–19AFh (203 bytes). These are range-union calculations, not a regenerated manifest or CI result.
+
+## 37. I/O resource-conflict probes and CPU/cache profile dispatch stubs — 18E5h–19AFh (2026-11-17)
+
+Detailed map: [AMI486_ADDRESS_LEDGER_REGION_18E5_19B0_20261117.md](AMI486_ADDRESS_LEDGER_REGION_18E5_19B0_20261117.md).
+
+Mapped the I/O pattern-test helper at 18E5h, four-port probe at 18FDh, and the conflict aggregator at 1914h. These routines scan the board I/O tables at CS:8248h and CS:8240h, test configured ports through F691h, and check fixed controller ports 03F4h/01F4h. The adjacent strings identify parallel, serial, floppy and hard-disk conflicts, though the exact status-bit-to-message mapping remains unresolved. Also mapped the 0170h/0171h I/O helpers at 1980h/198Fh and the profile dispatch pointer table at 19A2h–19AAh, whose targets are JMP DI at 19ABh and RET stubs at 19ADh–19AFh.
+
+Generator update: 6e4e5beb9e33a52b1618c1e901f57d4246c59bf7. The latest generated manifest still predates this phase. The prior projected union was 63,108 bytes (96.30%); adding this 203-byte region gives a projected 63,311/65,536 bytes (96.60%) and 55 uncovered intervals. The next largest remaining interval is expected to be C800h–C8AFh (176 bytes). These figures are range-union arithmetic, not a regenerated manifest or CI result.
