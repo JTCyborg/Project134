@@ -72,6 +72,16 @@ LIMITS.update({
 
 # Upper-ROM tail: POST complement-check entry and the post-font JMP trampoline.
 LIMITS.update({0xFA4E: 0x17, 0xFE6E: 0x03})
+# POST/Setup continuations in the former 5A4Ch–5FE3h gap.
+LIMITS.update({
+    0x5A4C: 0x56, 0x5AA2: 0x13, 0x5AB5: 0x37, 0x5AEC: 0x90,
+    0x5B7C: 0x59, 0x5BD5: 0x23, 0x5BF8: 0x0A,
+    0x5C04: 0x1A, 0x5C1E: 0x06, 0x5C26: 0x25,
+    0x5C4B: 0x0B, 0x5C58: 0x0E, 0x5C68: 0xBB,
+    0x5D23: 0x2B, 0x5D4E: 0x4E, 0x5D9C: 0x9B,
+    0x5E37: 0x06, 0x5E3D: 0x4B, 0x5F65: 0x42, 0x5FA7: 0x3D,
+})
+
 
 DATA_RANGES = [
     (0x562B, 0x566B, "16-entry x 4-byte Setup text-attribute palette table selected by [E037h]", "hexascii"),
@@ -288,12 +298,17 @@ DATA_RANGES = [
     (0x2834, 0x2836, "Crafted near-return word 2836h consumed by the 8DDCh indexed-write helper", "words"),
 
 
+    (0x5C02, 0x5C04, "Crafted stack-return word 5C04h consumed by the F5A9h POST diagnostic trampoline", "words"),
+    (0x5C24, 0x5C26, "Crafted stack-return word 5C26h consumed by the 5520h helper", "words"),
+    (0x5C56, 0x5C58, "Crafted stack-return word 5C58h consumed by the F5A9h POST diagnostic trampoline", "words"),
+    (0x5C66, 0x5C68, "Crafted stack-return word 5C68h consumed by the 552Ah helper", "words"),
     (0xFA00, 0xFA4C, "76-byte POST integrity comparison block; bytewise complement of FF70h-FFBBh", "hexascii"),
     (0xFA6E, 0xFE6E, "1-KiB bitmap/glyph block; 128 eight-byte records, not executable code", "hexascii"),
     (0xFE71, 0xFEA1, "Structured upper-ROM data following the FE6Eh near-JMP trampoline", "hexascii"),
     (0xFEA1, 0xFEA8, "Seven-byte upper-ROM metadata/control record", "hexascii"),
-    (0xFEA8, 0xFEE4, "Zero-filled upper-ROM padding/reserved area", "hexascii"),
-    (0xFEE4, 0xFF50, "Mixed upper-ROM dispatch/relocation data candidate; individual entries unresolved", "hexascii"),
+    (0xFEA8, 0xFEE3, "Zero-filled upper-ROM padding/reserved area before the IVT offset table", "hexascii"),
+    (0xFEE3, 0xFF33, "Forty-word IVT handler-offset table copied by POST: vectors 00h-1Fh and 70h-77h; segment fields remain CS", "words"),
+    (0xFF33, 0xFF50, "Zero-filled upper-ROM padding after the IVT offset table", "hexascii"),
     (0xFF50, 0xFF70, "Upper-ROM identification fields and printable (1992 AMI contact string", "hexascii"),
     (0xFF70, 0xFFBC, "76-byte complement data consumed by the FA4Eh POST integrity routine", "hexascii"),
     (0xFFBC, 0xFFC7, "FFh fill between upper-ROM data blocks", "hexascii"),
@@ -1072,6 +1087,29 @@ SEEDS = [
     (0x1BF0, "option-ROM scan invalid-candidate helper: advances BX by 0080h, restores DS and returns"),
     (0x1E9A, "OR SP,SP / RET status-success stub between POST callback entries"),
 ]
+
+SEEDS.extend([
+    (0x5A4C, "Setup/POST code candidate immediately after the Power-On Defaults prompt; entry xref unresolved"),
+    (0x5AA2, "direct CALL targets from 3C87h and 3E19h; Setup configuration selector"),
+    (0x5AB5, "direct CALL targets from 4797h and 4B8Dh; Setup record-copy helper"),
+    (0x5AEC, "direct CALL target from 5076h; drive/configuration state update helper"),
+    (0x5B7C, "direct CALL target from 508Fh; configuration-shadow update helper"),
+    (0x5BD5, "direct CALL target from 486Dh; multiply/divide conversion helper"),
+    (0x5BF8, "direct JMP target from DA9Fh; stack-threaded POST memory-test launcher"),
+    (0x5C04, "crafted return target from F5A9h; low-memory alias/pattern test"),
+    (0x5C1E, "POST memory-test error trampoline through F5A9h"),
+    (0x5C26, "crafted return continuation after 5520h diagnostic helper"),
+    (0x5C4B, "POST code 21h and diagnostic trampoline"),
+    (0x5C58, "crafted return continuation after F5A9h diagnostic helper"),
+    (0x5C68, "crafted return continuation after 552Ah; POST keyboard/controller initialization"),
+    (0x5D23, "POST IVT/BDA initialization continuation; installs interrupt-vector offset table"),
+    (0x5D4E, "POST CMOS/IVT/PIC initialization continuation"),
+    (0x5D9C, "POST configuration and controller initialization continuation"),
+    (0x5E37, "direct CALL target from the 5E2Eh ROM-segment check failure path"),
+    (0x5E3D, "POST video-memory/adapter selection continuation"),
+    (0x5F65, "direct CALL target from 5E37h; opaque diagnostic/check helper entry"),
+    (0x5FA7, "direct CALL targets from 5E53h and 5E83h; opaque status/check helper entry"),
+])
 
 SEEDS.extend([
     (0xFA4E, "POST-called complement-check routine; direct stack-threaded entry from E34Dh/E350h"),
