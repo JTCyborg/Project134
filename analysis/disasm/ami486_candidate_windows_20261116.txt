@@ -1208,6 +1208,10 @@ Reason: Thirteen-byte bit-mask/status-token lookup table; consumed by 6CC2h
 Reason: Single INT3 trap/alignment byte between the status table and 6CC2h helper
 6CC1  CC                                              .
 
+===== DATA 6BD8h-6BDDh =====
+Reason: Three-word near-call dispatch table: 6B14h, 71E4h, 6CE3h
+Words: 6B14, 71E4, 6CE3
+
 ===== 3E3Fh-3EBEh =====
 Reason: direct CALL target from 00EFh screen-presentation stream
 3E3F  55                      push bp
@@ -23153,4 +23157,28 @@ Reason: disk throughput benchmark and on-screen KB/sec/ms display
 7140  8C D0                   mov ax, ss
 7142  8E C0                   mov es, ax
 7144  C3                      ret
+
+===== 6BDEh-6C14h =====
+Reason: three-way disk/controller mode dispatcher selected through the word table at 6BD8h
+6BDE  C6 06 BB E3 FF          mov byte ptr [0xe3bb], 0xff
+6BE3  8A 1E 21 E4             mov bl, byte ptr [0xe421]
+6BE7  80 C3 80                add bl, 0x80
+6BEA  88 1E 21 E4             mov byte ptr [0xe421], bl
+6BEE  B8 AC E1                mov ax, 0xe1ac
+6BF1  8B F0                   mov si, ax
+6BF3  8A 04                   mov al, byte ptr [si]
+6BF5  A2 BC E3                mov byte ptr [0xe3bc], al
+6BF8  8A D8                   mov bl, al
+6BFA  32 FF                   xor bh, bh
+6BFC  D1 E3                   shl bx, 1
+6BFE  2E FF 97 D8 6B          call word ptr cs:[bx + 0x6bd8]
+6C03  32 E4                   xor ah, ah
+6C05  80 3E B9 E3 00          cmp byte ptr [0xe3b9], 0
+6C0A  A0 B9 E3                mov al, byte ptr [0xe3b9]
+6C0D  8E C0                   mov es, ax
+6C0F  74 02                   je 0x6c13
+6C11  F9                      stc
+6C12  C3                      ret
+6C13  F8                      clc
+6C14  C3                      ret
 
