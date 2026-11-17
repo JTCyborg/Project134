@@ -123,3 +123,23 @@ At F7FAh the code copies BX to DI, reads the first word at ES:DI into AX, sets C
 - The precise producer of BX/CX/DL on the marker-06 dispatch path.
 - Whether ES:BX at F7FAh refers to a sector buffer or another boot image buffer (ES is definitely 0000h from D691h unless changed by an intervening path).
 - The exact role of the F736h helper and the caller context around F780h.
+
+## Follow-up: F736h is a far-jump vector trampoline
+
+The byte sequence at F736h is:
+
+```asm
+F736: FF 2E 67 00    JMP FAR PTR [0067h]
+F73A: FA             CLI
+F73B: 8B EC          MOV BP,SP
+F73D: 8C C8          MOV AX,CS
+...
+```
+
+Thus F736h is not a normal local helper body: it is an indirect far jump through the memory pointer at DS:0067h (the active vector/dispatch pointer in the current data segment). The instructions after F736h are a separate fall-through/alternate entry and must not be attributed to the trampoline's normal execution.
+
+The F810h helper has four local CALL sites (F782, F79D, F7D5, F7E7). At each call, DL and ES:BX remain caller-supplied; the helper sets CX=1 and AX=0201h for INT 13h. The call at F782 is in the first disk-validation path; the other three are in alternate/error/retry paths. More precise semantics require decoding each branch from its actual entry point, because this ROM region contains overlapping entry points and shared tails.
+
+## Correction to the AA55 description
+
+The code at F7A3h compares the word at ES:BX+01FEh against AA55h. This is a genuine boot-sector signature check in the branch that reaches F7A3h. It is distinct from the REPNZ SCASB byte scan at F7FAh. The marker-06 route through F786h takes JNC F7FAh, so it does not execute the F7A3h comparison before the F7FAh scan.
