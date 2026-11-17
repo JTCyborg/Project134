@@ -265,9 +265,14 @@ Current generated candidate footprint: 243 code windows, 57 data ranges, 13,980 
 
 ## Temporary IVT/calendar refresh — 2026-11-17
 
-Report: AMI486_TEMPORARY_IVT_CALENDAR_REFRESH_20261117.md. 626Bh installs temporary INT 10h/1Ah/1Ch handlers; 62BDh restores the previous vectors. INT 1Ch uses BDA ticks and an active-handler counter to trigger 6616h calendar refresh when safe. Raw 6616h code is verified through RET at 6757h; the generator source requests a 0142h window, but the generated listing still shows 0080h, so regeneration remains open.
+Report: AMI486_TEMPORARY_IVT_CALENDAR_REFRESH_20261117.md. 626Bh installs temporary INT 10h/1Ah/1Ch handlers; 62BDh restores the previous vectors. INT 1Ch uses BDA ticks and an active-handler counter to trigger 6616h calendar refresh when safe. Raw 6616h code is verified through RET at 6757h; the generator source requests a 0142h window, but the generated listing now includes 6616h–6757h (0142h bytes).
 
 
 ## Disassembler alias correction — 2026-11-17
 
 Found 31 candidate-window lines where Capstone's 16-bit output mislabeled unprefixed opcode 98h as CWDE and 99h as CDQ. Correct mnemonics are CBW and CWD. Both the candidate generator and full linear workflow have been patched to normalize those exact byte sequences. Await generated-artifact verification before treating the correction as complete.
+
+
+## 16-bit CBW/CWD correction verified — 2026-11-17
+
+Both generator paths were patched. The regenerated candidate listing has zero CWDE/CDQ labels; bare 98h/99h are emitted as CBW/CWD. The full-linear listing blob changed after the workflow update; the manifest remains at 29,731 records and 65,536/65,536 byte coverage.
