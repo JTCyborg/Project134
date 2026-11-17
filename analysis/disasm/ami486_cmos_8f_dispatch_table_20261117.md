@@ -474,3 +474,30 @@ F597  RET
 This is a PIT channel-2 / port-61h speaker-gate sequence (beep/tone timing), not a disk command. The `F56Dh` entry remains a separate stack-sensitive `POP AX; OUT 61h,AL; RET` sequence, but it is not the target of the `500Ah` call. The routine at `3E3Fh`, reached from `5040h`, also belongs to the menu/display support chain; its visible prologue and calls build/display UI data and do not establish a disk write.
 
 This correction supersedes the earlier statement that `5006h` called `F56Dh`; that address/call attribution was wrong. The physical format/write path remains unresolved.
+
+
+### Disk-service driver discovery: INT 13h AH=05h write path (candidate, not yet tied to format UI)
+
+A scan of the disk-service region identified a concrete BIOS write-sector operation in the code stream around `6F7Ch–6FA5h`:
+
+```asm
+6F7C  CALL 72DBh
+6F7F  CALL 6F42h
+6F82  MOV CX,[BP+04h]       ; decode is entry-context dependent
+6F85  ...
+6F90  MOV BX,0E1B8h
+6F93  MOV AH,05h
+6F95  MOV AL,[1FE4h]
+6F98  CALL 6C1Ah
+6F9B  JC  6FA?              ; error path
+6F9D  CALL 72F3h            ; success/continuation helper (verify target in full trace)
+6FA0  ...
+```
+
+The byte-level fact is that the routine prepares `AH=05h`, loads `AL` from absolute data byte `1FE4h`, sets `BX=E1B8h`, and calls `6C1Ah`. The wrapper at `6C1Ah` enters the common disk-call path which reaches `INT 13h` at `6C1Fh`; it records returned status in `B9E3h` and propagates carry/status to its caller. Under the standard IBM-compatible INT 13h interface, AH=05h is Write Sectors. This is the first concrete BIOS write command found in the nearby disk service code.
+
+However, the call graph has not yet been connected to the hard-disk utility's Y/N confirmation path. The `6F7Ch–6FA5h` sequence appears embedded in a larger disk-service routine, and `1FE4h` plus the segment/register setup must be resolved before interpreting the actual LBA/CHS, drive, count, or data buffer. It may be a generic sector writer used by multiple functions. Therefore this is a confirmed INT 13h AH=05h invocation, but **not yet proof that this is the format-track operation**.
+
+Related distinction: the separate `AA70h` path uses AH=08h (drive parameters), AH=04h (verify), and AH=09h/AH=11h status/recalibration-style operations; it is not the AH=05h writer. The code at `7075h` sets AX=0228h before INT 13h, so its AH=02h read request has AL=28h (40 sectors) and must not be confused with AH=05h write.
+
+Next trace: identify all entries/callers of the `6F7Ch–6FA5h` worker and all references to `1FE4h`; then connect the hard-disk utility's confirmation path to that worker or rule it out. Keep the formatter classification open until that link and the data-buffer geometry are proven.
