@@ -167,7 +167,8 @@ DATA_RANGES = [
     (0x2096, 0x2098, "Crafted near-return word 2098h used by the 8DDCh table-writer trampoline", "words"),
     (0x20C2, 0x20C4, "Crafted near-return word 20C4h used by the 8DDCh table-writer trampoline", "words"),
     (0x20CC, 0x20CE, "Crafted near-return word 20CEh used by the F66Ah A20-enable helper", "words"),
-    (0x20D8, 0x20DA, "Crafted near-return word 20DAh used by the 8DDCh indexed-writer trampoline", "words"),
+    (0x20D8, 0x20DA, "Crafted near-return word 20DAh consumed by the EEEFh POST/PIC helper", "words"),
+    (0x20FA, 0x20FC, "Crafted near-return word 20FCh consumed by the 8DDCh indexed-writer trampoline", "words"),
     (0x2068, 0x208D, "LGDT pseudo-descriptor at 2068h plus adjacent descriptor/parameter bytes used by the PM memory probe", "hexascii"),
 ]
 
