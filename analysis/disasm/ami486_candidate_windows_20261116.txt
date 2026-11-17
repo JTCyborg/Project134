@@ -13281,10 +13281,20 @@ Reason: direct JMP target from D60Ch; alternate entry in the 88CBh overlapping s
 894C  BC              db 0xBC
 894D  52                      push dx
 
-===== 8A04h-8A05h =====
+===== 8A04h-8A1Fh =====
 Reason: direct JMP target from D612h; short JMP DI trampoline candidate
-8A04  0F              db 0x0F
-8A05  01              db 0x01
+8A04  0F 01 E0                smsw ax
+8A07  A8 01                   test al, 1
+8A09  74 0F                   je 0x8a1a
+8A0B  B0 8F                   mov al, 0x8f
+8A0D  E6 70                   out 0x70, al
+8A0F  E3 00                   jcxz 0x8a11
+8A11  E3 00                   jcxz 0x8a13
+8A13  B0 00                   mov al, 0
+8A15  E6 71                   out 0x71, al
+8A17  E9 BB 00                jmp 0x8ad5
+8A1A  E9 F8 4B                jmp 0xd615
+8A1D  E9 04 4D                jmp 0xd724
 
 ===== 8A20h-8A74h =====
 Reason: direct JMP target from D652h; POST controller/configuration continuation
@@ -13327,11 +13337,43 @@ Reason: direct JMP target from D652h; POST controller/configuration continuation
 Reason: direct JMP target from D749h; short branch/trampoline candidate
 8A75  E9 D4 4C                jmp 0xd74c
 
-===== 8A78h-8A7Ah =====
+===== 8A78h-8ACEh =====
 Reason: direct JMP target from D774h; short branch/trampoline candidate
-8A78  2E              db 0x2E
-8A79  A1              db 0xA1
-8A7A  DA              db 0xDA
+8A78  2E A1 DA 82             mov ax, word ptr cs:[0x82da]
+8A7C  BF 81 8A                mov di, 0x8a81
+8A7F  FF E0                   jmp ax
+8A81  BF 87 8A                mov di, 0x8a87
+8A84  E9 46 02                jmp 0x8ccd
+8A87  90                      nop
+8A88  BC 8E 8A                mov sp, 0x8a8e
+8A8B  E9 F5 02                jmp 0x8d83
+8A8E  90                      nop
+8A8F  8A B8 B3 B3             mov bh, byte ptr [bx + si - 0x4c4d]
+8A93  90                      nop
+8A94  BC 9A 8A                mov sp, 0x8a9a
+8A97  E9 FA 63                jmp 0xee94
+8A9A  9C                      pushf
+8A9B  8A 24                   mov ah, byte ptr [si]
+8A9D  FE 86 C4 BC             inc byte ptr [bp - 0x433c]
+8AA1  A6                      cmpsb byte ptr [si], byte ptr es:[di]
+8AA2  8A E9                   mov ch, cl
+8AA4  F7 63 A8                mul word ptr [bp + di - 0x58]
+8AA7  8A B8 03 C5             mov bh, byte ptr [bx + si - 0x3afd]
+8AAB  90                      nop
+8AAC  BC B2 8A                mov sp, 0x8ab2
+8AAF  E9 2A 03                jmp 0x8ddc
+8AB2  B4 8A                   mov ah, 0x8a
+8AB4  B8 13 13                mov ax, 0x1313
+8AB7  90                      nop
+8AB8  BC BE 8A                mov sp, 0x8abe
+8ABB  E9 11 03                jmp 0x8dcf
+8ABE  C0 8A 24 3F 86          ror byte ptr [bp + si + 0x3f24], 0x86
+8AC3  E0 BC                   loopne 0x8a81
+8AC5  CA 8A E9                retf 0xe98a
+8AC8  12 03                   adc al, byte ptr [bp + di]
+8ACA  CC                      int3
+8ACB  8A E9                   mov ch, cl
+8ACD  A8 4C                   test al, 0x4c
 
 ===== 8ACFh-8AD1h =====
 Reason: direct CALL target from 90F3h; near-JMP trampoline candidate
@@ -13475,7 +13517,7 @@ Reason: direct CALL targets from 1E2Ch/9484h; controller/status helper candidate
 8BA1  5A                      pop dx
 8BA2  C3                      ret
 
-===== 8BA3h-8BE1h =====
+===== 8BA3h-8BE7h =====
 Reason: direct CALL targets from 1E27h/9474h; controller/status helper candidate
 8BA3  52                      push dx
 8BA4  50                      push ax
@@ -13501,8 +13543,10 @@ Reason: direct CALL targets from 1E27h/9474h; controller/status helper candidate
 8BDA  B5 FF                   mov ch, 0xff
 8BDC  0A ED                   or ch, ch
 8BDE  74 05                   je 0x8be5
-8BE0  80              db 0x80
-8BE1  26              db 0x26
+8BE0  80 26 16 00 DF          and byte ptr [0x16], 0xdf
+8BE5  58                      pop ax
+8BE6  5A                      pop dx
+8BE7  C3                      ret
 
 ===== 8CB2h-8CCCh =====
 Reason: direct JMP targets from 1F26h/271Fh/2859h; protected-mode/cache-state helper candidate
@@ -13547,7 +13591,7 @@ Reason: direct JMP targets from 1EF7h/1F37h; alternate protected-mode/cache-stat
 8D06  E4 60                   in al, 0x60
 8D08  C3                      ret
 
-===== 8D83h-8DCDh =====
+===== 8D83h-8DCEh =====
 Reason: direct JMP targets from 27D7h/28D8h; chipset configuration callback candidate
 8D83  B8 03 C5                mov ax, 0xc503
 8D86  BF 8C 8D                mov di, 0x8d8c
@@ -13583,6 +13627,7 @@ Reason: direct JMP targets from 27D7h/28D8h; chipset configuration callback cand
 8DC8  EB 31                   jmp 0x8dfb
 8DCA  90                      nop
 8DCB  B9 FF FF                mov cx, 0xffff
+8DCE  C3                      ret
 
 ===== 8DCFh-8E4Eh =====
 Reason: indexed chipset-register read helper using ports 22h/23h
