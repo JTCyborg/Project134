@@ -337,10 +337,20 @@ The former D697Dh–D7144h gap is mapped as a Hard Disk Setup/INT 13h diagnostic
 Historical snapshot after the Hard Disk Setup expansion but before the 19B0h–23CEh expansion: 541 code windows, 140 data ranges, 45,118-byte union (68.84%). Superseded by the current 597-window mask below.
 
 
-## Address-ledger continuation — 19B0h–23CEh POST/ALi/A20 region (2026-11-17)
+## Address-ledger continuation — 19B0h–23CEh POST/ALi/A20 region (corrected 2026-11-17)
 
-Report: `AMI486_ADDRESS_LEDGER_REGION_19B0_23CE_20261117.md`.
+Overview: `AMI486_ADDRESS_LEDGER_REGION_19B0_23CE_20261117.md`.  
+Focused byte map: `AMI486_ADDRESS_LEDGER_REGION_19F8_20FB_20261117.md`.
 
-The former 19F8h–20FFh gap is fully covered by code/data windows. The map reconciles the cache/CPU display, B3h profile trampoline, option-ROM scan/validator, C0000h/E0000h window setup, CMOS-to-ALi manual configuration, POST A1h/A4h handlers, 8750h table walker and A20-bracketed protected-mode memory test. Stack-return words and descriptor data are separately classified.
+The former 19F8h–20FFh candidate gap is fully covered. The local POST chain confirms D9D9h -> 1AFBh, the CMOS B3h profile selection, option-ROM scanning, the 8750h–87A3h ALi register table, the LGDT/GDT setup and the A20-bracketed memory-alias probe.
 
-Current candidate mask: 597 code windows, 153 data ranges, 46,985-byte union (71.69%), 66 uncovered intervals, 210 pages touched and 135 fully covered. This is not semantic completion. Next largest gap: CA16h–D0FFh (1,770 bytes).
+Critical alignment corrections:
+- 1B24h, not 1B20h, sets SP=1B2Ah; the helper returns at 1B2Ch.
+- 20C6h sets SP=20CCh and jumps to F66Ah; the return resumes at 20CEh.
+- 20D2h sets SP=20D8h and jumps to EEEFh; the return resumes at 20DAh.
+- 20DAh loads ES=0008h from the GDT. AX=4410h is an ALi register 10h/value 44h write, not a segment selector.
+- 20F4h sets SP=20FAh and jumps to 8DDCh; the word at 20FAh returns to 20FCh. The first ES:66-prefixed dword store starts at 20FEh; 2100h is inside that instruction, not an independent entry.
+- The 20D8h return word is consumed by EEEFh, not 8DDCh. The 20FAh return word is now separately classified as data.
+- The B3h path skips the small profile list when bits 2 and 3 are both clear; otherwise it chooses 8E4Eh–8E61h or 8E76h–8E79h. The 1B2Ch tail programs PIT channel 1 via ports 43h/41h.
+
+Current candidate mask: 597 code windows, 154 data ranges, 31,189 unique code bytes, 15,829 unique data bytes, 117 overlap bytes, 46,901-byte union (71.57%), 69 uncovered intervals, 210 pages touched and 133 fully covered pages. This is not semantic completion. Next largest gap: CA16h–D0FFh (1,770 bytes).
