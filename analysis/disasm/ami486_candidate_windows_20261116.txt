@@ -1273,7 +1273,7 @@ Reason: LGDT pseudo-descriptor at 2068h plus adjacent descriptor/parameter bytes
 2078  FF FF 00 00 00 93 8F 00 FF FF 00 00 00 93 00 00 ................
 2088  01 04 02 10 40                                  ....@
 
-===== 19FBh-1A23h =====
+===== 19FBh-1A8Eh =====
 Reason: direct CALL target from POST summary renderer at 3F53h; cache/CPU speed display routine
 19FB  B8 18 18                mov ax, 0x1818
 19FE  E8 CE 73                call 0x8dcf
@@ -1290,12 +1290,53 @@ Reason: direct CALL target from POST summary renderer at 3F53h; cache/CPU speed 
 1A1A  E8 11 DB                call 0xf52e
 1A1D  E8 CD 0F                call 0x29ed
 1A20  0F 84 3C 00             je 0x1a60
+1A24  1E                      push ds
+1A25  BB 40 00                mov bx, 0x40
+1A28  8E DB                   mov ds, bx
+1A2A  A0 E2 00                mov al, byte ptr [0xe2]
+1A2D  1F                      pop ds
+1A2E  32 E4                   xor ah, ah
+1A30  BE C2 19                mov si, 0x19c2
+1A33  03 F0                   add si, ax
+1A35  B8 B3 B3                mov ax, 0xb3b3
+1A38  E8 59 D4                call 0xee94
+1A3B  A8 02                   test al, 2
+1A3D  0F 84 11 00             je 0x1a52
+1A41  2E 8A 04                mov al, byte ptr cs:[si]
+1A44  32 E4                   xor ah, ah
+1A46  E8 B4 EF                call 0x9fd
+1A49  BE EC 19                mov si, 0x19ec
+1A4C  E8 DF DA                call 0xf52e
+1A4F  EB 0F                   jmp 0x1a60
+1A51  90                      nop
+1A52  2E 8A 04                mov al, byte ptr cs:[si]
+1A55  32 E4                   xor ah, ah
+1A57  E8 A3 EF                call 0x9fd
+1A5A  BE DC 19                mov si, 0x19dc
+1A5D  E8 CE DA                call 0xf52e
+1A60  B8 B3 B3                mov ax, 0xb3b3
+1A63  E8 2E D4                call 0xee94
+1A66  A8 0C                   test al, 0xc
+1A68  0F 85 1C 00             jne 0x1a88
+1A6C  0F 01 E0                smsw ax
+1A6F  0A E4                   or ah, ah
+1A71  0F 84 13 00             je 0x1a88
+1A75  B8 12 12                mov ax, 0x1212
+1A78  E8 54 73                call 0x8dcf
+1A7B  24 EF                   and al, 0xef
+1A7D  86 E0                   xchg al, ah
+1A7F  E8 5A 73                call 0x8ddc
+1A82  B8 24 88                mov ax, 0x8824
+1A85  E8 54 73                call 0x8ddc
+1A88  B8 03 55                mov ax, 0x5503
+1A8B  E8 4E 73                call 0x8ddc
+1A8E  C3                      ret
 
 ===== 1A8Fh-1A8Fh =====
 Reason: direct CALL target from 850Eh; RET stub
 1A8F  C3                      ret
 
-===== 1A90h-1AFAh =====
+===== 1A90h-1AF7h =====
 Reason: direct CALL target from 852Fh; POST ALi register/E017h adjustment routine
 1A90  B0 12                   mov al, 0x12
 1A92  E8 3A 73                call 0x8dcf
@@ -1329,7 +1370,6 @@ Reason: direct CALL target from 852Fh; POST ALi register/E017h adjustment routin
 1AEF  81 06 17 E0 80 00       add word ptr [0xe017], 0x80
 1AF5  0B E4                   or sp, sp
 1AF7  C3                      ret
-1AF8  E9 34 BD                jmp 0xd82f
 
 ===== 1AF8h-1AFAh =====
 Reason: direct JMP target from D82Ch; alternate POST controller-command trampoline
@@ -1342,7 +1382,7 @@ Reason: direct JMP target from D9D9h; CMOS B3h read and stack-threaded profile s
 1AFE  BC 04 1B                mov sp, 0x1b04
 1B01  E9 90 D3                jmp 0xee94
 
-===== 1B06h-1B1Fh =====
+===== 1B06h-1B29h =====
 Reason: stack-return continuation from the CMOS B3h read at 1AFBh
 1B06  A8 0C                   test al, 0xc
 1B08  0F 84 22 00             je 0x1b2e
@@ -1353,8 +1393,12 @@ Reason: stack-return continuation from the CMOS B3h read at 1AFBh
 1B18  BE 76 8E                mov si, 0x8e76
 1B1B  B9 7A 8E                mov cx, 0x8e7a
 1B1E  2B CE                   sub cx, si
+1B20  D1 E9                   shr cx, 1
+1B22  2E AD                   lodsw ax, word ptr cs:[si]
+1B24  BC 2A 1B                mov sp, 0x1b2a
+1B27  E9 B2 72                jmp 0x8ddc
 
-===== 1B2Ch-1B5Dh =====
+===== 1B2Ch-1B5Ah =====
 Reason: stack-return continuation from the 8DDCh indexed-write helper at 1B24h
 1B2C  E2 F4                   loop 0x1b22
 1B2E  B0 FC                   mov al, 0xfc
@@ -1378,7 +1422,6 @@ Reason: stack-return continuation from the 8DDCh indexed-write helper at 1B24h
 1B55  AA                      stosb byte ptr es:[di], al
 1B56  E2 FD                   loop 0x1b55
 1B58  E9 32 05                jmp 0x208d
-1B5B  E9 C6 BB                jmp 0xd724
 
 ===== 1B5Bh-1B5Dh =====
 Reason: selector-7 target from the CMOS 8Fh jump table at D6A8h
@@ -1423,7 +1466,7 @@ Reason: direct CALL target from 5E05h; POST optional-handler and option-ROM scan
 1BB0  0B E4                   or sp, sp
 1BB2  C3                      ret
 
-===== 1BB3h-1BEFh =====
+===== 1BB3h-1BF5h =====
 Reason: direct CALL target from 1BA4h; option-ROM header/checksum/init worker
 1BB3  FA                      cli
 1BB4  FC                      cld
@@ -1461,15 +1504,17 @@ Reason: direct CALL target from 1BA4h; option-ROM header/checksum/init worker
 1BEC  1F                      pop ds
 1BED  3B E4                   cmp sp, sp
 1BEF  C3                      ret
+1BF0  81 C3 80 00             add bx, 0x80
+1BF4  1F                      pop ds
+1BF5  C3                      ret
 
-===== 1BF6h-1C05h =====
+===== 1BF6h-1C04h =====
 Reason: direct CALL target from 5E20h; optional board-specific handler gate
 1BF6  2E A0 1D B5             mov al, byte ptr cs:[0xb51d]
 1BFA  E8 03 67                call 0x8300
 1BFD  0F 84 03 00             je 0x1c04
 1C01  E8 11 08                call 0x2415
 1C04  C3                      ret
-1C05  C3                      ret
 
 ===== 1C05h-1C05h =====
 Reason: direct CALL target from 5216h; RET stub
@@ -1519,7 +1564,7 @@ Reason: direct CALL target from 12DFh; ALi register 13h update helper
 1C5A  E8 7F 71                call 0x8ddc
 1C5D  C3                      ret
 
-===== 1C5Eh-1C82h =====
+===== 1C5Eh-1C71h =====
 Reason: direct CALL target from 12E9h; POST chipset setup entry
 1C5E  2E A1 E2 82             mov ax, word ptr cs:[0x82e2]
 1C62  FF D0                   call ax
@@ -1528,12 +1573,6 @@ Reason: direct CALL target from 12E9h; POST chipset setup entry
 1C69  A8 C0                   test al, 0xc0
 1C6B  0F 84 03 00             je 0x1c72
 1C6F  E9 61 01                jmp 0x1dd3
-1C72  E8 78 0D                call 0x29ed
-1C75  0F 84 0C 00             je 0x1c85
-1C79  E8 96 72                call 0x8f12
-1C7C  E8 B8 08                call 0x2537
-1C7F  E8 E8 08                call 0x256a
-1C82  EB              db 0xEB
 
 ===== 1C72h-1C84h =====
 Reason: conditional branch target from 1C6Bh; AUTO Config branch continuation
@@ -1764,7 +1803,7 @@ Reason: direct CALL targets from 1397h and 1776h; returns AL=1 with flags
 1E75  0B C0                   or ax, ax
 1E77  C3                      ret
 
-===== 1E78h-1E99h =====
+===== 1E78h-1E98h =====
 Reason: direct CALL target from 14B2h; ALi register 14h bit 3 helper
 1E78  2E A0 13 B5             mov al, byte ptr cs:[0xb513]
 1E7C  E8 81 64                call 0x8300
@@ -1778,7 +1817,6 @@ Reason: direct CALL target from 14B2h; ALi register 14h bit 3 helper
 1E93  E8 46 6F                call 0x8ddc
 1E96  0B C0                   or ax, ax
 1E98  C3                      ret
-1E99  C3                      ret
 
 ===== 1E99h-1E99h =====
 Reason: direct CALL target from 14DEh; RET stub
@@ -1985,32 +2023,11 @@ Reason: direct CALL target from 1640h; optional B525h/B527h handlers
 Reason: direct JMP target from 15CBh; reset-entry transfer to E05Bh
 2065  E9 F3 BF                jmp 0xe05b
 
-===== 208Dh-20C8h =====
+===== 208Dh-2095h =====
 Reason: direct JMP target from 1B58h; table-driven ALi register initialization
 208D  B8 03 C5                mov ax, 0xc503
 2090  BC 96 20                mov sp, 0x2096
 2093  E9 46 6D                jmp 0x8ddc
-2096  98                      cbw
-2097  20 BE 50 87             and byte ptr [bp - 0x78b0], bh
-209B  B9 A4 87                mov cx, 0x87a4
-209E  81 E9 50 87             sub cx, 0x8750
-20A2  C1 E9 02                shr cx, 2
-20A5  2E AD                   lodsw ax, word ptr cs:[si]
-20A7  2C 30                   sub al, 0x30
-20A9  8A D8                   mov bl, al
-20AB  3C 26                   cmp al, 0x26
-20AD  0F 85 06 00             jne 0x20b7
-20B1  49                      dec cx
-20B2  83 C6 02                add si, 2
-20B5  EB EE                   jmp 0x20a5
-20B7  2E AD                   lodsw ax, word ptr cs:[si]
-20B9  8A C3                   mov al, bl
-20BB  90                      nop
-20BC  BC C2 20                mov sp, 0x20c2
-20BF  E9 1A 6D                jmp 0x8ddc
-20C2  C4 20                   les sp, ptr [bx + si]
-20C4  E2 DF                   loop 0x20a5
-20C6  BC CC 20                mov sp, 0x20cc
 
 ===== 2098h-20C1h =====
 Reason: stack-return continuation from 8DDCh at 208Dh; ALi register list walker
@@ -2045,7 +2062,7 @@ Reason: stack-return continuation from F66Ah at 20C6h; PIC setup continuation
 20D2  BC D8 20                mov sp, 0x20d8
 20D5  E9 17 CE                jmp 0xeeef
 
-===== 20DAh-23BCh =====
+===== 20DAh-20F9h =====
 Reason: stack-return continuation from EEEFh at 20D2h; protected-mode transition
 20DA  0F 20 C0                mov eax, cr0
 20DD  0C 01                   or al, 1
@@ -2059,133 +2076,6 @@ Reason: stack-return continuation from EEEFh at 20D2h; protected-mode transition
 20F3  90                      nop
 20F4  BC FA 20                mov sp, 0x20fa
 20F7  E9 E2 6C                jmp 0x8ddc
-20FA  FC                      cld
-20FB  20 B2 FF 26             and byte ptr [bp + si + 0x26ff], dh
-20FF  66 C7 06 00 00 55 55 AA AA mov dword ptr [0], 0xaaaa5555
-2108  26 66 C7 06 00 01 FF FF FF FF mov dword ptr es:[0x100], 0xffffffff
-2112  26 66 81 3E 00 00 55 55 AA AA cmp dword ptr es:[0], 0xaaaa5555
-211C  0F 85 67 00             jne 0x2187
-2120  26 66 C7 06 00 00 AA AA 55 55 mov dword ptr es:[0], 0x5555aaaa
-212A  26 66 C7 06 00 01 FF FF FF FF mov dword ptr es:[0x100], 0xffffffff
-2134  26 66 81 3E 00 00 AA AA 55 55 cmp dword ptr es:[0], 0x5555aaaa
-213E  0F 85 45 00             jne 0x2187
-2142  B2 00                   mov dl, 0
-2144  26 67 66 81 3D 00 00 80 00 AA AA 55 55 cmp dword ptr es:[0x800000], 0x5555aaaa
-2151  0F 84 32 00             je 0x2187
-2155  B2 02                   mov dl, 2
-2157  26 66 81 3E 00 08 AA AA 55 55 cmp dword ptr es:[0x800], 0x5555aaaa
-2161  0F 84 22 00             je 0x2187
-2165  B2 01                   mov dl, 1
-2167  26 66 81 3E 00 10 AA AA 55 55 cmp dword ptr es:[0x1000], 0x5555aaaa
-2171  0F 84 12 00             je 0x2187
-2175  B2 03                   mov dl, 3
-2177  26 66 81 3E 00 20 AA AA 55 55 cmp dword ptr es:[0x2000], 0x5555aaaa
-2181  0F 84 02 00             je 0x2187
-2185  B2 04                   mov dl, 4
-2187  B6 FF                   mov dh, 0xff
-2189  26 67 66 C7 05 00 00 00 04 55 55 AA AA mov dword ptr es:[0x4000000], 0xaaaa5555
-2196  26 67 66 C7 05 00 01 00 04 FF FF FF FF mov dword ptr es:[0x4000100], 0xffffffff
-21A3  26 67 66 81 3D 00 00 00 04 55 55 AA AA cmp dword ptr es:[0x4000000], 0xaaaa5555
-21B0  0F 85 79 00             jne 0x222d
-21B4  26 67 66 C7 05 00 00 00 04 AA AA 55 55 mov dword ptr es:[0x4000000], 0x5555aaaa
-21C1  26 67 66 C7 05 00 01 00 04 FF FF FF FF mov dword ptr es:[0x4000100], 0xffffffff
-21CE  26 67 66 81 3D 00 00 00 04 AA AA 55 55 cmp dword ptr es:[0x4000000], 0x5555aaaa
-21DB  0F 85 4E 00             jne 0x222d
-21DF  B6 00                   mov dh, 0
-21E1  26 67 66 81 3D 00 00 80 04 AA AA 55 55 cmp dword ptr es:[0x4800000], 0x5555aaaa
-21EE  0F 84 3B 00             je 0x222d
-21F2  B6 02                   mov dh, 2
-21F4  26 67 66 81 3D 00 08 00 04 AA AA 55 55 cmp dword ptr es:[0x4000800], 0x5555aaaa
-2201  0F 84 28 00             je 0x222d
-2205  B6 01                   mov dh, 1
-2207  26 67 66 81 3D 00 10 00 04 AA AA 55 55 cmp dword ptr es:[0x4001000], 0x5555aaaa
-2214  0F 84 15 00             je 0x222d
-2218  B6 03                   mov dh, 3
-221A  26 67 66 81 3D 00 20 00 04 AA AA 55 55 cmp dword ptr es:[0x4002000], 0x5555aaaa
-2227  0F 84 02 00             je 0x222d
-222B  B6 04                   mov dh, 4
-222D  B8 16 16                mov ax, 0x1616
-2230  BC 36 22                mov sp, 0x2236
-2233  E9 99 6B                jmp 0x8dcf
-2236  38 22                   cmp byte ptr [bp + si], ah
-2238  0C 30                   or al, 0x30
-223A  86 E0                   xchg al, ah
-223C  BC 42 22                mov sp, 0x2242
-223F  E9 9A 6B                jmp 0x8ddc
-2242  44                      inc sp
-2243  22 B8 11 44             and bh, byte ptr [bx + si + 0x4411]
-2247  90                      nop
-2248  BC 4E 22                mov sp, 0x224e
-224B  E9 8E 6B                jmp 0x8ddc
-224E  50                      push ax
-224F  22 B3 FF 26             and dh, byte ptr [bp + di + 0x26ff]
-2253  66 C7 06 00 00 55 55 AA AA mov dword ptr [0], 0xaaaa5555
-225C  26 66 C7 06 00 01 FF FF FF FF mov dword ptr es:[0x100], 0xffffffff
-2266  26 66 81 3E 00 00 55 55 AA AA cmp dword ptr es:[0], 0xaaaa5555
-2270  0F 85 67 00             jne 0x22db
-2274  26 66 C7 06 00 00 AA AA 55 55 mov dword ptr es:[0], 0x5555aaaa
-227E  26 66 C7 06 00 01 FF FF FF FF mov dword ptr es:[0x100], 0xffffffff
-2288  26 66 81 3E 00 00 AA AA 55 55 cmp dword ptr es:[0], 0x5555aaaa
-2292  0F 85 45 00             jne 0x22db
-2296  B3 00                   mov bl, 0
-2298  26 67 66 81 3D 00 00 80 00 AA AA 55 55 cmp dword ptr es:[0x800000], 0x5555aaaa
-22A5  0F 84 32 00             je 0x22db
-22A9  B3 02                   mov bl, 2
-22AB  26 66 81 3E 00 08 AA AA 55 55 cmp dword ptr es:[0x800], 0x5555aaaa
-22B5  0F 84 22 00             je 0x22db
-22B9  B3 01                   mov bl, 1
-22BB  26 66 81 3E 00 10 AA AA 55 55 cmp dword ptr es:[0x1000], 0x5555aaaa
-22C5  0F 84 12 00             je 0x22db
-22C9  B3 03                   mov bl, 3
-22CB  26 66 81 3E 00 20 AA AA 55 55 cmp dword ptr es:[0x2000], 0x5555aaaa
-22D5  0F 84 02 00             je 0x22db
-22D9  B3 04                   mov bl, 4
-22DB  B7 FF                   mov bh, 0xff
-22DD  26 67 66 C7 05 00 00 00 04 55 55 AA AA mov dword ptr es:[0x4000000], 0xaaaa5555
-22EA  26 67 66 C7 05 00 01 00 04 FF FF FF FF mov dword ptr es:[0x4000100], 0xffffffff
-22F7  26 67 66 81 3D 00 00 00 04 55 55 AA AA cmp dword ptr es:[0x4000000], 0xaaaa5555
-2304  0F 85 79 00             jne 0x2381
-2308  26 67 66 C7 05 00 00 00 04 AA AA 55 55 mov dword ptr es:[0x4000000], 0x5555aaaa
-2315  26 67 66 C7 05 00 01 00 04 FF FF FF FF mov dword ptr es:[0x4000100], 0xffffffff
-2322  26 67 66 81 3D 00 00 00 04 AA AA 55 55 cmp dword ptr es:[0x4000000], 0x5555aaaa
-232F  0F 85 4E 00             jne 0x2381
-2333  B7 00                   mov bh, 0
-2335  26 67 66 81 3D 00 00 80 04 AA AA 55 55 cmp dword ptr es:[0x4800000], 0x5555aaaa
-2342  0F 84 3B 00             je 0x2381
-2346  B7 02                   mov bh, 2
-2348  26 67 66 81 3D 00 08 00 04 AA AA 55 55 cmp dword ptr es:[0x4000800], 0x5555aaaa
-2355  0F 84 28 00             je 0x2381
-2359  B7 01                   mov bh, 1
-235B  26 67 66 81 3D 00 10 00 04 AA AA 55 55 cmp dword ptr es:[0x4001000], 0x5555aaaa
-2368  0F 84 15 00             je 0x2381
-236C  B7 03                   mov bh, 3
-236E  26 67 66 81 3D 00 20 00 04 AA AA 55 55 cmp dword ptr es:[0x4002000], 0x5555aaaa
-237B  0F 84 02 00             je 0x2381
-237F  B7 04                   mov bh, 4
-2381  81 E2 0F 0F             and dx, 0xf0f
-2385  8A E6                   mov ah, dh
-2387  C0 E4 04                shl ah, 4
-238A  0A E2                   or ah, dl
-238C  B0 10                   mov al, 0x10
-238E  BC 94 23                mov sp, 0x2394
-2391  E9 48 6A                jmp 0x8ddc
-2394  96                      xchg si, ax
-2395  23 81 E3 0F             and ax, word ptr [bx + di + 0xfe3]
-2399  0F 8A E7 C0             jp 0xe484
-239D  E4 04                   in al, 4
-239F  0A E3                   or ah, bl
-23A1  B0 11                   mov al, 0x11
-23A3  90                      nop
-23A4  BC AA 23                mov sp, 0x23aa
-23A7  E9 32 6A                jmp 0x8ddc
-23AA  AC                      lodsb al, byte ptr [si]
-23AB  23 B8 16 00             and di, word ptr [bx + si + 0x16]
-23AF  90                      nop
-23B0  BC B6 23                mov sp, 0x23b6
-23B3  E9 26 6A                jmp 0x8ddc
-23B6  B8 23 B8                mov ax, 0xb823
-23B9  10 00                   adc byte ptr [bx + si], al
-23BB  8E C0                   mov es, ax
 
 ===== 20FCh-2107h =====
 Reason: stack-return continuation from 8DDCh at 20F4h; aligned memory-alias probe entry
@@ -24296,7 +24186,7 @@ Reason: second stack-return trampoline into ALi indexed writer 8DDCh
 1B27  E9 B2 72                jmp 0x8ddc
 
 ===== 1C83h-1DD7h =====
-Reason: manual CMOS-to-ALi1429 read/modify/write configuration sequence
+Reason: manual CMOS-to-ALi1429 read/modify/write continuation; first CMOS key load at 1C85h
 1C83  31 90 B0 50             xor word ptr [bx + si + 0x50b0], dx
 1C87  E8 0A D2                call 0xee94
 1C8A  24 07                   and al, 7
@@ -24463,7 +24353,7 @@ Reason: POST 8042 input-port C0h probe and feature-selection path
 1E16  24 7F                   and al, 0x7f
 
 ===== 1DE8h-1E36h =====
-Reason: conditional POST feature setup handler; alternate entry inside 1DD8h stream
+Reason: internal conditional continuation of the 1DD8h POST feature/input-port path
 1DE8  E8 15 65                call 0x8300
 1DEB  58                      pop ax
 1DEC  0F 84 2C 00             je 0x1e1c
