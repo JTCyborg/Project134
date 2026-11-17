@@ -180,3 +180,41 @@ The exact full routine contains a checksum-like byte accumulation and a special 
 A scan of the 64 KiB image for relative CALL/JMP/Jcc targets finds no direct relative branch targeting F780h or F786h. The known marker-06 entry is the indirect word-table jump at D6A3h through D6A8h (table index 6 = F786h). The F810h retry helper has four direct local CALL sites: F782h, F79Dh, F7D5h, and F7E7h.
 
 This distinction matters: F780h is not a separately established public entry point. F786h is the table-selected entry; F7FAh is reached by its conditional branch for marker 06h. The neighboring routines contain overlapping control-flow and must be decoded from their actual entry offsets, not merely from the byte stream in ascending order.
+
+## Related non-disk continuation: D724h path for CMOS[8Fh] > 0Ah
+
+The dispatcher at D643h sends marker values greater than 0Ah to D724h. This is not the disk boot entry and should be documented separately from marker 06h.
+
+Initial sequence:
+
+```asm
+D724: 2E F6 06 81 82 40  TEST BYTE PTR CS:[8281h],40h
+D72B: 75 0F             JNZ D73Ch
+D72D: 0F 01 E0          SMSW AX
+D730: 0A E4             OR AH,AH
+D732: 74 08             JZ D73Ch
+D734: 0F 20 C0          MOV EAX,CR0
+D737: 0C 10             OR AL,10h
+D739: 0F 22 C0          MOV CR0,EAX
+D73C: B0 03             MOV AL,03h
+D73E: E6 80             OUT 80h,AL
+```
+
+This branch checks the same independent `CS:[8281h].40h` reset/mode selector already seen at POST checkpoints. If that bit is set, it bypasses the SMSW/CR0 adjustment and continues at D73Ch. If clear, it inspects the machine status word and, when the tested high byte is nonzero, sets CR0 bit 4 before continuing. This is a CPU/mode-recovery continuation, not a disk boot routine.
+
+The following code:
+- loads SS=CS and establishes stack state;
+- emits POST code 04h;
+- sets DS=0040h and ES=0000h;
+- checks port 64h bit 2 and the BIOS data-area word at 0040:0472h against 1234h;
+- conditionally modifies BP flags;
+- emits POST code 05h and then code 06h;
+- performs a 128-word accumulation from CS:SI before deciding whether to continue or enter a fallback routine.
+
+The meaning of the BP flags and the full checksum/fallback destination remain unresolved. Do not label this as a memory test or warm reset without tracing the subsequent branch and caller contract.
+
+This gives a useful separation of CMOS[8Fh] continuation classes:
+- 06h: table index 6 -> F786h, disk/boot-sector path.
+- >0Ah: D724h, CPU/mode-recovery and platform-state checks.
+- 04h/05h: special stack setup at D646h -> EEE7h.
+- Other values <=0Ah (except 04h/05h): 8A20h path, still being classified.
