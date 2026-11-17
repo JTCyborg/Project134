@@ -803,3 +803,23 @@ A byte-accurate decode of the worker body establishes the following sequence:
 The success path increments its local attempt/index register and checks whether it has reached two attempts. If another pass is needed it calls `6A93h`; otherwise it enters the response/cleanup path. The error path also uses the keyboard/response helpers and preserves a status in `[E3B9h]`. The full meanings of response characters and the precise retry policy are not yet established; do not label the non-ESC response keys as Retry/Ignore without tracing the helper at `6A93h` and the subsequent caller logic.
 
 This clarifies the CF contract: `6CA0h` reports keyboard ESC in its own CF, while the worker deliberately restores the earlier INT 13h flags before deciding whether the disk operation succeeded. The outer caller's saved-CF test therefore receives the worker's disk/abort status, not the keyboard helper's transient flags.
+
+
+### Disk status classification and error-code lookup (69D1h continuation)
+
+The retry decision helper at `6A93h` is a direct `AH` classifier:
+
+- `AH = AAh, CCh, 01h, 80h` -> returns CF=0.
+- Any other `AH` -> returns CF=1.
+
+In the worker, this helper is reached only after the second failed INT 13h attempt (`DI` has been incremented and compared with 2). CF=0 falls through to the response/error-display path; CF=1 branches back to the retry loop. This is a classification of the BIOS status byte, not a keyboard response decoder.
+
+The following response path at `6A3Ah` calls `6CC2h`. That helper does not use the incoming AL: it loads `AL=[E3B9h]`, then scans a 13-byte status list at `6CB5h`:
+
+`01 02 04 05 07 0A 10 11 20 40 80 AA CC`
+
+On a match, it returns the one-based position in the list in AL (1 through 13). If no match is found, it sets AL=1. It then calls `4FCDh` with that index, apparently entering the status-specific UI/error presentation path; the exact display text/control flow at `4FCDh` remains to be decoded.
+
+The source of `E3B9h` is now confirmed in the INT 13h wrapper at `6C15h`: immediately after `INT 13h`, it stores the BIOS status register `AH` to `[E3B9h]`. The wrapper returns CF clear when the BIOS call succeeded and CF set when it failed. Thus `E3B9h` is the latched INT 13h status byte used by both the retry classifier and the later status-list lookup. The worker can also explicitly overwrite it with `1Bh` on ESC abort; callers test that sentinel separately.
+
+Do not infer the semantic labels of the 13 status codes from their numeric values alone. The table ordering and index mapping are byte-confirmed; the corresponding UI strings and user choices still need cross-reference.
