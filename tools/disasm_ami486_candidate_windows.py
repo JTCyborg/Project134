@@ -21,7 +21,7 @@ LIMITS.update({
     0x2415: 0x30, 0x2420: 0x30, 0x242B: 0x30, 0x2436: 0x30,
     0x2441: 0x30, 0x244C: 0x30, 0x2495: 0x40,
     0x2537: 0x40, 0x256A: 0x40, 0x2588: 0x50, 0x25A6: 0x50,
-    0x2629: 0x60, 0x2686: 0x60, 0x26F9: 0x60,
+    0x2629: 0x1D, 0x2686: 0x60, 0x26BE: 0x30, 0x26D6: 0x23, 0x26F9: 0x68,
     0x2761: 0x40, 0x2772: 0x40, 0x284F: 0x20, 0x2850: 0x60,
     0x29BB: 0x80, 0x29ED: 0x20,
 })
@@ -30,8 +30,8 @@ LIMITS.update({
 LIMITS.update({
     0x24AE: 0x90, 0x24E1: 0x80, 0x2536: 0x20, 0x25C4: 0x80,
     0x2601: 0x30, 0x2615: 0x30, 0x26D6: 0x40,
-    0x27A0: 0x60, 0x27B0: 0x40, 0x27B6: 0x30,
-    0x2850: 0xA0, 0x28DC: 0x40, 0x28F2: 0x40,
+    0x27A0: 0x2A, 0x27B0: 0x1A, 0x27B6: 0x14, 0x27CC: 0x10, 0x27DC: 0x18, 0x27F4: 0x0C, 0x2800: 0x80,
+    0x2850: 0xA0, 0x28DC: 0x20, 0x28F2: 0x80, 0x2911: 0x30, 0x291B: 0x40, 0x296B: 0x80, 0x29BB: 0x30, 0x29ED: 0x09,
 })
 
 # Additional independently seeded entries for the 873Ch–8DCEh address-ledger pass.
@@ -261,6 +261,11 @@ DATA_RANGES = [
     (0x8ABE, 0x8AC0, "Crafted near-return word 8AC0h used by the 8DCFh ALi indexed-read helper", "words"),
     (0x8ACA, 0x8ACC, "Crafted near-return word 8ACCh used by the 8DDCh ALi indexed-write helper", "words"),
     (0x2068, 0x208D, "LGDT pseudo-descriptor at 2068h plus adjacent descriptor/parameter bytes used by the PM memory probe", "hexascii"),
+    (0x2646, 0x2686, "Eight-entry GDT used by the protected-mode memory probe; entry 1 at 264Eh overlays the six-byte GDTR pseudo-descriptor, selectors 0010h and 0038h select the 64-KiB and flat 4-GiB data descriptors", "hexascii"),
+    (0x27CA, 0x27CC, "Crafted stack-return word 27CCh consumed by RET at 29EAh; the following bytes are the aligned JE continuation", "words"),
+    (0x27DA, 0x27DC, "Crafted stack-return word 27DCh consumed by the 8D83h error helper; the following bytes are an aligned JMP continuation", "words"),
+    (0x27F2, 0x27F4, "Crafted stack-return word 27F4h consumed by the EE94h CMOS-read helper", "words"),
+    (0x27FE, 0x2800, "Crafted stack-return word 2800h consumed by the EE9Dh CMOS-write helper", "words"),
 ]
 
 SEEDS = [
@@ -545,6 +550,15 @@ SEEDS = [
     (0x27B6, "mismatch branch target in the protected-mode memory-pattern test"),
     (0x28DC, "common chipset-configuration continuation in the 2850h POST helper"),
     (0x28F2, "direct CALL target from the 2893h POST configuration path"),
+    (0x26BE, "alternate memory scan entry reached by the 26BCh indirect continuation"),
+    (0x27CC, "crafted-return continuation after the 29BBh memory test; tests returned ZF"),
+    (0x27DC, "crafted-return continuation after the 8D83h memory-test error helper"),
+    (0x27F4, "crafted-return continuation after CMOS B3h read through EE94h"),
+    (0x2800, "crafted-return continuation after CMOS B3h write through EE9Dh"),
+    (0x2911, "indirect continuation selected by the 28F2h memory scan"),
+    (0x291B, "second indirect continuation selected by the 2911h scan path"),
+    (0x296B, "common continuation reached by the 28F2h memory scan"),
+
 
 
     (0x88F0, "stack-return continuation after the 8921h arithmetic/flag probe"),
