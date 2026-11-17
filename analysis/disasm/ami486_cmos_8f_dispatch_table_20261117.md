@@ -501,3 +501,43 @@ However, the call graph has not yet been connected to the hard-disk utility's Y/
 Related distinction: the separate `AA70h` path uses AH=08h (drive parameters), AH=04h (verify), and AH=09h/AH=11h status/recalibration-style operations; it is not the AH=05h writer. The code at `7075h` sets AX=0228h before INT 13h, so its AH=02h read request has AL=28h (40 sectors) and must not be confused with AH=05h write.
 
 Next trace: identify all entries/callers of the `6F7Ch–6FA5h` worker and all references to `1FE4h`; then connect the hard-disk utility's confirmation path to that worker or rule it out. Keep the formatter classification open until that link and the data-buffer geometry are proven.
+
+
+### Critical correction to the AH=05h writer attribution (2026-11-17)
+
+The previous section misread the absolute operand at `6F95h`: bytes `A0 1F E4` mean `MOV AL,[E41Fh]`, **not** `[1FE4h]`. A fresh scan finds these direct references to `E41Fh`:
+
+- `5BDDh`: `MOV AL,[E41Fh]` followed by arithmetic involving words at `E413h` and `E411h` (the associated routine is a geometry/range calculation; decode the full entry before assigning semantics).
+- `69A6h`, `69B9h`: used in the record/geometry loop in the `6970h` routine.
+- `6A1Ch`: `MOV AL,[E41Fh]` immediately before the AH=05h disk call.
+- `6D08h`, `6DD1h`: used in the `6Dxx` operation state machine.
+- `6F95h`, `6FA5h`: used by the `6F75h` routine.
+
+The actual AH=05h invocation is visible in **two distinct code paths**:
+
+```asm
+; routine beginning at 69D0h (frame-based; exact entry callers unresolved)
+6A10  ...                  ; computes CH/CL/DH from inputs
+6A1A  MOV AH,05h
+6A1C  MOV AL,[E41Fh]
+6A1F  CALL 6C18h            ; shared INT 13h path
+6A22  POP CX
+6A23  POP BX
+6A24  PUSHF
+...
+
+; separate worker beginning at 6F75h, called from 6F23h
+6F90  MOV BX,E1B8h
+6F93  MOV AH,05h
+6F95  MOV AL,[E41Fh]
+6F98  CALL 6C18h
+6F9B  JC ...
+...
+6FA5  MOV AL,[E41Fh]
+```
+
+The earlier claim that `6F7Ch` was a routine entry is withdrawn. It is an instruction boundary inside the frame-based worker at `6F75h`; a direct CALL xref to that worker is from `6F23h`. The AH=05h call at `6A1Ah` is another independent callsite, inside the larger routine whose visible prologue begins at `69D0h`. No direct near-CALL xref to `69D0h` was found in the ROM scan; it may be reached by an indirect dispatch or alternate entry, so its caller must not be guessed.
+
+Important conclusion: the ROM contains at least two AH=05h sector-write callsites, both using the same count byte `E41Fh`. The path at `69D0h` explicitly derives CH/CL/DH immediately before the write call, making it a stronger candidate for track/sector formatting than the previously isolated `6F75h` worker. Nevertheless, the utility-menu Y/N chain has not yet been linked to either callsite. The meaning/value of `E41Fh`, drive number `DL`, buffer segment `ES`, and the producer of the CHS inputs still need to be established.
+
+This replaces the earlier tentative attribution that the `6F7Ch–6FA5h` range was the unique sector writer. Treat AH=05h as confirmed sector-write functionality, but keep its association with low-level format unproven.
