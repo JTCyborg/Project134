@@ -1168,3 +1168,17 @@ ROM bytes are unchanged. The findings above distinguish the confirmed ATA reset 
 ### Precision correction for the AABFh gate in AB34h
 
 The keyboard helper at `AABFh` must not be summarized as a simple ESC/cancel test. Its observed sequence is: save CX/AX/FLAGS, enable interrupts, poll BIOS keyboard status with `INT 16h/AH=01h`, and when a key is pending consume it with `INT 16h/AH=00h`. It compares the returned AL with ESC (`1Bh`) and uses the caller-provided SI value in the ESC branch before continuing its bounded loop. Since `AB34h` initializes `SI=FFFFh`, the observed caller does not establish an immediate abort on ESC. The only safe conclusion from this call site is that `AABFh` is a keyboard-poll/consume helper with a caller-sensitive ESC branch; whether the reset branch is suppressed by any key condition requires full tracing of its loop and carry return. This replaces the earlier over-specific wording that it simply handles an ESC/cancel path.
+
+### ABADh subroutines: ATA task-file/status access and BDA status bytes
+
+The two implementations selected by `ABADh` share ATA-channel helpers. The byte-level decode gives concrete I/O evidence:
+
+- `ABDDh` constructs a real-mode far pointer from the caller's `ES:BX` (shifts the offset right by 4, adds the old ES to form a segment, retains the low nibble as the new offset), then calls `A655h`. It passes the caller's local byte `[BP+07h]` as the value written to port `1F6h` (ATA Drive/Head register). It then polls port `1F7h` (ATA Status) and records the sampled status in `0040:008Ch`; it also writes `AAh` to `0040:0074h` on the success path. The failure paths return Carry set; the normal completion path returns Carry clear.
+- `AC34h` builds the same pointer/local-byte frame and calls `A655h`, writes the selected byte to `1F6h`, then calls `A73Eh` and status helpers `A694h` / `A6DCh`. It returns according to the Carry state from those helpers. The routine therefore performs a different ATA task-file/status sequence from `ABDDh`, not an unrelated generic service.
+- `A6DCh` reads `1F7h`, stores the raw status at `0040:008Ch`, tests status bits `04h`, `20h`, `40h`, `10h`, and `01h` in sequence, then reads port `1F1h` (ATA Error register) and stores that byte at `0040:008Dh`. This is direct evidence that the code captures ATA status and error-register information in the BIOS Data Area.
+- `A694h` issues `INT 15h` with `AX=9000h` (device-wait service), enables interrupts, and on success enters a bounded polling/wait path. It is a wait/synchronization helper used by the ATA path; it should not be confused with an INT 13h disk function.
+- `A655h` and `A62Eh` are the lower-level selection/polling helpers. `A655h` writes the drive/head byte to `1F6h`, polls `1F7h`, and updates BDA status locations. `A62Eh` performs a bounded wait around the same task-file interface.
+
+This establishes the role of `ABADh` more narrowly: it dispatches between two private ATA task-file procedures, using the caller's far pointer and one-byte drive/head selector, while communicating status through BDA offsets `74h`, `8Ch`, and `8Dh`. The full semantic interpretation of the far-pointer fields at `E1B8h+02h/+06h/+0Ch` is still open; the matching scan against `CS:E401h` remains a separate, not-yet-proven geometry/parameter table association.
+
+ROM image unchanged. This update documents only behavior directly visible in the instruction stream; no disk geometry or ATA command meaning is inferred solely from the call names.
