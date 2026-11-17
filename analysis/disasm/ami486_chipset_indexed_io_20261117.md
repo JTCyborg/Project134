@@ -36,10 +36,10 @@ This is an indexed configuration-register interface. It is distinct from the pre
 
 The sequence around `1C88–1DBB` repeatedly:
 1. loads the same register index into AX (e.g. `2020h`);
-2. calls the read helper at `8DD0`;
+2. calls the read helper at `8DCF`;
 3. masks the returned register value and merges bits from BL;
 4. exchanges AL/AH to form `AL=index, AH=new data`;
-5. calls the write helper at `8DDD`.
+5. calls the write helper at `8DDC`.
 
 Example for register index `20h`:
 
