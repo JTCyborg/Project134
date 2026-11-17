@@ -181,3 +181,17 @@ Correction to the preceding F1E2h note: the CPU continuation established by the 
 The 578Dh routine is independently called from numerous other ROM locations (including 0159h, 0FD9h, 3E52h, 3F28h, 48CAh, 4990h, 49D7h, 4A29h, 4BF0h, 4D05h, 4EFEh, 4FE2h, 5066h, and 597Dh), so its video-configuration behavior remains valid as a separate finding. It must not be attributed to the F1E2h continuation without proving an alternate entry.
 
 The F1E2h continuation instead proceeds through an overlapping instruction stream beginning with the CMP above, then pushes registers, allocates a 40h-byte stack frame, and copies 20h words from DS:E000h to the stack-local ES:DI buffer. It calls offsets F309h and F108h, both of which require entry-point-aware decoding (F309h is inside the bytes of a nearby INT 16h instruction when decoded from F300h). Their exact semantics are not yet established. The later visible INT 1Ah calls for functions 02h and 04h read RTC time/date. The remainder of this continuation is still under analysis.
+
+### Follow-up: indirect call chain confirms video setup is reached
+
+A subsequent call-graph pass found the indirect chain from the actual F1E2h entry to the independently identified video routine:
+
+```asm
+F1FD: E8 0E 01       CALL F30Eh
+F30E: E8 AD 16       CALL 0FBEh
+0FD9: E8 B1 47       CALL 578Dh
+```
+
+Thus the earlier direct-call attribution was wrong, but the broader conclusion that this startup continuation reaches 578Dh is now confirmed through two intermediate routines. The correction above should be read as: F1E2h does not directly call 578Dh; it reaches it through F30Eh -> 0FBEh.
+
+At 0FBEh the routine first updates working variables in the E18Fh/E19Fh/E1A0h area, derives parameters from the caller frame, then calls 578Dh. After returning, it continues through calls to 5862h and 58C2h and updates a buffer addressed via [E18Fh]. The exact data structure and meaning of these fields remain to be mapped. This is likely part of the display/platform initialization block, but do not assign a specific video adapter model yet.
