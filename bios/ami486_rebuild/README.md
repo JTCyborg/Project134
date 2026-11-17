@@ -77,7 +77,7 @@ Do not implement the disk service as complete until read, write, verify, format,
 
 ## Current implementation status
 
-- `bios/src/disk/int13.asm` now contains a first native INT 13h dispatch slice: selector guard AH=00h..19h, a 26-entry near-offset table, and the verified shared unsupported-function return behavior (AX=0100h, BDA 0040:0074h=01h, CF=1).
+- `bios/src/disk/int13.asm` now contains a first native INT 13h dispatch slice: the DL<80h floppy forwarding path through INT 40h / RETF 2, selector guard AH=00h..19h, a 26-entry near-offset table, and the verified shared unsupported-function return behavior (AX=0100h, BDA 0040:0074h=01h, CF=1).
 - The known unsupported selectors (06h, 07h, 0Eh, 0Fh, 12h, 13h, 16h, 17h, 18h) route to that reproduced error path.
 - Other selectors currently route to an explicitly temporary failure fallback. They are NOT implemented disk services and must be replaced only after their full register, flag, BDA, DPT and ATA side-effect contracts are ported.
 - The module is included in the flat ROM build and listed in the Visual Studio project, but is not yet installed into the IVT. The reset path still halts; this commit does not make the ROM bootable or PCem-ready.
