@@ -350,9 +350,9 @@ Reason: POST cache-memory and CPU-clock display strings including final CR/LF/NU
 19EA  0A 00 4D 48 7A 20 44 58 32 20 43 50 55 20 0D 0A ..MHz DX2 CPU ..
 19FA  00                                              .
 
-===== DATA 2F24h-2F65h =====
-Reason: Setup exit confirmation prompts: write CMOS or quit without saving
-ASCII: 'Write to CMOS and Exit (Y/N) ?\x00Want to Quit Without Saving (Y/N) ?'
+===== DATA 2F24h-2F66h =====
+Reason: Setup exit confirmation prompts: write CMOS or quit without saving, including the final NUL byte at 2F66h
+ASCII: 'Write to CMOS and Exit (Y/N) ?\x00Want to Quit Without Saving (Y/N) ?\x00'
 
 ===== DATA 3624h-36A3h =====
 Reason: Setup secondary keyboard legend and F-key option captions with control bytes
@@ -28045,6 +28045,132 @@ Reason: option-ROM scan invalid-candidate helper: advances BX by 0080h, restores
 1BF0  81 C3 80 00             add bx, 0x80
 1BF4  1F                      pop ds
 1BF5  C3                      ret
+
+===== 2F67h-2F8Eh =====
+Reason: Setup exit handler: called from 3D73h; prompts to write CMOS and exit or quit without saving
+2F67  BB 24 2F                mov bx, 0x2f24
+2F6A  E8 EC 29                call 0x5959
+2F6D  3C 59                   cmp al, 0x59
+2F6F  75 1D                   jne 0x2f8e
+2F71  E8 BB 55                call 0x852f
+2F74  EB 0A                   jmp 0x2f80
+2F76  BB 43 2F                mov bx, 0x2f43
+2F79  E8 DD 29                call 0x5959
+2F7C  3C 59                   cmp al, 0x59
+2F7E  75 0E                   jne 0x2f8e
+2F80  33 C0                   xor ax, ax
+2F82  8E D8                   mov ds, ax
+2F84  FA                      cli
+2F85  8E 16 69 04             mov ss, word ptr [0x469]
+2F89  8B 26 67 04             mov sp, word ptr [0x467]
+2F8D  FB                      sti
+2F8E  C3                      ret
+
+===== 2F8Fh-2FA2h =====
+Reason: BDA/low-memory clear helper called by the temporary INT 13h Setup diagnostic path
+2F8F  33 C0                   xor ax, ax
+2F91  BF 42 04                mov di, 0x442
+2F94  AB                      stosw word ptr es:[di], ax
+2F95  AB                      stosw word ptr es:[di], ax
+2F96  AB                      stosw word ptr es:[di], ax
+2F97  AA                      stosb byte ptr es:[di], al
+2F98  BF 74 04                mov di, 0x474
+2F9B  AB                      stosw word ptr es:[di], ax
+2F9C  AA                      stosb byte ptr es:[di], al
+2F9D  BF 8C 04                mov di, 0x48c
+2FA0  AB                      stosw word ptr es:[di], ax
+2FA1  AA                      stosb byte ptr es:[di], al
+2FA2  C3                      ret
+
+===== 2FA3h-3043h =====
+Reason: Setup diagnostic path called from 4A6Bh; saves IVT vectors, temporarily hooks INT 13h and restores vectors
+2FA3  56                      push si
+2FA4  57                      push di
+2FA5  1E                      push ds
+2FA6  1E                      push ds
+2FA7  07                      pop es
+2FA8  BF 29 E4                mov di, 0xe429
+2FAB  33 C0                   xor ax, ax
+2FAD  8E D8                   mov ds, ax
+2FAF  BE 00 01                mov si, 0x100
+2FB2  A5                      movsw word ptr es:[di], word ptr [si]
+2FB3  A5                      movsw word ptr es:[di], word ptr [si]
+2FB4  BE 4C 00                mov si, 0x4c
+2FB7  A5                      movsw word ptr es:[di], word ptr [si]
+2FB8  A5                      movsw word ptr es:[di], word ptr [si]
+2FB9  BE 04 01                mov si, 0x104
+2FBC  A5                      movsw word ptr es:[di], word ptr [si]
+2FBD  A5                      movsw word ptr es:[di], word ptr [si]
+2FBE  BE 18 01                mov si, 0x118
+2FC1  A5                      movsw word ptr es:[di], word ptr [si]
+2FC2  A5                      movsw word ptr es:[di], word ptr [si]
+2FC3  1E                      push ds
+2FC4  07                      pop es
+2FC5  FA                      cli
+2FC6  BE 4C 00                mov si, 0x4c
+2FC9  BF 00 01                mov di, 0x100
+2FCC  B8 8D A0                mov ax, 0xa08d
+2FCF  87 04                   xchg word ptr [si], ax
+2FD1  AB                      stosw word ptr es:[di], ax
+2FD2  8C C8                   mov ax, cs
+2FD4  87 44 02                xchg word ptr [si + 2], ax
+2FD7  AB                      stosw word ptr es:[di], ax
+2FD8  E8 B4 FF                call 0x2f8f
+2FDB  1F                      pop ds
+2FDC  1E                      push ds
+2FDD  80 3E 21 E4 00          cmp byte ptr [0xe421], 0
+2FE2  9C                      pushf
+2FE3  B8 40 00                mov ax, 0x40
+2FE6  8E D8                   mov ds, ax
+2FE8  FE 06 75 00             inc byte ptr [0x75]
+2FEC  BF 04 01                mov di, 0x104
+2FEF  B2 80                   mov dl, 0x80
+2FF1  9D                      popf
+2FF2  74 09                   je 0x2ffd
+2FF4  BF 18 01                mov di, 0x118
+2FF7  FE 06 75 00             inc byte ptr [0x75]
+2FFB  FE C2                   inc dl
+2FFD  B8 11 E4                mov ax, 0xe411
+3000  AB                      stosw word ptr es:[di], ax
+3001  B8 00 01                mov ax, 0x100
+3004  AB                      stosw word ptr es:[di], ax
+3005  FB                      sti
+3006  B4 14                   mov ah, 0x14
+3008  CD 13                   int 0x13
+300A  73 04                   jae 0x3010
+300C  B0 02                   mov al, 2
+300E  EB 0E                   jmp 0x301e
+3010  E8 90 7A                call 0xaaa3
+3013  73 04                   jae 0x3019
+3015  B0 03                   mov al, 3
+3017  EB 05                   jmp 0x301e
+3019  1F                      pop ds
+301A  E8 FF 38                call 0x691c
+301D  1E                      push ds
+301E  50                      push ax
+301F  33 C0                   xor ax, ax
+3021  8E C0                   mov es, ax
+3023  E8 69 FF                call 0x2f8f
+3026  FA                      cli
+3027  BE 29 E4                mov si, 0xe429
+302A  BF 00 01                mov di, 0x100
+302D  A5                      movsw word ptr es:[di], word ptr [si]
+302E  A5                      movsw word ptr es:[di], word ptr [si]
+302F  BF 4C 00                mov di, 0x4c
+3032  A5                      movsw word ptr es:[di], word ptr [si]
+3033  A5                      movsw word ptr es:[di], word ptr [si]
+3034  BF 04 01                mov di, 0x104
+3037  A5                      movsw word ptr es:[di], word ptr [si]
+3038  A5                      movsw word ptr es:[di], word ptr [si]
+3039  BF 18 01                mov di, 0x118
+303C  A5                      movsw word ptr es:[di], word ptr [si]
+303D  A5                      movsw word ptr es:[di], word ptr [si]
+303E  FB                      sti
+303F  58                      pop ax
+3040  1F                      pop ds
+3041  5F                      pop di
+3042  5E                      pop si
+3043  C3                      ret
 
 ===== 0BDEh-0C03h =====
 Reason: Advanced CMOS Setup handler overlapping the final 45-entry descriptor/handler table record; gated by B7CAh and calls shared page engine 0C7Dh
