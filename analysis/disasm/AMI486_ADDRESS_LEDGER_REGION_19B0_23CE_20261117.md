@@ -144,3 +144,32 @@ The separate RET stubs at 1B5Eh/1B5Fh and 1C4Eh/1C4Fh, plus the 1E9Ah status stu
 The latest successful generator run covers the former 19F8h–20FFh gap completely: **no uncovered bytes remain in that interval**. The global candidate mask contains 597 code windows and 154 data ranges, 31,189 unique code-window bytes, 15,829 unique data-range bytes, 117 overlap bytes and a 46,901/65,536-byte union (71.57%), with 69 uncovered intervals, 210 pages touched and 133 fully covered pages. This remains an inspection mask, not semantic completion. The next largest uncovered interval is CA16h–D0FFh (1,770 bytes).
 
 This is a seeded code/data inspection mask, not a whole-ROM semantic-completion percentage. The next largest uncovered interval is CA16h–D0FFh (1,770 bytes).
+
+
+## 10. Extended-memory alias-test tail at 22F7h–2380h
+
+The previous section identified the A20/PE transition and the later 2381h–23B8h stack-threaded ALi update chain. This addendum closes the intervening comparison sequence, including the 38-byte candidate-mask hole at 235Bh–2380h.
+
+The code runs with ES=0008h, the flat base-zero data selector established earlier. The 66h/67h-prefixed absolute memory operations therefore access 32-bit linear addresses. The confirmed sequence is:
+
+| Offset | Operation | Result/control |
+|---:|---|---|
+| 22F7h | Compare dword at 04000000h with AAAA5555h | Mismatch branches to 2381h |
+| 2308h | Write 5555AAAAh at 04000000h | Establishes test pattern |
+| 2315h | Write FFFFFFFFh at 04000100h | Adjacent-address disturbance/write |
+| 2322h | Compare 04000000h with 5555AAAAh | Mismatch branches to 2381h |
+| 2333h | Set BH=00h | Result selector before the 04800000h comparison |
+| 2335h | Compare 04800000h with 5555AAAAh | Equality branches to 2381h |
+| 2346h | Set BH=02h | Selector for the next comparison |
+| 2348h | Compare 04000800h with 5555AAAAh | Equality branches to 2381h |
+| 2359h | Set BH=01h | Selector for the next comparison |
+| 235Bh | Compare 04001000h with 5555AAAAh | Equality branches to 2381h |
+| 236Ch | Set BH=03h | Selector for the next comparison |
+| 236Eh | Compare 04002000h with 5555AAAAh | Equality branches to 2381h |
+| 237Fh | Set BH=04h | Final selector before falling through to 2381h |
+
+The 235Bh–2380h span is 38 bytes and consists of the final two prefixed 32-bit compare/conditional-branch pairs plus the BH=04h fallback assignment. It is a fall-through continuation of the earlier protected-mode memory test, not an independently called routine. The generator now seeds 235Bh with a 26h-byte bound ending exactly at 2380h; 2381h remains the separate continuation already documented in the 23CEh–29F5h ledger.
+
+The comparison addresses are 04000000h, 04000100h, 04800000h, 04000800h, 04001000h and 04002000h. The immediate constants and branches are confirmed from the bytes. This report does not infer the physical RAM size or the exact alias topology from these comparisons alone; those depend on the ALi memory mapping established by the preceding setup code.
+
+The follow-on at 2381h packs DX nibbles into AH and writes ALi index 10h through 8DDCh; 2396h packs BX nibbles and writes index 11h; 23ACh writes index 16h. The complete crafted-return sequence and the transition back to real mode are documented in [AMI486_ADDRESS_LEDGER_REGION_23CE_29F6_20261117.md](AMI486_ADDRESS_LEDGER_REGION_23CE_29F6_20261117.md).
