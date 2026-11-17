@@ -4060,8 +4060,8 @@ Reason: direct CALL target from 00EFh screen-presentation stream
 0611  E9 A6 FC                jmp 0x2ba
 0614  BE 39 75                mov si, 0x7539
 
-===== 03D4h-0453h =====
-Reason: direct CALL target from 00EFh screen-presentation stream
+===== 03D4h-04A9h =====
+Reason: direct CALL target from 00EFh screen-presentation stream; field-record display routine now bounded through RET at 04A9h
 03D4  C6 46 09 00             mov byte ptr [bp + 9], 0
 03D8  89 56 04                mov word ptr [bp + 4], dx
 03DB  88 46 08                mov byte ptr [bp + 8], al
@@ -4116,8 +4116,43 @@ Reason: direct CALL target from 00EFh screen-presentation stream
 044D  C3                      ret
 044E  50                      push ax
 044F  E8 14 01                call 0x566
-0452  E8              db 0xE8
-0453  35              db 0x35
+0452  E8 35 05                call 0x98a
+0455  58                      pop ax
+0456  50                      push ax
+0457  E8 A3 05                call 0x9fd
+045A  58                      pop ax
+045B  48                      dec ax
+045C  C1 E0 04                shl ax, 4
+045F  05 01 E4                add ax, 0xe401
+0462  53                      push bx
+0463  8B D8                   mov bx, ax
+0465  2E 8B 07                mov ax, word ptr cs:[bx]
+0468  89 46 40                mov word ptr [bp + 0x40], ax
+046B  2E 8A 47 02             mov al, byte ptr cs:[bx + 2]
+046F  88 46 42                mov byte ptr [bp + 0x42], al
+0472  2E 8B 47 05             mov ax, word ptr cs:[bx + 5]
+0476  89 46 43                mov word ptr [bp + 0x43], ax
+0479  2E 8B 47 0C             mov ax, word ptr cs:[bx + 0xc]
+047D  89 46 45                mov word ptr [bp + 0x45], ax
+0480  2E 8A 47 0E             mov al, byte ptr cs:[bx + 0xe]
+0484  88 46 47                mov byte ptr [bp + 0x47], al
+0487  5B                      pop bx
+0488  E8 1D 00                call 0x4a8
+048B  80 7E 09 00             cmp byte ptr [bp + 9], 0
+048F  74 03                   je 0x494
+0491  E8 39 04                call 0x8cd
+0494  9C                      pushf
+0495  50                      push ax
+0496  E8 DE 00                call 0x577
+0499  E8 EE 04                call 0x98a
+049C  8A 46 08                mov al, byte ptr [bp + 8]
+049F  E8 59 05                call 0x9fb
+04A2  E8 0B 00                call 0x4b0
+04A5  58                      pop ax
+04A6  9D                      popf
+04A7  C3                      ret
+04A8  8A              db 0x8A
+04A9  1E                      push ds
 
 ===== 0AADh-0B2Ch =====
 Reason: direct CALL target from 00EFh screen-presentation stream
@@ -32342,4 +32377,10 @@ Reason: Setup metric/value formatter: converts the input value, positions the cu
 3F46  8B E5                   mov sp, bp
 3F48  5D                      pop bp
 3F49  C3                      ret
+
+===== 04AAh-04AFh =====
+Reason: field-value helper wrapper called at 048Ah; loads selector byte E1A3h and enters common calculation at 04BBh
+04AA  A3 E1 B7                mov word ptr [0xb7e1], ax
+04AD  00 EB                   add bl, ch
+04AF  09              db 0x09
 
