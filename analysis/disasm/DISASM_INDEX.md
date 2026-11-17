@@ -1392,3 +1392,13 @@ The 19B0h–23CEh ledger now records two previously uncovered fall-through spans
 - 235Bh–2380h: BH-selected comparisons at 04001000h and 04002000h, ending with BH=04h before the ALi 10h/11h/16h update chain at 2381h.
 
 Both are continuations of the existing protected-mode extended-memory probe, not independent routines. The candidate generator now has bounded 26h-byte seeds at 2207h and 235Bh. The candidate listing and manifest were regenerated successfully after these seed additions; the current manifest includes both bounded windows.
+
+
+## POST 8042 keyboard-controller self-test continuation — 2026-11-17
+
+The D655h–E3FFh ledger now maps D7B3h–D7D7h, the former 37-byte candidate-mask gap.
+
+- D7B3h loads command AAh; the intervening XCHG BX,BX instructions form a no-state-change delay sequence.
+- D7C6h writes AAh to 8042 command port 64h, then reads the status port and records status bit 0 in DI.
+- D7D2h installs the crafted return word D7DAh at SP=D7D8h and jumps to F659h, the shared keyboard-controller input-buffer wait helper.
+- D7D8h–D7D9h remains return-address data, not code. The bounded candidate seed ends at D7D7h.
