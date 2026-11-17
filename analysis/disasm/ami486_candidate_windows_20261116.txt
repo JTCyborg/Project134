@@ -23182,7 +23182,7 @@ Reason: three-way disk/controller mode dispatcher selected through the word tabl
 6C13  F8                      clc
 6C14  C3                      ret
 
-===== 71E4h-7263h =====
+===== 71E4h-72CFh =====
 Reason: second target in the 6BD8h three-way disk/controller mode dispatch table
 71E4  80 3E AB E1 01          cmp byte ptr [0xe1ab], 1
 71E9  75 15                   jne 0x7200
@@ -23225,8 +23225,55 @@ Reason: second target in the 6BD8h three-way disk/controller mode dispatch table
 7258  A3 B2 E1                mov word ptr [0xe1b2], ax
 725B  E8 BB F8                call 0x6b19
 725E  72 70                   jb 0x72d0
-7260  80              db 0x80
-7261  3E              db 0x3E
-7262  B9              db 0xB9
-7263  E3              db 0xE3
+7260  80 3E B9 E3 1B          cmp byte ptr [0xe3b9], 0x1b
+7265  74 70                   je 0x72d7
+7267  E8 A8 FD                call 0x7012
+726A  72 64                   jb 0x72d0
+726C  8B 3E C4 E3             mov di, word ptr [0xe3c4]
+7270  3B 3E C1 E3             cmp di, word ptr [0xe3c1]
+7274  77 0A                   ja 0x7280
+7276  89 3E C1 E3             mov word ptr [0xe3c1], di
+727A  A0 22 E4                mov al, byte ptr [0xe422]
+727D  A2 C3 E3                mov byte ptr [0xe3c3], al
+7280  E8 1D FA                call 0x6ca0
+7283  72 4D                   jb 0x72d2
+7285  FE 06 22 E4             inc byte ptr [0xe422]
+7289  80 3E 22 E4 04          cmp byte ptr [0xe422], 4
+728E  76 A8                   jbe 0x7238
+7290  50                      push ax
+7291  53                      push bx
+7292  BB 00 00                mov bx, 0
+7295  BA 46 16                mov dx, 0x1646
+7298  B4 02                   mov ah, 2
+729A  52                      push dx
+729B  CD 10                   int 0x10
+729D  5A                      pop dx
+729E  8B C2                   mov ax, dx
+72A0  FE C8                   dec al
+72A2  B2 03                   mov dl, 3
+72A4  06                      push es
+72A5  E8 55 E5                call 0x57fd
+72A8  07                      pop es
+72A9  A0 C3 E3                mov al, byte ptr [0xe3c3]
+72AC  32 E4                   xor ah, ah
+72AE  E8 4A 97                call 0x9fb
+72B1  5B                      pop bx
+72B2  58                      pop ax
+72B3  A1 11 E4                mov ax, word ptr [0xe411]
+72B6  48                      dec ax
+72B7  A3 B2 E1                mov word ptr [0xe1b2], ax
+72BA  B8 00 00                mov ax, 0
+72BD  A3 AF E1                mov word ptr [0xe1af], ax
+72C0  A0 C3 E3                mov al, byte ptr [0xe3c3]
+72C3  A2 22 E4                mov byte ptr [0xe422], al
+72C6  E8 50 F8                call 0x6b19
+72C9  C6 06 AB E1 02          mov byte ptr [0xe1ab], 2
+72CE  73 07                   jae 0x72d7
+
+===== 72D0h-72D7h =====
+Reason: disk-mode error return stubs selected by the 71E4h handler
+72D0  F9                      stc
+72D1  C3                      ret
+72D2  C6 06 B9 E3 1B          mov byte ptr [0xe3b9], 0x1b
+72D7  C3                      ret
 
