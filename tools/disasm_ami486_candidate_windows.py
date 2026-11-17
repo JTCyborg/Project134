@@ -81,6 +81,12 @@ LIMITS.update({
 })
 
 LIMITS.update({
+    0x18E5: 0x18, 0x18FD: 0x17, 0x1914: 0x6C,
+    0x1980: 0x0F, 0x198F: 0x13,
+    0x19AB: 0x02, 0x19AD: 0x01, 0x19AE: 0x01, 0x19AF: 0x01,
+})
+
+LIMITS.update({
     0x0BDE: 0x26, 0x0C04: 0x01, 0x0C05: 0x27, 0x0C2B: 0x01, 0x0C2C: 0x27, 0x0C52: 0x01, 0x0C53: 0x2A,
 })
 
@@ -1357,6 +1363,22 @@ SEEDS.extend([
 SEEDS.extend([
     (0xFA4E, "POST-called complement-check routine; direct stack-threaded entry from E34Dh/E350h"),
     (0xFE6E, "three-byte near-JMP trampoline immediately following the 1-KiB bitmap block"),
+])
+
+DATA_RANGES.extend([
+    (0x19A2, 0x19AB, "CPU/cache profile dispatch pointer table referenced through CS:82C6h; four little-endian offsets to 19ABh/19ADh/19AEh/19AFh", "hexascii"),
+])
+
+SEEDS.extend([
+    (0x18E5, "I/O resource probe helper: tests a DX port with 55h and AAh through F691h and records the result in AH"),
+    (0x18FD, "four-port probe over the I/O base table at CS:8248h; calls 18E5h for each nonzero port"),
+    (0x1914, "I/O conflict aggregator: probes CS:8248h and CS:8240h port tables and checks fixed ports 03F4h/01F4h"),
+    (0x1980, "port-0170h write/read delay helper"),
+    (0x198F, "port-0170h/0171h dual-write delay helper"),
+    (0x19AB, "indirect-dispatch trampoline: JMP DI; referenced by the profile pointer table at 19A2h"),
+    (0x19AD, "one-byte RET dispatch stub referenced by the profile pointer table at 19A2h"),
+    (0x19AE, "one-byte RET dispatch stub referenced by the profile pointer table at 19A2h"),
+    (0x19AF, "one-byte RET dispatch stub referenced by the profile pointer table at 19A2h"),
 ])
 
 def main():
