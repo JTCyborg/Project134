@@ -100,7 +100,7 @@ This matches the use of helper 7323h by the POST/Setup metric-display paths alre
 
 The generator now has four separate entries with exact limits: 72D8h/19h, 72F1h/19h, 730Ah/19h and 7323h/0Ah. The data range previously beginning at 732Bh now begins at 732Dh.
 
-Projected range-mask result after this boundary correction:
+Generated range-mask result after this boundary correction:
 - Candidate windows: 895
 - Data ranges: 248
 - Unique code-window bytes: 44,372
@@ -108,7 +108,7 @@ Projected range-mask result after this boundary correction:
 - Code/data overlap: 334 bytes
 - Code/data union: 64,553 / 65,536 (98.50%)
 - Uncovered intervals: 45
-- Pages touched/full: 256 / 256, 217 / 256
+- Pages touched/full: 256 / 256, 216 / 256
 - Next largest uncovered interval: 83AEh–83FFh (82 bytes)
 
-The range figures are projected from the exact changed intervals; the updated generator has not yet been executed and the full Capstone candidate listing remains pending regeneration.
+The generator update is commit 781d8b3eda465a66a6195dd129f258093d18fde5. The full Capstone candidate listing and range-mask manifest were regenerated in commit 3f26611b497fe9cb7f2e96dd8b2a217dd3a9e977. The generated result reports 216 fully covered pages; this replaces the earlier manual projection of 217.
