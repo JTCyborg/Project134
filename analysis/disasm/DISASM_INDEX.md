@@ -413,7 +413,7 @@ This phase is semantic classification of selected regions, not a complete CFG. S
 - [AMI486_SEMANTIC_MAP_PHASE33_20261116.md](AMI486_SEMANTIC_MAP_PHASE33_20261116.md)
 - Corrected the CMOS-B3-selected small table ranges to 8E4Eh–8E61h and 8E76h–8E79h.
 - Disassembled helper 8DDCh and proved that each small-table word is a direct ALi index/value byte pair written through ports 22h/23h.
-- Established that 8750h–87A3h is a separate 21-record, four-byte encoding with a transformed selector and a value byte; entries resolving to selector 26h are skipped.
+- Established that 8750h–87A3h is a 21-record, four-byte ALi write view with a transformed selector and value byte; entries resolving to selector 26h are skipped. This is an overlapping consumer view of the first 21 records of the 76-record suffix at 8750h–887Fh, itself part of the 81-record array at 873Ch–887Fh.
 - Explicitly supersedes the incorrect small-table range/encoding description in phase32.
 
 
@@ -1277,7 +1277,7 @@ Report: [AMI486_ADDRESS_LEDGER_REGION_D655_E3FF_20261117.md](AMI486_ADDRESS_LEDG
 - DAA2h–DFFFh is 1,374 zero bytes. E000h/E005h are entry stubs; E05Bh is the reset entry target; E160h–E25Fh and E260h–E2BFh are separately classified descriptor-like/parameter blocks.
 - New direct entry: the stack-return continuation D906h executes `JMP 8400h`. This corrects phase 52's former unresolved dynamic-entry note; it does not contradict phase 51's table-target statement. The 8400h path clears/restores CMOS 8Eh–FFh and preserves BP.13.
 - Historical candidate-generator snapshot before the 19B0h–23CEh expansion: 541 code windows, 140 data ranges; 29,460 unique code-window bytes, 15,775 unique data-range bytes, 117 overlap bytes, 45,118-byte union (68.84%), 203 pages touched and 125 fully covered. Superseded by the current mask below.
-- Largest remaining uncovered intervals in the current mask: CA16h–D0FFh (1,770 bytes), 873Ch–8DCEh (1,683 bytes), 2436h–29F5h (1,472 bytes), FA53h–FFFFh (1,453 bytes), and 5A4Ch–5FE3h (1,432 bytes).
+- Historical gap ranking before the 873Ch–8DCEh region expansion: CA16h–D0FFh, 873Ch–8DCEh, 2436h–29F5h, FA53h–FFFFh and 5A4Ch–5FE3h. The first two are now covered; see the current ranking at the end of this index.
 
 
 ## Interrupt/CMOS/diagnostic region E862h–F52Dh — 2026-11-17
@@ -1291,7 +1291,7 @@ Report: [AMI486_ADDRESS_LEDGER_REGION_E862_F52D_20261117.md](AMI486_ADDRESS_LEDG
 - F068h clears CR0.PE and returns through the E2B8h IDT pointer to reset entry E05Bh. F10Dh–F302h covers CMOS Setup validation/editor; F371h is the encoded “EVALUATION COPY, NOT FOR SALE” message; F3DBh/F419h validate video/ROM signatures; F4A5h/F50Dh are fatal diagnostic paths.
 - The E87Bh and F0A3h tables, EFC7h–F041h opaque block and several interrupt-vector installations remain unresolved.
 - Historical candidate-mask snapshot at the time of this region report: 597 code windows, 153 data ranges; 31,279 unique code bytes, 15,827 unique data bytes, 121 overlap bytes, 46,985-byte union (71.69%), 210 pages touched, 135 fully covered. Superseded by the updated 597-window/154-data-range mask in section 17.
-- Historical gap ranking before the 19B0h–23CEh expansion; 19F8h–20FFh is now fully covered. Current largest gaps are CA16h–D0FFh (1,770 bytes), 873Ch–8DCEh (1,683 bytes), 2436h–29F5h (1,472 bytes), FA53h–FFFFh (1,453 bytes), and 5A4Ch–5FE3h (1,432 bytes).
+- Historical gap ranking before the 19B0h–23CEh expansion; 19F8h–20FFh is now fully covered. The CA16h–D0FFh and 873Ch–8DCEh gaps have also since been mapped.
 
 
 ## Hard Disk Setup / INT 13h diagnostic region 696Fh–72D7h — 2026-11-17
@@ -1309,7 +1309,7 @@ Report: [AMI486_ADDRESS_LEDGER_REGION_696F_72D8_20261117.md](AMI486_ADDRESS_LEDG
 
 Report: [AMI486_ADDRESS_LEDGER_REGION_19B0_23CE_20261117.md](AMI486_ADDRESS_LEDGER_REGION_19B0_23CE_20261117.md).
 
-- The former 19F8h–20FFh gap is now fully covered by bounded code windows and explicit data ranges. It contains cache/CPU-speed display, B3h-selected ALi profile setup, option-ROM scanning/validation, manual CMOS-to-ALi configuration, POST A1h/A4h paths, the 21-record 8750h table walker and the A20-bracketed protected-mode memory-address probe.
+- The former 19F8h–20FFh gap is now fully covered by bounded code windows and explicit data ranges. It contains cache/CPU-speed display, B3h-selected ALi profile setup, option-ROM scanning/validation, manual CMOS-to-ALi configuration, POST A1h/A4h paths, the 21-record 8750h ALi table view (overlapping the 81-record CMOS/configuration array) and the A20-bracketed protected-mode memory-address probe.
 - Exact stack-return sequence: 1AFBh sets SP=1B04h and returns to 1B06h; 1B24h sets SP=1B2Ah and returns to 1B2Ch; 208Dh returns to 2098h; 20BCh returns to 20C4h; 20C6h jumps to F66Ah and returns to 20CEh; 20D2h jumps to EEEFh and returns to 20DAh; 20F4h jumps to 8DDCh and returns to 20FCh. The words at 1B04h, 1B2Ah, 2096h, 20C2h, 20CCh, 20D8h and 20FAh are data, not opcodes.
 - D9D9h is a confirmed direct JMP to the B3h profile entry at 1AFBh. The B3h selector skips the list when bits 2/3 are both clear; otherwise it chooses 8E4Eh–8E61h or 8E76h–8E79h. The 1B2Ch continuation programs PIT channel 1 (ports 43h/41h), not channel 2.
 - The LGDT pseudo-descriptor at 2068h loads limit 0017h and 24-bit base 0F2070h; GDT selectors 0008h and 0010h are flat 4-GiB and 64-KiB data segments respectively. 20DAh loads ES=0008h; AX=4410h is an ALi index/value pair, not a segment selector.
@@ -1328,4 +1328,16 @@ Detailed map: [AMI486_ADDRESS_LEDGER_REGION_CA15_D103_20261117.md](AMI486_ADDRES
 - CABBh–CB08h contains six 13-byte parameter records. C8CAh is a 13-byte parameter-table view that overlaps executable code after CALL D0D9h at C8C7h.
 - CB09h and CBF8h are coherent candidate entries but have no direct near xref in the linear listing; their dispatch provenance remains unresolved.
 - D058h is a floppy motor/readiness helper; D0D9h reads the INT 1Eh table through IVT offset 0078h and ends at D103h, including POP AX/RET.
-- Candidate seeds/data ranges have been added to `tools/disasm_ami486_candidate_windows.py`. Latest generated mask: 610 code windows, 163 data ranges, 32,861 unique code bytes, 15,940 unique data bytes, 130 overlap bytes, 48,671-byte union (74.27%), 68 uncovered intervals, 216 pages touched and 140 fully covered. This is not semantic completion. The former CA16h–D0FFh gap is fully covered; next largest gap is 873Ch–8DCEh (1,683 bytes).
+- Candidate seeds/data ranges have been added to `tools/disasm_ami486_candidate_windows.py`. Latest generated mask after mapping the 873Ch–8DCEh region: 678 code windows, 205 data ranges, 34,292 unique code bytes, 16,419 unique data bytes, 213 overlap bytes, 50,498-byte union (77.05%), 70 uncovered intervals, 223 pages touched and 147 fully covered. This is an inspection mask, not semantic completion. The next largest uncovered interval is 2436h–29F5h (1,472 bytes).
+
+
+## Address-ledger region 873Ch–8DCEh — 2026-11-17
+
+Detailed report: [AMI486_ADDRESS_LEDGER_REGION_873C_8DCE_20261117.md](AMI486_ADDRESS_LEDGER_REGION_873C_8DCE_20261117.md).
+
+- The 81-entry four-byte array at 873Ch–887Fh has consumer-specific views: CMOS defaults at 8400h, key-to-value lookup at 8378h, masked E000h/E080h buffer updates at 85FEh, and the 21-record ALi write view at 208Dh. The 8750h–87A3h ALi view is an overlap within the 76-record suffix, not a separate non-overlapping allocation.
+- The AUTO Config lookup at 87A9h uses a 20-byte row stride and fields at +0/+4/+8/+0Ch through row 13; its final field overlaps executable bytes at 88B9h–88BAh.
+- 85B3h calls the five-entry prefix, empty 85CBh slot and optional 85D6h worker, then falls through into the 76-entry 85C0h suffix. In the stock image this processes all 81 built-in records.
+- Mapped the POST CMOS B3h/ALi C2h-C3h path at 88CEh, the CMOS 8Fh/reset path at 8A04h, the B3h-selected ALi profile path at 8A20h, the 82DAh hook path at 8A78h, INT 15h keyboard hook, controller/port configuration helpers, CR0 cache-state continuations, 8042 transaction helper and ALi indexed-register callbacks.
+- Stack-return words are marked as data separately from their continuation streams; the remaining 8889h–8897h bytes and hardware-level register semantics remain unresolved.
+- The 873Ch–8DCEh interval now has zero uncovered bytes in the candidate mask. Latest mask: 678 code windows, 205 data ranges, 34,292 code bytes, 16,419 data bytes, 213 overlap bytes, 50,498-byte union (77.05%). Next largest gap: 2436h–29F5h (1,472 bytes).
