@@ -31735,6 +31735,43 @@ Reason: POST video/adapter initialization continuation: selects B000h/B800h mapp
 5F60  E6 80                   out 0x80, al
 5F62  E9 39 F1                jmp 0x509e
 
+===== 5EB6h-5F04h =====
+Reason: Alternate POST/video path reached by the unconditional short JMP at 5E6Dh; overlaps the high displacement byte of the linear CALL at 5EB4h and rejoins near 5F01h
+5EB6  B0 33                   mov al, 0x33
+5EB8  E6 80                   out 0x80, al
+5EBA  A0 10 00                mov al, byte ptr [0x10]
+5EBD  24 30                   and al, 0x30
+5EBF  3C 30                   cmp al, 0x30
+5EC1  A0 12 00                mov al, byte ptr [0x12]
+5EC4  74 02                   je 0x5ec8
+5EC6  34 40                   xor al, 0x40
+5EC8  A8 40                   test al, 0x40
+5ECA  75 04                   jne 0x5ed0
+5ECC  81 CD 80 00             or bp, 0x80
+5ED0  B0 34                   mov al, 0x34
+5ED2  E6 80                   out 0x80, al
+5ED4  A0 10 00                mov al, byte ptr [0x10]
+5ED7  24 30                   and al, 0x30
+5ED9  3C 30                   cmp al, 0x30
+5EDB  B4 07                   mov ah, 7
+5EDD  74 21                   je 0x5f00
+5EDF  B0 8E                   mov al, 0x8e
+5EE1  E8 B0 8F                call 0xee94
+5EE4  A8 E0                   test al, 0xe0
+5EE6  B8 20 03                mov ax, 0x320
+5EE9  75 15                   jne 0x5f00
+5EEB  50                      push ax
+5EEC  E8 5A 27                call 0x8649
+5EEF  58                      pop ax
+5EF0  74 0E                   je 0x5f00
+5EF2  B0 94                   mov al, 0x94
+5EF4  E8 9D 8F                call 0xee94
+5EF7  24 30                   and al, 0x30
+5EF9  3C 20                   cmp al, 0x20
+5EFB  74 03                   je 0x5f00
+5EFD  B8 10 01                mov ax, 0x110
+5F00  80 26 10 00 CF          and byte ptr [0x10], 0xcf
+
 ===== 5F65h-5FA6h =====
 Reason: direct CALL target from 5E37h; opaque diagnostic/check helper entry
 5F65  B0 94                   mov al, 0x94

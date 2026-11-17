@@ -1,6 +1,6 @@
 Target: ami486.bin
 ROM size: 65536 bytes
-Candidate windows: 865
+Candidate windows: 866
 Data ranges: 242
 Unique code-window bytes: 43228
 Unique data-range bytes: 20214
