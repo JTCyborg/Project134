@@ -609,3 +609,12 @@ The candidate generator now includes bounded seeds and data/padding boundaries f
 Detailed verification: [AMI486_ADDRESS_LEDGER_REGION_7CE9_7FFF_20261117.md](AMI486_ADDRESS_LEDGER_REGION_7CE9_7FFF_20261117.md).
 
 The entire 791-byte interval 7CE9h–7FFFh is verified as 00h (791 zero bytes, zero nonzero bytes). It is padding/reserved ROM space, not code or an embedded table. The candidate generator now includes it as a single zero-filled data range. GitHub Actions run 44084573238 passed: 811 windows / 238 data ranges, 58,500 covered bytes (89.26%), 67 uncovered intervals. The next largest uncovered interval is 639Ch–6615h (634 bytes).
+
+
+## 26. RTC date/time Setup editor — 639Ch–6615h (2026-11-17)
+
+Detailed map: [AMI486_ADDRESS_LEDGER_REGION_639C_6615_20261117.md](AMI486_ADDRESS_LEDGER_REGION_639C_6615_20261117.md).
+
+Mapped the RTC Setup editor continuation: day/month/year fields use INT 1Ah AH=04h/AH=05h; hour/minute/second use AH=02h/AH=03h. The visible UI explicitly specifies 24-hour time and date/year ranges. Helper 6774h validates RTC date (1901–2099; invalid values default to 1980-01-01); 67AEh validates time (invalid values default to 00:00:00); 65BFh/65C4h validate month/day with February leap-year handling. The adjacent 6616h display routine calculates weekday from the 6164h/616Bh tables and uses weekday/month abbreviations at 7829h/7845h.
+
+Candidate generation now includes bounded seeds for the editor and its field-rendering/date-validation helpers. GitHub Actions run 44084872234 passed: 819 windows / 238 data ranges, 59,134 covered bytes (90.23%), 66 uncovered intervals. The next largest uncovered interval is AF86h–B1E8h (611 bytes).
