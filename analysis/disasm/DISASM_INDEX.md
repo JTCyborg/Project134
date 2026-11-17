@@ -1074,7 +1074,7 @@ Detailed report: [AMI486_STORAGE_AND_DISPATCH_REGIONS_20261116.md](AMI486_STORAG
 - D100h–D5FFh is the independent floppy controller/DMA subsystem using 03F2h/03F4h/03F5h/03F7h and DMA ports 0Ch/0Bh/05h/04h.
 - AD00h–AE5Fh is keyboard translation data candidate; AE60h onward includes INT 15h AH=4Fh keyboard intercept handling.
 - F92Ah–F935h is the six-entry INT 14h serial-service table; F977h is the AH=03h status entry overlapping the F936h initialization stream. F8E7h INT 14h vector installation remains unresolved.
-- Historical candidate-window snapshot: 168 code windows plus 18 data ranges (186 headers; 10,700-byte union). The current generated artifact has 222 code windows and 57 data ranges (279 headers; 21,224-byte union across 108 pages). This is a selected-window footprint, not semantic coverage; see AMI486_ADDRESS_LEDGER_20261116.md section 11.
+- Historical candidate-window snapshot: 168 code windows plus 18 data ranges (186 headers; 10,700-byte union). The current generated artifact has 243 code windows and 57 data ranges (300 headers; 23,064-byte union across 121 pages). This is a selected-window footprint, not semantic coverage; see AMI486_ADDRESS_LEDGER_20261116.md section 11.
 
 Do not merge ATA, FDC, keyboard and F9xx dispatch code into one subsystem.
 
@@ -1191,13 +1191,13 @@ The 2100h raw-byte correction is recorded in AMI486_ADDRESS_LEDGER_20261116.md: 
 - [AMI486_SETUP_EDITOR_RENDERING_EXTENSION_20261117.md](AMI486_SETUP_EDITOR_RENDERING_EXTENSION_20261117.md) extends phase 12 with byte-aligned 0D84h event dispatch, 0E19h/0E47h selection wrap helpers, 0E7Ch single-item rendering, and the 0EE2h–10DEh option-list/auxiliary-description renderer. It refines E18Ch as absolute selected-record index and E185 as on-screen row.
 - [AMI486_POST_SUMMARY_DISPLAY_20261117.md](AMI486_POST_SUMMARY_DISPLAY_20261117.md) maps the 3F4Ah/3F7Bh POST summary frame and fields, CPU/numeric-processor selection, floppy/HDD/display formatting, BDA COM/LPT enumeration and decimal/line-rendering helpers.
 - Setup data boundaries are distinct: 3044h–318Bh short captions; 318Ch–31A3h 12 caption pointers; 31A4h–342Dh long descriptions; 342Eh–3443h 11 long-description pointers; 3444h–3445h separate Do Not Write pointer; 3446h–345Bh 11 handler pointers.
-- Previous candidate artifact: 187 code windows plus 35 data ranges, 15,639-byte union. Superseded by the current 222-window/57-range artifact (21,224-byte union across 108 pages). This is a sampling footprint, not semantic coverage.
+- Previous candidate artifact: 187 code windows plus 35 data ranges, 15,639-byte union. Superseded by the current 243-window/57-range artifact (23,064-byte union across 121 pages). This is a sampling footprint, not semantic coverage.
 - Do not start phase 97. Continue from the address ledger's unresolved ranges and cross-reference gaps.
 
 
 ## Candidate address/data map update — 2026-11-17
 
-The Capstone candidate generator now emits 222 code windows and 57 explicit data ranges (279 headers). Recomputed union is 21,224/65,536 bytes (32.39%) across 108 pages: 12,140 code-window bytes, 9,197 data-range bytes, 113 overlap bytes. This is only a seeded inspection footprint, not semantic coverage. See AMI486_ADDRESS_LEDGER_20261116.md section 11 for the newly classified strings, labels, embedded pointer tables and OEM identity block.
+The Capstone candidate generator now emits 243 code windows and 57 explicit data ranges (300 headers). Recomputed union is 23,064/65,536 bytes (35.19%) across 121 pages: 13,980 code-window bytes, 9,197 data-range bytes, 113 overlap bytes. This is only a seeded inspection footprint, not semantic coverage. See AMI486_ADDRESS_LEDGER_20261116.md section 11 for the newly classified strings, labels, embedded pointer tables and OEM identity block.
 
 Newly mapped data regions include POST conflict strings (188Eh–18E4h), cache/CPU labels (19CAh–19F7h), Setup exit prompts (2F24h–2F65h), Setup legends (3624h–381Bh), hard-disk utility strings/tables (3900h–3C5Bh), load-default prompts (59C0h–5A4Bh), POST throughput label (7145h–714Dh), POST/help/error text and lookup data (732Bh–7CE8h), AMI/OEM identity block (8000h–81EDh), and ASCII lookup bytes (B528h–B55Eh).
 
@@ -1223,7 +1223,10 @@ The 00EFh cleanup target is byte-verified as 62BDh, not 6220h. The 626Bh install
 Byte-aligned target correction: the cleanup CALL at 0210h resolves to 62BDh (bytes E8 AA 60), not 6220h. The IVT helper pair is 626Bh (install) / 62BDh (restore); 62ECh, 62FCh and 631Ch are the installed INT 10h/1Ah/1Ch handler entries. The INT 1Ch handler calls 6616h; these entries and helper are seeded for cross-reference analysis.
 
 
-The temporary INT 1Ch handler at 631Ch uses the BIOS tick count at 0040:006Ch and calls 6616h when its timing threshold is reached and the INT 10h/1Ah nesting counter at 028Eh is zero. The 6616h helper reads/validates the BIOS date via 6774h and performs calendar calculations through CS tables at 6164h/616Bh. The candidate window is extended through its RET at 6757h; BCD/date conversion helpers 68E2h and 68FDh are seeded separately.
+The temporary INT 1Ch handler at 631Ch uses the BIOS tick count at 0040:006Ch and calls 6616h when its timing threshold is reached and the INT 10h/1Ah nesting counter at 028Eh is zero. The 6616h helper reads/validates the BIOS date via 6774h and performs calendar calculations through CS tables at 6164h/616Bh. The raw 6616h stream has been checked through its RET at 6757h; BCD/date conversion helpers 68E2h and 68FDh are seeded separately. The generator source requests a 0142h window, but the currently generated listing still shows only 0080h bytes.
 
 
-The calendar updater at 6616h is now decoded as a complete candidate stream through its RET at 6757h (LIMITS 0142h). It reads and validates the BIOS date with 6774h/68E2h, converts packed BCD components through 68FDh, computes weekday/month offsets using tables 6164h/616Bh, and writes the calendar grid. The generated candidate listing is being refreshed for this full window.
+The raw 6616h stream has been checked through its RET at 6757h. It reads and validates the BIOS date with 6774h/68E2h, converts packed BCD components through 68FDh, computes weekday/month offsets using tables 6164h/616Bh, and writes the calendar grid. The generator source requests LIMITS 0142h, but the generated candidate listing still shows 6616h–6695h (0080h bytes); the refreshed window is not yet verified.
+
+
+The temporary IVT/calendar-refresh analysis is documented in [AMI486_TEMPORARY_IVT_CALENDAR_REFRESH_20261117.md](AMI486_TEMPORARY_IVT_CALENDAR_REFRESH_20261117.md). The screen routine's 0210h call is 62BDh, not 6220h. The current generated candidate listing has 243 code windows and 57 data ranges; the 6616h extended-window regeneration remains pending.
