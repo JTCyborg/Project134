@@ -76,4 +76,4 @@ The exact Setup field edited through this text path remains unresolved; retain t
 
 The candidate generator now includes bounded entries for the four BP-relative field helpers, generic numeric editor, render/cursor helpers, keyboard loop, decimal parser and text-input prologue. The entire 066Bh–084Eh interval is treated as executable code.
 
-The CI manifest is the verification gate for this update; the next largest uncovered interval will be taken from the completed run.
+GitHub Actions run 44085877262 completed successfully. The manifest reports 837 candidate windows, 238 data ranges, 41,395 unique code-window bytes, 19,703 unique data-range bytes, 293 overlap bytes, and a 60,805-byte union (92.78%). There are 63 uncovered intervals; the next largest is 3C5Ch–3E3Dh (483 bytes).
