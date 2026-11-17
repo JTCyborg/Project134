@@ -593,3 +593,12 @@ Detailed map: [AMI486_ADDRESS_LEDGER_REGION_E481_E830_20261117.md](AMI486_ADDRES
 E481h–E6F0h continues the 16-byte fixed-disk parameter table already recorded at E401h–E480h: 39 more records, 47 records total across E401h–E6F0h. E6F2h is a near JMP to F758h. E729h–E738h is an eight-word UART baud-divisor table (110–9600 baud); E739h is the INT 14h trampoline to F8E3h. The remaining E6F5h–E728h and E73Ch–E7E7h blocks remain opaque data. E7E8h–E82Dh contains 8042 keyboard-controller helpers, E82Eh is the INT 16h trampoline to B3DEh, and EFD2h is the INT 17h trampoline to F85Eh.
 
 The candidate generator now splits the table, padding, jump, payload and helper entries. GitHub Actions run 44084310128 passed: 811 windows / 237 data ranges, 57,709 covered bytes (88.06%), 68 uncovered intervals. The next largest uncovered interval is 7CE9h–7FFFh (791 bytes). The fixed-disk record field semantics and payload consumer remain open.
+
+
+## 24. 8042, option-ROM, boot and BIOS interrupt services — F5AEh–F8E6h (2026-11-17)
+
+Detailed map: [AMI486_ADDRESS_LEDGER_REGION_F5AE_F8E6_20261117.md](AMI486_ADDRESS_LEDGER_REGION_F5AE_F8E6_20261117.md).
+
+Mapped the 8042 command/data/status helpers F5BCh–F670h, generic I/O port test F691h/F6B8h, option-ROM scanner F6D9h, INT 19h bootstrap F758h, four-retry INT 13h read helper F810h, INT 11h/12h handlers F84Dh/F841h, INT 14h serial handler trampoline E739h→F8E3h, INT 15h trampoline F859h→90B4h, INT 16h trampoline E82Eh→B3DEh, and INT 17h printer handler trampoline EFD2h→F85Eh. The INT 14h dispatcher uses six handler offsets at F92Ah–F935h. F82Ch–F840h and F85Ch–F85Dh are padding; F5AEh–F5B1h remains opaque.
+
+The candidate generator now includes bounded seeds and data/padding boundaries for this region. GitHub Actions run 44084310128 passed: 811 windows / 237 data ranges, 57,709 covered bytes (88.06%), 68 uncovered intervals. The next largest uncovered interval is 7CE9h–7FFFh (791 bytes).
