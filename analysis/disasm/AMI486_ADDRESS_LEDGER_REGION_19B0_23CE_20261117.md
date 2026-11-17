@@ -24,8 +24,8 @@ This map reconciles existing semantic reports (phases 16–35 and 38–39) with 
 
 - 19FBh–1A23h reads ALi register 18h. If the cache-enable bit is set, it extracts the cache-size index, reads the word table at 19B0h, formats the value and prints the cache label at 19C9h.
 - 1A24h–1A5Fh is the CPU-speed display path. It uses the lookup bytes at 19C2h and the CPU-clock strings. The CMOS B6h.0 AUTO Config gate is checked through 29EDh; the conditional branch selects the chipset-dependent speed display path.
-- 1A60h–1A8Fh is the conditional ALi initialization path selected by CMOS B6h.0. It checks the current ALi state and applies the associated register updates.
-- 1A90h–1AFAh reads ALi registers 12h/13h and normalizes the BIOS-reported memory-size value at E017h. This is a memory-size normalization routine; it is not itself a write to the ALi registers.
+- 1A60h–1A8Eh is the conditional ALi initialization path selected by CMOS B6h.0. It checks the current ALi state and applies the associated register updates; 1A8Fh is a separate RET stub called from 850Eh.
+- 1A90h–1AF7h reads ALi registers 12h/13h and normalizes the BIOS-reported memory-size value at E017h. This is a memory-size normalization routine; 1AF8h is a separate JMP trampoline to D82Fh, and 1AFBh is a distinct POST entry reached by D9D9h.
 
 ## 3. CMOS B3h profile selection and table writes (1AFBh–1B5Dh)
 
@@ -33,13 +33,13 @@ This map reconciles existing semantic reports (phases 16–35 and 38–39) with 
 
 At 1AFBh the code loads AL=B3h, sets SP=1B04h and jumps to EE94h (CMOS indexed read). The word at 1B04h–1B05h is 1B06h, so RET from EE94h resumes at 1B06h.
 
-The continuation tests CMOS B3h bits 2/3 and selects one of the two small profile tables at 8E4Eh or 8E76h. This is the B3h-selected profile table; it is distinct from the later 21-record table at 8750h–87A4h.
+The continuation at 1B06h tests CMOS B3h bits 2/3. If both are clear it skips the list writer and branches to 1B2Eh. If bit 2 is set it selects 8E4Eh–8E61h; otherwise (bit 3 set) it selects 8E76h–8E79h. This is distinct from the later 21-record table at 8750h–87A3h.
 
 ### 3.2 Second stack-return trampoline
 
-At 1B20h the code sets SP=1B2Ah and jumps to 8DDCh, the ALi indexed-register writer. The word at 1B2Ah–1B2Bh is 1B2Ch, so the helper returns to the loop at 1B2Ch.
+At 1B24h the code sets SP=1B2Ah and jumps to 8DDCh, the ALi indexed-register writer. The word at 1B2Ah–1B2Bh is 1B2Ch, so the helper returns to the loop at 1B2Ch.
 
-The loop applies the selected profile words through 8DDCh, programs port 61h, port 8Fh, PIT control/data ports 43h/41h, fills 400h bytes at ES:DI, then jumps to 208Dh for the separate 8750h table pass.
+The loop applies the selected profile words through 8DDCh, writes port 61h and port 8Fh, programs PIT channel 1 (control word 54h to port 43h and count byte to port 41h), fills 400h bytes at ES:DI, then jumps to 208Dh for the separate 8750h table pass. The selector-7 entry at 1B5Bh is a separate JMP D724h target from the CMOS 8Fh table at D6A8h.
 
 The one-byte RET stubs at 1B5Eh and 1B5Fh are preserved as code entries; they are not part of the PIT loop.
 
@@ -53,7 +53,7 @@ It then checks C000:0000 for signature AA55h. If no image is present, BX scans E
 
 ### 4.2 Separate C0000h path
 
-1BF6h is a separate hook path reached from the POST 5E20h site. It reads CS:B51Dh through 8300h and conditionally calls the C0000h window helper. It is distinct from the E0000h–E7FFFh scan.
+1BF6h is a separate optional board-specific hook reached from the POST 5E20h site. It reads CS:B51Dh through 8300h and conditionally calls 2415h. Its exact hardware effect is not established by this local path.
 
 ## 5. POST chipset configuration and A20 feature decision (1C06h–1F46h)
 
@@ -62,11 +62,11 @@ It then checks C000:0000 for signature AA55h. If no image is present, BX scans E
 - 1C06h calls the pointer at CS:82DEh. The stock value is 19ADh (RET), so this callback is a no-op in the stock image. The routine then checks CS:8280h bit 40h and performs the associated ALi register setup when enabled.
 - 1C50h is the ALi register 13h helper.
 - 1C5Eh calls the pointer at CS:82E2h. The stock value is 19AEh (RET), also a no-op. It then reads CMOS 8Eh; bits C0h gate the normal configuration path.
-- 1C72h calls 29EDh to test CMOS B6h.0. AUTO Config calls 8F12h, 2588h and 25A6h. The manual configuration continuation begins at 1C83h; its first CMOS key load is at 1C85h.
+- 1C72h calls 29EDh to test CMOS B6h.0. If AUTO Config is active, this path calls 8F12h, 2537h and 256Ah, then jumps to 1CB5h. The manual configuration path is entered at aligned address 1C85h (1C83h is not an entry).
 
 ### 5.2 Manual CMOS-to-ALi1429 path
 
-1C83h–1DD7h is the manual read/modify/write continuation. It reads the selected CMOS keys, combines them with the current ALi register values, and writes the resulting values through the indexed helpers at 8DCFh/8DDCh. This path is distinct from the later A4h configuration group at 1F47h.
+1C85h–1DD2h is the manual read/modify/write continuation. It reads the selected CMOS keys, combines them with current ALi register values, and writes through 8DCFh/8DDCh. The separate feature-gated entry at 1DD3h is reached by the direct JMP at 1C6Fh; it must not be merged into the manual stream.
 
 ### 5.3 Fast Gate A20 input-port probe
 
@@ -77,9 +77,9 @@ The actual A20 output-port operations are separate: F66Ah writes D1h/DFh to enab
 ### 5.4 Conditional POST handlers
 
 - 1DE8h is an internal continuation of the 1DD8h feature path; it calls 8300h for the B51Bh option record and updates the BDA state before the 8042 input-port probe.
-- 1E37h–1E45h checks BDA 0012h bit 20h and routes to the appropriate continuation.
-- 1E46h–1E4Ch is a short PIC EOI/IRET stub.
-- 1E4Dh and 1E61h are ALi register 14h update helpers.
+- 1E36h–1E43h checks BDA 0012h bit 20h and routes to F068h when set.
+- 1E44h–1E4Ah is the PIC EOI/IRET path: OUT 20h,20h followed by IRET.
+- 1E4Bh and 1E5Fh are the aligned ALi register 14h set/clear helper entries.
 - 1E78h checks B513h through 8300h; when enabled it sets bit 3 in ALi register 14h.
 - 1E9Ah–1E9Ch is an `OR SP,SP; RET` status-success stub.
 - 1E9Dh checks B51Fh/B521h/B523h through 8300h and conditionally calls 2420h/242Bh/2436h for the shadow-window setup.
@@ -94,7 +94,7 @@ The actual A20 output-port operations are separate: F66Ah writes D1h/DFh to enab
 ## 6. Reset stub, descriptor block and 21-record ALi table (2065h–20C8h)
 
 - 2065h–2067h is a near-JMP stub to the reset entry F000:E05Bh.
-- 2068h–208Ch is a descriptor/parameter block used by the protected-mode probe. The six-byte pseudo-descriptor at 2068h is loaded by `LGDT CS:[2068h]` at 20E3h; its raw limit is 0017h and its raw base is 930F2070h. The exact purpose of all adjacent descriptor bytes remains open.
+- 2068h–206Dh is the six-byte LGDT pseudo-descriptor: limit 0017h, 24-bit base 0F2070h (byte 206Dh is the reserved high byte for 16-bit LGDT). 206Eh–206Fh are zero padding. The GDT at 2070h–2087h has three 8-byte entries: null, flat base-zero writable 4-GiB data selector 0008h, and base-zero writable 64-KiB data selector 0010h. Bytes 2088h–208Ch (`01 04 02 10 40`) remain unresolved.
 - 208Dh–20C8h selects ALi index C503h and walks 21 four-byte records at 8750h–87A4h. It subtracts 30h from each record's low byte, skips entries whose adjusted value is 26h, and writes the selected values through 8DDCh. This 21-record table is independent of the B3h-selected 8E4Eh/8E76h profile tables.
 
 The table walker uses stack-return trampolines:
@@ -103,12 +103,11 @@ The table walker uses stack-return trampolines:
 
 ## 7. A20-bracketed protected-mode memory-address probe (20C9h–23CEh)
 
-- 20C9h is a tail jump to F66Ah, enabling A20. The code sets SP=20CCh first; the word at 20CCh–20CDh returns to 20CEh after the helper.
-- 20CEh prepares the next indexed write. It sets SP=20D8h and jumps to 8DDCh; the return word at 20D8h–20D9h resumes at 20DAh.
-- 20DAh reads CR0, sets PE, loads the GDT pointer at CS:2068h, and enters the protected-mode test using selector 4410h. It writes and verifies complementary 32-bit patterns at multiple offsets, derives the memory-address test result, and writes the result through ALi registers 10h/11h.
-- 23BDh–23CAh clears CR0.PE and returns to real mode.
-- 23CBh jumps to F66Eh to disable A20.
-- 23CEh resumes the ordinary POST continuation.
+- 20C6h sets SP=20CCh and jumps to F66Ah to enable A20; the word at 20CCh–20CDh returns to 20CEh after the helper.
+- 20CEh loads BX=0800h, sets SP=20D8h and jumps to EEEFh; the return word at 20D8h–20D9h resumes at 20DAh.
+- 20DAh reads CR0, sets PE, loads the GDT pointer at CS:2068h, then loads ES=0008h (the flat 4-GiB data selector). It loads AX=4410h as an ALi indexed-register write (index 10h, value 44h), not as a segment selector. After the 8DDCh helper returns through stack word 20FAh, execution resumes at 20FCh and begins the 32-bit ES memory-alias test.
+- 20F4h sets SP=20FAh and jumps to 8DDCh; the word at 20FAh–20FBh is 20FCh. RET resumes at 20FCh, where MOV DL,FFh precedes the first prefixed dword store at 20FEh. The opcode byte at 2100h is inside that instruction, not a separate entry.
+- The later 23BDh–23CAh continuation clears CR0.PE and returns to real mode; 23CBh jumps to F66Eh to disable A20; 23CEh resumes the ordinary POST continuation.
 
 This establishes the local A20/PE ordering and the 1B58h -> 208Dh -> 20C9h path. The upstream entry into the larger 1AFBh B3h profile block remains unresolved; no conventional direct CALL/JMP to its start has been established.
 
@@ -127,20 +126,21 @@ This establishes the local A20/PE ordering and the 1B58h -> 208Dh -> 20C9h path.
 | 2096h–2097h | Stack return word 2098h |
 | 20C2h–20C3h | Stack return word 20C4h |
 | 20CCh–20CDh | Stack return word 20CEh |
-| 20D8h–20D9h | Stack return word 20DAh |
+| 20D8h–20D9h | Stack return word 20DAh consumed by EEEFh |
+| 20FAh–20FBh | Stack return word 20FCh consumed by 8DDCh |
 
 The separate RET stubs at 1B5Eh/1B5Fh and 1C4Eh/1C4Fh, plus the 1E9Ah status stub and 203Fh status stub, are classified as code rather than data.
 
 ## 9. Remaining uncertainties
 
-- The upstream entry that first reaches the 1AFBh B3h profile trampoline and the larger 1B20h profile loop is still unresolved.
+- D9D9h is a confirmed direct JMP to 1AFBh. The 1AFBh B3h profile trampoline and its 1B06h/1B2Ch stack-threaded continuation are therefore directly reachable; the earlier unresolved-entry statement is withdrawn.
 - The precise board-specific meanings of ALi registers 03h, 10h and 11h remain unnamed.
-- The exact purpose of the full descriptor/parameter block at 2068h–208Ch, beyond the six-byte LGDT pseudo-descriptor, remains open.
+- The GDT entries at 2070h–2087h are identified; only the five bytes at 2088h–208Ch remain unresolved.
 - The precise external caller of the 20C9h memory-address probe is not identified, although its local entry from the 1B58h -> 208Dh sequence is confirmed.
 - The semantics of each 8E4Eh/8E76h profile word remain in the separate B3h table analysis.
 
 ## 10. Candidate-mask result
 
-The latest successful generator run covers the former 19F8h–20FFh gap completely: **no uncovered bytes remain in that interval**. The global candidate mask contains 597 code windows and 153 data ranges, covering 46,985/65,536 bytes (71.69%) with 121 overlap bytes, 66 uncovered intervals, 210 pages touched and 135 fully covered pages.
+The latest successful generator run covers the former 19F8h–20FFh gap completely: **no uncovered bytes remain in that interval**. The global candidate mask contains 597 code windows and 154 data ranges, 31,189 unique code-window bytes, 15,829 unique data-range bytes, 117 overlap bytes and a 46,901/65,536-byte union (71.57%), with 69 uncovered intervals, 210 pages touched and 133 fully covered pages. This remains an inspection mask, not semantic completion. The next largest uncovered interval is CA16h–D0FFh (1,770 bytes).
 
 This is a seeded code/data inspection mask, not a whole-ROM semantic-completion percentage. The next largest uncovered interval is CA16h–D0FFh (1,770 bytes).
