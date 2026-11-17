@@ -127,3 +127,8 @@ The candidate generator keeps the two tables, the INT3 byte, the NOP alignment b
 ## Follow-up cross-reference correction — Hard Disk Setup caller (2026-11-17)
 
 The 6BDEh dispatcher caller and E1ACh selector source are now resolved. The direct call is at 6967h from 6936h. The UI handler at 4642h–46E8h saves E1ACh, renders all three values (0–2), restores the original value and cycles it with wraparound on arrow-key input. The surrounding screen handler at 4628h displays the geometry headings and the strings “No Hard Disk Installed” and “Hard Disk Type can be changed from”. Thus the 6BD8h three-word table is the Hard Disk Setup mode/operation dispatch table. The caller of the 691Bh IRQ1-masking wrapper remains unknown.
+
+
+## Candidate-mask snapshot — 2026-11-17
+
+The latest successful generator run contains 541 code windows and 140 data ranges. The union is 45,118/65,536 bytes (68.84%), with 117 overlap bytes, 71 uncovered intervals, 203 pages touched and 125 fully covered pages. This is a seeded inspection mask, not a semantic-completion percentage. The largest remaining uncovered interval is 19F8h–20FFh (1,800 bytes), followed by CA16h–D0FFh (1,770 bytes) and 873Ch–8DCEh (1,683 bytes).
