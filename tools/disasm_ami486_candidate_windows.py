@@ -76,7 +76,7 @@ LIMITS.update({0xFA4E: 0x17, 0xFE6E: 0x03})
 # Main POST continuation and bounded helper entries in 1364h–188Dh.
 # Fixed-disk parameter continuation, embedded data, and keyboard-controller helpers.
 LIMITS.update({
-    0x10DF: 0x240,
+    0x10DF: 0x241,
 })
 
 LIMITS.update({
