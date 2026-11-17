@@ -1341,3 +1341,18 @@ Detailed report: [AMI486_ADDRESS_LEDGER_REGION_873C_8DCE_20261117.md](AMI486_ADD
 - Mapped the POST CMOS B3h/ALi C2h-C3h path at 88CEh, the CMOS 8Fh/reset path at 8A04h, the B3h-selected ALi profile path at 8A20h, the 82DAh hook path at 8A78h, INT 15h keyboard hook, controller/port configuration helpers, CR0 cache-state continuations, 8042 transaction helper and ALi indexed-register callbacks.
 - Stack-return words are marked as data separately from their continuation streams; the remaining 8893h–8898h bytes and hardware-level register semantics remain unresolved.
 - The 873Ch–8DCEh interval now has zero uncovered bytes in the candidate mask. Latest mask: 678 code windows, 205 data ranges, 34,292 code bytes, 16,419 data bytes, 213 overlap bytes, 50,498-byte union (77.05%). Next largest gap: 2436h–29F5h (1,472 bytes).
+
+
+## INT 13h DMA / FDC command engine — 2026-11-17
+
+Detailed map: [AMI486_ADDRESS_LEDGER_REGION_D104_D603_20261117.md](AMI486_ADDRESS_LEDGER_REGION_D104_D603_20261117.md).
+
+- D104h–D155h is a drive/media-state check; D156h–D196h programs 8237 DMA channel 2 through ports 0Ch, 0Bh, 05h, 04h, 81h and 0Ah; D197h–D1BFh normalizes the DMA buffer address and checks the 64-KiB page boundary.
+- D1C0h–D215h builds FDC command packets; D216h is the busy/wait wrapper; D243h writes command bytes to 3F5h; D270h/D294h read FDC result bytes; D2BDh decodes the BDA diskette geometry/status word.
+- D2FDh–D380h covers the drive/media status and motor-start paths. D381h loads the INT 1Eh parameter-table vector. D3B5h reads CMOS drive-type nibbles; D3CFh–D496h initializes per-drive BDA state.
+- D499h–D51Fh performs drive/media probing and rate-select writes. D520h–D603h contains controller initialization/configuration probing and a parameterized command/result verifier.
+- Incoming references from the INT 13h region and POST/controller path were checked against the complete Capstone listing. D604h remains the separate POST entry.
+- The readable `docs/627.10/ASM1/BIOS.ASM` has no diskette/FDC/INT 13h implementation in the inspected file; `IO.112/SYSTEM` has prebuilt `RDMA.OBJ` but no readable FDC source. These binaries were not treated as source evidence.
+- Candidate-window seeds for this area were already present in `tools/disasm_ami486_candidate_windows.py`; this ledger adds semantic classification and cross-reference evidence rather than duplicating the linear listing.
+
+The candidate-mask figures in earlier sections are historical snapshots. The checked-in manifest currently reports 904 candidate windows, 250 data ranges and a 64,925-byte (99.07%) code/data union, with the largest listed uncovered intervals at 566Bh–56ADh, 55ECh–562Ah, 235Bh–2380h, 2207h–222Ch and D7B3h–D7D7h. Treat these as generator inspection metrics only; they are not a measure of semantic completion, and the manifest still requests regeneration from the current generator before being treated as a final reproducibility result.
