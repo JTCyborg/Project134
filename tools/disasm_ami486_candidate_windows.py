@@ -164,6 +164,7 @@ LIMITS.update({
 
 
 DATA_RANGES = [
+    (0x8E09, 0x8E44, "unresolved four-byte prefix 86 C4 FF E7 followed by the 55-byte indexed value table used by the helper at 8E44h", "hexascii"),
     (0x562B, 0x566B, "16-entry x 4-byte Setup text-attribute palette table selected by [E037h]", "hexascii"),
     (0x0000, 0x00EF, "AMI BIOS copyright/identity block and embedded date/pattern bytes preceding the 00EFh code candidate", "hexascii"),
     (0x3044, 0x318C, "Complete Setup main-menu caption strings, ending at the final NUL", "ascii"),
@@ -1497,6 +1498,13 @@ LIMITS.update({
 SEEDS.extend([
     (0xAAEF, "epilogue of the ATA-ready timeout caller: complements carry, restores AX/CX and returns at AAF2h"),
     (0xAAF3, "ATA drive-ready poll helper called from AAD8h; waits on port 80h, checks BSY on 01F7h, selects A0h/B0h through 01F6h and tests DRDY with bounded caller retry"),
+])
+
+
+LIMITS.update({0x8E44: 0x0A})
+
+SEEDS.extend([
+    (0x8E44, "indexed value-table accessor called directly from 8894h; computes SI=8E0Dh+(AL-80h), returns the selected byte with LODSB"),
 ])
 
 def main():
