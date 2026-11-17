@@ -1411,6 +1411,15 @@ SEEDS.extend([
     (0x86D0, "compares BEh/BFh result and jumps to D2EAh"),
 ])
 
+LIMITS.update({
+    0x714E: 0x52, 0x71A0: 0x44,
+})
+
+SEEDS.extend([
+    (0x714E, "direct CALL target from 711Ch; displays two measured values beneath the KB/sec/ms label using BIOS INT 10h"),
+    (0x71A0, "Setup/POST metric display routine with BP frame; formats the E1AFh value and positions the output using E3C6h/E3C7h"),
+])
+
 def main():
     rom = ROM_PATH.read_bytes()
     if len(rom) != 65536:
