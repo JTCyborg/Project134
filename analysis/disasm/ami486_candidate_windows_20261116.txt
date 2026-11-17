@@ -1571,7 +1571,7 @@ Reason: direct CALL target from temporary INT 1Ch calendar-refresh handler at 63
 663C  50                      push ax
 663D  C1 E8 02                shr ax, 2
 6640  B9 07 00                mov cx, 7
-6643  99                      cdq
+6643  99                      cwd
 6644  F7 F1                   div cx
 6646  8B DA                   mov bx, dx
 6648  2E 8A 9F 64 61          mov bl, byte ptr cs:[bx + 0x6164]
@@ -1582,13 +1582,13 @@ Reason: direct CALL target from temporary INT 1Ch calendar-refresh handler at 63
 6655  76 03                   jbe 0x665a
 6657  80 EB 07                sub bl, 7
 665A  8A 46 02                mov al, byte ptr [bp + 2]
-665D  98                      cwde
+665D  98                      cbw
 665E  E8 9C 02                call 0x68fd
 6661  88 46 06                mov byte ptr [bp + 6], al
 6664  48                      dec ax
 6665  50                      push ax
 6666  8A 46 03                mov al, byte ptr [bp + 3]
-6669  98                      cwde
+6669  98                      cbw
 666A  E8 90 02                call 0x68fd
 666D  88 46 07                mov byte ptr [bp + 7], al
 6670  48                      dec ax
@@ -1640,7 +1640,7 @@ Reason: direct CALL target from temporary INT 1Ch calendar-refresh handler at 63
 66E2  E8 F3 00                call 0x67d8
 66E5  8A 46 06                mov al, byte ptr [bp + 6]
 66E8  FE C8                   dec al
-66EA  98                      cwde
+66EA  98                      cbw
 66EB  B1 07                   mov cl, 7
 66ED  F6 F1                   div cl
 66EF  8A 46 08                mov al, byte ptr [bp + 8]
@@ -2466,7 +2466,7 @@ Reason: decode current option value through the E000h configuration shadow and r
 603F  8B 1E 8F E1             mov bx, word ptr [0xe18f]
 6043  8A 47 1C                mov al, byte ptr [bx + 0x1c]
 6046  24 7F                   and al, 0x7f
-6048  98                      cwde
+6048  98                      cbw
 6049  53                      push bx
 604A  BB 00 E0                mov bx, 0xe000
 604D  D7                      xlatb
@@ -2487,7 +2487,7 @@ Reason: decode current option value through the E000h configuration shadow and r
 6069  8B 1E 8F E1             mov bx, word ptr [0xe18f]
 606D  8A 47 1C                mov al, byte ptr [bx + 0x1c]
 6070  24 7F                   and al, 0x7f
-6072  98                      cwde
+6072  98                      cbw
 6073  BE 00 E0                mov si, 0xe000
 6076  03 F0                   add si, ax
 6078  8A 04                   mov al, byte ptr [si]
@@ -2501,7 +2501,7 @@ Reason: write transformed option value back to the E000h configuration shadow
 6069  8B 1E 8F E1             mov bx, word ptr [0xe18f]
 606D  8A 47 1C                mov al, byte ptr [bx + 0x1c]
 6070  24 7F                   and al, 0x7f
-6072  98                      cwde
+6072  98                      cbw
 6073  BE 00 E0                mov si, 0xe000
 6076  03 F0                   add si, ax
 6078  8A 04                   mov al, byte ptr [si]
@@ -2560,7 +2560,7 @@ Reason: dispatch the record-specific option callback from the E195h pointer tabl
 60C2  A1 80 E1                mov ax, word ptr [0xe180]
 60C5  E8 F9 A8                call 0x9c1
 60C8  58                      pop ax
-60C9  98                      cwde
+60C9  98                      cbw
 60CA  8B 1E 8F E1             mov bx, word ptr [0xe18f]
 60CE  80 7F 1F 00             cmp byte ptr [bx + 0x1f], 0
 
@@ -3013,7 +3013,7 @@ Reason: resolve current option code to its NUL-terminated display string
 6134  8B C3                   mov ax, bx
 6136  C3                      ret
 6137  A0 85 E1                mov al, byte ptr [0xe185]
-613A  98                      cwde
+613A  98                      cbw
 613B  B1 12                   mov cl, 0x12
 613D  F6 F1                   div cl
 613F  33 D2                   xor dx, dx
@@ -3038,7 +3038,7 @@ Reason: alternate entry into 6115h string-list skip tail; AL is number of NUL st
 6134  8B C3                   mov ax, bx
 6136  C3                      ret
 6137  A0 85 E1                mov al, byte ptr [0xe185]
-613A  98                      cwde
+613A  98                      cbw
 613B  B1 12                   mov cl, 0x12
 613D  F6 F1                   div cl
 613F  33 D2                   xor dx, dx
@@ -3058,7 +3058,7 @@ Reason: alternate entry into 6115h string-list skip tail; AL is number of NUL st
 ===== 6137h-6176h =====
 Reason: map E185h viewport index to B800h text-screen offset
 6137  A0 85 E1                mov al, byte ptr [0xe185]
-613A  98                      cwde
+613A  98                      cbw
 613B  B1 12                   mov cl, 0x12
 613D  F6 F1                   div cl
 613F  33 D2                   xor dx, dx
@@ -3153,7 +3153,7 @@ Reason: aligned MOV state initialization immediately before Setup item loop
 0D0E  FE 06 85 E1             inc byte ptr [0xe185]
 0D12  E8 F3 52                call 0x6008
 0D15  A0 85 E1                mov al, byte ptr [0xe185]
-0D18  98                      cwde
+0D18  98                      cbw
 0D19  8A 0E 8D E1             mov cl, byte ptr [0xe18d]
 0D1D  2A ED                   sub ch, ch
 0D1F  3B C1                   cmp ax, cx
@@ -3201,7 +3201,7 @@ Reason: fall-through continuation after E1xx state initialization
 0D0E  FE 06 85 E1             inc byte ptr [0xe185]
 0D12  E8 F3 52                call 0x6008
 0D15  A0 85 E1                mov al, byte ptr [0xe185]
-0D18  98                      cwde
+0D18  98                      cbw
 0D19  8A 0E 8D E1             mov cl, byte ptr [0xe18d]
 0D1D  2A ED                   sub ch, ch
 0D1F  3B C1                   cmp ax, cx
@@ -3247,7 +3247,7 @@ Reason: loop body directly targeted by 0D21h; draws Setup menu items
 0D0E  FE 06 85 E1             inc byte ptr [0xe185]
 0D12  E8 F3 52                call 0x6008
 0D15  A0 85 E1                mov al, byte ptr [0xe185]
-0D18  98                      cwde
+0D18  98                      cbw
 0D19  8A 0E 8D E1             mov cl, byte ptr [0xe18d]
 0D1D  2A ED                   sub ch, ch
 0D1F  3B C1                   cmp ax, cx
@@ -3319,11 +3319,11 @@ Reason: aligned selector dispatcher and branch context before E1xx routines
 0DBA  B1 24                   mov cl, 0x24
 0DBC  A0 85 E1                mov al, byte ptr [0xe185]
 0DBF  04 12                   add al, 0x12
-0DC1  98                      cwde
+0DC1  98                      cbw
 0DC2  F6 F9                   idiv cl
 0DC4  88 26 85 E1             mov byte ptr [0xe185], ah
 0DC8  8A C4                   mov al, ah
-0DCA  98                      cwde
+0DCA  98                      cbw
 0DCB  8A 0E 8D E1             mov cl, byte ptr [0xe18d]
 0DCF  2A ED                   sub ch, ch
 0DD1  3B C1                   cmp ax, cx
@@ -3384,7 +3384,7 @@ Reason: byte-aligned state-update helper; entry begins with CMP byte ptr [E18C],
 0E5E  EB 16                   jmp 0xe76
 0E60  FE 06 85 E1             inc byte ptr [0xe185]
 0E64  A0 85 E1                mov al, byte ptr [0xe185]
-0E67  98                      cwde
+0E67  98                      cbw
 0E68  8A 0E 8D E1             mov cl, byte ptr [0xe18d]
 0E6C  2A ED                   sub ch, ch
 0E6E  3B C1                   cmp ax, cx
@@ -3404,7 +3404,7 @@ Reason: direct CALL target; increment/wrap state-update helper
 0E5E  EB 16                   jmp 0xe76
 0E60  FE 06 85 E1             inc byte ptr [0xe185]
 0E64  A0 85 E1                mov al, byte ptr [0xe185]
-0E67  98                      cwde
+0E67  98                      cbw
 0E68  8A 0E 8D E1             mov cl, byte ptr [0xe18d]
 0E6C  2A ED                   sub ch, ch
 0E6E  3B C1                   cmp ax, cx
@@ -3658,7 +3658,7 @@ Reason: direct CALL site and caller context for E1xx state/menu helper at 0E7Ch
 60C2  A1 80 E1                mov ax, word ptr [0xe180]
 60C5  E8 F9 A8                call 0x9c1
 60C8  58                      pop ax
-60C9  98                      cwde
+60C9  98                      cbw
 60CA  8B 1E 8F E1             mov bx, word ptr [0xe18f]
 60CE  80 7F 1F 00             cmp byte ptr [bx + 0x1f], 0
 60D2  74 0F                   je 0x60e3
@@ -4153,7 +4153,7 @@ A0AD  6A 40                   push 0x40
 A0AF  1F                      pop ds
 A0B0  50                      push ax
 A0B1  8A C4                   mov al, ah
-A0B3  98                      cwde
+A0B3  98                      cbw
 A0B4  8B F8                   mov di, ax
 A0B6  3C 19                   cmp al, 0x19
 A0B8  58                      pop ax
@@ -4219,7 +4219,7 @@ A0AD  6A 40                   push 0x40
 A0AF  1F                      pop ds
 A0B0  50                      push ax
 A0B1  8A C4                   mov al, ah
-A0B3  98                      cwde
+A0B3  98                      cbw
 A0B4  8B F8                   mov di, ax
 A0B6  3C 19                   cmp al, 0x19
 A0B8  58                      pop ax
@@ -4267,7 +4267,7 @@ A0AD  6A 40                   push 0x40
 A0AF  1F                      pop ds
 A0B0  50                      push ax
 A0B1  8A C4                   mov al, ah
-A0B3  98                      cwde
+A0B3  98                      cbw
 A0B4  8B F8                   mov di, ax
 A0B6  3C 19                   cmp al, 0x19
 A0B8  58                      pop ax
@@ -10643,8 +10643,8 @@ Reason: numeric formatting helper
 6846  B0 20                   mov al, 0x20
 6848  E8 15 00                call 0x6860
 684B  58                      pop ax
-684C  98                      cwde
-684D  99                      cdq
+684C  98                      cbw
+684D  99                      cwd
 684E  B9 0A 00                mov cx, 0xa
 6851  F7 F1                   div cx
 6853  0B C0                   or ax, ax
@@ -10690,8 +10690,8 @@ Reason: code-dense raw window without phase address token
 6846  B0 20                   mov al, 0x20
 6848  E8 15 00                call 0x6860
 684B  58                      pop ax
-684C  98                      cwde
-684D  99                      cdq
+684C  98                      cbw
+684D  99                      cwd
 684E  B9 0A 00                mov cx, 0xa
 6851  F7 F1                   div cx
 6853  0B C0                   or ax, ax
@@ -10755,8 +10755,8 @@ Reason: numeric text-rendering loop
 6846  B0 20                   mov al, 0x20
 6848  E8 15 00                call 0x6860
 684B  58                      pop ax
-684C  98                      cwde
-684D  99                      cdq
+684C  98                      cbw
+684D  99                      cwd
 684E  B9 0A 00                mov cx, 0xa
 6851  F7 F1                   div cx
 6853  0B C0                   or ax, ax
@@ -10796,8 +10796,8 @@ Reason: recursive decimal conversion helper
 6846  B0 20                   mov al, 0x20
 6848  E8 15 00                call 0x6860
 684B  58                      pop ax
-684C  98                      cwde
-684D  99                      cdq
+684C  98                      cbw
+684D  99                      cwd
 684E  B9 0A 00                mov cx, 0xa
 6851  F7 F1                   div cx
 6853  0B C0                   or ax, ax
@@ -11318,7 +11318,7 @@ C635  EB 06                   jmp 0xc63d
 C637  3C 15                   cmp al, 0x15
 C639  72 55                   jb 0xc690
 C63B  2C 0E                   sub al, 0xe
-C63D  98                      cwde
+C63D  98                      cbw
 C63E  8B F8                   mov di, ax
 C640  58                      pop ax
 C641  D1 E7                   shl di, 1
