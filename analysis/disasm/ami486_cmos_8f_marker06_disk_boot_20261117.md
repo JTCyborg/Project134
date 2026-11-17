@@ -143,3 +143,40 @@ The F810h helper has four local CALL sites (F782, F79D, F7D5, F7E7). At each cal
 ## Correction to the AA55 description
 
 The code at F7A3h compares the word at ES:BX+01FEh against AA55h. This is a genuine boot-sector signature check in the branch that reaches F7A3h. It is distinct from the REPNZ SCASB byte scan at F7FAh. The marker-06 route through F786h takes JNC F7FAh, so it does not execute the F7A3h comparison before the F7FAh scan.
+
+## Adjacent validator at F6D8h — separate entry, do not merge with marker-06 path
+
+A linear decode from F6D8h shows a distinct routine:
+
+```asm
+F6D8: FA             CLI
+F6D9: FC             CLD
+F6DA: 1E             PUSH DS
+F6DB: 8E DB          MOV DS,BX
+F6DD: 33 F6          XOR SI,SI
+F6DF: AD             LODSW
+F6E0: 35 55 AA       XOR AX,AA55h
+F6E3: 75 32          JNZ F717h
+F6E5: B9 80 00       MOV CX,0080h
+F6E8: 81 FB 00 E0    CMP BX,E000h
+F6EC: 74 03          JZ F6F1h
+F6EE: AC             LODSB
+F6EF: 8B C8          MOV CX,AX
+F6F1: C1 E1 05       SHL CX,5
+F6F4: 03 D9          ADD BX,CX
+F6F6: C1 E1 04       SHL CX,4
+F6F9: 33 F6          XOR SI,SI
+F6FB: AC             LODSB
+F6FC: 02 E0          ADD AH,AL
+F6FE: E2 FB          LOOP F6FBh
+F700: 75 19          JNZ F71Bh
+...
+```
+
+The exact full routine contains a checksum-like byte accumulation and a special case when BX equals E000h. It is adjacent to the disk boot code but is not reached by the marker-06 dispatch directly: the marker-06 table target is F786h. Treat F6D8h as a separate validation/loader entry until a caller or far-entry contract proves the relationship.
+
+## Entry-point audit
+
+A scan of the 64 KiB image for relative CALL/JMP/Jcc targets finds no direct relative branch targeting F780h or F786h. The known marker-06 entry is the indirect word-table jump at D6A3h through D6A8h (table index 6 = F786h). The F810h retry helper has four direct local CALL sites: F782h, F79Dh, F7D5h, and F7E7h.
+
+This distinction matters: F780h is not a separately established public entry point. F786h is the table-selected entry; F7FAh is reached by its conditional branch for marker 06h. The neighboring routines contain overlapping control-flow and must be decoded from their actual entry offsets, not merely from the byte stream in ascending order.
