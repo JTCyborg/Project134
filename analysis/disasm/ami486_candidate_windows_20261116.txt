@@ -23886,45 +23886,11 @@ Reason: overlapping alternate entry to the B513h/ALi register-14h bit-3 POST han
 1E98  C3                      ret
 1E99  C3                      ret
 
-===== 1E7Ah-1E9Ch =====
-Reason: aligned B513h/ALi register-14h bit-3 POST handler
-1E7A  13 B5 E8 81             adc si, word ptr [di - 0x7e18]
-1E7E  64 0F 84 15 00          je 0x1e98
-1E83  B8 03 C5                mov ax, 0xc503
-1E86  E8 53 6F                call 0x8ddc
-1E89  B8 14 14                mov ax, 0x1414
-1E8C  E8 40 6F                call 0x8dcf
-1E8F  0C 08                   or al, 8
-1E91  86 E0                   xchg al, ah
-1E93  E8 46 6F                call 0x8ddc
-1E96  0B C0                   or ax, ax
-1E98  C3                      ret
-1E99  C3                      ret
-1E9A  0B E4                   or sp, sp
-1E9C  C3                      ret
-
 ===== 1E9Dh-1EC7h =====
 Reason: overlapping alternate entry to the B51Fh/B521h/B523h shadow-window handler
 1E9D  2E A0 1F B5             mov al, byte ptr cs:[0xb51f]
 1EA1  E8 5C 64                call 0x8300
 1EA4  0F 84 03 00             je 0x1eab
-1EA8  E8 75 05                call 0x2420
-1EAB  2E A0 21 B5             mov al, byte ptr cs:[0xb521]
-1EAF  E8 4E 64                call 0x8300
-1EB2  0F 84 03 00             je 0x1eb9
-1EB6  E8 72 05                call 0x242b
-1EB9  2E A0 23 B5             mov al, byte ptr cs:[0xb523]
-1EBD  E8 40 64                call 0x8300
-1EC0  0F 84 03 00             je 0x1ec7
-1EC4  E8 6F 05                call 0x2436
-1EC7  C3                      ret
-
-===== 1E9Fh-1EC7h =====
-Reason: aligned B51Fh/B521h/B523h shadow-window handler
-1E9F  1F                      pop ds
-1EA0  B5 E8                   mov ch, 0xe8
-1EA2  5C                      pop sp
-1EA3  64 0F 84 03 00          je 0x1eab
 1EA8  E8 75 05                call 0x2420
 1EAB  2E A0 21 B5             mov al, byte ptr cs:[0xb521]
 1EAF  E8 4E 64                call 0x8300
