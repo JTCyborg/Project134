@@ -99,3 +99,15 @@ This provides a functional explanation for the dispatch without inventing proces
 - `ami486_pointer_init_0C30_0C90_20261116_01.txt`
 - `ami486_cmos_table_raw_873C_8888_20261116_01.txt`
 - `AMI486_POST_FLOW_20261116_01.md`
+
+
+## Raw-table boundary clarification — 2026-11-17
+
+A byte-level pass distinguishes four adjacent structures that should not be merged:
+
+- `318Ch–31A3h`: 12-word pointer table to short Setup captions at `3044h, 305Ah, 3070h, 3089h, 30A2h, 30C1h, 30E9h, 3115h, 3127h, 313Fh, 3153h, 316Ch`. This includes short labels such as STANDARD CMOS SETUP, HARD DISK UTILITY, WRITE TO CMOS AND EXIT and DO NOT WRITE TO CMOS AND EXIT. The runtime consumer of this 12-entry table is not yet traced.
+- `342Eh–3443h`: the 11-word table used with E187h to select the long descriptive text for the 11 main-menu entries. Its targets are `31A4h, 31E6h, 3219h, 3256h, 3298h, 32D9h, 3325h, 336Fh, 339Bh, 33BCh, 3406h`.
+- `3444h–3445h`: a separate extra pointer, `33FFh`, to the full “Do Not Write the settings to the CMOS and Exit” string. It is not a twelfth main-menu handler.
+- `3446h–345Bh`: the 11-word handler table, targets `00ECh, 0BDEh, 0C05h, 0C2Ch, 0C53h, 5A7Ah, 5A7Ah, F1C8h, 5038h, 4628h, 2F67h`.
+
+The last long-description pointer, `3406h`, points seven bytes into the NUL-terminated string beginning at `33FFh`, selecting the affirmative “Write the settings…” substring. The extra pointer at `3444h` selects the full negative “Do Not Write…” text. The title string begins at `345Ch`; the handler table ends at `345Bh`.
