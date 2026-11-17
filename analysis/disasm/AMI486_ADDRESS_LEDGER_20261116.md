@@ -548,8 +548,8 @@ Detailed byte map: [AMI486_ADDRESS_LEDGER_REGION_873C_8DCE_20261117.md](AMI486_A
 The former 1,683-byte candidate gap now has zero uncovered bytes in the code/data inspection mask. The region includes:
 - The 81-entry four-byte array at 873Ch–887Fh, its five-entry prefix, 76-entry suffix and count words at 8880h/8882h/8884h/8886h; 8888h is the E0h key threshold.
 - Four confirmed consumer views of the same bytes: 8400h CMOS default application, 8378h key lookup returning byte +3, 85FEh masked E000h/E080h configuration-buffer update, and the 208Dh 21-record ALi write table at 8750h–87A3h. The 21-record ALi view overlaps the first 21 records of the 76-entry suffix; it is not a separate physical table allocation.
-- A 14-row AUTO Config lookup view at 87A9h with 20-byte row stride and fields at +0/+4/+8/+0Ch, extending through 88BBh and overlapping executable bytes at 8898h–88BBh.
+- A 14-row AUTO Config lookup view at 87A9h with 20-byte row stride and fields at +0/+4/+8/+0Ch, extending through 88BBh. Row 11 overlaps the 8886h count/8888h threshold area; rows 12/13 overlap executable bytes at 8898h–88BBh.
 - The 85B3h wrapper's fall-through into the 76-record suffix at 85C0h; in the stock ROM it processes 5 + 0 + 0 + 76 = 81 records and returns at 862Fh. Phase 6 was corrected in place.
 - POST CMOS B3h/ALi C2h-C3h operations, CMOS 8Fh reset path, B3h-selected ALi profile path, 82DAh hook sequence, INT 15h keyboard hook, controller/port configuration helpers, CR0 cache-state continuations, 8042 transaction helper and ALi indexed-register callbacks.
 
-Crafted stack-return words are separated from code continuations. Bytes 8889h–8897h, runtime table provenance and ALi register meanings remain unresolved. The candidate mask is an inspection aid, not a semantic-completion percentage.
+Crafted stack-return words are separated from code continuations. Bytes 8893h–8898h, runtime table provenance and ALi register meanings remain unresolved. The candidate mask is an inspection aid, not a semantic-completion percentage.
