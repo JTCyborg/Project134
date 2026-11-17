@@ -12,7 +12,7 @@ Candidate generator blob: `a0f7681722edcee97c2b24e8714d31208fccee01`.\nGenerated
 
 The former candidate-mask gap `873Ch–8DCEh` (1,683 bytes) now has **no uncovered bytes in the candidate code/data union**. The only remaining hole found during the pass, `8B17h–8B2Ch`, was confirmed as the tail of the CMOS feature-query helper at `8B11h` and added through its RET at `8B2Ch`.
 
-This means the interval is represented by bounded code windows, explicit table/data views and stack-return-word ranges. It does **not** mean every byte has one exclusive semantic class: several bytes have confirmed overlapping interpretations, and `8889h–8897h` remains unresolved.
+This means the interval is represented by bounded code windows, explicit table/data views and stack-return-word ranges. It does **not** mean every byte has one exclusive semantic class: several bytes have confirmed overlapping interpretations, including row-11 table fields overlapping the count/threshold block and row-12/13 fields overlapping code; `8893h–8898h` remains unresolved.
 
 ## 2. The 81-entry four-byte configuration array at 873Ch–887Fh
 
