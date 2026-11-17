@@ -146,6 +146,12 @@ Reason: POST summary field labels, CPU names and device-value strings
 45C0  47 41 2F 50 47 41 2F 45 47 41 20 20 20 20 00 4E GA/PGA/EGA    .N
 45D0  4F 4E 45 20 20 20 20 00                         ONE    .
 
+===== DATA 45D8h-45FFh =====
+Reason: POST summary bottom box-drawing border graphics
+45D8  C8 CD CD CD CD CD CD CD CD CD CD CD CD CD CD CD ................
+45E8  CD CD CD CD CD CD CD CD CD CD CD CD CD CD CD CD ................
+45F8  CD CD CD CD CD CD CF CD                         ........
+
 ===== DATA A0F1h-A124h =====
 Reason: INT 13h AH function table
 Words: A197, A20B, A216, A226, A23E, A25F, A18E, A18E, A1A4, A337, A372, A381, A474, A19E, A18E, A18E, A4D3, A501, A18E, A18E, A52B, A1A9, A18E, A18E, A18E, A57B
@@ -860,6 +866,14 @@ Reason: direct CALL site and caller context for E1xx state/menu helper at 0E7Ch
 6136  C3                      ret
 6137  A0 85 E1                mov al, byte ptr [0xe185]
 613A  98                      cwde
+
+===== 3F4Ah-3F56h =====
+Reason: direct CALL wrapper for POST summary frame renderer; prints bottom border on return
+3F4A  E8 2E 00                call 0x3f7b
+3F4D  BE D8 45                mov si, 0x45d8
+3F50  E8 0B 00                call 0x3f5e
+3F53  E8 A5 DA                call 0x19fb
+3F56  C3                      ret
 
 ===== 3F7Bh-4141h =====
 Reason: POST summary frame and hardware-field renderer; continues through 4141h
