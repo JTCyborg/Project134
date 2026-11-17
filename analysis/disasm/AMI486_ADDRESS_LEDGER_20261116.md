@@ -501,3 +501,12 @@ Report: [AMI486_ADDRESS_LEDGER_REGION_E862_F52D_20261117.md](AMI486_ADDRESS_LEDG
 The former E865h–F52Dh candidate gap is now represented by bounded code windows and explicit data ranges. The mapped content includes polling helpers, parity/NMI diagnostics, RTC/PIC/timer handlers, INT 1Ah-compatible time/date services, CMOS access helpers, a protected-mode-assisted 0F05h path, CMOS Setup editing, an encoded evaluation-copy message, video/ROM signature checks and fatal POST diagnostics. Strings, padding, the opaque EFC7h–F041h block, F0A3h parameter tables and the F3BCh signature bytes are separated from executable windows. The report deliberately leaves interrupt-vector installation and opaque-table consumers open where no direct evidence was found.
 
 Latest candidate-mask snapshot: 508 code windows, 136 data ranges, 27,247 unique code-window bytes, 15,754 unique data-range bytes, 117 overlap bytes, 42,884-byte union (65.44%), 70 uncovered intervals, 195 pages touched and 118 fully covered. This remains a seeded mask, not semantic completion. Largest remaining uncovered range is 697Dh–7144h (1,992 bytes).
+
+
+## 16. Hard Disk Setup / INT 13h diagnostic and throughput region — 2026-11-17
+
+Report: [AMI486_ADDRESS_LEDGER_REGION_696F_72D8_20261117.md](AMI486_ADDRESS_LEDGER_REGION_696F_72D8_20261117.md).
+
+The D697Dh–D7144h gap is now mapped as part of the Hard Disk Setup subsystem. The UI at 4628h–46E8h cycles E1ACh through three options and displays drive geometry headings and “No Hard Disk Installed” / “Hard Disk Type can be changed from”. The direct dispatcher caller is 6936h; it calls 6BDEh, which selects one of three handlers through the three-word table at 6BD8h: 6B14h, 71E4h or 6CE3h. The subsystem includes an INT 13h wrapper at 6C15h, disk request/transfer loops at 6D94h/6E30h, status-token lookup at 6CB4h, and a 40-sector repeated-read benchmark at 7033h that prints “KB/sec ms” at 7145h.
+
+Latest candidate mask: 541 code windows, 140 data ranges, 29,460 unique code-window bytes, 15,775 unique data-range bytes, 117 overlap bytes, 45,118-byte union (68.84%), 71 uncovered intervals, 203 pages touched and 125 fully covered. This is still a seeded inspection mask. The next largest uncovered interval is 19F8h–20FFh (1,800 bytes).
