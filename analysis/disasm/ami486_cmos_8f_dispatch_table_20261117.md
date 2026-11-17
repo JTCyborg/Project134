@@ -986,3 +986,36 @@ Examples from the ROM table (index : cylinders / heads / sectors-per-track):
 - 17: 977 / 5 / 17
 
 Indices 0 and 15 are zero-filled records. This is a BIOS drive-type/geometry table, not an arbitrary runtime array. The index is supplied by the caller; the full mapping from user-visible drive-type menu labels to each index is still to be reconstructed from the menu/display code. Several records have distinct auxiliary fields despite matching geometry, so do not collapse records solely by cylinder/head/SPT values.
+
+### Drive-to-geometry index indirection at 4B68h
+
+A byte-level trace of the call site at 4B68h adds an intermediate mapping layer between the active drive identifier and the 16-byte geometry records loaded by 5AB5h.
+
+```asm
+4B68: 55             PUSH BP
+4B69: 8B EC          MOV BP,SP
+4B6B: 83 EC 02       SUB SP,0002h
+4B6E: 8A 1E 21 E4    MOV BL,[E421h]
+4B72: 2A FF          SUB BH,BH
+4B74: 8A 9F AD E1    MOV BL,[BX+E1ADh]
+4B78: 88 5E FF       MOV [BP-1],BL
+...
+4B84: 8A 16 21 E4    MOV DL,[E421h]
+4B88: 2A F6          SUB DH,DH
+4B8A: 8A 46 FF       MOV AL,[BP-1]
+4B8D: E8 25 0F       CALL 5AB5h
+```
+
+The value in E421h is zero-extended and used as an index into the byte array at E1ADh. The resulting byte is saved in the local variable and passed in AL to the geometry-record loader at 5AB5h. That loader selects the 16-byte record at CS:E3F1h + AL*10h (except its separately handled AL=2Fh case) and copies it to E411h.
+
+Therefore the selection chain is:
+
+1. E421h supplies the active drive/index value for this caller.
+2. E1ADh maps that value to a geometry-record index.
+3. 5AB5h uses that mapped index to load the corresponding 16-byte record into the live E411h..E420h parameter block.
+
+The table E1ADh is also written by the routine around 47A2h: after deriving an index in BX and a value in AL, it executes MOV [BX+E1ADh],AL. This proves E1ADh is a runtime-populated mapping array rather than a fixed ROM geometry table.
+
+The producer path at 47A2h derives its destination index from the value at E189h (through sign/zero extension and a lookup at E019h) and its stored value from a stack-local byte derived from E012h. The full user-interface meaning of E189h, E012h, and the E019h lookup table is not yet established. Do not label E1ADh entries as drive A/B or fixed-disk types until those source fields and the menu path are decoded.
+
+The ROM bytes were not modified; this is documentation-only analysis.
