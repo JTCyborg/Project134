@@ -173,3 +173,25 @@ The 235Bh–2380h span is 38 bytes and consists of the final two prefixed 32-bit
 The comparison addresses are 04000000h, 04000100h, 04800000h, 04000800h, 04001000h and 04002000h. The immediate constants and branches are confirmed from the bytes. This report does not infer the physical RAM size or the exact alias topology from these comparisons alone; those depend on the ALi memory mapping established by the preceding setup code.
 
 The follow-on at 2381h packs DX nibbles into AH and writes ALi index 10h through 8DDCh; 2396h packs BX nibbles and writes index 11h; 23ACh writes index 16h. The complete crafted-return sequence and the transition back to real mode are documented in [AMI486_ADDRESS_LEDGER_REGION_23CE_29F6_20261117.md](AMI486_ADDRESS_LEDGER_REGION_23CE_29F6_20261117.md).
+
+
+## 11. Earlier DH-selected alias-test tail at 21E1h–222Ch
+
+A second selector pass precedes the BH-selected sequence documented above. It is part of the same protected-mode extended-memory probe and is reached by fall-through; there is no independent CALL/JMP entry at 2207h.
+
+| Offset | Operation | Result/control |
+|---:|---|---|
+| 21E1h | Compare dword at 04800000h with 5555AAAAh | Equality branches to 222Dh |
+| 21F2h | Set DH=02h | Selector before next compare |
+| 21F4h | Compare 04000800h with 5555AAAAh | Equality branches to 222Dh |
+| 2205h | Set DH=01h | Selector before next compare |
+| 2207h | Compare 04001000h with 5555AAAAh | Equality branches to 222Dh |
+| 2218h | Set DH=03h | Selector before next compare |
+| 221Ah | Compare 04002000h with 5555AAAAh | Equality branches to 222Dh |
+| 222Bh | Set DH=04h | Final selector before falling through to 222Dh |
+
+The 2207h–222Ch span is 26h bytes. The compare operations use the flat ES=0008h selector and 32-bit absolute addresses. The result selector is carried in DH; the later BH-selected pass at 2333h–2380h is a separate sequence and must not be merged with this one.
+
+At 222Dh the code loads AX=1616h and jumps to the ALi indexed-register read helper at 8DC Fh (the target is 8DCFh). Its stack-threaded return continues at 2238h, where the returned AL value is ORed with 30h, exchanged into AH, and written back through 8DDCh using another crafted stack return. The exact hardware meaning of ALi register 16h is not assigned here; the observed read/modify/write is the supported conclusion.
+
+The candidate generator now seeds 2207h with a 26h-byte bound ending at 222Ch, alongside the 235Bh continuation seed.
