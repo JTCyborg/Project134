@@ -96,10 +96,13 @@ Words: 381C, 382D, 383D, 384F, 3865
 Reason: Hard-disk format menu title and three option labels
 ASCII: 'Hard Disk Format\x00Auto Interleave\x00Media Analysis\x00'
 
-===== DATA 38ADh-38C2h =====
-Reason: Three four-byte hard-disk menu descriptors and five callback offsets
-38AD  7D 38 05 1F 8E 38 04 1B 9E 38 03 13 EE 4A 68 4B }8...8...8...JhK
-38BD  96 4B B1 4B 85 59                               .K.K.Y
+===== DATA 38ADh-38B8h =====
+Reason: Three four-byte hard-disk utility menu descriptors (string pointer plus two selector bytes)
+38AD  7D 38 05 1F 8E 38 04 1B 9E 38 03 13             }8...8...8..
+
+===== DATA 38B9h-38C2h =====
+Reason: Five-word callback table for the hard-disk utility menu
+Words: 4AEE, 4B68, 4B96, 4BB1, 5985
 
 ===== DATA 38C3h-3934h =====
 Reason: Bad-track editor headings and Add/Revise/Delete/Clear labels
@@ -15055,7 +15058,7 @@ Reason: hard-disk utility option-panel renderer and callback dispatcher
 4AED  C3                      ret
 
 ===== 4AEEh-4B5Ch =====
-Reason: separate drive-selection/input routine following the 4AEDh RET; entry provenance unresolved
+Reason: callback target at 38B9h in the five-entry hard-disk utility callback table
 4AEE  55                      push bp
 4AEF  8B EC                   mov bp, sp
 4AF1  80 3E AE E1 00          cmp byte ptr [0xe1ae], 0
@@ -15104,7 +15107,7 @@ Reason: hard-disk utility character-output helper
 4B67  C3                      ret
 
 ===== 4B68h-4B95h =====
-Reason: separate prologue-led utility routine; caller/entry provenance unresolved
+Reason: callback target at 38BBh in the five-entry hard-disk utility callback table
 4B68  55                      push bp
 4B69  8B EC                   mov bp, sp
 4B6B  83 EC 02                sub sp, 2
@@ -15125,7 +15128,7 @@ Reason: separate prologue-led utility routine; caller/entry provenance unresolve
 4B95  C3                      ret
 
 ===== 4B96h-4BB0h =====
-Reason: callback target stored at 38BDh in the hard-disk utility callback table
+Reason: callback target at 38BDh in the five-entry hard-disk utility callback table
 4B96  B0 03                   mov al, 3
 4B98  50                      push ax
 4B99  A1 80 E1                mov ax, word ptr [0xe180]
@@ -15138,7 +15141,7 @@ Reason: callback target stored at 38BDh in the hard-disk utility callback table
 4BB0  C3                      ret
 
 ===== 4BB1h-4BD9h =====
-Reason: callback target stored at 38BFh; confirmation and utility dispatch
+Reason: callback target at 38BFh; confirmation and utility dispatch
 4BB1  E8 26 00                call 0x4bda
 4BB4  E8 CE 0D                call 0x5985
 4BB7  A2 84 E1                mov byte ptr [0xe184], al
