@@ -78,7 +78,7 @@ The candidate generator now:
 - separates the E6F2h jump and the embedded payload around the UART divisor table and E739h INT 14h trampoline;
 - adds bounded code seeds for E7E8h, E800h, E803h, E819h, E82Eh and EFD2h (INT 17h trampoline).
 
-GitHub Actions run 44083781676 completed successfully. The regenerated manifest reports 779 candidate windows, 232 data ranges, 38,287 unique code-window bytes, 18,888 unique data-range bytes, 290 overlap bytes, and a 56,885-byte union (86.80%). There are 68 uncovered intervals; the next largest is F5AEh–F8E6h (825 bytes).
+GitHub Actions run 44084310128 completed successfully. The regenerated manifest reports 811 candidate windows, 237 data ranges, 39,090 unique code-window bytes, 18,912 unique data-range bytes, 293 overlap bytes, and a 57,709-byte union (88.06%). There are 68 uncovered intervals; the next largest is 7CE9h–7FFFh (791 bytes).
 
 ## 6. Remaining questions
 
