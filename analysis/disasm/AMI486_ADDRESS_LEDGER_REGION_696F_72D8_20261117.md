@@ -10,6 +10,12 @@ The candidate gap D697Dh–D7144h is now decoded as part of a fixed-disk diagnos
 
 The region is not one linear function. It contains multiple routines, two small dispatch/status tables, an INT3 guard byte, a NOP alignment byte and the inline display label at 7145h.
 
+## 2. Hard Disk Setup UI and three-way disk-mode dispatch
+
+The menu handler at 4628h is the Hard Disk Setup screen entry. It sets E422h=3, displays the drive geometry headings from the string at 36F5h (`Cyln Head WPcom LZone Sect Size (MB)`), and uses the strings at 3757h/376Eh (`No Hard Disk Installed` / `Hard Disk Type can be changed from`). The UI loop at 4642h–46E8h saves E1ACh, iterates it through 0, 1 and 2 to render the three options via 4752h, restores the prior value, and uses the arrow-key paths at 46CBh/46D8h to decrement/increment with wraparound.
+
+The direct caller of the disk-mode dispatcher is 6936h. It initializes the geometry/state variables from E411h/E413h when E1ABh is clear, pushes the current drive byte E421h, calls 6BDEh at 6967h, then restores E421h. The surrounding wrapper at 691Bh masks IRQ1 around the call to 6936h; its own caller remains unresolved.
+
 ## 2. Three-way disk-mode dispatch
 
 ### 2.1 Dispatch table at 6BD8h
@@ -40,7 +46,7 @@ The dispatcher at 6BDEh uses the selector byte at E1ACh, doubles it, and execute
 
 After the selected handler returns, it reads the status byte at E3B9h and returns with CF set on a nonzero status, clear on success. The addition of 80h to the drive number at E421h is consistent with selecting a fixed-disk BIOS drive (DL bit 7 set).
 
-The caller that enters 6BDEh and the source/meaning of the E1ACh selector are not yet proven.
+The direct caller is 6936h (CALL at 6967h). The E1ACh selector is saved, cycled through 0–2 and restored by the Hard Disk Setup menu handler at 4642h–46E8h. The caller that enters the surrounding 691Bh wrapper remains unresolved.
 
 ### 2.2 Selector 0 — 6B14h
 
@@ -108,7 +114,7 @@ The candidate generator keeps the two tables, the INT3 byte, the NOP alignment b
 
 ## 7. Remaining uncertainties
 
-- The caller of the 6BDEh mode dispatcher and the origin/semantics of E1ACh are not yet established.
+- The direct caller of 6BDEh is 6936h. The E1ACh selector is driven by the Hard Disk Setup UI at 4642h–46E8h; the exact user-visible meaning of each of its three options is still being reconciled with the handler bodies. The caller of the surrounding 691Bh wrapper is not yet established.
 - The exact meaning of all three mode selectors is not fully documented, although their target routines and observed behavior are mapped.
 - The 13-byte 6CB4h status table is confirmed, but each token's exact relationship to BIOS AH status values needs a separate trace.
 - The E1B2h/E1B4h/E1B5h/E1B7h geometry fields and E3Bxh state bytes need a global writer/reader cross-reference.
@@ -116,3 +122,8 @@ The candidate generator keeps the two tables, the INT3 byte, the NOP alignment b
 - The benchmark's precise unit conversion should be checked against the tick arithmetic and screen output; the sector count and loop count are byte-confirmed.
 
 **The D697Dh–D7144h candidate gap is now represented by aligned code windows and explicit data ranges. This is a region map, not a whole-ROM completion claim.**
+
+
+## Follow-up cross-reference correction — Hard Disk Setup caller (2026-11-17)
+
+The 6BDEh dispatcher caller and E1ACh selector source are now resolved. The direct call is at 6967h from 6936h. The UI handler at 4642h–46E8h saves E1ACh, renders all three values (0–2), restores the original value and cycles it with wraparound on arrow-key input. The surrounding screen handler at 4628h displays the geometry headings and the strings “No Hard Disk Installed” and “Hard Disk Type can be changed from”. Thus the 6BD8h three-word table is the Hard Disk Setup mode/operation dispatch table. The caller of the 691Bh IRQ1-masking wrapper remains unknown.
