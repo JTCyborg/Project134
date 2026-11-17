@@ -731,3 +731,11 @@ Detailed map: [AMI486_ADDRESS_LEDGER_REGION_8630_86DB_20261117.md](AMI486_ADDRES
 Mapped the three CMOS option-check helpers at 8630h/8649h/8662h, which read CMOS 8Eh and conditionally 90h/94h before testing CS:8280h option bits. The helper at 867Bh checks bit 3 and calls the CPU-profile helper at 8300h. The continuation at 868Bh enters the existing checksum accumulators at 17F2h and 180Fh, then compares the CMOS AEh/AFh and BEh/BFh checksum pairs. Four embedded stack-return words (86A0h, 86AAh, 86C4h, 86CEh) are now explicitly classified as data; code windows begin after each return slot.
 
 Generator update: 1ced033a4465751b83b7a5d1fc793e31d679aa63. The latest generated manifest still predates this phase. The previous projected union was 63,487 bytes (96.87%); adding this 171-byte interval gives a projected 63,658/65,536 bytes (97.13%) and 53 uncovered intervals. The next largest remaining interval is expected to be 714Eh–71E3h (150 bytes). These are range-union calculations, not a regenerated manifest or CI result.
+
+## 40. POST/Setup metric display routines — 714Eh–71E3h (2026-11-17)
+
+Detailed map: [AMI486_ADDRESS_LEDGER_REGION_714E_71E4_20261117.md](AMI486_ADDRESS_LEDGER_REGION_714E_71E4_20261117.md).
+
+Mapped the two-value metric display routine at 714Eh (direct caller 711Ch) and the BP-framed display routine at 71A0h. The first uses the inline “KB/sec ms” label at 7145h–714Dh, cursor positioning, INT 10h output and format helper 7323h to display values from E3C9h/E3CBh. The second reserves a 10h-byte local frame, uses E3C6h/E3C7h for cursor placement and formats E1AFh through 7324h/72F2h. The RET at 71E3h is the end of this routine; 71E4h remains a separate dispatch entry.
+
+Generator update: b9fe29583640d2967d2c5f1f41bdb126af1963cb. The latest generated manifest still predates this phase. The previous projected union was 63,658 bytes (97.13%); adding this 150-byte interval gives a projected 63,808/65,536 bytes (97.36%) and 52 uncovered intervals. The next largest remaining interval is expected to be 3EBFh–3F49h (139 bytes). These are range-union calculations, not a regenerated manifest or CI result.
