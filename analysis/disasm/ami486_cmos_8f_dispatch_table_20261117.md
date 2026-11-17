@@ -541,3 +541,15 @@ The earlier claim that `6F7Ch` was a routine entry is withdrawn. It is an instru
 Important conclusion: the ROM contains at least two AH=05h sector-write callsites, both using the same count byte `E41Fh`. The path at `69D0h` explicitly derives CH/CL/DH immediately before the write call, making it a stronger candidate for track/sector formatting than the previously isolated `6F75h` worker. Nevertheless, the utility-menu Y/N chain has not yet been linked to either callsite. The meaning/value of `E41Fh`, drive number `DL`, buffer segment `ES`, and the producer of the CHS inputs still need to be established.
 
 This replaces the earlier tentative attribution that the `6F7Ch–6FA5h` range was the unique sector writer. Treat AH=05h as confirmed sector-write functionality, but keep its association with low-level format unproven.
+
+
+### Overlapping INT 13h wrapper entry correction: 6C14h vs 6C15h
+
+A further exact relative-target calculation corrects the preceding dual-writer conclusion:
+
+- The call at `6A1Eh` has displacement `01F3h`; next IP is `6A21h`, so target is `6C14h`. Byte `6C14h` is `C3` (`RET`). Therefore this call does **not** reach the INT 13h wrapper. It is an overlapping one-byte return entry. The AH=05h setup at `6A1Ah` is not evidence of an actual BIOS write on this path.
+- The call at `6F98h` has displacement `FC7Ah`; next IP is `6F9Bh`, so target is `6C15h`. This is a separate entry one byte later, beginning `80 3E BB E3 FF 74 03 E8 1A 00 CD 13`. That entry conditionally invokes helper `6C32h`, then executes `INT 13h` at `6C1Fh`, stores returned AH in `B9E3h`, and propagates status/carry.
+
+Accordingly, the previous section's statement that both AH=05h callsites reach the common INT 13h path is withdrawn. The only presently confirmed actual AH=05h BIOS write path is the call from the worker at `6F75h` through `6C15h`. The `69D0h` frame-based routine's `6A1Ah` AH=05h setup remains a prepared-but-not-issued operation at this particular callsite; do not classify it as a second disk write.
+
+This is another case where linear disassembly obscures intentional/overlapping entry points. Keep the disk formatter link open: the confirmed sector write still needs to be connected to the hard-disk menu's confirmation handler, and the worker's caller parameters must be resolved.
