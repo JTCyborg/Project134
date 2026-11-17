@@ -1207,3 +1207,6 @@ The 2D11h timing benchmark candidate is now seeded at its aligned byte stream; 2
 ## Low-ROM identity/data split — 2026-11-17
 
 Raw-byte inspection separates 0000h–00EEh as AMI identity/copyright/pattern data from the executable-looking stream beginning at 00EFh. The generator now seeds 00EFh–01EEh as an unresolved code candidate and emits 0000h–00EEh as data. No direct near CALL/JMP xref or literal 00EFh pointer was found; entry provenance remains open. See AMI486_ADDRESS_LEDGER_20261116.md section 11.1. The workflow output is pending verification; do not include this new seed in the published candidate-footprint counts until the generated listing and manifest update.
+
+
+The 00EFh candidate window has been extended through 0235h (the aligned RET) to capture the complete observed Setup/video presentation stream. The candidate generator was updated; verify the refreshed generated listing before treating the extended window as part of the current byte-mask totals.
