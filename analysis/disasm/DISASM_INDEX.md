@@ -1241,3 +1241,6 @@ The 00EFh screen routine's direct callees are being expanded as separate candida
 
 
 The 03D4h editor/helper chain exposes three further direct callees: 04B0h (field-record update), 56AEh (keyboard event path), and 5821h (display update). These are now separate candidate seeds to complete the renderer/editor call graph.
+
+
+The screen-renderer helper map is documented in AMI486_SCREEN_RENDERER_HELPERS_20261117.md. Key contracts: 04B0h computes hard-disk capacity from geometry (sectors × heads × cylinders, /2048 with nearest-MiB rounding); 56AEh selects one of 16 UI palettes from the 562Bh table (F2/F3 increment/decrement); 5821h applies the selected attributes to a text rectangle. The 562Bh–566Ah palette table is now an explicit data range.
