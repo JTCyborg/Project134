@@ -6,7 +6,7 @@ ROM: `ami486.bin`, 65,536 bytes
 ROM SHA-256: `91fd62ce3ccb0b79b42f5fd6c6a7262ed52824b8ade917181b8a12267fec003b`  
 Candidate decoder: Capstone x86, 16-bit mode  
 Generator: `tools/disasm_ami486_candidate_windows.py`  
-Generated candidate listing SHA/blob at this report revision: `dc3b5ceec6c7d049f8b6ac931020429453f5f3b7`.
+Candidate generator blob: `a0f7681722edcee97c2b24e8714d31208fccee01`.\nGenerated manifest blob: `f1f88b5556113ee3080018284f9c4cb652e526a6`.\nGenerated candidate listing blob: `0e01351632d402d3551a3f537f5362ac8be9697f`.
 
 ## 1. Region result
 
