@@ -76,6 +76,11 @@ LIMITS.update({0xFA4E: 0x17, 0xFE6E: 0x03})
 # Main POST continuation and bounded helper entries in 1364h–188Dh.
 # Fixed-disk parameter continuation, embedded data, and keyboard-controller helpers.
 LIMITS.update({
+    0xAF84: 0x03, 0xAF87: 0x03, 0xAF8A: 0x03,
+    0xAF8D: 0x252, 0xB1DF: 0x0A, 0xB1E4: 0x05,
+})
+
+LIMITS.update({
     0x639C: 0x1D2, 0x656E: 0x05, 0x6573: 0x03, 0x6576: 0x25,
     0x659B: 0x0C, 0x65A7: 0x18, 0x65BF: 0x05, 0x65C4: 0x52,
 })
@@ -1128,6 +1133,16 @@ SEEDS = [
     (0x1BF0, "option-ROM scan invalid-candidate helper: advances BX by 0080h, restores DS and returns"),
     (0x1E9A, "OR SP,SP / RET status-success stub between POST callback entries"),
 ]
+
+SEEDS.extend([
+    (0xAF84, "INT 09h keyboard IRQ path: final near-JMP byte completes the AF84h->B2E5h dispatch branch"),
+    (0xAF87, "keyboard ISR alternate exit trampoline from AF60h to common IRQ tail B1DFh"),
+    (0xAF8A, "keyboard ISR alternate exit trampoline from AF60h to IRQ tail B1E4h"),
+    (0xAF8D, "INT 09h keyboard scan-code processing body reached from E987h->AF60h; updates BDA shift/extended flags and handles special keys"),
+    (0xB1DF, "keyboard IRQ common epilogue: clear BDA flag bits, CLI, send PIC EOI, restore frame and IRET"),
+    (0xB1E4, "alternate keyboard IRQ epilogue entry skipping the BDA flag clear"),
+])
+
 
 SEEDS.extend([
     (0x639C, "RTC Setup editor continuation: month/day/year and time field editing with INT 1Ah read/write"),
