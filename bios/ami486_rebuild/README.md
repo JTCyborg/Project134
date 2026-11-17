@@ -10,6 +10,14 @@ Create an independently maintained, buildable BIOS image that preserves the orig
 
 The original `ami486.bin` remains immutable reference input. This reconstruction lives separately and must never overwrite the reference image.
 
+## Development environment
+
+- Primary IDE: Microsoft Visual Studio 2026.
+- Target artifact: a flat 16-bit x86 ROM image, not a normal MSVC executable.
+- The Visual Studio project should orchestrate the assembler, ROM-layout/validation scripts, and emulator tests through build targets.
+- MSVC's normal compiler/linker are not the BIOS code generator. Use an assembler that can emit flat binary and explicit 16-bit x86 code; NASM is the initial candidate. Finalize the assembler and its version when the first source module and reproducible build are added.
+- Keep all build paths configurable; do not hard-code a developer-specific installation path.
+
 ## Reference image
 
 - Source: repository-root `ami486.bin`
