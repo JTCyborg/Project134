@@ -1446,3 +1446,27 @@ Therefore the two runtime records are:
 - Drive 1: `DS:E024..E02C`
 
 The earlier 5B7Ch shadow/live copy is consistent with this: it transfers exactly nine bytes per drive from E09B..E0A3 / E0A4..E0AC into E01B..E023 / E024..E02C. The 5AB5h special branch then expands the selected nine-byte DPT record into the destination buffer and inserts the seven caller-derived fill bytes already documented above.
+
+## 5AB5h output: expansion into the 16-byte record at DS:E411
+
+The custom branch does not copy the compact nine-byte record contiguously into E411h. Its instruction order expands it into a 16-byte BIOS-side record with interleaved fill bytes. Starting with SI at E01Bh (drive 0) or E024h (drive 1), the exact destination map is:
+
+| Destination | Source/value | Meaning established by producer |
+|---:|---|---|
+| E411-E412 | source +0..+1 | Cylinder count |
+| E413 | source +2 | Head count |
+| E414 | AL=2Fh | Fill byte |
+| E415 | AH | Caller-dependent fill byte: 00h at 4797h, 0Eh at 4B8Dh |
+| E416-E417 | source +3..+4 | Write-precompensation word (FFFFh sentinel) |
+| E418 | AL=2Fh | Fill byte |
+| E419 | source +5 | Control byte (00h or 08h) |
+| E41A | AL=2Fh | Fill byte |
+| E41B | AH | Caller-dependent fill byte |
+| E41C | AL=2Fh | Fill byte |
+| E41D-E41E | source +6..+7 | Landing-zone cylinder |
+| E41F | source +8 | Sectors per track |
+| E420 | AL=2Fh | Fill byte |
+
+This map follows the exact sequence of `MOVSW`, `MOVSB`, `STOSW`, `STOSB` in 5ADDh–5AE7h; it is not an inferred linear copy. It also explains why the fill pattern has seven bytes: they occupy the gaps in the expanded 16-byte record. The first three fields are independently read by code at 481Fh (word E411h), 482Ch (byte E413h), and 4841h (word E416h). The other fields remain part of the produced record even where this pass has not yet identified a direct reader.
+
+The destination is explicitly E411h in DS/ES, because 5AB5h saves DS, loads ES from DS, and sets DI=E411h. The ordinary AL!=2Fh branch instead selects one of the 16-byte ROM geometry records at CS:E3F1h+AL*10h and copies all 16 bytes directly. Thus both branches produce the same 16-byte destination shape: the normal branch copies a complete ROM table entry; the custom branch expands the compact runtime nine-byte ATA-derived record and fills the interstitial bytes.
