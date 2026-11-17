@@ -1215,3 +1215,6 @@ The 00EFh candidate window has been extended through 0235h (the aligned RET) to 
 ## Low-ROM screen-presentation stream — 2026-11-17
 
 Detailed report: [AMI486_LOW_ROM_SETUP_VIDEO_ENTRY_20261117.md](AMI486_LOW_ROM_SETUP_VIDEO_ENTRY_20261117.md). The 00EFh–0235h byte-aligned stream backs up/restores DS:E000h, formats the System Configuration/Setup display fields and walks 0AF5h four-byte callback records. It is not proven reachable from a static near CALL/JMP; the nonstandard saved BP/SI/DI stack precondition remains unresolved. Keep its record-walker entry (BX=0AF5h direct) distinct from the 05B4h base+4 dispatcher.
+
+
+The 00EFh cleanup target is byte-verified as 62BDh, not 6220h. The 626Bh install helper writes temporary INT 10h/1Ah/1Ch handlers at F000:62ECh, F000:62FCh and F000:631Ch; the 62BDh helper restores the six prior IVT words. The generator now seeds these three installed handler entries separately for overlapping-stream analysis.
