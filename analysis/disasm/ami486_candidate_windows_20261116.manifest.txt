@@ -1,15 +1,14 @@
 Target: ami486.bin
 ROM size: 65536 bytes
-Candidate windows: 903
-Data ranges: 249
-Unique code-window bytes: 44678
-Unique data-range bytes: 20512
+Candidate windows: 904
+Data ranges: 250
+Unique code-window bytes: 44688
+Unique data-range bytes: 20571
 Overlap bytes: 334
-Code/data union: 64856/65536 (98.96%)
-Uncovered intervals: 41
-Pages touched/full: 256/256, 222/256
+Code/data union: 64925/65536 (99.07%)
+Uncovered intervals: 40
+Pages touched/full: 256/256, 223/256
 Largest uncovered intervals (length, start, end):
-  69, 8E09-8E4D
   67, 566B-56AD
   63, 55EC-562A
   38, 235B-2380
@@ -22,4 +21,4 @@ Relative near-branch targets normalized to 16-bit IP.
 Known tables and strings are emitted separately as data.
 Interpretation: independently seeded linear windows only; no CFG or entry-point proof.
 Range-mask source: tools/disasm_ami486_candidate_windows.py at pending update.
-Status: projected after adding AAEFh/AAF3h ATA-ready helper windows; generator and candidate listing require regeneration.
+Status: projected after adding 8E44h accessor and classifying 8E09h-8E43h as prefix/table data; generator and candidate listing require regeneration.
