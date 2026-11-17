@@ -76,6 +76,10 @@ LIMITS.update({0xFA4E: 0x17, 0xFE6E: 0x03})
 # Main POST continuation and bounded helper entries in 1364h–188Dh.
 # Fixed-disk parameter continuation, embedded data, and keyboard-controller helpers.
 LIMITS.update({
+    0x8328: 0x06, 0x832E: 0x4A,
+})
+
+LIMITS.update({
     0x0236: 0x5E, 0x026F: 0x19, 0x0288: 0x06, 0x028E: 0x06,
     0x02A4: 0x130, 0x02BA: 0x21, 0x02DB: 0x22, 0x02F1: 0x0C,
     0x02FD: 0x1C, 0x0319: 0x38, 0x0351: 0x16, 0x0367: 0x51,
@@ -151,6 +155,7 @@ DATA_RANGES = [
     (0x3446, 0x345E, "12-entry Setup main-menu handler pointer table", "words"),
     (0x3C5C, 0x3C5E, "Two zero-byte alignment padding before the BIOS Setup main-menu entry", "hexascii"),
     (0x0294, 0x02A4, "Eight-word internal selector/dispatch table with offsets 029Ch, 0288h, 029Ch, 0288h, 0294h, 028Eh, 0294h, 028Eh; consumer semantics unresolved", "words"),
+    (0x81EE, 0x8328, "Advanced CMOS/CPU-profile data block: board configuration words, COM/LPT I/O base addresses, and pointers to CPU/cache profile records around 19A2h-19AFh", "hexascii"),
     (0x345C, 0x3473, "AMI BIOS Setup Utilities title string", "ascii"),
     (0x3473, 0x3474, "Setup title-to-key-legend control prefix", "hexascii"),
     (0x3474, 0x34AB, "Setup keyboard navigation legend", "hexascii"),
@@ -1156,6 +1161,12 @@ SEEDS = [
     (0x1BF0, "option-ROM scan invalid-candidate helper: advances BX by 0080h, restores DS and returns"),
     (0x1E9A, "OR SP,SP / RET status-success stub between POST callback entries"),
 ]
+
+SEEDS.extend([
+    (0x8328, "wrapper entry preserving BX around CPU-profile/CMOS 8Eh configuration helper"),
+    (0x832E, "CPU clock/cache profile selector: walks 32-byte records rooted at CS:82C6h and updates CMOS register 8Eh"),
+])
+
 
 SEEDS.extend([
     (0x0236, "Standard CMOS Setup field handler: video display type bits in BP+14h; options text at 769Dh"),
