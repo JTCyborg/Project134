@@ -139,3 +139,8 @@ The values +2/+3 are two alternative configuration profiles. The common worker a
 - `ami486_config_tables_8400_20261116_01.txt`
 - `ami486_pointer_init_85D0_8640_20261116_01.txt`
 - `ami486_cmos_table_callers_context_20261116_02.txt`
+
+
+## Audit addendum — 85D6 zero-selector correction (2026-11-17)
+
+The original wording in this report that grouped 85F5 and 85D6 as the same five-entry prefix is withdrawn. 85F5 is the five-entry prefix worker. 85D6 is the optional runtime-table worker; with stock `82B0h=0`, it leaves CX zero and does not fall back to the prefix (phase 8 correction). See phase 8 and the region ledger `AMI486_ADDRESS_LEDGER_REGION_873C_8DCE_20261117.md`.
