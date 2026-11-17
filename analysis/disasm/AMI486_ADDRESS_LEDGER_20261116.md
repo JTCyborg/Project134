@@ -140,7 +140,7 @@ D100h–D5FFh is the separate floppy-controller/DMA subsystem: FDC ports 03F2h/0
 
 F92Ah–F935h is a six-word little-endian dispatch table with targets F936h, F986h, F9C4h, F977h, F999h and F9D3h. F977h overlaps the F936h stream as an alternate entry. The F8E7h wrapper ends in IRET at F929h; its actual vector entry remains unknown.
 
-Historical snapshot: 168 code windows plus 18 data ranges (186 headers) produced a 10,700-byte union. The 2026-11-17 generated artifact is 243 code windows plus 57 data ranges (300 headers); the recomputed union is 23,064 bytes across 121 pages. See section 11 for exact byte-mask counts. Neither figure is semantic coverage. Near-branch targets are normalized to 16-bit IP wraparound.
+Historical snapshot: 168 code windows plus 18 data ranges (186 headers) produced a 10,700-byte union. The 2026-11-17 generated artifact is 255 code windows plus 58 data ranges (313 headers); the recomputed union is 23,479 bytes across 121 pages. See section 11 for exact byte-mask counts. Neither figure is semantic coverage. Near-branch targets are normalized to 16-bit IP wraparound.
 
 
 ## INT 13h dispatch correction
@@ -361,11 +361,11 @@ The updated generator also removes the redundant 2D00h and misaligned 2D80h expl
 
 ### Current reproducible candidate footprint
 
-The regenerated manifest reports 243 code windows and 57 data ranges (300 headers). A byte-mask recomputation from the generated listing yields:
-- code-window bytes: 13,980;
-- data-range bytes: 9,197;
+The regenerated manifest reports 255 code windows and 58 data ranges (313 headers). A byte-mask recomputation from the generated listing yields:
+- code-window bytes: 14,331;
+- data-range bytes: 9,261;
 - overlap: 113;
-- union: 23,064 bytes (35.19%);
+- union: 23,479 bytes (35.83%);
 - touched 256-byte pages: 121/256.
 
 Do not interpret 31.52% as BIOS semantic completion. The code windows are independent linear decodes; the data ranges include confirmed strings/tables and some mixed blocks whose internal table consumers remain open.
@@ -417,3 +417,15 @@ The candidate-window generator and full-linear GitHub Actions workflow now norma
 - `99h` -> `CWD` (not `CDQ`)
 
 The previous candidate listing contained 31 such mislabeled lines. After regeneration, the candidate listing contains zero `cwde`/`cdq` mnemonics. The full linear listing blob changed after the workflow update; its manifest still reports 29,731 decode records and complete 65,536-byte linear coverage. Operand-size-prefixed forms are not rewritten.
+
+
+### 11.5 Palette table and screen field helper expansion — 2026-11-17
+
+Detailed helper contracts: [AMI486_SCREEN_RENDERER_HELPERS_20261117.md](AMI486_SCREEN_RENDERER_HELPERS_20261117.md).
+
+- `562Bh–566Ah` is a 16-entry × 4-byte attribute palette table selected by `[E037h]&0Fh`.
+- F2/F3 input at 08CDh increments/decrements the palette index through 56AEh; the four selected bytes expand into eight attribute variants at E1A2h–E1A9h.
+- 5821h applies selected attribute bits to a rectangular text region while preserving the character bytes.
+- 04B0h computes hard-disk capacity from sectors × heads × cylinders, divides by 2048 sectors per MiB and rounds to nearest MiB; it saturates at FFFFh on overflow and prints the result with an MB suffix.
+- 0A15h prints a fixed-width decimal field followed by a space and KB suffix; 0975h prints a space and MB suffix.
+- 03D4h is a field editor with record callbacks; 08CDh handles F2/F3 and arrow/Enter scan codes.
