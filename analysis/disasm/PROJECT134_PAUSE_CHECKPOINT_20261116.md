@@ -372,7 +372,7 @@ Completed the region pass and committed:
 - Updated `AMI486_ADDRESS_LEDGER_20261116.md`, `DISASM_INDEX.md`, phase 5 and phase 6 reports.
 - Expanded candidate seeds and explicit data/stack-return ranges in `tools/disasm_ami486_candidate_windows.py`; GitHub Actions regenerated the listing successfully.
 
-The 873Ch–8DCEh interval (1,683 bytes) now has no uncovered byte in the candidate code/data union. This is not proof that every byte's runtime meaning is resolved. In particular, 8889h–8897h, optional runtime-table provenance, ALi register names and some upstream entry references remain open.
+The 873Ch–8DCEh interval (1,683 bytes) now has no uncovered byte in the candidate code/data union. This is not proof that every byte's runtime meaning is resolved. In particular, 8893h–8898h, optional runtime-table provenance, ALi register names and some upstream entry references remain open.
 
 Key correction: 85B3h falls through from 85BFh into the 76-record worker at 85C0h; it does not return after 85D6h. In the stock image, 85F5h applies five records, 85CBh has count zero, 85D6h is a no-op because 82B0h=0, then 85C0h applies 76 records and returns at 862Fh. The 8750h–87A3h 21-record ALi write view is an overlapping use of the first 21 entries of the 76-record suffix.
 
