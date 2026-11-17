@@ -887,3 +887,12 @@ Detailed map: [AMI486_ADDRESS_LEDGER_REGION_AAEF_AB34_20261117.md](AMI486_ADDRES
 Mapped the epilogue at AAEFh–AAF2h and the ATA drive-ready poll helper at AAF3h–AB33h. The helper is called from AAD8h, waits on port 80h, checks BSY at ATA status port 01F7h, selects A0h/B0h through 01F6h, and tests DRDY. It returns CF=0 when ready and CF=1 on the observed failure/not-ready paths. The caller at AAD8h performs a CX=4000h retry/delay loop.
 
 Generator update: pending commit. The projected range mask is 64,856/65,536 bytes (98.96%), with 41 uncovered intervals and 222 fully covered 256-byte pages. The next largest gap is 8E09h–8E4Dh (69 bytes). These are range-mask projections, not semantic-completion or reachability percentages. The Capstone listing must be regenerated after the updated generator is committed.
+
+
+## 53. Indexed value-table accessor — 8E09h–8E4Dh (2026-11-17)
+
+Detailed map: [AMI486_ADDRESS_LEDGER_REGION_8E09_8E4E_20261117.md](AMI486_ADDRESS_LEDGER_REGION_8E09_8E4E_20261117.md).
+
+Separated the mixed interval into an unresolved four-byte prefix at 8E09h–8E0Ch, a 55-byte lookup table at 8E0Dh–8E42h, and a ten-byte accessor at 8E44h–8E4Dh. The accessor is called directly from 8894h and returns table[AL-80h]. The exact meaning of the returned values and the role of the four-byte prefix remain unresolved.
+
+Generator update: pending commit. The projected range mask is 64,925/65,536 bytes (99.07%), with 40 uncovered intervals and 223 fully covered 256-byte pages. The next largest uncovered interval is 566Bh–56ADh (67 bytes). These are range-mask projections, not semantic-completion or reachability percentages. The full Capstone listing must be regenerated after the updated generator is committed.
