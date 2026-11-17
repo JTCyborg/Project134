@@ -1,15 +1,14 @@
 Target: ami486.bin
 ROM size: 65536 bytes
-Candidate windows: 890
+Candidate windows: 891
 Data ranges: 248
-Unique code-window bytes: 44201
+Unique code-window bytes: 44287
 Unique data-range bytes: 20517
 Overlap bytes: 334
-Code/data union: 64384/65536 (98.24%)
-Uncovered intervals: 47
-Pages touched/full: 256/256, 214/256
+Code/data union: 64470/65536 (98.37%)
+Uncovered intervals: 46
+Pages touched/full: 256/256, 215/256
 Largest uncovered intervals (length, start, end):
-  86, 596A-59BF
   83, 72D8-732A
   82, 83AE-83FF
   76, 2ED8-2F23
@@ -19,10 +18,11 @@ Largest uncovered intervals (length, start, end):
   67, 566B-56AD
   63, 55EC-562A
   38, 2207-222C
+  34, 8FCE-8FEF
 Window bytes: 0x80 default; selected handler windows clipped at known data boundaries
 Decoder: Capstone x86 16-bit
 Relative near-branch targets normalized to 16-bit IP.
 Known tables and strings are emitted separately as data.
 Interpretation: independently seeded linear windows only; no CFG or entry-point proof.
-Range-mask source: tools/disasm_ami486_candidate_windows.py at 39fc3e561268696251e4ea8e5f8fd16684e47aaa.
-Status: range-mask metrics reconciled from current generator definitions; the per-window Capstone listing has not yet been regenerated after the latest boundary corrections.
+Range-mask source: tools/disasm_ami486_candidate_windows.py at pending update.
+Status: recalculated from the proposed 5959h seed; the per-window Capstone listing has not yet been regenerated.
