@@ -576,3 +576,16 @@ The confirmed direct CALL xref into the worker entry `6F75h` remains `6F23h`. At
 A separate path at `706Ch` loads `CL=[E41Fh]`, decrements CX, then sets `AX=0228h` and performs a 40-sector read at `7075h`. Do not conflate that read with the AH=05h write worker. This further supports treating E41Fh as shared disk-operation state until its producer and complete dataflow are traced.
 
 Current classification: one confirmed AH=05h INT 13h write callsite (`6F98h -> 6C15h -> 6C1Fh`); no proof yet that this worker is the menu's low-level format implementation.
+
+
+### Correction: 6F75h is an alternate entry/caller, not an ENTER prologue
+
+Reconstructing exact byte offsets (rather than reading the 16-byte dump rows as instruction boundaries) corrects the previous description of `6F75h`:
+
+- `6F37h` begins `ENTER 0010h,00h` and is the frame-based helper.
+- `6F75h` begins `CALL 6F37h` (bytes `E8 BF FF`), so it is an alternate entry into a wrapper/caller sequence, not an ENTER instruction.
+- The direct CALL from `6F23h` targets `6F75h` and therefore enters this wrapper.
+- The helper at `6F37h` sets up a 16-byte local frame, calls register/frame support at `72D8h`, then calls the routine at `696Bh` (relative target from `6F49h`). It reads `CL=[E41Fh]`, clears CH, sets `SI=E1B8h` and `DI=E3CFh`, then loops copying two-byte records: `AL=[SI]` to `[DI]`, while reading `[SI+1]` into BL; SI advances by two. The exact semantic fields of each record remain unresolved.
+- After the helper returns, the wrapper continues at `6F78h`, calls `72D8h`-adjacent register support at `72D8h` (call site `6F79h`), then calls back into `6F37h`? No: the actual call at `6F75h` is the helper invocation; subsequent bytes at `6F78h` are the continuation and include `8B 0C 86 E9 C0 E1 06...`. The CHS preparation and AH=05h issue remain in this continuation at `6F80h–6F98h`.
+
+The confirmed disk-write path remains `6F98h -> 6C15h -> INT 13h` at `6C1Fh`. However, the wrapper/helper relationship is more complex than previously stated: `6F75h` is a call sequence that first invokes the record-preparation helper at `6F37h`, and the worker is not a standalone ENTER-framed routine. Previous wording calling `6F75h` a frame-based worker is withdrawn.
