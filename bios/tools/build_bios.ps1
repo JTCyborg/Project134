@@ -11,7 +11,9 @@ param(
 $ErrorActionPreference = "Stop"
 
 $biosDirectory = Split-Path -Parent $PSScriptRoot
-$sourcePath = Join-Path $biosDirectory "src\reset.asm"
+$sourceDirectory = Join-Path $biosDirectory "src"
+$sourcePath = Join-Path $sourceDirectory "reset.asm"
+$includePath = $sourceDirectory + [System.IO.Path]::DirectorySeparatorChar
 $validatorPath = Join-Path $PSScriptRoot "validate_rom.ps1"
 $outputDirectory = [System.IO.Path]::GetFullPath($OutputDirectory)
 $outputPath = Join-Path $outputDirectory "Project134.bin"
