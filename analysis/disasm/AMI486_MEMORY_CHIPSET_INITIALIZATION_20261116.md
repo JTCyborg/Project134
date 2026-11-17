@@ -5,7 +5,7 @@ Decode: Capstone x86-16 seeded windows, with near-relative targets normalized to
 
 ## 1. Memory pattern and alias probes
 
-### 2100h stream
+### 20FCh–2186h stream (first memory-probe continuation)
 
 The code writes alternating 32-bit patterns at the low-memory base and uses a sentinel at offset 0100h:
 - 0xAAAA5555
@@ -86,25 +86,34 @@ This links the memory-probe result path to chipset register programming and a pr
 No physical RAM capacity or whole-ROM semantic coverage percentage is claimed from these routines alone.
 
 
-## 5. Raw-entry and segment-context audit — 2026-11-16
+## 5. Raw-entry and segment-context audit — corrected 2026-11-17
 
-The exact first instructions at 2100h are:
+The earlier 2026-11-16 alignment note incorrectly treated 2100h as the start of an independent stream. It is withdrawn. The actual stack-threaded return chain is:
+- 20F4h: `MOV SP,20FAh`
+- 20F7h: `JMP 8DDCh`
+- 20FAh–20FBh: word `20FCh`
+- RET from 8DDCh resumes at 20FCh.
+
+The aligned entry and first instructions are:
 
 ```asm
-2100  C7 06 00 00 55 55       MOV word ptr [DS:0000h],5555h
-2106  AA                      STOSB byte ptr ES:[DI],AL
-2107  AA                      STOSB byte ptr ES:[DI],AL
-2108  26 66 C7 06 00 01 FF FF FF FF  MOV dword ptr ES:[0100h],FFFFFFFFh
-2112  26 66 81 3E 00 00 55 55 AA AA  CMP dword ptr ES:[0000h],AAAA5555h
-211C  0F 85 67 00             JNE 2187h
+20FC  B2 FF                         MOV DL,FFh
+20FE  26 66 C7 06 00 00 55 55 AA AA  ES: MOV DWORD PTR [0000h],AAAA5555h
+2108  26 66 C7 06 00 01 FF FF FF FF  ES: MOV DWORD PTR [0100h],FFFFFFFFh
+2112  26 66 81 3E 00 00 55 55 AA AA  ES: CMP DWORD PTR [0000h],AAAA5555h
+211C  0F 85 67 00                    JNE 2187h
 ```
 
-The first dword pattern is therefore partly caller-dependent: the routine writes the low word through DS:[0000h], then emits two bytes from AL through ES:DI. It is consistent with AL=AAh and DI=0002h when DS/ES address the same base, but those register values are not established by the local stream and must not be assumed.
+The GDT pseudo-descriptor at 2068h contains limit 0017h and base 0F2070h. The GDT at 2070h contains a null descriptor, a base-zero writable 32-bit 4-GiB data descriptor at selector 0008h, and a base-zero writable 64-KiB data descriptor at selector 0010h. The code at 20DAh sets CR0.PE, loads this GDT, and loads ES=0008h before the probe. Thus the first pattern store is an operand-size-prefixed 32-bit write through ES to the flat segment. The opcode byte at 2100h belongs to the instruction beginning at 20FEh; 2100h is not an entry point.
 
-A full raw-ROM reference scan found no direct near CALL/JMP target to 2100h and no literal far pointer F000:2100h. The only other little-endian 2100h word occurrence is inside a text string. Thus 2100h remains an entry candidate whose transfer mechanism is indirect, stack-threaded or established outside the ROM image; the exact caller is unresolved. Internal branch targets 2187h and 222Dh are directly confirmed.
+The first pattern is not a DS:[0000h] word store followed by two STOSB instructions. The previous claim about caller-dependent AL=AAh and DI=0002h for those bytes is withdrawn. The first dword store is explicitly `ES:[0000h] = AAAA5555h`; the sentinel is `ES:[0100h] = FFFFFFFFh`.
 
-The result-selector order is exact: DL=00h before testing ES:00800000h; DL=02h before ES:00000800h; DL=01h before ES:00001000h; DL=03h before ES:00002000h. The high-address pass similarly sets DH=00h/02h/01h/03h before checking ES:04800000h, ES:04000800h, ES:04001000h and ES:04002000h. The second pattern pass repeats this with BL/BH.
+The full setup path into this stream is now byte-confirmed through stack return words:
+`D9D9h -> 1AFBh -> 1B06h -> 1B2Ch -> 208Dh -> 2098h -> 20C4h -> 20CEh -> 20DAh -> 20FCh`.
+The CMOS B3h table selection at 1AFBh/1B06h and the indexed-register list at 2098h are detailed in `AMI486_ADDRESS_LEDGER_REGION_19F8_20FB_20261117.md`.
 
-At 23B6h the continuation loads AX=B823h into ES, reads CR0, clears bit 0 (PE) and writes CR0 back. The selector descriptor/base and the initial protected-mode ES value are not known from this local stream. The later 23E4h continuation sets SS=0030h/SP=0100h, calls 240Ah/2495h/29EDh, then sets DS=ES=0000h and SS=CS before jumping to D9DCh. The segment setup and actual memory map remain caller-dependent.
+The result-selector order remains exact: DL=00h before testing ES:00800000h; DL=02h before ES:00000800h; DL=01h before ES:00001000h; DL=03h before ES:00002000h. The high-address pass similarly sets DH=00h/02h/01h/03h before checking ES:04800000h, ES:04000800h, ES:04001000h and ES:04002000h. The second pattern pass repeats this with BL/BH.
 
-The previous section's stack-threaded decode remains authoritative: 222Dh reads indexed chipset register 16h, ORs 30h and writes it back, then writes 44h to register 11h; 2381h/2396h pack the probe selectors into chipset registers 10h/11h. This report supersedes the shorter duplicate draft AMI486_MEMORY_ALIAS_TEST_2100_20261116.md.
+At 23B6h the continuation loads AX=B823h into ES, reads CR0, clears bit 0 (PE) and writes CR0 back. The selector descriptor/base and the initial protected-mode ES value are not known from that local stream. The later 23E4h continuation sets SS=0030h/SP=0100h, calls 240Ah/2495h/29EDh, then sets DS=ES=0000h and SS=CS before jumping to D9DCh. The segment setup and actual installed RAM map remain partly caller-dependent.
+
+The previous section's stack-threaded decode remains authoritative: 222Dh reads indexed chipset register 16h, ORs 30h and writes it back, then writes 44h to register 11h; 2381h/2396h pack the probe selectors into chipset registers 10h/11h. This report does not claim a physical RAM capacity or whole-ROM semantic coverage percentage.
