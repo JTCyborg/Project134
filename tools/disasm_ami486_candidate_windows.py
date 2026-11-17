@@ -70,6 +70,9 @@ LIMITS.update({
     0x281E: 0x0A, 0x282A: 0x0A, 0x2836: 0x19,
 })
 
+# Upper-ROM tail: POST complement-check entry and the post-font JMP trampoline.
+LIMITS.update({0xFA4E: 0x17, 0xFE6E: 0x03})
+
 DATA_RANGES = [
     (0x562B, 0x566B, "16-entry x 4-byte Setup text-attribute palette table selected by [E037h]", "hexascii"),
     (0x0000, 0x00EF, "AMI BIOS copyright/identity block and embedded date/pattern bytes preceding the 00EFh code candidate", "hexascii"),
@@ -284,6 +287,18 @@ DATA_RANGES = [
     (0x2828, 0x282A, "Crafted near-return word 282Ah consumed by the 8DCFh indexed-read helper", "words"),
     (0x2834, 0x2836, "Crafted near-return word 2836h consumed by the 8DDCh indexed-write helper", "words"),
 
+
+    (0xFA00, 0xFA4C, "76-byte POST integrity comparison block; bytewise complement of FF70h-FFBBh", "hexascii"),
+    (0xFA6E, 0xFE6E, "1-KiB bitmap/glyph block; 128 eight-byte records, not executable code", "hexascii"),
+    (0xFE71, 0xFEA1, "Structured upper-ROM data following the FE6Eh near-JMP trampoline", "hexascii"),
+    (0xFEA1, 0xFEA8, "Seven-byte upper-ROM metadata/control record", "hexascii"),
+    (0xFEA8, 0xFEE4, "Zero-filled upper-ROM padding/reserved area", "hexascii"),
+    (0xFEE4, 0xFF50, "Mixed upper-ROM dispatch/relocation data candidate; individual entries unresolved", "hexascii"),
+    (0xFF50, 0xFF70, "Upper-ROM identification fields and printable (1992 AMI contact string", "hexascii"),
+    (0xFF70, 0xFFBC, "76-byte complement data consumed by the FA4Eh POST integrity routine", "hexascii"),
+    (0xFFBC, 0xFFC7, "FFh fill between upper-ROM data blocks", "hexascii"),
+    (0xFFC7, 0xFFF0, "41-byte duplicate of FE75h-FE9Dh", "hexascii"),
+    (0xFFF5, 0x10000, "BIOS date 04/04/93 and trailing metadata bytes after reset vector", "hexascii"),
 ]
 
 SEEDS = [
@@ -1057,6 +1072,11 @@ SEEDS = [
     (0x1BF0, "option-ROM scan invalid-candidate helper: advances BX by 0080h, restores DS and returns"),
     (0x1E9A, "OR SP,SP / RET status-success stub between POST callback entries"),
 ]
+
+SEEDS.extend([
+    (0xFA4E, "POST-called complement-check routine; direct stack-threaded entry from E34Dh/E350h"),
+    (0xFE6E, "three-byte near-JMP trampoline immediately following the 1-KiB bitmap block"),
+])
 
 def main():
     rom = ROM_PATH.read_bytes()
