@@ -35,13 +35,11 @@ The records contain repeated 16-byte structures with fields including 16-bit val
 
 E6F2h contains E9 63 10, a near JMP from the post-instruction IP E6F5h to F758h. The target F758h is a boot path: it sets the INT 1Eh vector at 0000:0078 to CS:EFC7h, clears the 7C00h boot-sector buffer, resets disk services with INT 13h, and continues through the BIOS boot-drive helper.
 
-The bytes E6F5h–E7E7h are therefore skipped by this direct JMP path. They include a 16-byte descending-value table at E729h:
-
-```text
-17 04 00 03 80 01 C0 00 60 00 30 00 18 00 0C 00
-```
-
-The table's consumer is not yet proven. The surrounding 243-byte block includes a zero-heavy preamble and a high-entropy binary tail; retain it as opaque embedded data rather than linear x86 code.
+The E6F5h–E7E7h span is skipped by this direct JMP path. It is not one homogeneous payload:
+- E6F5h–E728h is an opaque data preamble.
+- E729h–E738h is the eight-word UART baud-divisor table: 0417h, 0300h, 0180h, 00C0h, 0060h, 0030h, 0018h and 000Ch. These are the standard divisors for 110, 150, 300, 600, 1200, 2400, 4800 and 9600 baud.
+- E739h–E73Bh contains E9 A7 11, a near JMP from E73Ch to F8E3h. The IVT table at FEE3h installs E739h for vector 14h, so this is the INT 14h serial-service trampoline to the six-function dispatcher at F8E3h.
+- E73Ch–E7E7h remains opaque embedded data and must not be decoded as a linear instruction stream.
 
 ## 4. Keyboard-controller helpers
 
