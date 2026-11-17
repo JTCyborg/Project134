@@ -1264,8 +1264,12 @@ Reason: Crafted near-return word 20CEh used by the F66Ah A20-enable helper
 Words: 20CE
 
 ===== DATA 20D8h-20D9h =====
-Reason: Crafted near-return word 20DAh used by the 8DDCh indexed-writer trampoline
+Reason: Crafted near-return word 20DAh consumed by the EEEFh POST/PIC helper
 Words: 20DA
+
+===== DATA 20FAh-20FBh =====
+Reason: Crafted near-return word 20FCh consumed by the 8DDCh indexed-writer trampoline
+Words: 20FC
 
 ===== DATA 2068h-208Ch =====
 Reason: LGDT pseudo-descriptor at 2068h plus adjacent descriptor/parameter bytes used by the PM memory probe
