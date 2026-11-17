@@ -769,22 +769,21 @@ Generator update: dc1b930b4e68ccce53251df74f60be8f6cbfcdd0. The candidate-window
 
 The range-mask summary [ami486_candidate_windows_20261116.manifest.txt](ami486_candidate_windows_20261116.manifest.txt) has been refreshed from the current generator definitions. The per-window Capstone decode listing has not yet been rerun after the latest boundary corrections; this manifest reports the independently calculated coverage mask.
 
-- Candidate windows: 889
+- Candidate windows: 890
 - Data ranges: 248
-- Unique code-window bytes: 44,109
+- Unique code-window bytes: 44,201
 - Unique data-range bytes: 20,517
 - Code/data overlap: 334 bytes
-- Code/data union: 64,292 / 65,536 bytes (**98.10%**)
-- Uncovered intervals: 48
-- Pages touched/full: 256 / 256, 213 / 256
+- Code/data union: 64,384 / 65,536 bytes (**98.24%**)
+- Uncovered intervals: 47
+- Pages touched/full: 256 / 256, 214 / 256
 
-Manifest blob SHA: 10ebb99d5c031e8287e5db970e4ca60bce841cc2. The metrics match an independent range-union calculation from generator source b1af4e1760e626febdd74b612f2a914f18e67b3c.
+Manifest blob SHA: dd56696866171ff2009bb32826db68bf4c11339e. The metrics match an independent range-union calculation from generator source 39fc3e561268696251e4ea8e5f8fd16684e47aaa.
 
 The ten largest remaining uncovered intervals are:
 
 | Length | Start–end (inclusive) |
 |---:|---|
-| 92 | 0454h–04AFh |
 | 86 | 596Ah–59BFh |
 | 83 | 72D8h–732Ah |
 | 82 | 83AEh–83FFh |
@@ -794,9 +793,9 @@ The ten largest remaining uncovered intervals are:
 | 69 | AAEFh–AB33h |
 | 67 | 566Bh–56ADh |
 | 63 | 55ECh–562Ah |
+| 38 | 2207h–222Ch |
 
-Next region selected for analysis: 0454h–04AFh (92 bytes). The 98.10% figure is byte-range coverage by independently seeded candidate windows and classified data ranges; it is not a claim that 98.10% of the BIOS has been semantically understood or proven reachable.
-
+Next region selected for analysis: 596Ah–59BFh (86 bytes). The 98.24% figure is byte-range coverage by independently seeded candidate windows and classified data ranges; it is not a claim that 98.24% of the BIOS has been semantically understood or proven reachable.
 
 ## 45. Drive-type/status display helper continuation — 475Ch–4890h (2026-11-17)
 
@@ -804,4 +803,13 @@ Detailed map: [AMI486_ADDRESS_LEDGER_REGION_475C_4891_20261117.md](AMI486_ADDRES
 
 The 475Ch drive-type/status display helper was clipped at 4830h, immediately after the BA opcode of MOV DX,0003h. Extended its window from D5h to 135h bytes so the complete helper through RET at 4890h is included. The tail processes E411h/E413h/E416h/E41Dh/E41Fh fields through 09EBh, advances the E180h display-state pointer, calls 5BD5h, and uses the 37BDh fallback label when the returned value is FFFFh. The next independent renderer begins at 4891h.
 
-Generator update: 86d414d730b3a35a9c339788033a4cc20ce77b98. The refreshed range-mask summary now reports 64,292/65,536 bytes (98.10%) and 48 uncovered intervals; the next largest gap is 0454h–04AFh (92 bytes). The per-window Capstone listing still needs a full regeneration to match the current generator source.
+Generator update: 86d414d730b3a35a9c339788033a4cc20ce77b98. Section 46 closes the 0454h–04AFh interval; the refreshed range-mask summary is recorded there. The per-window Capstone listing still needs a full regeneration to match the current generator source.
+
+
+## 46. Setup field-record renderer and selector wrappers — 03D4h–04AFh (2026-11-17)
+
+Detailed map: [AMI486_ADDRESS_LEDGER_REGION_03D4_04B0_20261117.md](AMI486_ADDRESS_LEDGER_REGION_03D4_04B0_20261117.md).
+
+Extended the 03D4h screen-presentation field-record renderer from the default 80h-byte window to 0D6h bytes, covering the clipped CALL displacement at 0454h and the full routine through RET at 04A9h. The routine computes a 16-byte record offset from E401h and copies record fields into BP+40h–BP+47h. Added the six-byte E1A3h selector wrapper at 04AAh, called from 048Ah; it joins the common field-value calculation at 04BBh. The existing 04B0h entry and alternate 04B2h wrapper remain separate.
+
+Generator update: fee1d36bc61ef71410e760d1bbb7b9d92608a9f8. The refreshed range-mask summary reports 64,384/65,536 bytes (98.24%), 47 uncovered intervals, and 214 fully covered 256-byte pages. The next largest gap is 596Ah–59BFh (86 bytes). The per-window Capstone listing remains pending regeneration.
