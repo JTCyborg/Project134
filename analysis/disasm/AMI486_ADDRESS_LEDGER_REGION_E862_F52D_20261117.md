@@ -113,7 +113,7 @@ The code uses the E260h descriptor/parameter area already classified in the prev
 - EE80h/EE86h/EE8Ch are CMOS status-B read, status-C read and status-B write helpers.
 - EE94h reads the CMOS index/data ports 70h/71h; EE9Dh writes them. EEAAh/EEB9h wrap read/write while preserving flags and the NMI-mask state.
 - EED2h and EEDBh are separate interrupt stubs: one sends slave EOI then invokes INT 0Ah; the other clears port F0h, calls the PIC EOI helper and invokes INT 02h.
-- EEE7h writes the port-F1h command used by POST. EEE Fh–EF35h initializes and programs the master/slave PIC masks.
+- EEE7h writes the port-F1h command used by POST. EEEFh–EF35h initializes and programs the master/slave PIC masks.
 - EF36h–EF56h is a CMOS 8Dh/port-61h NMI status helper, called from F724h and F808h. EF57h is a near-JMP stub to E831h.
 
 ## 7. Embedded strings and opaque data
