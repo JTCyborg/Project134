@@ -15829,7 +15829,7 @@ Reason: INT 10h AH=0Fh return current video mode
 Reason: INT 10h unsupported-service RET stub for AH=10h..12h
 9F7D  C3                      ret
 
-===== 9F7Eh-A017h =====
+===== 9F7Eh-9FD8h =====
 Reason: INT 10h AH=13h write string
 9F7E  3C 04                   cmp al, 4
 9F80  73 56                   jae 0x9fd8
@@ -15875,36 +15875,8 @@ Reason: INT 10h AH=13h write string
 9FD4  B4 02                   mov ah, 2
 9FD6  CD 10                   int 0x10
 9FD8  C3                      ret
-9FD9  B9 01 00                mov cx, 1
-9FDC  CD 10                   int 0x10
-9FDE  FE C2                   inc dl
-9FE0  3A 16 4A 00             cmp dl, byte ptr [0x4a]
-9FE4  75 31                   jne 0xa017
-9FE6  32 D2                   xor dl, dl
-9FE8  FE C6                   inc dh
-9FEA  80 FE 19                cmp dh, 0x19
-9FED  75 28                   jne 0xa017
-9FEF  FE CE                   dec dh
-9FF1  80 3E 49 00 07          cmp byte ptr [0x49], 7
-9FF6  74 09                   je 0xa001
-9FF8  80 3E 49 00 04          cmp byte ptr [0x49], 4
-9FFD  B4 00                   mov ah, 0
-9FFF  73 04                   jae 0xa005
-A001  B4 08                   mov ah, 8
-A003  CD 10                   int 0x10
-A005  53                      push bx
-A006  52                      push dx
-A007  33 C9                   xor cx, cx
-A009  8A 16 4A 00             mov dl, byte ptr [0x4a]
-A00D  FE CA                   dec dl
-A00F  BB 01 06                mov bx, 0x601
-A012  93                      xchg bx, ax
-A013  CD 10                   int 0x10
-A015  5A                      pop dx
-A016  5B                      pop bx
-A017  C3                      ret
 
-===== 9FD9h-A017h =====
+===== 9FD9h-9FE7h =====
 Reason: shared INT 10h character-output and cursor-wrap helper
 9FD9  B9 01 00                mov cx, 1
 9FDC  CD 10                   int 0x10
@@ -15912,28 +15884,6 @@ Reason: shared INT 10h character-output and cursor-wrap helper
 9FE0  3A 16 4A 00             cmp dl, byte ptr [0x4a]
 9FE4  75 31                   jne 0xa017
 9FE6  32 D2                   xor dl, dl
-9FE8  FE C6                   inc dh
-9FEA  80 FE 19                cmp dh, 0x19
-9FED  75 28                   jne 0xa017
-9FEF  FE CE                   dec dh
-9FF1  80 3E 49 00 07          cmp byte ptr [0x49], 7
-9FF6  74 09                   je 0xa001
-9FF8  80 3E 49 00 04          cmp byte ptr [0x49], 4
-9FFD  B4 00                   mov ah, 0
-9FFF  73 04                   jae 0xa005
-A001  B4 08                   mov ah, 8
-A003  CD 10                   int 0x10
-A005  53                      push bx
-A006  52                      push dx
-A007  33 C9                   xor cx, cx
-A009  8A 16 4A 00             mov dl, byte ptr [0x4a]
-A00D  FE CA                   dec dl
-A00F  BB 01 06                mov bx, 0x601
-A012  93                      xchg bx, ax
-A013  CD 10                   int 0x10
-A015  5A                      pop dx
-A016  5B                      pop bx
-A017  C3                      ret
 
 ===== 9FE8h-A017h =====
 Reason: INT 10h cursor line-advance alternate helper entry
