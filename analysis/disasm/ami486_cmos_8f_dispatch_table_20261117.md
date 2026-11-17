@@ -299,3 +299,11 @@ The dispatch table at D6A8h has now been traced one step further:
 - The 4D4Dh target is a real routine that manipulates variables in the E1xx/E4xx areas and performs further calls. Its full purpose is not yet established; do not classify it as a disk or password routine solely from this entry.
 
 This resolves the actual destinations for CMOS[8Fh] marker 09h and 0Ah: marker 09h returns via 89B0h; marker 0Ah enters 4D4Dh via the ROM pointer at CS:0030h.
+
+### Stack precondition at D691h
+
+D691h sets SS=0030h and SP=0100h. The resulting linear stack address is 0030h*10h+0100h = 00400h, i.e. the beginning of the BIOS Data Area, not a private stack region. Neither D691h nor the short marker-specific trampolines shown above initialize this stack word:
+- marker 09h reaches RET at 89B0h, which consumes the word at physical 00400h as its return IP;
+- marker 0Ah reaches 9237h, whose POP BP consumes the same stack word before jumping to 4D4Dh.
+
+Therefore these paths depend on a pre-existing value at 00400h supplied by earlier initialization/caller context. The return target for marker 09h and the restored BP value for marker 0Ah cannot be claimed until the writer/initializer of physical 00400h is located. This is a key unresolved dependency in the POST state machine.
