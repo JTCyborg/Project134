@@ -1331,14 +1331,27 @@ Reason: 81 four-byte CMOS/ALi configuration records consumed by the 8400h indexe
 886C  B2 FF 40 40 B3 0F 05 00 B4 83 01 7E B5 60 00 00 ..@@.......~.`..
 887C  B6 07 22 05                                     ..".
 
-===== DATA 8750h-87A3h =====
-Reason: Overlapping 21-record subset walked by the POST ALi register initializer at 2098h; four-byte records
+===== DATA 8750h-887Fh =====
+Reason: Overlapping 76-record subset processed by the 85C1h E000h state updater; four-byte records
 8750  36 FF 01 00 40 FF 20 F0 41 FF 0A FF 42 FF 10 00 6...@. .A...B...
 8760  43 FF 1F 00 44 FF 0F 00 45 FF 00 00 46 FF 0F 00 C...D...E...F...
 8770  47 FF 69 3A 48 FF 01 01 49 FF 08 60 4A FF 40 00 G.i:H...I..`J.@.
 8780  4E FF 00 0C 50 FF 21 40 51 FF 00 00 52 FF 64 00 N...P.!@Q...R.d.
 8790  53 FF 5B 5F 54 FF 88 00 55 FF 65 C5 56 FF 00 00 S.[_T...U.e.V...
-87A0  57 FF 30 32                                     W.02
+87A0  57 FF 30 32 80 FF 16 16 81 0F 0F 05 82 83 01 7E W.02...........~
+87B0  83 60 00 00 84 07 20 01 85 FF 20 20 86 0F 0F 05 .`.... ...  ....
+87C0  87 83 01 7E 88 60 00 00 89 07 20 02 8A FF 25 25 ...~.`.... ...%%
+87D0  8B 0F 05 05 8C 83 01 7E 8D 60 40 00 8E 07 20 03 .......~.`@... .
+87E0  8F FF 33 33 90 0F 05 00 91 83 01 7E 92 60 40 00 ..33.......~.`@.
+87F0  93 07 21 04 94 FF 40 40 95 0F 05 00 96 83 01 7E ..!...@@.......~
+8800  97 60 40 00 98 07 22 05 99 FF 50 50 9A 0F 05 00 .`@..."...PP....
+8810  9B 83 02 7E 9C 60 60 00 9D 07 23 06 9E FF 66 66 ...~.``...#...ff
+8820  9F 0F 05 00 A0 83 01 7E A1 60 40 00 A2 07 21 04 .......~.`@...!.
+8830  A3 FF 24 24 A4 0F 05 00 A5 83 01 81 A6 60 40 00 ..$$.........`@.
+8840  A7 07 20 03 A8 FF 25 25 A9 0F 05 00 AA 83 01 7E .. ...%%.......~
+8850  AB 60 00 00 AC 07 20 02 AD FF 33 33 AE 0F 05 00 .`.... ...33....
+8860  AF 83 01 7E B0 60 00 00 B1 07 21 04 B2 FF 40 40 ...~.`....!...@@
+8870  B3 0F 05 00 B4 83 01 7E B5 60 00 00 B6 07 22 05 .......~.`....".
 
 ===== DATA 87A9h-88BAh =====
 Reason: Overlapping 14-row AUTO Config lookup view; 20-byte row stride with 16-bit fields at offsets +00h/+04h/+08h/+0Ch; overlaps other data and code views
@@ -1376,6 +1389,102 @@ Words: 21C0, 00C1, 0AC5, 06C6, 0CC8, 07C9, 00CB, 00CC, 00CE, 00CF
 ===== DATA 8E76h-8E7Dh =====
 Reason: Four-word short ALi indexed-register profile list selected by the CMOS B3h profile path
 Words: 00C1, 00C2, 10C1, 00C2
+
+===== DATA 88EEh-88EFh =====
+Reason: Crafted near-return word 88F0h used by the arithmetic/flag probe at 8921h
+Words: 88F0
+
+===== DATA 890Eh-890Fh =====
+Reason: Crafted near-return word 8910h used by the EE94h CMOS-read trampoline
+Words: 8910
+
+===== DATA 891Ch-891Dh =====
+Reason: Crafted near-return word 891Eh used by the EE9Dh CMOS-write trampoline
+Words: 891E
+
+===== DATA 893Ch-893Dh =====
+Reason: Crafted near-return word 893Eh used by the 8DCFh ALi indexed-read helper
+Words: 893E
+
+===== DATA 894Ah-894Bh =====
+Reason: Crafted near-return word 894Ch used by the 8DDCh ALi indexed-write helper
+Words: 894C
+
+===== DATA 8952h-8953h =====
+Reason: Crafted near-return word 8954h used by the 8DCFh ALi indexed-read helper
+Words: 8954
+
+===== DATA 8966h-8967h =====
+Reason: Crafted near-return word 8968h used by the 8DDCh ALi indexed-write helper
+Words: 8968
+
+===== DATA 896Eh-896Fh =====
+Reason: Crafted near-return word 8970h used by the 8DCFh ALi indexed-read helper
+Words: 8970
+
+===== DATA 8982h-8983h =====
+Reason: Crafted near-return word 8984h used by the 8DDCh ALi indexed-write helper
+Words: 8984
+
+===== DATA 898Eh-898Fh =====
+Reason: Crafted near-return word 8990h used by the 8DCFh ALi indexed-read helper
+Words: 8990
+
+===== DATA 899Ch-899Dh =====
+Reason: Crafted near-return word 899Eh used by the 8DDCh ALi indexed-write helper
+Words: 899E
+
+===== DATA 89A4h-89A5h =====
+Reason: Crafted near-return word 89A6h used by the 8DCFh ALi indexed-read helper
+Words: 89A6
+
+===== DATA 89B8h-89B9h =====
+Reason: Crafted near-return word 89BAh used by the 8DDCh ALi indexed-write helper
+Words: 89BA
+
+===== DATA 89C0h-89C1h =====
+Reason: Crafted near-return word 89C2h used by the 8DCFh ALi indexed-read helper
+Words: 89C2
+
+===== DATA 89D4h-89D5h =====
+Reason: Crafted near-return word 89D6h used by the 8DDCh ALi indexed-write helper
+Words: 89D6
+
+===== DATA 89ECh-89EDh =====
+Reason: Crafted near-return word 89EEh used by the 8DCFh ALi indexed-read helper
+Words: 89EE
+
+===== DATA 8A36h-8A37h =====
+Reason: Crafted near-return word 8A38h used by the EE94h CMOS-read trampoline
+Words: 8A38
+
+===== DATA 8A66h-8A67h =====
+Reason: Crafted near-return word 8A68h used by the 8DDCh ALi indexed-write helper
+Words: 8A68
+
+===== DATA 8A8Eh-8A8Fh =====
+Reason: Crafted near-return word 8A90h used by the 8D83h ALi indexed-register sequence
+Words: 8A90
+
+===== DATA 8A9Ah-8A9Bh =====
+Reason: Crafted near-return word 8A9Ch used by the EE94h CMOS-read trampoline
+Words: 8A9C
+
+===== DATA 8AA6h-8AA7h =====
+Reason: Crafted near-return word 8AA8h used by the EE9Dh CMOS-write trampoline
+Words: 8AA8
+
+===== DATA 8AB2h-8AB3h =====
+Reason: Crafted near-return word 8AB4h used by the 8DDCh ALi indexed-write helper
+Words: 8AB4
+
+===== DATA 8ABEh-8ABFh =====
+Reason: Crafted near-return word 8AC0h used by the 8DCFh ALi indexed-read helper
+Words: 8AC0
+
+===== DATA 8ACAh-8ACBh =====
+Reason: Crafted near-return word 8ACCh used by the 8DDCh ALi indexed-write helper
+Words: 8ACC
 
 ===== DATA 2068h-208Ch =====
 Reason: LGDT pseudo-descriptor at 2068h plus adjacent descriptor/parameter bytes used by the PM memory probe
@@ -13202,6 +13311,196 @@ Reason: return-to-stack continuation after CR0 transition
 2405  8E D0                   mov ss, ax
 2407  E9 D2 B5                jmp 0xd9dc
 
+===== 88F0h-8907h =====
+Reason: stack-return continuation after the 8921h arithmetic/flag probe
+88F0  75 08                   jne 0x88fa
+88F2  BF F8 88                mov di, 0x88f8
+88F5  EB 3A                   jmp 0x8931
+88F7  90                      nop
+88F8  EB 0C                   jmp 0x8906
+88FA  80 E2 30                and dl, 0x30
+88FD  80 FA 30                cmp dl, 0x30
+8900  B4 02                   mov ah, 2
+8902  74 02                   je 0x8906
+8904  B4 00                   mov ah, 0
+8906  B0 B3                   mov al, 0xb3
+
+===== 8904h-890Dh =====
+Reason: conditional continuation in the D60Ch CMOS B3h update path
+8904  B4 00                   mov ah, 0
+8906  B0 B3                   mov al, 0xb3
+8908  BC 0E 89                mov sp, 0x890e
+890B  E9 86 65                jmp 0xee94
+
+===== 8906h-890Dh =====
+Reason: aligned CMOS B3h write setup continuation
+8906  B0 B3                   mov al, 0xb3
+8908  BC 0E 89                mov sp, 0x890e
+890B  E9 86 65                jmp 0xee94
+
+===== 8910h-891Dh =====
+Reason: stack-return continuation after the EE94h CMOS B3h read
+8910  24 F1                   and al, 0xf1
+8912  0A E0                   or ah, al
+8914  B0 B3                   mov al, 0xb3
+8916  BC 1C 89                mov sp, 0x891c
+8919  E9 81 65                jmp 0xee9d
+891C  1E                      push ds
+891D  89              db 0x89
+
+===== 891Eh-8920h =====
+Reason: stack-return continuation after the EE9Dh CMOS B3h write
+891E  E9 EE 4C                jmp 0xd60f
+
+===== 8921h-8930h =====
+Reason: arithmetic/flag probe called through a crafted stack return at 88EEh
+8921  33 C0                   xor ax, ax
+8923  9E                      sahf
+8924  B8 05 00                mov ax, 5
+8927  BB 02 00                mov bx, 2
+892A  F6 F3                   div bl
+892C  9F                      lahf
+892D  80 FC 02                cmp ah, 2
+8930  C3                      ret
+
+===== 8931h-893Bh =====
+Reason: ALi C2h register read/modify/write sequence
+8931  32 C9                   xor cl, cl
+8933  B8 C2 C2                mov ax, 0xc2c2
+8936  BC 3C 89                mov sp, 0x893c
+8939  E9 93 04                jmp 0x8dcf
+
+===== 893Eh-8949h =====
+Reason: stack-return continuation after the 8DCFh indexed read
+893E  8A D8                   mov bl, al
+8940  0C 04                   or al, 4
+8942  86 C4                   xchg ah, al
+8944  BC 4A 89                mov sp, 0x894a
+8947  E9 92 04                jmp 0x8ddc
+
+===== 894Ch-8953h =====
+Reason: stack-return continuation after the 8DDCh indexed write
+894C  BC 52 89                mov sp, 0x8952
+894F  E9 7D 04                jmp 0x8dcf
+8952  54                      push sp
+8953  89              db 0x89
+
+===== 8954h-895Fh =====
+Reason: ALi C2h bit-test and conditional write continuation
+8954  A8 04                   test al, 4
+8956  74 1C                   je 0x8974
+8958  8A E3                   mov ah, bl
+895A  80 E4 FB                and ah, 0xfb
+895D  B0 C2                   mov al, 0xc2
+895F  90                      nop
+
+===== 8968h-896Fh =====
+Reason: stack-return continuation after the 8DDCh indexed write
+8968  BC 6E 89                mov sp, 0x896e
+896B  E9 61 04                jmp 0x8dcf
+896E  70 89                   jo 0x88f9
+
+===== 8970h-897Bh =====
+Reason: stack-return continuation after the 8DCFh indexed read
+8970  A8 04                   test al, 4
+8972  74 03                   je 0x8977
+8974  80 C9 02                or cl, 2
+8977  8A E3                   mov ah, bl
+8979  B0 C2                   mov al, 0xc2
+897B  90                      nop
+
+===== 8975h-897Bh =====
+Reason: conditional ALi C2h update continuation
+8975  C9                      leave
+8976  02 8A E3 B0             add cl, byte ptr [bp + si - 0x4f1d]
+897A  C2              db 0xC2
+897B  90                      nop
+
+===== 8984h-898Dh =====
+Reason: stack-return continuation after the 8DDCh indexed write
+8984  B8 C3 C3                mov ax, 0xc3c3
+8987  90                      nop
+8988  BC 8E 89                mov sp, 0x898e
+898B  E9 41 04                jmp 0x8dcf
+
+===== 8990h-899Bh =====
+Reason: stack-return continuation after the 8DCFh indexed read
+8990  8A D8                   mov bl, al
+8992  0C 02                   or al, 2
+8994  86 C4                   xchg ah, al
+8996  BC 9C 89                mov sp, 0x899c
+8999  E9 40 04                jmp 0x8ddc
+
+===== 899Eh-89A5h =====
+Reason: stack-return continuation after the 8DDCh indexed write
+899E  BC A4 89                mov sp, 0x89a4
+89A1  E9 2B 04                jmp 0x8dcf
+89A4  A6                      cmpsb byte ptr [si], byte ptr es:[di]
+89A5  89              db 0x89
+
+===== 89A6h-89B1h =====
+Reason: stack-return continuation after the 8DCFh indexed read
+89A6  A8 02                   test al, 2
+89A8  74 1C                   je 0x89c6
+89AA  8A E3                   mov ah, bl
+89AC  80 E4 FD                and ah, 0xfd
+89AF  B0 C3                   mov al, 0xc3
+89B1  90                      nop
+
+===== 89BAh-89C1h =====
+Reason: stack-return continuation after the 8DDCh indexed write
+89BA  BC C0 89                mov sp, 0x89c0
+89BD  E9 0F 04                jmp 0x8dcf
+89C0  C2              db 0xC2
+89C1  89              db 0x89
+
+===== 89C2h-89CDh =====
+Reason: stack-return continuation after the 8DCFh indexed read
+89C2  A8 02                   test al, 2
+89C4  74 03                   je 0x89c9
+89C6  80 C9 01                or cl, 1
+89C9  8A E3                   mov ah, bl
+89CB  B0 C3                   mov al, 0xc3
+89CD  90                      nop
+
+===== 89C9h-89D1h =====
+Reason: conditional ALi C3h update continuation
+89C9  8A E3                   mov ah, bl
+89CB  B0 C3                   mov al, 0xc3
+89CD  90                      nop
+89CE  BC D4 89                mov sp, 0x89d4
+89D1  E9              db 0xE9
+
+===== 89D6h-89EBh =====
+Reason: stack-return continuation after the 8DDCh indexed write
+89D6  B4 08                   mov ah, 8
+89D8  80 F9 01                cmp cl, 1
+89DB  74 25                   je 0x8a02
+89DD  B4 04                   mov ah, 4
+89DF  80 F9 03                cmp cl, 3
+89E2  74 1E                   je 0x8a02
+89E4  B0 FE                   mov al, 0xfe
+89E6  BC EC 89                mov sp, 0x89ec
+89E9  E9 E3 03                jmp 0x8dcf
+
+===== 89EEh-8A03h =====
+Reason: stack-return continuation after the 8DCFh indexed read
+89EE  B4 04                   mov ah, 4
+89F0  3C 05                   cmp al, 5
+89F2  76 0E                   jbe 0x8a02
+89F4  B4 06                   mov ah, 6
+89F6  3C 07                   cmp al, 7
+89F8  76 08                   jbe 0x8a02
+89FA  B4 0A                   mov ah, 0xa
+89FC  A8 01                   test al, 1
+89FE  75 02                   jne 0x8a02
+8A00  B4 08                   mov ah, 8
+8A02  FF E7                   jmp di
+
+===== 8A02h-8A03h =====
+Reason: indirect DI continuation after CMOS/ALi profile checks
+8A02  FF E7                   jmp di
+
 ===== 8898h-88CAh =====
 Reason: direct JMP target from ED13h; chipset configuration routine; independently seeded entry
 8898  60                      pushaw
@@ -13232,7 +13531,7 @@ Reason: direct JMP target from ED13h; chipset configuration routine; independent
 Reason: direct JMP target from AE6Ch; alternate entry inside the 8898h stream
 88CB  E9 A1 25                jmp 0xae6f
 
-===== 88CEh-894Dh =====
+===== 88CEh-8A03h =====
 Reason: direct JMP target from D60Ch; alternate entry in the 88CBh overlapping stream
 88CE  B9 00 01                mov cx, 0x100
 88D1  E2 FE                   loop 0x88d1
@@ -13289,9 +13588,83 @@ Reason: direct JMP target from D60Ch; alternate entry in the 88CBh overlapping s
 8943  C4 BC 4A 89             les di, ptr [si - 0x76b6]
 8947  E9 92 04                jmp 0x8ddc
 894A  4C                      dec sp
-894B  89              db 0x89
-894C  BC              db 0xBC
-894D  52                      push dx
+894B  89 BC 52 89             mov word ptr [si - 0x76ae], di
+894F  E9 7D 04                jmp 0x8dcf
+8952  54                      push sp
+8953  89 A8 04 74             mov word ptr [bx + si + 0x7404], bp
+8957  1C 8A                   sbb al, 0x8a
+8959  E3 80                   jcxz 0x88db
+895B  E4 FB                   in al, 0xfb
+895D  B0 C2                   mov al, 0xc2
+895F  90                      nop
+8960  BC 66 89                mov sp, 0x8966
+8963  E9 76 04                jmp 0x8ddc
+8966  68 89 BC                push 0xbc89
+8969  6E                      outsb dx, byte ptr [si]
+896A  89 E9                   mov cx, bp
+896C  61                      popaw
+896D  04 70                   add al, 0x70
+896F  89 A8 04 74             mov word ptr [bx + si + 0x7404], bp
+8973  03 80 C9 02             add ax, word ptr [bx + si + 0x2c9]
+8977  8A E3                   mov ah, bl
+8979  B0 C2                   mov al, 0xc2
+897B  90                      nop
+897C  BC 82 89                mov sp, 0x8982
+897F  E9 5A 04                jmp 0x8ddc
+8982  84 89 B8 C3             test byte ptr [bx + di - 0x3c48], cl
+8986  C3                      ret
+8987  90                      nop
+8988  BC 8E 89                mov sp, 0x898e
+898B  E9 41 04                jmp 0x8dcf
+898E  90                      nop
+898F  89 8A D8 0C             mov word ptr [bp + si + 0xcd8], cx
+8993  02 86 C4 BC             add al, byte ptr [bp - 0x433c]
+8997  9C                      pushf
+8998  89 E9                   mov cx, bp
+899A  40                      inc ax
+899B  04 9E                   add al, 0x9e
+899D  89 BC A4 89             mov word ptr [si - 0x765c], di
+89A1  E9 2B 04                jmp 0x8dcf
+89A4  A6                      cmpsb byte ptr [si], byte ptr es:[di]
+89A5  89 A8 02 74             mov word ptr [bx + si + 0x7402], bp
+89A9  1C 8A                   sbb al, 0x8a
+89AB  E3 80                   jcxz 0x892d
+89AD  E4 FD                   in al, 0xfd
+89AF  B0 C3                   mov al, 0xc3
+89B1  90                      nop
+89B2  BC B8 89                mov sp, 0x89b8
+89B5  E9 24 04                jmp 0x8ddc
+89B8  BA 89 BC                mov dx, 0xbc89
+89BB  C0 89 E9 0F 04          ror byte ptr [bx + di + 0xfe9], 4
+89C0  C2 89 A8                ret 0xa889
+89C3  02 74 03                add dh, byte ptr [si + 3]
+89C6  80 C9 01                or cl, 1
+89C9  8A E3                   mov ah, bl
+89CB  B0 C3                   mov al, 0xc3
+89CD  90                      nop
+89CE  BC D4 89                mov sp, 0x89d4
+89D1  E9 08 04                jmp 0x8ddc
+89D4  D6                      salc
+89D5  89 B4 08 80             mov word ptr [si - 0x7ff8], si
+89D9  F9                      stc
+89DA  01 74 25                add word ptr [si + 0x25], si
+89DD  B4 04                   mov ah, 4
+89DF  80 F9 03                cmp cl, 3
+89E2  74 1E                   je 0x8a02
+89E4  B0 FE                   mov al, 0xfe
+89E6  BC EC 89                mov sp, 0x89ec
+89E9  E9 E3 03                jmp 0x8dcf
+89EC  EE                      out dx, al
+89ED  89 B4 04 3C             mov word ptr [si + 0x3c04], si
+89F1  05 76 0E                add ax, 0xe76
+89F4  B4 06                   mov ah, 6
+89F6  3C 07                   cmp al, 7
+89F8  76 08                   jbe 0x8a02
+89FA  B4 0A                   mov ah, 0xa
+89FC  A8 01                   test al, 1
+89FE  75 02                   jne 0x8a02
+8A00  B4 08                   mov ah, 8
+8A02  FF E7                   jmp di
 
 ===== 8A04h-8A1Fh =====
 Reason: direct JMP target from D612h; short JMP DI trampoline candidate
@@ -13641,7 +14014,7 @@ Reason: direct JMP targets from 27D7h/28D8h; chipset configuration callback cand
 8DCB  B9 FF FF                mov cx, 0xffff
 8DCE  C3                      ret
 
-===== 8378h-83A7h =====
+===== 8378h-83ADh =====
 Reason: CMOS/ALi configuration selector: searches the 873Ch record array and returns record byte 3
 8378  BB 3C 87                mov bx, 0x873c
 837B  2E 3A 06 88 88          cmp al, byte ptr cs:[0x8888]
@@ -13661,7 +14034,10 @@ Reason: CMOS/ALi configuration selector: searches the 873Ch record array and ret
 83A1  EB 02                   jmp 0x83a5
 83A3  D0 C0                   rol al, 1
 83A5  FE CF                   dec bh
-83A7  75              db 0x75
+83A7  75 F2                   jne 0x839b
+83A9  8A C4                   mov al, ah
+83AB  0A C0                   or al, al
+83AD  C3                      ret
 
 ===== 85B3h-85BFh =====
 Reason: POST CMOS/ALi state-application wrapper; calls the 873Ch record walkers
@@ -13673,12 +14049,12 @@ Reason: POST CMOS/ALi state-application wrapper; calls the 873Ch record walkers
 85BC  E8 17 00                call 0x85d6
 85BF  58                      pop ax
 
-===== 85CBh-85D4h =====
+===== 85CBh-85D5h =====
 Reason: record walker over the CS:8880h metadata block
 85CB  56                      push si
 85CC  2E 8B 0E 84 88          mov cx, word ptr cs:[0x8884]
 85D1  BE 80 88                mov si, 0x8880
-85D4  EB              db 0xEB
+85D4  EB 28                   jmp 0x85fe
 
 ===== 85D6h-85FDh =====
 Reason: dynamic record walker using CS:82C0h/82C2h and CS:82CAh
