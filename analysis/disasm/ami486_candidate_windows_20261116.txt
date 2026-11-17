@@ -27910,6 +27910,329 @@ Reason: option-ROM scan invalid-candidate helper: advances BX by 0080h, restores
 1BF4  1F                      pop ds
 1BF5  C3                      ret
 
+===== 639Ch-656Dh =====
+Reason: RTC Setup editor continuation: month/day/year and time field editing with INT 1Ah read/write
+639C  3C 12                   cmp al, 0x12
+639E  75 04                   jne 0x63a4
+63A0  B0 01                   mov al, 1
+63A2  EB 05                   jmp 0x63a9
+63A4  0A C0                   or al, al
+63A6  FE C0                   inc al
+63A8  27                      daa
+63A9  8A F0                   mov dh, al
+63AB  E8 16 02                call 0x65c4
+63AE  EB C3                   jmp 0x6373
+63B0  E8 C1 03                call 0x6774
+63B3  8A C6                   mov al, dh
+63B5  3C 01                   cmp al, 1
+63B7  75 04                   jne 0x63bd
+63B9  B0 12                   mov al, 0x12
+63BB  EB 05                   jmp 0x63c2
+63BD  0A C0                   or al, al
+63BF  FE C8                   dec al
+63C1  2F                      das
+63C2  8A F0                   mov dh, al
+63C4  E8 FD 01                call 0x65c4
+63C7  EB AA                   jmp 0x6373
+63C9  BA 1F 05                mov dx, 0x51f
+63CC  B9 04 00                mov cx, 4
+63CF  E8 9C 01                call 0x656e
+63D2  9C                      pushf
+63D3  73 07                   jae 0x63dc
+63D5  74 05                   je 0x63dc
+63D7  80 FC 01                cmp ah, 1
+63DA  75 0B                   jne 0x63e7
+63DC  BA 1F 05                mov dx, 0x51f
+63DF  B9 04 00                mov cx, 4
+63E2  E8 B6 01                call 0x659b
+63E5  9D                      popf
+63E6  C3                      ret
+63E7  9D                      popf
+63E8  80 FC 49                cmp ah, 0x49
+63EB  74 19                   je 0x6406
+63ED  E8 84 03                call 0x6774
+63F0  8A C2                   mov al, dl
+63F2  3C 31                   cmp al, 0x31
+63F4  75 04                   jne 0x63fa
+63F6  B0 01                   mov al, 1
+63F8  EB 05                   jmp 0x63ff
+63FA  0A C0                   or al, al
+63FC  FE C0                   inc al
+63FE  27                      daa
+63FF  8A D0                   mov dl, al
+6401  E8 C0 01                call 0x65c4
+6404  EB C3                   jmp 0x63c9
+6406  E8 6B 03                call 0x6774
+6409  8A C2                   mov al, dl
+640B  3C 01                   cmp al, 1
+640D  75 04                   jne 0x6413
+640F  B0 32                   mov al, 0x32
+6411  EB 05                   jmp 0x6418
+6413  0A C0                   or al, al
+6415  FE C8                   dec al
+6417  2F                      das
+6418  8A D0                   mov dl, al
+641A  E8 A2 01                call 0x65bf
+641D  EB AA                   jmp 0x63c9
+641F  BA 22 05                mov dx, 0x522
+6422  B9 06 00                mov cx, 6
+6425  E8 46 01                call 0x656e
+6428  9C                      pushf
+6429  73 07                   jae 0x6432
+642B  74 05                   je 0x6432
+642D  80 FC 01                cmp ah, 1
+6430  75 0B                   jne 0x643d
+6432  BA 22 05                mov dx, 0x522
+6435  B9 06 00                mov cx, 6
+6438  E8 60 01                call 0x659b
+643B  9D                      popf
+643C  C3                      ret
+643D  9D                      popf
+643E  80 FC 49                cmp ah, 0x49
+6441  74 21                   je 0x6464
+6443  E8 2E 03                call 0x6774
+6446  8B C1                   mov ax, cx
+6448  3D 99 20                cmp ax, 0x2099
+644B  75 05                   jne 0x6452
+644D  B8 01 19                mov ax, 0x1901
+6450  EB 0B                   jmp 0x645d
+6452  3D 99 19                cmp ax, 0x1999
+6455  75 02                   jne 0x6459
+6457  B4 20                   mov ah, 0x20
+6459  0B C0                   or ax, ax
+645B  40                      inc ax
+645C  27                      daa
+645D  8B C8                   mov cx, ax
+645F  E8 62 01                call 0x65c4
+6462  EB BB                   jmp 0x641f
+6464  E8 0D 03                call 0x6774
+6467  8B C1                   mov ax, cx
+6469  3D 01 19                cmp ax, 0x1901
+646C  75 05                   jne 0x6473
+646E  B8 99 20                mov ax, 0x2099
+6471  EB 0B                   jmp 0x647e
+6473  3D 00 20                cmp ax, 0x2000
+6476  75 02                   jne 0x647a
+6478  B4 1A                   mov ah, 0x1a
+647A  0B C0                   or ax, ax
+647C  48                      dec ax
+647D  2F                      das
+647E  8B C8                   mov cx, ax
+6480  E8 41 01                call 0x65c4
+6483  EB 9A                   jmp 0x641f
+6485  BA 16 06                mov dx, 0x616
+6488  B9 04 00                mov cx, 4
+648B  E8 E5 00                call 0x6573
+648E  9C                      pushf
+648F  73 07                   jae 0x6498
+6491  74 05                   je 0x6498
+6493  80 FC 01                cmp ah, 1
+6496  75 0B                   jne 0x64a3
+6498  BA 16 06                mov dx, 0x616
+649B  B9 04 00                mov cx, 4
+649E  E8 FA 00                call 0x659b
+64A1  9D                      popf
+64A2  C3                      ret
+64A3  9D                      popf
+64A4  80 FC 49                cmp ah, 0x49
+64A7  74 1D                   je 0x64c6
+64A9  E8 02 03                call 0x67ae
+64AC  8A C5                   mov al, ch
+64AE  3C 23                   cmp al, 0x23
+64B0  75 04                   jne 0x64b6
+64B2  B0 00                   mov al, 0
+64B4  EB 05                   jmp 0x64bb
+64B6  0A C0                   or al, al
+64B8  FE C0                   inc al
+64BA  27                      daa
+64BB  8A E8                   mov ch, al
+64BD  B4 03                   mov ah, 3
+64BF  CD 1A                   int 0x1a
+64C1  E8 52 01                call 0x6616
+64C4  EB BF                   jmp 0x6485
+64C6  E8 E5 02                call 0x67ae
+64C9  8A C5                   mov al, ch
+64CB  3C 00                   cmp al, 0
+64CD  75 04                   jne 0x64d3
+64CF  B0 23                   mov al, 0x23
+64D1  EB 05                   jmp 0x64d8
+64D3  0A C0                   or al, al
+64D5  FE C8                   dec al
+64D7  2F                      das
+64D8  8A E8                   mov ch, al
+64DA  B4 03                   mov ah, 3
+64DC  CD 1A                   int 0x1a
+64DE  E8 35 01                call 0x6616
+64E1  EB A2                   jmp 0x6485
+64E3  BA 1B 06                mov dx, 0x61b
+64E6  B9 04 00                mov cx, 4
+64E9  E8 87 00                call 0x6573
+64EC  9C                      pushf
+64ED  73 07                   jae 0x64f6
+64EF  74 05                   je 0x64f6
+64F1  80 FC 01                cmp ah, 1
+64F4  75 0B                   jne 0x6501
+64F6  BA 1B 06                mov dx, 0x61b
+64F9  B9 04 00                mov cx, 4
+64FC  E8 9C 00                call 0x659b
+64FF  9D                      popf
+6500  C3                      ret
+6501  9D                      popf
+6502  80 FC 49                cmp ah, 0x49
+6505  74 1D                   je 0x6524
+6507  E8 A4 02                call 0x67ae
+650A  8A C1                   mov al, cl
+650C  3C 59                   cmp al, 0x59
+650E  75 04                   jne 0x6514
+6510  B0 00                   mov al, 0
+6512  EB 05                   jmp 0x6519
+6514  0A C0                   or al, al
+6516  FE C0                   inc al
+6518  27                      daa
+6519  8A C8                   mov cl, al
+651B  B4 03                   mov ah, 3
+651D  CD 1A                   int 0x1a
+651F  E8 F4 00                call 0x6616
+6522  EB BF                   jmp 0x64e3
+6524  E8 87 02                call 0x67ae
+6527  8A C1                   mov al, cl
+6529  3C 00                   cmp al, 0
+652B  75 04                   jne 0x6531
+652D  B0 59                   mov al, 0x59
+652F  EB 05                   jmp 0x6536
+6531  0A C0                   or al, al
+6533  FE C8                   dec al
+6535  2F                      das
+6536  8A C8                   mov cl, al
+6538  B4 03                   mov ah, 3
+653A  CD 1A                   int 0x1a
+653C  E8 D7 00                call 0x6616
+653F  EB A2                   jmp 0x64e3
+6541  BA 20 06                mov dx, 0x620
+6544  B9 04 00                mov cx, 4
+6547  E8 29 00                call 0x6573
+654A  9C                      pushf
+654B  73 07                   jae 0x6554
+654D  74 05                   je 0x6554
+654F  80 FC 01                cmp ah, 1
+6552  75 0B                   jne 0x655f
+6554  BA 20 06                mov dx, 0x620
+6557  B9 04 00                mov cx, 4
+655A  E8 3E 00                call 0x659b
+655D  9D                      popf
+655E  C3                      ret
+655F  9D                      popf
+6560  E8 4B 02                call 0x67ae
+6563  B6 00                   mov dh, 0
+6565  B4 03                   mov ah, 3
+6567  CD 1A                   int 0x1a
+6569  E8 AA 00                call 0x6616
+656C  EB D3                   jmp 0x6541
+
+===== 656Eh-6572h =====
+Reason: direct CALL targets from 6379h, 63CFh and 6425h; RTC field editor/display using format at 75D2h
+656E  BE D2 75                mov si, 0x75d2
+6571  EB 03                   jmp 0x6576
+
+===== 6573h-6575h =====
+Reason: direct CALL targets from 648Bh, 64E9h and 6547h; alternate RTC field editor/display using format at 7625h
+6573  BE 25 76                mov si, 0x7625
+
+===== 6576h-659Ah =====
+Reason: shared RTC field display/input loop; calls 05E0h and character renderer 65A7h
+6576  56                      push si
+6577  E8 66 A0                call 0x5e0
+657A  5E                      pop si
+657B  8A 1E A3 E1             mov bl, byte ptr [0xe1a3]
+657F  B7 00                   mov bh, 0
+6581  51                      push cx
+6582  52                      push dx
+6583  E8 21 00                call 0x65a7
+6586  5A                      pop dx
+6587  59                      pop cx
+6588  E8 42 A3                call 0x8cd
+658B  9C                      pushf
+658C  80 FC 3C                cmp ah, 0x3c
+658F  74 07                   je 0x6598
+6591  80 FC 3D                cmp ah, 0x3d
+6594  74 02                   je 0x6598
+6596  9D                      popf
+6597  C3                      ret
+6598  9D                      popf
+6599  EB DB                   jmp 0x6576
+
+===== 659Bh-65A6h =====
+Reason: direct CALL targets from 638Ch, 63E2h, 6438h, 649Eh, 64FCh and 655Ah; alternate field refresh
+659B  E8 4D A0                call 0x5eb
+659E  8A 1E A2 E1             mov bl, byte ptr [0xe1a2]
+65A2  E8 23 A3                call 0x8c8
+65A5  B7 00                   mov bh, 0
+
+===== 65A7h-65BEh =====
+Reason: direct CALL targets from 075Ch, 0768h and 6583h; draw characters with INT 10h cursor/read/write services
+65A7  50                      push ax
+65A8  B4 02                   mov ah, 2
+65AA  CD 10                   int 0x10
+65AC  FE C2                   inc dl
+65AE  B4 08                   mov ah, 8
+65B0  CD 10                   int 0x10
+65B2  51                      push cx
+65B3  B9 01 00                mov cx, 1
+65B6  B4 09                   mov ah, 9
+65B8  CD 10                   int 0x10
+65BA  59                      pop cx
+65BB  E2 EB                   loop 0x65a8
+65BD  58                      pop ax
+65BE  C3                      ret
+
+===== 65BFh-65C3h =====
+Reason: date validator entry with CH=0; direct CALL target from 641Ah
+65BF  51                      push cx
+65C0  B5 00                   mov ch, 0
+65C2  EB 03                   jmp 0x65c7
+
+===== 65C4h-6615h =====
+Reason: date validator entry with CH=1; direct CALL targets from 63ABh, 63C4h, 6401h, 645Fh and 6480h; leap-year/day clamp and INT 1Ah AH=05h
+65C4  51                      push cx
+65C5  B5 01                   mov ch, 1
+65C7  80 FE 02                cmp dh, 2
+65CA  74 1B                   je 0x65e7
+65CC  80 FE 08                cmp dh, 8
+65CF  73 0B                   jae 0x65dc
+65D1  F6 C6 01                test dh, 1
+65D4  75 0B                   jne 0x65e1
+65D6  B0 30                   mov al, 0x30
+65D8  3A D0                   cmp dl, al
+65DA  EB 29                   jmp 0x6605
+65DC  F6 C6 01                test dh, 1
+65DF  75 F5                   jne 0x65d6
+65E1  B0 31                   mov al, 0x31
+65E3  3A D0                   cmp dl, al
+65E5  EB 1E                   jmp 0x6605
+65E7  8A C1                   mov al, cl
+65E9  C0 E8 04                shr al, 4
+65EC  B4 0A                   mov ah, 0xa
+65EE  F6 E4                   mul ah
+65F0  8A E1                   mov ah, cl
+65F2  80 E4 0F                and ah, 0xf
+65F5  02 C4                   add al, ah
+65F7  A8 03                   test al, 3
+65F9  74 06                   je 0x6601
+65FB  B0 28                   mov al, 0x28
+65FD  3A D0                   cmp dl, al
+65FF  EB 04                   jmp 0x6605
+6601  B0 29                   mov al, 0x29
+6603  3A D0                   cmp dl, al
+6605  76 08                   jbe 0x660f
+6607  0A ED                   or ch, ch
+6609  74 02                   je 0x660d
+660B  B0 01                   mov al, 1
+660D  8A D0                   mov dl, al
+660F  59                      pop cx
+6610  B4 05                   mov ah, 5
+6612  CD 1A                   int 0x1a
+6614  EB 00                   jmp 0x6616
+
 ===== F5B2h-F5BBh =====
 Reason: port-61h control helper candidate; no direct relative CALL xref found
 F5B2  61                      popaw
