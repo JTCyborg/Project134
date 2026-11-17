@@ -149,7 +149,7 @@ LIMITS.update({
     0x5C04: 0x1A, 0x5C1E: 0x06, 0x5C26: 0x25,
     0x5C4B: 0x0B, 0x5C58: 0x0E, 0x5C68: 0xBB,
     0x5D23: 0x2B, 0x5D4E: 0x4E, 0x5D9C: 0x9B,
-    0x5E37: 0x06, 0x5E3D: 0x128, 0x5F65: 0x42, 0x5FA7: 0x3D,
+    0x5E37: 0x06, 0x5E3D: 0x128, 0x5EB6: 0x4F, 0x5F65: 0x42, 0x5FA7: 0x3D,
 })
 
 
@@ -1349,6 +1349,7 @@ SEEDS.extend([
     (0x5D9C, "POST configuration and controller initialization continuation"),
     (0x5E37, "direct CALL target from the 5E2Eh ROM-segment check failure path"),
     (0x5E3D, "POST video/adapter initialization continuation: selects B000h/B800h mapping, emits POST codes 30h-3Bh, tests BIOS video services, then branches to 509Eh"),
+    (0x5EB6, "Alternate POST/video path reached by the unconditional short JMP at 5E6Dh; overlaps the high displacement byte of the linear CALL at 5EB4h and rejoins near 5F01h"),
     (0x5F65, "direct CALL target from 5E37h; opaque diagnostic/check helper entry"),
     (0x5FA7, "direct CALL targets from 5E53h and 5E83h; opaque status/check helper entry"),
 ])
