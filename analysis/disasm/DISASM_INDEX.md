@@ -1402,3 +1402,6 @@ The D655h–E3FFh ledger now maps D7B3h–D7D7h, the former 37-byte candidate-ma
 - D7C6h writes AAh to 8042 command port 64h, then reads the status port and records status bit 0 in DI.
 - D7D2h installs the crafted return word D7DAh at SP=D7D8h and jumps to F659h, the shared keyboard-controller input-buffer wait helper.
 - D7D8h–D7D9h remains return-address data, not code. The bounded candidate seed ends at D7D7h.
+
+
+Candidate-generator follow-up: the D7B3h seed is present in tools/disasm_ami486_candidate_windows.py, but the last checked-in generated listing/manifest still predates that seed. The current 99.38% mask figures therefore include the 2207h/235Bh additions but still show D7B3h–D7D7h as uncovered. Regenerate before quoting a post-D7B3 mask percentage.
