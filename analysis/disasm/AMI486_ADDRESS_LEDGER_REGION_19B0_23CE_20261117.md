@@ -192,6 +192,6 @@ A second selector pass precedes the BH-selected sequence documented above. It is
 
 The 2207h–222Ch span is 26h bytes. The compare operations use the flat ES=0008h selector and 32-bit absolute addresses. The result selector is carried in DH; the later BH-selected pass at 2333h–2380h is a separate sequence and must not be merged with this one.
 
-At 222Dh the code loads AX=1616h and jumps to the ALi indexed-register read helper at 8DC Fh (the target is 8DCFh). Its stack-threaded return continues at 2238h, where the returned AL value is ORed with 30h, exchanged into AH, and written back through 8DDCh using another crafted stack return. The exact hardware meaning of ALi register 16h is not assigned here; the observed read/modify/write is the supported conclusion.
+At 222Dh the code loads AX=1616h and jumps to the ALi indexed-register read helper at 8DCFh (the target is 8DCFh). Its stack-threaded return continues at 2238h, where the returned AL value is ORed with 30h, exchanged into AH, and written back through 8DDCh using another crafted stack return. The exact hardware meaning of ALi register 16h is not assigned here; the observed read/modify/write is the supported conclusion.
 
 The candidate generator now seeds 2207h with a 26h-byte bound ending at 222Ch, alongside the 235Bh continuation seed.
