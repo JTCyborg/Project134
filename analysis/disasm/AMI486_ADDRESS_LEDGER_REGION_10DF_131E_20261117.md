@@ -78,4 +78,4 @@ The CALL at 131Dh targets 135Ah, linking this sequence to the next POST continua
 
 The candidate generator now includes a bounded 10DFh POST continuation window and extends it through 1320h to include the complete CALL at 131Dh. No embedded data range is assigned within the 10DFh–131Eh interval; the first three bytes remain a documented entry-boundary uncertainty.
 
-The CI manifest is the verification gate for this new candidate window. The next largest uncovered interval will be taken from the completed run.
+GitHub Actions run 44085575642 completed successfully. The manifest reports 826 candidate windows, 238 data ranges, 40,911 unique code-window bytes, 19,703 unique data-range bytes, 293 overlap bytes, and a 60,321-byte union (92.04%). There are 64 uncovered intervals; the next largest is 066Bh–084Eh (484 bytes).
