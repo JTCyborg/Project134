@@ -24,4 +24,3 @@ Decoder: Capstone x86 16-bit
 Relative near-branch targets normalized to 16-bit IP.
 Known tables and strings are emitted separately as data.
 Interpretation: independently seeded linear windows only; no CFG or entry-point proof.
-Status: Metrics/listing include seeds through 2207h and 235Bh; the D7B3h seed was added to the generator afterward and still requires regeneration.
