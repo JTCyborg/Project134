@@ -636,3 +636,12 @@ Detailed map: [AMI486_ADDRESS_LEDGER_REGION_10DF_131E_20261117.md](AMI486_ADDRES
 Mapped the POST continuation that initializes/tests the 8042 keyboard controller (command byte, FFh reset, FAh ACK, AAh self-test), initializes keyboard-buffer pointers and PIC mask, validates CMOS memory/configuration against BDA values, enumerates I/O resources, displays the Setup warning through 1656h when BP error flags are set, and continues chipset/video setup through 1C4Eh/1C4Fh/1C50h/1C5Eh, INT 11h and INT 10h. The CALL at 131Dh to 135Ah is included completely by extending the candidate window one byte beyond the old gap. The initial 10DFh entry provenance remains unresolved; the first three bytes are retained rather than discarded.
 
 GitHub Actions run 44085575642 passed: 826 windows / 238 data ranges, 60,321 covered bytes (92.04%), 64 uncovered intervals. The next largest uncovered interval is 066Bh–084Eh (484 bytes).
+
+
+## 29. BIOS Setup numeric/text field editor — 066Bh–084Eh (2026-11-17)
+
+Detailed map: [AMI486_ADDRESS_LEDGER_REGION_066B_084E_20261117.md](AMI486_ADDRESS_LEDGER_REGION_066B_084E_20261117.md).
+
+Mapped the BP-relative field setters at 066Bh/068Ah/069Ch/06AEh, generic numeric editor 06C9h, render/cursor helpers 0731h/0744h/0749h, keyboard input loop 076Bh–080Eh, decimal parser/range checker 080Fh–0844h, and text-editor prologue 0845h→0892h. The numeric editor is called by Setup routines at 4BA3h/4F4Ch/4F67h, including fixed-disk parameter editing through CS:E422h/E436h. The text entry is called from 05E5h; its exact field meaning remains unresolved.
+
+GitHub Actions run 44085877262 passed: 837 windows / 238 data ranges, 60,805 covered bytes (92.78%), 63 uncovered intervals. The next largest uncovered interval is 3C5Ch–3E3Dh (483 bytes).
