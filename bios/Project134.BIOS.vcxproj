@@ -35,6 +35,7 @@
   </PropertyGroup>
   <ItemGroup>
     <None Include="$(ProjectDir)src\reset.asm" />
+    <None Include="$(ProjectDir)src\disk\int13.asm" />
     <None Include="$(ProjectDir)tools\build_bios.ps1" />
     <None Include="$(ProjectDir)tools\validate_rom.ps1" />
     <None Include="$(ProjectDir)README.md" />
