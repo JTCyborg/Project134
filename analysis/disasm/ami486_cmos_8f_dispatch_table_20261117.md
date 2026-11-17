@@ -589,3 +589,13 @@ Reconstructing exact byte offsets (rather than reading the 16-byte dump rows as 
 - After the helper returns, the wrapper continues at `6F78h`, calls `72D8h`-adjacent register support at `72D8h` (call site `6F79h`), then calls back into `6F37h`? No: the actual call at `6F75h` is the helper invocation; subsequent bytes at `6F78h` are the continuation and include `8B 0C 86 E9 C0 E1 06...`. The CHS preparation and AH=05h issue remain in this continuation at `6F80h–6F98h`.
 
 The confirmed disk-write path remains `6F98h -> 6C15h -> INT 13h` at `6C1Fh`. However, the wrapper/helper relationship is more complex than previously stated: `6F75h` is a call sequence that first invokes the record-preparation helper at `6F37h`, and the worker is not a standalone ENTER-framed routine. Previous wording calling `6F75h` a frame-based worker is withdrawn.
+
+
+### Follow-up byte-accurate correction for helper calls in 6F37h
+
+The relative targets within the `6F37h` helper were recalculated byte-for-byte and correct the immediately preceding note:
+
+- CALL at `6F3Bh` targets `72D1h`, which is a one-byte `RET` entry (not a register-save helper).
+- CALL at `6F49h` targets `6968h`, whose bytes are `A2 21 E4 C3`: `MOV [E421h],AL; RET` (not a routine beginning at 696Bh).
+
+Thus the helper at `6F37h` saves the byte read from `E422h` into `E421h` through this overlapping entry, then performs the two-byte record-copy loop from `E1B8h` to `E3CFh`, with loop count loaded from `E41Fh`. This establishes an additional state byte `E421h` adjacent to the shared `E41Fh` variable, but does not yet identify the record format. The prior description of calls to `72D8h` and `696Bh` from this helper is withdrawn.
