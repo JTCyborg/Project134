@@ -4,9 +4,9 @@ Window length: 0x80 bytes by default; selected handler windows stop at known dat
 WARNING: independently seeded linear decodes; not a CFG and not proof of entry points.
 Relative near-branch targets are normalized to 16-bit IP wraparound.
 
-===== DATA 3100h-318Bh =====
-Reason: Setup main-menu captions, ending at the final NUL
-ASCII: 'H POWER-ON DEFAULTS \x00 CHANGE PASSWORD \x00 AUTO DETECT HARD DISK \x00 HARD DISK UTILITY \x00 WRITE TO CMOS AND EXIT \x00 DO NOT WRITE TO CMOS AND EXIT \x00'
+===== DATA 3044h-318Bh =====
+Reason: Complete Setup main-menu caption strings, ending at the final NUL
+ASCII: ' STANDARD CMOS SETUP \x00 ADVANCED CMOS SETUP \x00 ADVANCED CHIPSET SETUP \x00 POWER MANAGEMENT SETUP \x00  PERIPHERAL MANAGEMENT SETUP \x00 AUTO CONFIGURATION WITH BIOS DEFAULTS \x00 AUTO CONFIGURATION WITH POWER-ON DEFAULTS \x00 CHANGE PASSWORD \x00 AUTO DETECT HARD DISK \x00 HARD DISK UTILITY \x00 WRITE TO CMOS AND EXIT \x00 DO NOT WRITE TO CMOS AND EXIT \x00'
 
 ===== DATA 318Ch-31A3h =====
 Reason: Setup main-menu caption pointer table (12 words)
@@ -22,9 +22,13 @@ Reason: Setup menu string-pointer and graphic metadata block
 343E  9B 33 BC 33 06 34 FF 33 EC 00 DE 0B 05 0C 2C 0C .3.3.4.3......,.
 344E  53 0C 7A 5A 7A 5A C8 F1                         S.zZzZ..
 
-===== DATA 3456h-3473h =====
-Reason: AMI BIOS Setup Utilities title text
-ASCII: '8P(Fg/v/BIOS SETUP UTILITIES\x00�'
+===== DATA 3456h-3472h =====
+Reason: AMI BIOS Setup Utilities title/graphic text
+ASCII: '8P(Fg/v/BIOS SETUP UTILITIES\x00'
+
+===== DATA 3473h-3473h =====
+Reason: Setup title-to-key-legend control prefix
+3473  B5                                              .
 
 ===== DATA 3474h-34AAh =====
 Reason: Setup keyboard navigation legend
