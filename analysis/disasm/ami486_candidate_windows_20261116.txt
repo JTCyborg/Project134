@@ -27910,6 +27910,264 @@ Reason: option-ROM scan invalid-candidate helper: advances BX by 0080h, restores
 1BF4  1F                      pop ds
 1BF5  C3                      ret
 
+===== AF84h-AF86h =====
+Reason: INT 09h keyboard IRQ path: final near-JMP byte completes the AF84h->B2E5h dispatch branch
+AF84  E9 5E 03                jmp 0xb2e5
+
+===== AF87h-AF89h =====
+Reason: keyboard ISR alternate exit trampoline from AF60h to common IRQ tail B1DFh
+AF87  E9 55 02                jmp 0xb1df
+
+===== AF8Ah-AF8Ch =====
+Reason: keyboard ISR alternate exit trampoline from AF60h to IRQ tail B1E4h
+AF8A  E9 57 02                jmp 0xb1e4
+
+===== AF8Dh-B1DEh =====
+Reason: INT 09h keyboard scan-code processing body reached from E987h->AF60h; updates BDA shift/extended flags and handles special keys
+AF8D  E8 48 04                call 0xb3d8
+AF90  74 13                   je 0xafa5
+AF92  E8 BE 02                call 0xb253
+AF95  74 F3                   je 0xaf8a
+AF97  3C 45                   cmp al, 0x45
+AF99  75 EC                   jne 0xaf87
+AF9B  F6 06 18 00 08          test byte ptr [0x18], 8
+AFA0  75 E5                   jne 0xaf87
+AFA2  E9 02 01                jmp 0xb0a7
+AFA5  E8 2A 04                call 0xb3d2
+AFA8  74 05                   je 0xafaf
+AFAA  E8 B2 02                call 0xb25f
+AFAD  74 D8                   je 0xaf87
+AFAF  E8 A1 02                call 0xb253
+AFB2  75 1F                   jne 0xafd3
+AFB4  08 26 17 00             or byte ptr [0x17], ah
+AFB8  50                      push ax
+AFB9  E8 A3 02                call 0xb25f
+AFBC  58                      pop ax
+AFBD  74 C8                   je 0xaf87
+AFBF  E8 10 04                call 0xb3d2
+AFC2  74 06                   je 0xafca
+AFC4  08 26 96 00             or byte ptr [0x96], ah
+AFC8  EB BD                   jmp 0xaf87
+AFCA  C0 EC 02                shr ah, 2
+AFCD  08 26 18 00             or byte ptr [0x18], ah
+AFD1  EB B4                   jmp 0xaf87
+AFD3  22 C0                   and al, al
+AFD5  74 B0                   je 0xaf87
+AFD7  3C 58                   cmp al, 0x58
+AFD9  77 AC                   ja 0xaf87
+AFDB  3C 54                   cmp al, 0x54
+AFDD  75 1D                   jne 0xaffc
+AFDF  F6 06 18 00 04          test byte ptr [0x18], 4
+AFE4  75 A1                   jne 0xaf87
+AFE6  80 0E 18 00 04          or byte ptr [0x18], 4
+AFEB  B8 00 85                mov ax, 0x8500
+AFEE  50                      push ax
+AFEF  B0 20                   mov al, 0x20
+AFF1  E6 20                   out 0x20, al
+AFF3  E8 74 02                call 0xb26a
+AFF6  58                      pop ax
+AFF7  CD 15                   int 0x15
+AFF9  E9 F0 01                jmp 0xb1ec
+AFFC  F6 06 17 00 08          test byte ptr [0x17], 8
+B001  74 0C                   je 0xb00f
+B003  E8 C6 03                call 0xb3cc
+B006  74 0A                   je 0xb012
+B008  F6 06 18 00 04          test byte ptr [0x18], 4
+B00D  74 03                   je 0xb012
+B00F  EB 79                   jmp 0xb08a
+B011  90                      nop
+B012  F6 06 17 00 04          test byte ptr [0x17], 4
+B017  74 12                   je 0xb02b
+B019  3C 53                   cmp al, 0x53
+B01B  75 09                   jne 0xb026
+B01D  C7 06 72 00 34 12       mov word ptr [0x72], 0x1234
+B023  E9 35 30                jmp 0xe05b
+B026  E8 04 DB                call 0x8b2d
+B029  EB 03                   jmp 0xb02e
+B02B  E8 C7 01                call 0xb1f5
+B02E  E8 DD 01                call 0xb20e
+B031  BB 60 AC                mov bx, 0xac60
+B034  E8 EA 01                call 0xb221
+B037  E8 98 03                call 0xb3d2
+B03A  74 1D                   je 0xb059
+B03C  C6 06 19 00 00          mov byte ptr [0x19], 0
+B041  80 FC 1C                cmp ah, 0x1c
+B044  75 04                   jne 0xb04a
+B046  B0 A6                   mov al, 0xa6
+B048  EB 39                   jmp 0xb083
+B04A  80 FC 35                cmp ah, 0x35
+B04D  75 04                   jne 0xb053
+B04F  B0 A4                   mov al, 0xa4
+B051  EB 30                   jmp 0xb083
+B053  8A C4                   mov al, ah
+B055  04 50                   add al, 0x50
+B057  EB 2A                   jmp 0xb083
+B059  3C 0A                   cmp al, 0xa
+B05B  73 13                   jae 0xb070
+B05D  8A 26 19 00             mov ah, byte ptr [0x19]
+B061  D0 E4                   shl ah, 1
+B063  02 C4                   add al, ah
+B065  C0 E4 02                shl ah, 2
+B068  02 C4                   add al, ah
+B06A  A2 19 00                mov byte ptr [0x19], al
+B06D  E9 6F 01                jmp 0xb1df
+B070  C6 06 19 00 00          mov byte ptr [0x19], 0
+B075  80 FC 53                cmp ah, 0x53
+B078  74 F3                   je 0xb06d
+B07A  80 FC 39                cmp ah, 0x39
+B07D  74 08                   je 0xb087
+B07F  3C F0                   cmp al, 0xf0
+B081  74 04                   je 0xb087
+B083  B4 00                   mov ah, 0
+B085  86 C4                   xchg ah, al
+B087  E9 5B 02                jmp 0xb2e5
+B08A  F6 06 17 00 04          test byte ptr [0x17], 4
+B08F  75 03                   jne 0xb094
+B091  E9 9A 00                jmp 0xb12e
+B094  E8 77 01                call 0xb20e
+B097  BB E0 AC                mov bx, 0xace0
+B09A  E8 84 01                call 0xb221
+B09D  80 FC 45                cmp ah, 0x45
+B0A0  75 2B                   jne 0xb0cd
+B0A2  E8 27 03                call 0xb3cc
+B0A5  75 C6                   jne 0xb06d
+B0A7  80 0E 18 00 08          or byte ptr [0x18], 8
+B0AC  E8 BB 01                call 0xb26a
+B0AF  B0 20                   mov al, 0x20
+B0B1  E6 20                   out 0x20, al
+B0B3  80 3E 49 00 07          cmp byte ptr [0x49], 7
+B0B8  74 09                   je 0xb0c3
+B0BA  A0 65 00                mov al, byte ptr [0x65]
+B0BD  52                      push dx
+B0BE  BA D8 03                mov dx, 0x3d8
+B0C1  EE                      out dx, al
+B0C2  5A                      pop dx
+B0C3  F6 06 18 00 08          test byte ptr [0x18], 8
+B0C8  75 F9                   jne 0xb0c3
+B0CA  E9 1C 01                jmp 0xb1e9
+B0CD  80 FC 46                cmp ah, 0x46
+B0D0  75 21                   jne 0xb0f3
+B0D2  E8 F7 02                call 0xb3cc
+B0D5  74 05                   je 0xb0dc
+B0D7  E8 F8 02                call 0xb3d2
+B0DA  74 91                   je 0xb06d
+B0DC  A1 80 00                mov ax, word ptr [0x80]
+B0DF  A3 1A 00                mov word ptr [0x1a], ax
+B0E2  A3 1C 00                mov word ptr [0x1c], ax
+B0E5  C6 06 71 00 80          mov byte ptr [0x71], 0x80
+B0EA  E8 7D 01                call 0xb26a
+B0ED  CD 1B                   int 0x1b
+B0EF  33 C0                   xor ax, ax
+B0F1  EB 94                   jmp 0xb087
+B0F3  80 FC 37                cmp ah, 0x37
+B0F6  75 0F                   jne 0xb107
+B0F8  E8 D1 02                call 0xb3cc
+B0FB  74 05                   je 0xb102
+B0FD  E8 D2 02                call 0xb3d2
+B100  74 02                   je 0xb104
+B102  B0 72                   mov al, 0x72
+B104  E9 7C FF                jmp 0xb083
+B107  E8 C8 02                call 0xb3d2
+B10A  75 13                   jne 0xb11f
+B10C  80 FC 0F                cmp ah, 0xf
+B10F  74 F3                   je 0xb104
+B111  80 FC 39                cmp ah, 0x39
+B114  74 DB                   je 0xb0f1
+B116  80 FC 35                cmp ah, 0x35
+B119  74 BF                   je 0xb0da
+B11B  72 D4                   jb 0xb0f1
+B11D  EB E5                   jmp 0xb104
+B11F  80 FC 35                cmp ah, 0x35
+B122  74 E0                   je 0xb104
+B124  80 FC 1C                cmp ah, 0x1c
+B127  B4 E0                   mov ah, 0xe0
+B129  74 C6                   je 0xb0f1
+B12B  E9 57 FF                jmp 0xb085
+B12E  E8 C4 00                call 0xb1f5
+B131  3C 52                   cmp al, 0x52
+B133  74 03                   je 0xb138
+B135  E8 D6 00                call 0xb20e
+B138  3C 37                   cmp al, 0x37
+B13A  75 26                   jne 0xb162
+B13C  E8 8D 02                call 0xb3cc
+B13F  74 07                   je 0xb148
+B141  E8 8E 02                call 0xb3d2
+B144  74 1C                   je 0xb162
+B146  EB 07                   jmp 0xb14f
+B148  F6 06 17 00 03          test byte ptr [0x17], 3
+B14D  74 13                   je 0xb162
+B14F  E8 18 01                call 0xb26a
+B152  B0 20                   mov al, 0x20
+B154  E6 20                   out 0x20, al
+B156  55                      push bp
+B157  CD 05                   int 5
+B159  5D                      pop bp
+B15A  80 26 96 00 FC          and byte ptr [0x96], 0xfc
+B15F  E9 87 00                jmp 0xb1e9
+B162  E8 6D 02                call 0xb3d2
+B165  75 09                   jne 0xb170
+B167  F6 06 17 00 03          test byte ptr [0x17], 3
+B16C  74 34                   je 0xb1a2
+B16E  EB 18                   jmp 0xb188
+B170  3C 1C                   cmp al, 0x1c
+B172  75 05                   jne 0xb179
+B174  B8 0D E0                mov ax, 0xe00d
+B177  EB 07                   jmp 0xb180
+B179  3C 35                   cmp al, 0x35
+B17B  75 06                   jne 0xb183
+B17D  B8 2F E0                mov ax, 0xe02f
+B180  E9 62 01                jmp 0xb2e5
+B183  BB E0 AD                mov bx, 0xade0
+B186  EB 31                   jmp 0xb1b9
+B188  BB 60 AD                mov bx, 0xad60
+B18B  F6 06 17 00 20          test byte ptr [0x17], 0x20
+B190  74 2A                   je 0xb1bc
+B192  E8 97 00                call 0xb22c
+B195  3C 46                   cmp al, 0x46
+B197  76 23                   jbe 0xb1bc
+B199  3C 56                   cmp al, 0x56
+B19B  73 1F                   jae 0xb1bc
+B19D  BB E0 AD                mov bx, 0xade0
+B1A0  EB 1A                   jmp 0xb1bc
+B1A2  BB E0 AD                mov bx, 0xade0
+B1A5  F6 06 17 00 20          test byte ptr [0x17], 0x20
+B1AA  74 0D                   je 0xb1b9
+B1AC  3C 46                   cmp al, 0x46
+B1AE  76 0C                   jbe 0xb1bc
+B1B0  3C 56                   cmp al, 0x56
+B1B2  73 08                   jae 0xb1bc
+B1B4  BB 60 AD                mov bx, 0xad60
+B1B7  EB 03                   jmp 0xb1bc
+B1B9  E8 70 00                call 0xb22c
+B1BC  E8 62 00                call 0xb221
+B1BF  80 FC 3A                cmp ah, 0x3a
+B1C2  76 18                   jbe 0xb1dc
+B1C4  3C 3A                   cmp al, 0x3a
+B1C6  76 14                   jbe 0xb1dc
+B1C8  3C F0                   cmp al, 0xf0
+B1CA  74 10                   je 0xb1dc
+B1CC  80 FC 56                cmp ah, 0x56
+B1CF  74 0B                   je 0xb1dc
+B1D1  8A E0                   mov ah, al
+B1D3  B0 00                   mov al, 0
+B1D5  E8 FA 01                call 0xb3d2
+B1D8  74 02                   je 0xb1dc
+B1DA  B0 E0                   mov al, 0xe0
+B1DC  E9 E2 00                jmp 0xb2c1
+
+===== B1DFh-B1E8h =====
+Reason: keyboard IRQ common epilogue: clear BDA flag bits, CLI, send PIC EOI, restore frame and IRET
+B1DF  80 26 96 00 FC          and byte ptr [0x96], 0xfc
+B1E4  FA                      cli
+B1E5  B0 20                   mov al, 0x20
+B1E7  E6 20                   out 0x20, al
+
+===== B1E4h-B1E8h =====
+Reason: alternate keyboard IRQ epilogue entry skipping the BDA flag clear
+B1E4  FA                      cli
+B1E5  B0 20                   mov al, 0x20
+B1E7  E6 20                   out 0x20, al
+
 ===== 639Ch-656Dh =====
 Reason: RTC Setup editor continuation: month/day/year and time field editing with INT 1Ah read/write
 639C  3C 12                   cmp al, 0x12
