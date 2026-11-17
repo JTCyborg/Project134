@@ -109,7 +109,7 @@ For each interval record:
 - unresolved bytes and alternate-entry candidates;
 - confidence and evidence source.
 
-Do not infer that an entire 256-byte page is code because one function starts there. Do not infer data from linear-decoder output alone. No whole-ROM semantic percentage is currently defensible. At the initial snapshot the seeded-window union was 10,700 bytes (16.33%). That historical figure is superseded by the current 29,072-byte (44.36%) candidate footprint in section 11; neither figure is semantic completion.
+Do not infer that an entire 256-byte page is code because one function starts there. Do not infer data from linear-decoder output alone. No whole-ROM semantic percentage is currently defensible. At the initial snapshot the seeded-window union was 10,700 bytes (16.33%). That historical figure is superseded by the current 35,960-byte (54.87%) candidate footprint in section 11; neither figure is semantic completion.
 
 
 ## 7. Seeded Capstone decode — first executable evidence
@@ -140,7 +140,7 @@ D100h–D5FFh is the separate floppy-controller/DMA subsystem: FDC ports 03F2h/0
 
 F92Ah–F935h is a six-word little-endian dispatch table with targets F936h, F986h, F9C4h, F977h, F999h and F9D3h. F977h overlaps the F936h stream as an alternate entry. The F8E7h wrapper ends in IRET at F929h; its actual vector entry remains unknown.
 
-Historical snapshot: 168 code windows plus 18 data ranges (186 headers) produced a 10,700-byte union. The 2026-11-17 generated artifact is 330 code windows plus 64 data ranges (394 headers); the recomputed union is 29,072 bytes across 141 pages. See section 11 for exact byte-mask counts. Neither figure is semantic coverage. Near-branch targets are normalized to 16-bit IP wraparound.
+Historical snapshot: 168 code windows plus 18 data ranges (186 headers) produced a 10,700-byte union. The 2026-11-17 generated artifact is 386 code windows plus 74 data ranges (460 headers); the recomputed union is 35,960 bytes across 169 pages. See section 11 for exact byte-mask counts. Neither figure is semantic coverage. Near-branch targets are normalized to 16-bit IP wraparound.
 
 
 ## INT 13h dispatch correction
@@ -220,7 +220,7 @@ The first-pass region descriptions above have been refined by raw-byte and calle
 | E845h–E864h | INT 76h / IRQ14 handler | AMI486_STORAGE_AND_DISPATCH_REGIONS_20261116.md |
 | F8E7h–F9FCh | BIOS INT 14h serial-service dispatcher and UART handlers | AMI486_INT14_SERIAL_BIOS_20261116.md |
 
-The previous candidate-window artifact had 187 code windows and 41 data ranges, with a 15,639-byte union across 79 pages. This historical snapshot is superseded by the 330/64 artifact and 29,072-byte union in section 11.
+The previous candidate-window artifact had 187 code windows and 41 data ranges, with a 15,639-byte union across 79 pages. This historical snapshot is superseded by the 386/74 artifact and 35,960-byte union in section 11.
 
 
 ## 9. F9xx dispatcher entry-boundary correction
@@ -331,12 +331,12 @@ Detailed byte-backed report: [AMI486_POST_SUMMARY_DISPLAY_20261117.md](AMI486_PO
 
 ### 10.4 Current candidate-window footprint
 
-The previous generator snapshot reported 187 code windows and 35 deduplicated data ranges (15,639 bytes across 79 pages). This is historical and superseded by the current reproducible 330-window/64-range artifact in section 11.
+The previous generator snapshot reported 187 code windows and 35 deduplicated data ranges (15,639 bytes across 79 pages). This is historical and superseded by the current reproducible 386-window/74-range artifact in section 11.
 
 
 ## 11. Data-region expansion — 2026-11-17
 
-The candidate-window generator now emits 64 explicitly identified data ranges, including the following newly byte-checked groups:
+The candidate-window generator now emits 74 explicitly identified data ranges, including the following newly byte-checked groups:
 
 | Range | Classification | Evidence / limits |
 |---|---|---|
@@ -369,15 +369,15 @@ The updated generator also removes the redundant 2D00h and misaligned 2D80h expl
 
 ### Current reproducible candidate footprint
 
-The regenerated manifest reports 330 code windows and 64 data ranges (394 headers). A byte-mask recomputation from the generated listing yields:
-- unique code-window bytes: 19,883;
-- unique data-range bytes: 9,302;
+The regenerated manifest reports 386 code windows and 74 data ranges (460 headers). A byte-mask recomputation from the generated listing yields:
+- unique code-window bytes: 22,989;
+- unique data-range bytes: 13,084;
 - overlap: 113;
-- union: 29,072 bytes (44.36%);
-- touched 256-byte pages: 141/256;
-- fully covered 256-byte pages: 73/256.
+- union: 35,960 bytes (54.87%);
+- touched 256-byte pages: 169/256;
+- fully covered 256-byte pages: 98/256.
 
-Do not interpret 44.36% as BIOS semantic completion. The code windows are independent linear decodes; the data ranges include confirmed strings/tables and some mixed blocks whose internal table consumers remain open.
+Do not interpret 54.87% as BIOS semantic completion. The code windows are independent linear decodes; the data ranges include confirmed strings/tables and some mixed blocks whose internal table consumers remain open.
 
 
 ### 11.1 Low-ROM identity block and first code candidate
@@ -393,7 +393,7 @@ At 00EFh the bytes switch to an executable-looking stream:
 
 The initial aligned instructions are PUSH ES, PUSH DS, PUSH SS, POP ES, MOV AH,03h, MOV BH,00h, INT 10h, PUSH CX, PUSH DX, SUB SP,0080h, MOV BP,SP, MOV DI,SP, MOV CX,0020h, MOV SI,E000h, REP MOVSW. This is a candidate code stream seeded separately at 00EFh; it is **not yet a proven function entry**. A raw-byte scan found no direct near CALL/JMP target or literal little-endian 00EFh pointer in the ROM. The caller/entry mechanism and the meaning of the copied DS:E000h block remain unresolved. Do not infer reachability from the new seed.
 
-The generator update has been regenerated and verified by a successful GitHub Actions run. The current manifest is 330 code windows and 64 data ranges; the candidate listing SHA is 426aa9903c473c7de7c879300358c0b6979dd83c.
+The generator update has been regenerated and verified by a successful GitHub Actions run. The current manifest is 386 code windows and 74 data ranges; the candidate listing SHA is 64c64b7250b8c9271635f38230a89a43a71b34ec.
 
 
 ## 11.2 Low-ROM screen-presentation stream — 2026-11-17
@@ -460,3 +460,24 @@ Current largest uncovered contiguous intervals in the regenerated candidate map:
 The next selected interval is 93F8h–9FFFh: it is the immediate continuation of the INT 15h/controller cluster and contains keyboard-controller and video-BIOS service paths. The other larger gaps remain queued by reference density and subsystem continuity, not by numeric phase order.
 
 These metrics describe independently seeded candidate windows and explicitly classified data ranges only. They do not prove that the remaining bytes are data, nor that all included windows are reachable code.
+
+
+## 13. Setup catalog and INT 10h video expansion — 2026-11-17
+
+Additional byte-backed reports:
+- [AMI486_ADDRESS_LEDGER_REGION_93F8_9870_20261117.md](AMI486_ADDRESS_LEDGER_REGION_93F8_9870_20261117.md): PS/2 auxiliary-device services, eight-function mouse command table, sample-rate table, IRQ12 packet decoder and callback pointer.
+- [AMI486_ADDRESS_LEDGER_REGION_9848_A017_20261117.md](AMI486_ADDRESS_LEDGER_REGION_9848_A017_20261117.md): INT 10h video dispatcher and 20-entry AH=00h–13h handler table, cursor/page/scroll/text/pixel services.
+- [AMI486_ADDRESS_LEDGER_REGION_B7B1_C5FA_20261117.md](AMI486_ADDRESS_LEDGER_REGION_B7B1_C5FA_20261117.md): Advanced CMOS and Advanced Chipset Setup data pages, 15-word callback table at B7B2h, and two previously unseeded far callback targets (29F6h and 86DBh).
+
+The generated candidate artifact now emits all confirmed tables separately:
+- 8EA7h–8EB0h: five-word interrupt-style callback table;
+- 90BAh–90DDh: 18-word INT 15h AH=80h–91h dispatch table;
+- 94FAh–9509h: eight-word PS/2 mouse service table;
+- 9589h–958Fh: sample-rate values;
+- 9784h–9793h: IRQ12 packet-dispatch table;
+- 9848h–986Fh: 20-word INT 10h dispatch table;
+- B7B2h–B7CFh: 15-word Advanced Setup callback table.
+
+Current byte-mask metrics: 386 code windows, 74 data ranges, 22,989 unique code-window bytes, 13,084 unique data-range bytes, 113 overlap bytes, 35,960-byte union (54.87%), 169 pages touched and 98 pages fully covered. Candidate listing blob SHA: 64c64b7250b8c9271635f38230a89a43a71b34ec.
+
+The largest remaining contiguous uncovered intervals are D65Bh–E400h (3,494 bytes), E865h–F52Dh (3,273 bytes), 697Dh–7144h (1,992 bytes), 19F8h–20FFh (1,800 bytes) and CA16h–D0FFh (1,770 bytes). The next work item is D65Bh–E400h; first determine whether it is code, tables or mixed data before adding seeds.
