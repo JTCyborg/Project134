@@ -952,3 +952,37 @@ The disk-format/track preparation code around `5BD5h..5BEFh` reads `[E41Fh]`, `[
 ### Clarification on the common INT 13h wrapper
 
 At `6C15h`, the wrapper checks `[E3BBh]`. If it equals `FFh`, it bypasses the helper call and executes `INT 13h` directly; otherwise it calls `6C32h` first and then executes `INT 13h`. It stores returned AH into `[E3B9h]` and propagates the interrupt carry result. Therefore the `AH=14h/08h/09h/11h/10h` selector sequence documented above is confirmed as actual INT 13h service dispatch, with `6C32h` serving as a pre-call support/setup path under the non-FF gate.
+
+
+### Geometry record format and confirmed units (E3F1h table)
+
+The routine entered at `5AB5h` selects a 16-byte record using AL as a record index. In the ordinary path it computes `SI = CS:E3F1h + AL*10h`, then copies exactly 10h bytes to `DS:E411h`. The special `AL=2Fh` path instead sources the structure from `DS:E01Bh` (with an optional 9-byte offset controlled by DL) and copies the fields into the same destination. The caller at `4795h` passes its selected one-byte index in AL; the separate caller at `4B8Dh` also invokes this loader as part of drive-parameter selection.
+
+The 16-byte ROM records make the geometry units unambiguous:
+
+- record byte offset `+0..+1`: cylinder count (little-endian word);
+- record byte offset `+2`: head count;
+- record byte offset `+14`: sectors per track (SPT).
+
+After loading to E411h, these are `WORD [E411h]`, `BYTE [E413h]`, and `BYTE [E41Fh]` respectively. The initialization at `6954h..6965h` subtracts one from the cylinder count and head count to create zero-based maximum indices in E1B2h and E1B4h. E41Fh remains the sectors-per-track count, not a zero-based maximum. The arithmetic at `5BD5h..5BEFh` multiplies E41Fh by E413h and E411h, independently corroborating the three geometry dimensions.
+
+Examples from the ROM table (index : cylinders / heads / sectors-per-track):
+
+- 1: 306 / 4 / 17
+- 2: 615 / 4 / 17
+- 3: 615 / 6 / 17
+- 4: 940 / 8 / 17
+- 5: 940 / 6 / 17
+- 6: 615 / 4 / 17 (alternate parameter record)
+- 7: 462 / 8 / 17
+- 8: 733 / 5 / 17
+- 9: 900 / 15 / 17
+- 10: 820 / 3 / 17
+- 11: 855 / 5 / 17
+- 12: 855 / 7 / 17
+- 13: 306 / 8 / 17
+- 14: 733 / 7 / 17
+- 16: 612 / 4 / 17
+- 17: 977 / 5 / 17
+
+Indices 0 and 15 are zero-filled records. This is a BIOS drive-type/geometry table, not an arbitrary runtime array. The index is supplied by the caller; the full mapping from user-visible drive-type menu labels to each index is still to be reconstructed from the menu/display code. Several records have distinct auxiliary fields despite matching geometry, so do not collapse records solely by cylinder/head/SPT values.
