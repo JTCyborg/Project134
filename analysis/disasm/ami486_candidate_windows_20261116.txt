@@ -1509,6 +1509,22 @@ Reason: LGDT pseudo-descriptor at 2068h plus adjacent descriptor/parameter bytes
 2078  FF FF 00 00 00 93 8F 00 FF FF 00 00 00 93 00 00 ................
 2088  01 04 02 10 40                                  ....@
 
+===== DATA 2088h-208Ch =====
+Reason: Five-byte nibble-indexed ALi register-10h/11h weight table read by the 2495h feature-gated configuration helper
+2088  01 04 02 10 40                                  ....@
+
+===== DATA 2394h-2395h =====
+Reason: Crafted stack-return word 2396h consumed by the 8DDCh ALi register-10h write trampoline
+Words: 2396
+
+===== DATA 23AAh-23ABh =====
+Reason: Crafted stack-return word 23ACh consumed by the 8DDCh ALi register-11h write trampoline
+Words: 23AC
+
+===== DATA 23B6h-23B7h =====
+Reason: Crafted stack-return word 23B8h consumed by the 8DDCh ALi register-16h write trampoline
+Words: 23B8
+
 ===== DATA 2646h-2686h =====
 Reason: GDT object: GDTR at 264Eh has limit 0040h and base F2646h; selectors 0010h and 0038h select the 64-KiB and flat 4-GiB data descriptors. The inclusive limit reaches byte 2686h, which also begins executable code.
 2646  00 00 00 00 00 00 00 00 40 00 46 26 0F 00 00 00 ........@.F&....
@@ -13126,7 +13142,7 @@ Reason: return-to-stack code continuation
 2250  B3 FF                   mov bl, 0xff
 2252  26              db 0x26
 
-===== 2381h-2400h =====
+===== 2381h-2393h =====
 Reason: second memory-alias result path; chipset register 10h write trampoline
 2381  81 E2 0F 0F             and dx, 0xf0f
 2385  8A E6                   mov ah, dh
@@ -13135,52 +13151,8 @@ Reason: second memory-alias result path; chipset register 10h write trampoline
 238C  B0 10                   mov al, 0x10
 238E  BC 94 23                mov sp, 0x2394
 2391  E9 48 6A                jmp 0x8ddc
-2394  96                      xchg si, ax
-2395  23 81 E3 0F             and ax, word ptr [bx + di + 0xfe3]
-2399  0F 8A E7 C0             jp 0xe484
-239D  E4 04                   in al, 4
-239F  0A E3                   or ah, bl
-23A1  B0 11                   mov al, 0x11
-23A3  90                      nop
-23A4  BC AA 23                mov sp, 0x23aa
-23A7  E9 32 6A                jmp 0x8ddc
-23AA  AC                      lodsb al, byte ptr [si]
-23AB  23 B8 16 00             and di, word ptr [bx + si + 0x16]
-23AF  90                      nop
-23B0  BC B6 23                mov sp, 0x23b6
-23B3  E9 26 6A                jmp 0x8ddc
-23B6  B8 23 B8                mov ax, 0xb823
-23B9  10 00                   adc byte ptr [bx + si], al
-23BB  8E C0                   mov es, ax
-23BD  0F 20 C0                mov eax, cr0
-23C0  24 FE                   and al, 0xfe
-23C2  0F 22 C0                mov cr0, eax
-23C5  EB 00                   jmp 0x23c7
-23C7  90                      nop
-23C8  BC CE 23                mov sp, 0x23ce
-23CB  E9 A0 D2                jmp 0xf66e
-23CE  D0 23                   shl byte ptr [bp + di], 1
-23D0  BB 00 04                mov bx, 0x400
-23D3  90                      nop
-23D4  BC DA 23                mov sp, 0x23da
-23D7  E9 53 31                jmp 0x552d
-23DA  DC 23                   fsub qword ptr [bp + di]
-23DC  74 06                   je 0x23e4
-23DE  BD 03 00                mov bp, 3
-23E1  E9 C1 D0                jmp 0xf4a5
-23E4  B8 30 00                mov ax, 0x30
-23E7  8E D0                   mov ss, ax
-23E9  BC 00 01                mov sp, 0x100
-23EC  E8 1B 00                call 0x240a
-23EF  E8 A3 00                call 0x2495
-23F2  E8 F8 05                call 0x29ed
-23F5  74 06                   je 0x23fd
-23F7  E8 18 6B                call 0x8f12
-23FA  E8 3A 01                call 0x2537
-23FD  2B C0                   sub ax, ax
-23FF  8E D8                   mov ds, ax
 
-===== 2396h-2415h =====
+===== 2396h-23A9h =====
 Reason: return-to-stack code: mask and write chipset register 10h
 2396  81 E3 0F 0F             and bx, 0xf0f
 239A  8A E7                   mov ah, bh
@@ -13190,13 +13162,17 @@ Reason: return-to-stack code: mask and write chipset register 10h
 23A3  90                      nop
 23A4  BC AA 23                mov sp, 0x23aa
 23A7  E9 32 6A                jmp 0x8ddc
-23AA  AC                      lodsb al, byte ptr [si]
-23AB  23 B8 16 00             and di, word ptr [bx + si + 0x16]
+
+===== 23ACh-23B5h =====
+Reason: stack-return continuation after the 8DDCh ALi register-11h write
+23AC  B8 16 00                mov ax, 0x16
 23AF  90                      nop
 23B0  BC B6 23                mov sp, 0x23b6
 23B3  E9 26 6A                jmp 0x8ddc
-23B6  B8 23 B8                mov ax, 0xb823
-23B9  10 00                   adc byte ptr [bx + si], al
+
+===== 23B8h-23CDh =====
+Reason: stack-return continuation after the 8DDCh ALi register-16h write; enters CR0.PE clear and A20 disable
+23B8  B8 10 00                mov ax, 0x10
 23BB  8E C0                   mov es, ax
 23BD  0F 20 C0                mov eax, cr0
 23C0  24 FE                   and al, 0xfe
@@ -13205,209 +13181,15 @@ Reason: return-to-stack code: mask and write chipset register 10h
 23C7  90                      nop
 23C8  BC CE 23                mov sp, 0x23ce
 23CB  E9 A0 D2                jmp 0xf66e
-23CE  D0 23                   shl byte ptr [bp + di], 1
-23D0  BB 00 04                mov bx, 0x400
-23D3  90                      nop
-23D4  BC DA 23                mov sp, 0x23da
-23D7  E9 53 31                jmp 0x552d
-23DA  DC 23                   fsub qword ptr [bp + di]
-23DC  74 06                   je 0x23e4
-23DE  BD 03 00                mov bp, 3
-23E1  E9 C1 D0                jmp 0xf4a5
-23E4  B8 30 00                mov ax, 0x30
-23E7  8E D0                   mov ss, ax
-23E9  BC 00 01                mov sp, 0x100
-23EC  E8 1B 00                call 0x240a
-23EF  E8 A3 00                call 0x2495
-23F2  E8 F8 05                call 0x29ed
-23F5  74 06                   je 0x23fd
-23F7  E8 18 6B                call 0x8f12
-23FA  E8 3A 01                call 0x2537
-23FD  2B C0                   sub ax, ax
-23FF  8E D8                   mov ds, ax
-2401  8E C0                   mov es, ax
-2403  8C C8                   mov ax, cs
-2405  8E D0                   mov ss, ax
-2407  E9 D2 B5                jmp 0xd9dc
-240A  BB 00 F0                mov bx, 0xf000
-240D  B2 C0                   mov dl, 0xc0
-240F  B9 00 80                mov cx, 0x8000
-2412  EB 43                   jmp 0x2457
-2414  90                      nop
-2415  BB              db 0xBB
 
-===== 23AAh-2429h =====
-Reason: return-to-stack code: chipset register 11h update
-23AA  AC                      lodsb al, byte ptr [si]
-23AB  23 B8 16 00             and di, word ptr [bx + si + 0x16]
-23AF  90                      nop
-23B0  BC B6 23                mov sp, 0x23b6
-23B3  E9 26 6A                jmp 0x8ddc
-23B6  B8 23 B8                mov ax, 0xb823
-23B9  10 00                   adc byte ptr [bx + si], al
-23BB  8E C0                   mov es, ax
-23BD  0F 20 C0                mov eax, cr0
-23C0  24 FE                   and al, 0xfe
-23C2  0F 22 C0                mov cr0, eax
-23C5  EB 00                   jmp 0x23c7
-23C7  90                      nop
-23C8  BC CE 23                mov sp, 0x23ce
-23CB  E9 A0 D2                jmp 0xf66e
-23CE  D0 23                   shl byte ptr [bp + di], 1
-23D0  BB 00 04                mov bx, 0x400
-23D3  90                      nop
-23D4  BC DA 23                mov sp, 0x23da
-23D7  E9 53 31                jmp 0x552d
-23DA  DC 23                   fsub qword ptr [bp + di]
-23DC  74 06                   je 0x23e4
-23DE  BD 03 00                mov bp, 3
-23E1  E9 C1 D0                jmp 0xf4a5
-23E4  B8 30 00                mov ax, 0x30
-23E7  8E D0                   mov ss, ax
-23E9  BC 00 01                mov sp, 0x100
-23EC  E8 1B 00                call 0x240a
-23EF  E8 A3 00                call 0x2495
-23F2  E8 F8 05                call 0x29ed
-23F5  74 06                   je 0x23fd
-23F7  E8 18 6B                call 0x8f12
-23FA  E8 3A 01                call 0x2537
-23FD  2B C0                   sub ax, ax
-23FF  8E D8                   mov ds, ax
-2401  8E C0                   mov es, ax
-2403  8C C8                   mov ax, cs
-2405  8E D0                   mov ss, ax
-2407  E9 D2 B5                jmp 0xd9dc
-240A  BB 00 F0                mov bx, 0xf000
-240D  B2 C0                   mov dl, 0xc0
-240F  B9 00 80                mov cx, 0x8000
-2412  EB 43                   jmp 0x2457
-2414  90                      nop
-2415  BB 00 C0                mov bx, 0xc000
-2418  B9 00 40                mov cx, 0x4000
-241B  B2 01                   mov dl, 1
-241D  EB 38                   jmp 0x2457
-241F  90                      nop
-2420  BB 00 C8                mov bx, 0xc800
-2423  B9 00 40                mov cx, 0x4000
-2426  B2 02                   mov dl, 2
-2428  EB 2D                   jmp 0x2457
-
-===== 23B6h-2435h =====
-Reason: return-to-stack code: CR0 transition sequence
-23B6  B8 23 B8                mov ax, 0xb823
-23B9  10 00                   adc byte ptr [bx + si], al
-23BB  8E C0                   mov es, ax
-23BD  0F 20 C0                mov eax, cr0
-23C0  24 FE                   and al, 0xfe
-23C2  0F 22 C0                mov cr0, eax
-23C5  EB 00                   jmp 0x23c7
-23C7  90                      nop
-23C8  BC CE 23                mov sp, 0x23ce
-23CB  E9 A0 D2                jmp 0xf66e
-23CE  D0 23                   shl byte ptr [bp + di], 1
-23D0  BB 00 04                mov bx, 0x400
-23D3  90                      nop
-23D4  BC DA 23                mov sp, 0x23da
-23D7  E9 53 31                jmp 0x552d
-23DA  DC 23                   fsub qword ptr [bp + di]
-23DC  74 06                   je 0x23e4
-23DE  BD 03 00                mov bp, 3
-23E1  E9 C1 D0                jmp 0xf4a5
-23E4  B8 30 00                mov ax, 0x30
-23E7  8E D0                   mov ss, ax
-23E9  BC 00 01                mov sp, 0x100
-23EC  E8 1B 00                call 0x240a
-23EF  E8 A3 00                call 0x2495
-23F2  E8 F8 05                call 0x29ed
-23F5  74 06                   je 0x23fd
-23F7  E8 18 6B                call 0x8f12
-23FA  E8 3A 01                call 0x2537
-23FD  2B C0                   sub ax, ax
-23FF  8E D8                   mov ds, ax
-2401  8E C0                   mov es, ax
-2403  8C C8                   mov ax, cs
-2405  8E D0                   mov ss, ax
-2407  E9 D2 B5                jmp 0xd9dc
-240A  BB 00 F0                mov bx, 0xf000
-240D  B2 C0                   mov dl, 0xc0
-240F  B9 00 80                mov cx, 0x8000
-2412  EB 43                   jmp 0x2457
-2414  90                      nop
-2415  BB 00 C0                mov bx, 0xc000
-2418  B9 00 40                mov cx, 0x4000
-241B  B2 01                   mov dl, 1
-241D  EB 38                   jmp 0x2457
-241F  90                      nop
-2420  BB 00 C8                mov bx, 0xc800
-2423  B9 00 40                mov cx, 0x4000
-2426  B2 02                   mov dl, 2
-2428  EB 2D                   jmp 0x2457
-242A  90                      nop
-242B  BB 00 D0                mov bx, 0xd000
-242E  B9 00 40                mov cx, 0x4000
-2431  B2 04                   mov dl, 4
-2433  EB 22                   jmp 0x2457
-2435  90                      nop
-
-===== 23D0h-244Fh =====
+===== 23D0h-23D9h =====
 Reason: stack-return continuation after F66Eh A20 disable; starts the 0400h memory-pattern test
 23D0  BB 00 04                mov bx, 0x400
 23D3  90                      nop
 23D4  BC DA 23                mov sp, 0x23da
 23D7  E9 53 31                jmp 0x552d
-23DA  DC 23                   fsub qword ptr [bp + di]
-23DC  74 06                   je 0x23e4
-23DE  BD 03 00                mov bp, 3
-23E1  E9 C1 D0                jmp 0xf4a5
-23E4  B8 30 00                mov ax, 0x30
-23E7  8E D0                   mov ss, ax
-23E9  BC 00 01                mov sp, 0x100
-23EC  E8 1B 00                call 0x240a
-23EF  E8 A3 00                call 0x2495
-23F2  E8 F8 05                call 0x29ed
-23F5  74 06                   je 0x23fd
-23F7  E8 18 6B                call 0x8f12
-23FA  E8 3A 01                call 0x2537
-23FD  2B C0                   sub ax, ax
-23FF  8E D8                   mov ds, ax
-2401  8E C0                   mov es, ax
-2403  8C C8                   mov ax, cs
-2405  8E D0                   mov ss, ax
-2407  E9 D2 B5                jmp 0xd9dc
-240A  BB 00 F0                mov bx, 0xf000
-240D  B2 C0                   mov dl, 0xc0
-240F  B9 00 80                mov cx, 0x8000
-2412  EB 43                   jmp 0x2457
-2414  90                      nop
-2415  BB 00 C0                mov bx, 0xc000
-2418  B9 00 40                mov cx, 0x4000
-241B  B2 01                   mov dl, 1
-241D  EB 38                   jmp 0x2457
-241F  90                      nop
-2420  BB 00 C8                mov bx, 0xc800
-2423  B9 00 40                mov cx, 0x4000
-2426  B2 02                   mov dl, 2
-2428  EB 2D                   jmp 0x2457
-242A  90                      nop
-242B  BB 00 D0                mov bx, 0xd000
-242E  B9 00 40                mov cx, 0x4000
-2431  B2 04                   mov dl, 4
-2433  EB 22                   jmp 0x2457
-2435  90                      nop
-2436  BB 00 D8                mov bx, 0xd800
-2439  B9 00 40                mov cx, 0x4000
-243C  B2 08                   mov dl, 8
-243E  EB 17                   jmp 0x2457
-2440  90                      nop
-2441  BB 00 E0                mov bx, 0xe000
-2444  B9 00 40                mov cx, 0x4000
-2447  B2 10                   mov dl, 0x10
-2449  EB 0C                   jmp 0x2457
-244B  90                      nop
-244C  BB 00 C8                mov bx, 0xc800
-244F  B9              db 0xB9
 
-===== 23DCh-245Bh =====
+===== 23DCh-2409h =====
 Reason: stack-return continuation after the 552Dh memory-pattern test
 23DC  74 06                   je 0x23e4
 23DE  BD 03 00                mov bp, 3
@@ -13427,44 +13209,6 @@ Reason: stack-return continuation after the 552Dh memory-pattern test
 2403  8C C8                   mov ax, cs
 2405  8E D0                   mov ss, ax
 2407  E9 D2 B5                jmp 0xd9dc
-240A  BB 00 F0                mov bx, 0xf000
-240D  B2 C0                   mov dl, 0xc0
-240F  B9 00 80                mov cx, 0x8000
-2412  EB 43                   jmp 0x2457
-2414  90                      nop
-2415  BB 00 C0                mov bx, 0xc000
-2418  B9 00 40                mov cx, 0x4000
-241B  B2 01                   mov dl, 1
-241D  EB 38                   jmp 0x2457
-241F  90                      nop
-2420  BB 00 C8                mov bx, 0xc800
-2423  B9 00 40                mov cx, 0x4000
-2426  B2 02                   mov dl, 2
-2428  EB 2D                   jmp 0x2457
-242A  90                      nop
-242B  BB 00 D0                mov bx, 0xd000
-242E  B9 00 40                mov cx, 0x4000
-2431  B2 04                   mov dl, 4
-2433  EB 22                   jmp 0x2457
-2435  90                      nop
-2436  BB 00 D8                mov bx, 0xd800
-2439  B9 00 40                mov cx, 0x4000
-243C  B2 08                   mov dl, 8
-243E  EB 17                   jmp 0x2457
-2440  90                      nop
-2441  BB 00 E0                mov bx, 0xe000
-2444  B9 00 40                mov cx, 0x4000
-2447  B2 10                   mov dl, 0x10
-2449  EB 0C                   jmp 0x2457
-244B  90                      nop
-244C  BB 00 C8                mov bx, 0xc800
-244F  B9 00 40                mov cx, 0x4000
-2452  B2 20                   mov dl, 0x20
-2454  EB 01                   jmp 0x2457
-2456  90                      nop
-2457  06                      push es
-2458  1E                      push ds
-2459  B8 13 13                mov ax, 0x1313
 
 ===== 240Ah-2414h =====
 Reason: direct CALL target from the 23E4h POST continuation; first ALi/memory setup helper
@@ -24075,7 +23819,7 @@ Reason: set 8000h-word test count and fall through to the memory-test routine
 5571  C3                      ret
 
 ===== 552Dh-5571h =====
-Reason: 64 KiB ES:0000h multi-pattern memory test; direct targets from 23D7h and 5FBEh
+Reason: Variable-length ES:DI multi-pattern word test; 23D7h caller passes BX=0400h (2 KiB), while 5FBEh sets BH=08h and preserves caller-supplied BL; writes/verifies 8080h, 5555h, 3333h and 0000h
 552D  B8 80 80                mov ax, 0x8080
 5530  8B CB                   mov cx, bx
 5532  33 FF                   xor di, di
