@@ -14,7 +14,7 @@ The code at 5A5E reads `[E187]` and dispatches:
 | 0 or 1 | `cmp 2; JC` | 85F5 | SI=873Ch; CX=[8880] | 5 |
 | 2 | equality after compare | 85C0 | SI=8750h; CX=[8882] | 76 |
 | 3 | greater than 2, not 4 | 85CB | SI=8880h; CX=[8884] | 0 |
-| 4 | equality at second compare | 85D6 | SI=[82C0]; CX from [82CA + 2*(82B0-1)] or fallback | Dynamic |
+| 4 | equality at second compare | 85D6 | SI=[82C0]; CX from [82CA + 2*(82B0-1)] when selector nonzero, otherwise zero | Dynamic |
 | 5–255 | greater than 2, not 4 | 85CB | SI=8880h; CX=[8884] | 0 |
 
 The branch logic is exact:
@@ -42,7 +42,7 @@ Loads count 0 and base 8880h. The common worker at 85FE checks CX and immediatel
 
 - Reads selector `CS:[82B0]`.
 - If nonzero, decrements it, doubles it, reads a word count from `CS:[82CA + 2*(selector-1)]`, and takes base `CS:[82C0]`.
-- If zero, falls back to count 5 at `CS:[8880]` and base 873Ch.
+- If zero, CX remains zero; the common worker returns without processing any records. There is no fallback to the five-entry prefix (phase 8 correction).
 - Uses the common four-byte record worker at 85FE.
 
 ## 3. Common worker semantics at 85FE–862F
@@ -71,7 +71,7 @@ The wrapper at 85B3:
 3. Restores AX.
 4. Calls 85CB (zero-entry table, so no entries are changed).
 5. Saves AX.
-6. Calls 85D6 (dynamic table or its five-entry fallback).
+6. Calls 85D6 (optional runtime table; with the stock zero selector it is a no-op).
 7. Restores AX.
 8. Falls through into 85C0h, which loads CX=[8882h]=76 and SI=8750h, then jumps to the common worker at 85FEh. The suffix is processed before the routine returns at 862Fh.
 
