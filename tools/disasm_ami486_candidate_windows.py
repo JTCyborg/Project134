@@ -218,6 +218,7 @@ DATA_RANGES = [
     (0x188E, 0x18E5, "Four POST resource-conflict messages (parallel, serial, floppy and hard disk)", "ascii"),
     (0x19B0, 0x19CA, "POST cache/CPU timing threshold lookup bytes preceding the display labels", "hexascii"),
     (0x19CA, 0x19FB, "POST cache-memory and CPU-clock display strings including final CR/LF/NUL", "hexascii"),
+    (0x2EF1, 0x2EF2, "single unreferenced zero byte between the selector-loop jump and the separately called Setup exit/relocation routine", "hexascii"),
     (0x2F24, 0x2F67, "Setup exit confirmation prompts: write CMOS or quit without saving, including the final NUL byte at 2F66h", "ascii"),
     (0x3624, 0x36A4, "Setup secondary keyboard legend and F-key option captions with control bytes", "hexascii"),
     (0x37C3, 0x3806, "Setup option-page legends, control prefixes and border fill bytes", "hexascii"),
@@ -1476,6 +1477,16 @@ SEEDS.extend([
     (0xABAD, "ATA command wrapper called at AB45h and AB50h; selects the ABDDh IDENTIFY path or the AC34h recalibrate path according to AH"),
     (0xABDD, "ATA IDENTIFY DEVICE path selected indirectly by the wrapper at ABADh; configures drive/head, issues command ECh, waits for status and reads 256 words from port 01F0h"),
     (0xAC34, "ATA recalibrate path selected indirectly by the wrapper at ABADh; configures drive/head, issues command 10h, waits and checks completion through A6DCh; RET at AC5Eh"),
+])
+
+
+LIMITS.update({
+    0x2ED8: 0x19, 0x2EF2: 0x32,
+})
+
+SEEDS.extend([
+    (0x2ED8, "continuation of the BIOS segment/ROM-shadow selector loop; tests CS=F000h, conditionally masks the [SI+E000h] byte, then loops back to 2EABh"),
+    (0x2EF2, "direct CALL target from F109h; Setup exit/relocation transition saves old SS:SP, switches to 0100:DFFEh, copies 7000h words from CS:0000h to 0100:0000h, clears 0FF1h bytes at 0100:E000h and jumps to 3C5Eh"),
 ])
 
 def main():
