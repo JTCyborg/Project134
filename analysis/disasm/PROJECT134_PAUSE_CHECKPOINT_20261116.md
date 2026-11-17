@@ -315,7 +315,7 @@ Report: `AMI486_ADDRESS_LEDGER_REGION_D655_E3FF_20261117.md`.
 - D6C4h/D6DEh are a stack/register/segment integrity test; the D7xx–DAA1h stream contains 8042, CMOS, chipset and PIT POST work with explicit stack-return words classified as data.
 - DAA2h–DFFFh is 1,374 zero bytes. E000h/E005h are jump stubs, E05Bh is the reset entry, E00Eh/E0CBh are ROM strings, E160h–E25Fh is descriptor-like data and E260h–E2BFh is the 96-byte protected-mode parameter block copied before INT 15h/AH=89h.
 - D906h is a confirmed direct JMP to 8400h after the EE9Dh helper returns through stack slot D904h. 8400h clears/restores CMOS 8Eh–FFh; AND BP,FFC7h preserves BP.13. The producer remains unresolved.
-- Candidate mask: 508 code windows, 136 data ranges, 42,884-byte union (65.44%), 70 uncovered intervals, 195 pages touched and 118 fully covered. This is not semantic completion.
+- Candidate mask: 541 code windows, 140 data ranges, 45,118-byte union (68.84%), 71 uncovered intervals, 203 pages touched and 125 fully covered. This is not semantic completion.
 - Next largest uncovered range: E865h–F52Dh (3,273 bytes). Select it only after confirming incoming references and data/code boundaries.
 
 
@@ -326,3 +326,12 @@ Report: `AMI486_ADDRESS_LEDGER_REGION_E862_F52D_20261117.md`.
 The former E865h–F52Dh gap is now classified into polling helpers, parity diagnostics, RTC/PIC/timer handlers, INT 1Ah-compatible services, CMOS helpers, the 0F05h protected-mode-assisted path, Setup/CMOS editor code, encoded strings, video/ROM checks and fatal POST diagnostics. Embedded strings, stack/data tables, padding and opaque blocks are separated from bounded code windows. Several interrupt vector mappings and opaque data consumers remain unresolved.
 
 Current candidate mask: 508 code windows, 136 data ranges, 42,884-byte union (65.44%). This is not semantic completion. The next largest uncovered range is 697Dh–7144h (1,992 bytes); inspect incoming references and table boundaries before adding new seeds.
+
+
+## Address-ledger continuation — Hard Disk Setup region (2026-11-17)
+
+Report: `AMI486_ADDRESS_LEDGER_REGION_696F_72D8_20261117.md`.
+
+The former D697Dh–D7144h gap is mapped as a Hard Disk Setup/INT 13h diagnostic subsystem. E1ACh is a three-value UI selector; the 6BD8h near-call table dispatches to 6B14h, 71E4h and 6CE3h; the direct dispatcher caller is 6936h. The subsystem includes disk read/write/verify paths, a 13-byte status table and a repeated 40-sector throughput benchmark.
+
+Current candidate mask: 541 code windows, 140 data ranges, 45,118-byte union (68.84%). The next largest uncovered interval is 19F8h–20FFh (1,800 bytes). This is not semantic completion.
