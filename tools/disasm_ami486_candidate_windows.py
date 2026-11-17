@@ -76,8 +76,8 @@ LIMITS.update({0xFA4E: 0x17, 0xFE6E: 0x03})
 # Main POST continuation and bounded helper entries in 1364h–188Dh.
 # Fixed-disk parameter continuation, embedded data, and keyboard-controller helpers.
 LIMITS.update({
-    0xE6F2: 0x03, 0xE7E8: 0x18, 0xE800: 0x03,
-    0xE803: 0x16, 0xE819: 0x15, 0xE82E: 0x03,
+    0xE6F2: 0x03, 0xE739: 0x03, 0xE7E8: 0x18, 0xE800: 0x03,
+    0xE803: 0x16, 0xE819: 0x15, 0xE82E: 0x03, 0xEFD2: 0x03,
 })
 
 LIMITS.update({
@@ -320,7 +320,9 @@ DATA_RANGES = [
     (0x5C66, 0x5C68, "Crafted stack-return word 5C68h consumed by the 552Ah helper", "words"),
     (0xE481, 0xE6F1, "Thirty-nine additional 16-byte fixed-disk parameter records, continuing the E401h-E480h table", "hexascii"),
     (0xE6F1, 0xE6F2, "Single zero padding byte between fixed-disk parameter records and near-JMP entry", "hexascii"),
-    (0xE6F5, 0xE7E8, "Opaque embedded binary payload; contains a 16-byte timing/threshold table at E729h", "hexascii"),
+    (0xE6F5, 0xE729, "Opaque embedded data preamble before UART baud-divisor table", "hexascii"),
+    (0xE729, 0xE739, "Eight-word UART baud-divisor table: 110, 150, 300, 600, 1200, 2400, 4800 and 9600 baud", "words"),
+    (0xE73C, 0xE7E8, "Opaque embedded binary payload after INT 14h serial-service trampoline", "hexascii"),
     (0xFA00, 0xFA4C, "76-byte POST integrity comparison block; bytewise complement of FF70h-FFBBh", "hexascii"),
     (0xFA6E, 0xFE6E, "1-KiB bitmap/glyph block; 128 eight-byte records, not executable code", "hexascii"),
     (0xFE71, 0xFEA1, "Structured upper-ROM data following the FE6Eh near-JMP trampoline", "hexascii"),
@@ -1109,6 +1111,8 @@ SEEDS = [
 
 SEEDS.extend([
     (0xE6F2, "near-JMP trampoline to F758h, skipping the fixed-disk parameter table and embedded payload"),
+    (0xE739, "INT 14h vector target: near-JMP trampoline to the serial service dispatcher at F8E3h"),
+    (0xEFD2, "INT 17h vector target: near-JMP trampoline to printer service handler at F85Eh"),
     (0xE7E8, "direct CALL targets from 1506h, 8521h and A826h; 8042 keyboard-controller status/command check"),
     (0xE800, "three-byte ADD AL,B0h / RETF helper stub; caller provenance unresolved"),
     (0xE803, "keyboard-controller command/echo helper; direct entry provenance unresolved"),
