@@ -369,3 +369,19 @@ The regenerated manifest reports 221 code windows and 56 data ranges. A byte-mas
 - touched 256-byte pages: 105/256.
 
 Do not interpret 31.52% as BIOS semantic completion. The code windows are independent linear decodes; the data ranges include confirmed strings/tables and some mixed blocks whose internal table consumers remain open.
+
+
+### 11.1 Low-ROM identity block and first code candidate
+
+Raw bytes at 0000h–00EEh form a mixed AMI identity/copyright block rather than a confirmed instruction stream. It contains the repeated-letter AMIBIOS marker, date `04/04/93`, copyright `1985–1993`, American Megatrends attribution, trademark notice and the trailing `UVW` bytes. The candidate generator now emits 0000h–00EEh as a separate hex/data range.
+
+At 00EFh the bytes switch to an executable-looking stream:
+
+```
+00EF: 06 1E 16 07 B4 03 B7 00 CD 10 51 52 81 EC 80 00
+00FF: 8B EC 8B FC B9 20 00 BE 00 E0 F3 A5 BB 45 30 B8
+```
+
+The initial aligned instructions are PUSH ES, PUSH DS, PUSH SS, POP ES, MOV AH,03h, MOV BH,00h, INT 10h, PUSH CX, PUSH DX, SUB SP,0080h, MOV BP,SP, MOV DI,SP, MOV CX,0020h, MOV SI,E000h, REP MOVSW. This is a candidate code stream seeded separately at 00EFh; it is **not yet a proven function entry**. A raw-byte scan found no direct near CALL/JMP target or literal little-endian 00EFh pointer in the ROM. The caller/entry mechanism and the meaning of the copied DS:E000h block remain unresolved. Do not infer reachability from the new seed.
+
+The generator change is committed, but the generated candidate artifact must be checked after the workflow refresh; until then the manifest's 221/56 counts remain the last verified generated output.
