@@ -1074,7 +1074,7 @@ Detailed report: [AMI486_STORAGE_AND_DISPATCH_REGIONS_20261116.md](AMI486_STORAG
 - D100h–D5FFh is the independent floppy controller/DMA subsystem using 03F2h/03F4h/03F5h/03F7h and DMA ports 0Ch/0Bh/05h/04h.
 - AD00h–AE5Fh is keyboard translation data candidate; AE60h onward includes INT 15h AH=4Fh keyboard intercept handling.
 - F92Ah–F935h is the six-entry INT 14h serial-service table; F977h is the AH=03h status entry overlapping the F936h initialization stream. F8E7h INT 14h vector installation remains unresolved.
-- The current Capstone candidate-window output has 168 unique bounded code windows plus 18 data windows (186 headers total); their union is 10,700 distinct bytes across 56 pages. This is a selected-window footprint, not semantic coverage.
+- Historical candidate-window snapshot: 168 code windows plus 18 data ranges (186 headers; 10,700-byte union). The current generated artifact has 221 code windows and 56 data ranges (277 headers; 20,658-byte union across 105 pages). This is a selected-window footprint, not semantic coverage; see AMI486_ADDRESS_LEDGER_20261116.md section 11.
 
 Do not merge ATA, FDC, keyboard and F9xx dispatch code into one subsystem.
 
@@ -1175,7 +1175,7 @@ The 131Fh entry is overlapping: its direct caller is 1BAAh, and its alternate st
 
 ## Candidate-window / CMOS gate refresh — 2026-11-16
 
-The candidate artifact now contains 168 code windows and 18 data ranges; union 10,700 bytes across 56 pages. The 131Fh alternate entry (direct caller 1BAAh) is now seeded separately through 1364h. CMOS 0Eh bit 7/6 gating and the EEAAh CMOS read wrapper are mapped; only the low nibble of [BX+90h] remains semantically incomplete in this FDC token family.
+Historical snapshot at this point: 168 code windows and 18 data ranges; union 10,700 bytes across 56 pages. Superseded by the 2026-11-17 candidate-map expansion below. The 131Fh alternate entry (direct caller 1BAAh) is now seeded separately through 1364h. CMOS 0Eh bit 7/6 gating and the EEAAh CMOS read wrapper are mapped; only the low nibble of [BX+90h] remains semantically incomplete in this FDC token family.
 
 
 ## INT 14h vector scan — 2026-11-16
@@ -1191,7 +1191,7 @@ The 2100h raw-byte correction is recorded in AMI486_ADDRESS_LEDGER_20261116.md: 
 - [AMI486_SETUP_EDITOR_RENDERING_EXTENSION_20261117.md](AMI486_SETUP_EDITOR_RENDERING_EXTENSION_20261117.md) extends phase 12 with byte-aligned 0D84h event dispatch, 0E19h/0E47h selection wrap helpers, 0E7Ch single-item rendering, and the 0EE2h–10DEh option-list/auxiliary-description renderer. It refines E18Ch as absolute selected-record index and E185 as on-screen row.
 - [AMI486_POST_SUMMARY_DISPLAY_20261117.md](AMI486_POST_SUMMARY_DISPLAY_20261117.md) maps the 3F4Ah/3F7Bh POST summary frame and fields, CPU/numeric-processor selection, floppy/HDD/display formatting, BDA COM/LPT enumeration and decimal/line-rendering helpers.
 - Setup data boundaries are distinct: 3044h–318Bh short captions; 318Ch–31A3h 12 caption pointers; 31A4h–342Dh long descriptions; 342Eh–3443h 11 long-description pointers; 3444h–3445h separate Do Not Write pointer; 3446h–345Bh 11 handler pointers.
-- Current candidate artifact: 187 unique seeded code windows plus 35 deduplicated data ranges; byte-mask union 15,639 bytes across 79 pages (11,414 code-window bytes, 4,319 data-range bytes, 94 overlap). This is a sampling footprint, not semantic coverage.
+- Previous candidate artifact: 187 code windows plus 35 data ranges, 15,639-byte union. Superseded by the current 221-window/56-range artifact (20,658-byte union across 105 pages). This is a sampling footprint, not semantic coverage.
 - Do not start phase 97. Continue from the address ledger's unresolved ranges and cross-reference gaps.
 
 
