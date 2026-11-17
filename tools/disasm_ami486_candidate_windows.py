@@ -76,6 +76,11 @@ LIMITS.update({0xFA4E: 0x17, 0xFE6E: 0x03})
 # Main POST continuation and bounded helper entries in 1364h–188Dh.
 # Fixed-disk parameter continuation, embedded data, and keyboard-controller helpers.
 LIMITS.update({
+    0x639C: 0x1D2, 0x656E: 0x05, 0x6573: 0x03, 0x6576: 0x25,
+    0x659B: 0x0C, 0x65A7: 0x18, 0x65BF: 0x05, 0x65C4: 0x52,
+})
+
+LIMITS.update({
     0xF5B2: 0x0A, 0xF5BC: 0x0D, 0xF5C9: 0x0F, 0xF5D9: 0x10,
     0xF5E9: 0x10, 0xF5F9: 0x06, 0xF5FF: 0x10, 0xF60F: 0x13,
     0xF622: 0x0B, 0xF62D: 0x08, 0xF635: 0x0F, 0xF644: 0x0D,
@@ -1123,6 +1128,18 @@ SEEDS = [
     (0x1BF0, "option-ROM scan invalid-candidate helper: advances BX by 0080h, restores DS and returns"),
     (0x1E9A, "OR SP,SP / RET status-success stub between POST callback entries"),
 ]
+
+SEEDS.extend([
+    (0x639C, "RTC Setup editor continuation: month/day/year and time field editing with INT 1Ah read/write"),
+    (0x656E, "direct CALL targets from 6379h, 63CFh and 6425h; RTC field editor/display using format at 75D2h"),
+    (0x6573, "direct CALL targets from 648Bh, 64E9h and 6547h; alternate RTC field editor/display using format at 7625h"),
+    (0x6576, "shared RTC field display/input loop; calls 05E0h and character renderer 65A7h"),
+    (0x659B, "direct CALL targets from 638Ch, 63E2h, 6438h, 649Eh, 64FCh and 655Ah; alternate field refresh"),
+    (0x65A7, "direct CALL targets from 075Ch, 0768h and 6583h; draw characters with INT 10h cursor/read/write services"),
+    (0x65BF, "date validator entry with CH=0; direct CALL target from 641Ah"),
+    (0x65C4, "date validator entry with CH=1; direct CALL targets from 63ABh, 63C4h, 6401h, 645Fh and 6480h; leap-year/day clamp and INT 1Ah AH=05h"),
+])
+
 
 SEEDS.extend([
     (0xF5B2, "port-61h control helper candidate; no direct relative CALL xref found"),
