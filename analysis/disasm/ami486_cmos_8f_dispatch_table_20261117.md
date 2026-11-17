@@ -1576,3 +1576,55 @@ The 2FA3h routine is called from 4A6Bh. Its prologue saves four existing IVT vec
 It then temporarily installs INT 13h as CS:A08Dh and points the selected INT 41h/INT 46h slot at 0100:E411. The routine invokes INT 13h with AH=14h during this wrapper. On the exit path at 3026h-303Eh it disables interrupts, copies all four saved vectors back from DS:E429h-E438h to their original IVT slots, and re-enables interrupts. Therefore the E411 DPT vector assignment observed at 2FFDh-3004h is temporary and scoped to this controller-test/initialization wrapper; it must not be described as the BIOS's permanent INT 41h/46h installation. The previous section's wording “exposed through the conventional BIOS fixed-disk parameter-table vector” is accurate only for the duration of this wrapper.
 
 This also explains why the code saves both INT 41h and INT 46h before modifying only the slot selected by E421h: the other drive's vector is preserved unchanged and restored with the rest of the IVT state.
+
+## INT 13h temporary hook A08Dh: verified dispatch path
+
+The temporary IVT hook installed by 2FA3h enters at CS:A08Dh. The first bytes and control-flow targets decode as follows:
+
+```asm
+A08D  CMP DL,80h
+A090  CMP BL,FCh
+A093  CLD
+A094  JB  A0EEh           ; carry from CMP BL,FCh
+A096  OR  AH,AH
+A098  JNZ A09Eh
+A09A  INT 40h
+A09C  XOR AH,AH
+A09E  CALL 90B4h          ; trampoline: JMP 90E7h
+A0A1  PUSH AX
+A0A2  PUSH CX
+A0A3  PUSH DX
+A0A4  PUSH SI
+A0A5  PUSH DI
+A0A6  PUSH DS
+A0A7  PUSH ES
+A0A8  SUB SP,8
+A0AA  PUSH BP
+A0AB  MOV BP,SP
+...
+A0C5  MOV AX,0201h
+A0C8  JB  A0CFh
+A0CA  AND BYTE [BP-?],FEh  ; operand is a local flag byte; retain exact frame mapping for next pass
+A0CE  DEC AX
+A0CF  ADD SP,8
+A0D2  POP BP
+A0D3  ADD SP,8
+A0D6  POP ES
+A0D7  POP DS
+A0D8  POP DI
+A0D9  POP SI
+A0DA  POP DX
+A0DB  POP CX
+A0DC  POP AX
+A0DD  RET                 ; returns to A0E1h
+A0DE  CALL 90B2h          ; 90B2h is RET; compatibility/no-op helper
+A0E1  IRET
+```
+
+The conditional at A094h is controlled by the second compare (`BL<FCh`), because CMP BL,FCh overwrites the flags from CMP DL,80h. Requests taking that branch go to A0EEh, which executes `INT 40h` followed by `RETF 2`; this is a distinct far-return path, not the normal IRET path. On the other path, AH=0 invokes INT 40h and then clears AH; nonzero AH skips that call. The handler then calls the common dispatcher through 90B4h, saves its working state, and ultimately returns with IRET at A0E1h.
+
+The trampoline at 90B4h is `JMP 90E7h`. The first instructions at 90E7h are `CMP AH,87h; JNE 90DEh`; 90DEh in turn jumps to 9220h. Thus the 2FA3h wrapper's INT 13h request with AH=14h does not take the AH=87h special branch: it follows the common 9220h path. The AH=87h path is a separate operation handled by the same shared dispatcher. This is why the code at 90E7h should not be labelled solely as the DPT reader.
+
+The 90E7h/AH=87h branch contains 386 protected-mode setup instructions (`LGDT`, `LIDT`, `SMSW`/`LMSW`-class control-register handling and port 70h/71h accesses) and is consistent with a special extended-memory transfer service; its exact API and descriptor layout need a separate pass. The ordinary path for AH!=87h continues at 9220h and is the relevant next target for the temporary AH=14h controller-diagnostic call.
+
+This pass does not yet establish direct reads of E411-E420 by A08Dh or 90E7h. The DPT vector is installed in the IVT for the duration of the test, but the data consumer still needs to be identified in the 9220h path or in the firmware's chained handler.
