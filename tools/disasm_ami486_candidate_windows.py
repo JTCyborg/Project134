@@ -77,6 +77,10 @@ LIMITS.update({0xFA4E: 0x17, 0xFE6E: 0x03})
 # Main POST continuation and bounded helper entries in 1364h–188Dh.
 # Fixed-disk parameter continuation, embedded data, and keyboard-controller helpers.
 LIMITS.update({
+    0x2F67: 0x28, 0x2F8F: 0x14, 0x2FA3: 0xA1,
+})
+
+LIMITS.update({
     0x0BDE: 0x26, 0x0C04: 0x01, 0x0C05: 0x27, 0x0C2B: 0x01, 0x0C2C: 0x27, 0x0C52: 0x01, 0x0C53: 0x2A,
 })
 
@@ -204,7 +208,7 @@ DATA_RANGES = [
     (0x188E, 0x18E5, "Four POST resource-conflict messages (parallel, serial, floppy and hard disk)", "ascii"),
     (0x19B0, 0x19CA, "POST cache/CPU timing threshold lookup bytes preceding the display labels", "hexascii"),
     (0x19CA, 0x19FB, "POST cache-memory and CPU-clock display strings including final CR/LF/NUL", "hexascii"),
-    (0x2F24, 0x2F66, "Setup exit confirmation prompts: write CMOS or quit without saving", "ascii"),
+    (0x2F24, 0x2F67, "Setup exit confirmation prompts: write CMOS or quit without saving, including the final NUL byte at 2F66h", "ascii"),
     (0x3624, 0x36A4, "Setup secondary keyboard legend and F-key option captions with control bytes", "hexascii"),
     (0x37C3, 0x3806, "Setup option-page legends, control prefixes and border fill bytes", "hexascii"),
     (0x3806, 0x381C, "Setup menu border fill, terminator and disk-utility exit legend", "hexascii"),
@@ -1168,6 +1172,12 @@ SEEDS = [
     (0x1BF0, "option-ROM scan invalid-candidate helper: advances BX by 0080h, restores DS and returns"),
     (0x1E9A, "OR SP,SP / RET status-success stub between POST callback entries"),
 ]
+
+SEEDS.extend([
+    (0x2F67, "Setup exit handler: called from 3D73h; prompts to write CMOS and exit or quit without saving"),
+    (0x2F8F, "BDA/low-memory clear helper called by the temporary INT 13h Setup diagnostic path"),
+    (0x2FA3, "Setup diagnostic path called from 4A6Bh; saves IVT vectors, temporarily hooks INT 13h and restores vectors"),
+])
 
 SEEDS.extend([
     (0x0BDE, "Advanced CMOS Setup handler overlapping the final 45-entry descriptor/handler table record; gated by B7CAh and calls shared page engine 0C7Dh"),
