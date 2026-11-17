@@ -331,4 +331,4 @@ Detailed byte-backed report: [AMI486_POST_SUMMARY_DISPLAY_20261117.md](AMI486_PO
 
 ### 10.4 Current candidate-window footprint
 
-The generator now reports 187 unique seeded code windows and emits 41 data ranges. The byte-mask union is 15,639/65,536 bytes (23.86%) across 79 pages: 11,414 bytes touched by code windows, 4,319 by data ranges and 94 overlapping bytes. This is still a seeded sampling footprint only; it is not a semantic code/data completion percentage. No claim is made that the remaining bytes are all unexplored.
+The generator now reports 187 unique seeded code windows and emits 35 deduplicated data ranges. The byte-mask union is 15,639/65,536 bytes (23.86%) across 79 pages: 11,414 bytes touched by code windows, 4,319 by data ranges and 94 overlapping bytes. This is still a seeded sampling footprint only; it is not a semantic code/data completion percentage. No claim is made that the remaining bytes are all unexplored.
