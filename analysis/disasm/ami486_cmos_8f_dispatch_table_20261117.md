@@ -1796,3 +1796,25 @@ The labels for AH=02h/03h/04h/05h/08h/14h follow their recognizable IBM-compatib
 - AH=14h entry A52Bh calls A796h and A82Dh, then tests controller result/status and stores the result in BDA byte 0040:008Dh; it returns status through AH and CF. This corrects the earlier unsupported-function interpretation: AH=14h is implemented by the actual A08Dh dispatch table. The earlier claim that this hook immediately returned AH=86h for AH=14h was based on the unrelated 90E7h dispatcher and is withdrawn.
 
 The temporary wrapper at 2FA3h calls AH=14h precisely to exercise this implemented controller-diagnostic path. This makes the wrapper's DPT pointer setup relevant to the A08Dh code. The next analysis must trace A76Ch/A807h and the geometry lookup helper they call, then identify which fields of the installed DPT are actually consumed.
+
+## Confirmed DPT dereference in the INT 13h read path
+
+The helper at A5B7h resolves the active diskette/hard-disk parameter-table vector into an actual far pointer:
+
+```asm
+A5B6  XOR BX,BX
+A5B8  MOV ES,BX              ; ES=0000
+A5BA  TEST DL,01h
+A5BD  MOV BX,0104h           ; INT 41h vector slot for DL bit0=0
+A5C0  JZ A5C5h
+A5C2  MOV BX,0118h           ; INT 46h vector slot for DL bit0=1
+A5C5  LES BX,[BX]            ; load offset:segment from IVT
+A5C8  CLC
+A5C9  RET
+```
+
+This is decisive evidence that the A08Dh disk handler consumes the temporary DPT pointer installed by 2FA3h. For DL=80h it resolves IVT 41h (0000:0104); for DL=81h it resolves IVT 46h (0000:0118). `LES BX,[BX]` loads the DPT pointer into ES:BX.
+
+The AH=02h read entry at A216h calls A76Ch. A76Ch normalizes the caller's buffer pointer, then calls A5B7h at A79Dh. Immediately afterward it reads `ES:[BX+08h]` (A7A0h), i.e. byte E419h in the installed custom DPT. This byte is the control field produced by 5AB5h (source byte +5). The routine masks bit 3 and uses it in the controller setup before issuing I/O through ports 01F6h/01F2h/01F3h/01F4h/01F5h and command/status port 01F7h. Thus the custom DPT is not merely displayed or used for capacity math: its control byte is consumed in the actual disk-read path.
+
+Important precision: the A76Ch fragment proven here directly reads DPT offset +08h only. The cylinders, heads and sectors/track fields have already been proven consumed by setup/capacity code elsewhere, but this pass has not yet demonstrated every DPT field's use by the sector-transfer routine. The write path begins at A808h and needs its own trace.
