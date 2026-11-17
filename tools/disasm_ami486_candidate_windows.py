@@ -13,7 +13,7 @@ ROM_PATH = ROOT / "ami486.bin"
 OUT_PATH = ROOT / "analysis" / "disasm" / "ami486_candidate_windows_20261116.txt"
 MANIFEST_PATH = ROOT / "analysis" / "disasm" / "ami486_candidate_windows_20261116.manifest.txt"
 WINDOW = 0x80
-LIMITS = {0x0E00: 0x1A, 0x0E19: 0x63, 0x0E47: 0x35, 0x0E7C: 0x66, 0x0EE2: 0x11E, 0x0C80: 0x80, 0x0CFE: 0x80, 0x0D03: 0x7D, 0x0D08: 0x78, 0x0D84: 0x7C, 0x0EE2: 0x1FD, 0x60BB: 0x80, 0x3F80: 0x80, 0x4180: 0x80, 0x41C0: 0x24, 0x41E4: 0x3A, 0x421E: 0x13, 0x427D: 0x06, 0x431B: 0x05, 0xA08D: 0x64, 0xA0A0: 0x51, 0xA0BD: 0x34, 0xE845: 0x20, 0x2238: 0x0A, 0x2244: 0x0B, 0x2250: 0x03, 0xF8E7: 0x43, 0xD46D: 0x2D, 0x131F: 0x46}
+LIMITS = {0x0E00: 0x1A, 0x0E19: 0x63, 0x0E47: 0x35, 0x0E7C: 0x66, 0x0EE2: 0x11E, 0x0C80: 0x80, 0x0CFE: 0x80, 0x0D03: 0x7D, 0x0D08: 0x78, 0x0D84: 0x7C, 0x0EE2: 0x1FD, 0x60BB: 0x80, 0x3F81: 0x7F, 0x4142: 0xA2, 0x41C0: 0x24, 0x41E4: 0x3A, 0x421E: 0x13, 0x427D: 0x06, 0x431B: 0x05, 0xA08D: 0x64, 0xA0A0: 0x51, 0xA0BD: 0x34, 0xE845: 0x20, 0x2238: 0x0A, 0x2244: 0x0B, 0x2250: 0x03, 0xF8E7: 0x43, 0xD46D: 0x2D, 0x131F: 0x46}
 
 DATA_RANGES = [
     (0x3100, 0x318C, "Setup main-menu captions, ending at the final NUL", "ascii"),
@@ -28,6 +28,13 @@ DATA_RANGES = [
     (0x36AB, 0x37C3, "Available-options and hard-disk help strings", "ascii"),
     (0x381C, 0x3873, "Hard-disk format menu labels", "ascii"),
     (0x3874, 0x3900, "Hard-disk format menu title and labels", "ascii"),
+    (0x4234, 0x427D, "POST-summary fill/padding bytes", "hexascii"),
+    (0x427D, 0x4283, "AMIBIOS banner control/prefix bytes", "hexascii"),
+    (0x4283, 0x42CC, "AMIBIOS System Configuration copyright banner", "ascii"),
+    (0x42CC, 0x42D0, "AMIBIOS banner terminator/control bytes", "hexascii"),
+    (0x42D0, 0x431B, "POST-summary fill/padding bytes", "hexascii"),
+    (0x431B, 0x4320, "POST summary label-record prefix bytes", "hexascii"),
+    (0x4320, 0x45D8, "POST summary field labels, CPU names and device-value strings", "hexascii"),
 
     (0xA0F1, 0xA125, "INT 13h AH function table", "words"),
     (0xA125, 0xA18E, "Format / BootSector Write / Possible VIRUS prompt", "ascii"),
@@ -61,13 +68,13 @@ SEEDS = [
     (0x0E7C, "stack-frame routine following E1xx state-update helper"),
     (0x0EE2, "second stack-frame routine in E1xx state/menu rendering cluster"),
     (0x60BB, "direct CALL site and caller context for E1xx state/menu helper at 0E7Ch"),
-    (0x3F80, "caller context for POST equipment-summary display"),
-    (0x4180, "preceding POST display stream to resolve 41C0h entry boundary"),
+    (0x3F81, "aligned continuation of POST equipment-summary display; calls CPU and numeric-processor helpers"),
+    (0x4142, "direct CALL target from POST summary; CPU-identification and processor-label selection"),
     (0x41C0, "POST processor-identification display block; incoming entry unresolved"),
     (0x41E4, "direct CALL target; POST numeric-processor presence display"),
     (0x421E, "direct CALL target; equipment-word/Weitek display selector"),
-    (0x427D, "short code/data boundary candidate before AMIBIOS banner"),
-    (0x431B, "short code/data boundary candidate before POST field labels"),
+    (0x427D, "mixed banner prefix before AMIBIOS system-configuration text"),
+    (0x431B, "structured display-record prefix before POST summary field labels"),
 
     (0xA000, "code-dense raw window; entry not yet caller-verified"),
     (0xA080, "continuation candidate after initial A000h helper group"),
