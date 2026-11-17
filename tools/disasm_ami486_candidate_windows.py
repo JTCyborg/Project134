@@ -93,6 +93,7 @@ SEEDS = [
     (0x62EC, "temporary INT 10h handler installed by 626Bh"),
     (0x62FC, "temporary INT 1Ah handler installed by 626Bh"),
     (0x631C, "temporary INT 1Ch timer handler installed by 626Bh"),
+    (0x6616, "direct CALL target from temporary INT 1Ch watchdog handler at 631Ch"),
     (0x099D, "direct CALL target from 00EFh screen-presentation stream"),
     (0x09C1, "direct CALL target from 00EFh screen-presentation stream"),
     (0x00EF, "low-ROM executable-looking stream after the AMI copyright block; entry xrefs unresolved"),
