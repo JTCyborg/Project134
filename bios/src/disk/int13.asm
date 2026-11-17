@@ -18,6 +18,14 @@
 BITS 16
 
 int13_entry:
+    ; The original A08D hook forwards floppy requests to the displaced
+    ; BIOS INT 13h handler saved in INT 40h, then returns from the outer INT.
+    cmp dl, 80h
+    jae .hard_disk
+    int 40h
+    retf 2
+
+.hard_disk:
     push bx                         ; preserve caller BX across table lookup
     cmp ah, 19h
     ja  int13_error_unsupported
