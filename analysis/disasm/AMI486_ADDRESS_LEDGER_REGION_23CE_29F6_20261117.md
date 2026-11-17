@@ -154,7 +154,7 @@ On the successful path it sets DS=ES=1000h and calls `29BBh` through a crafted r
 
 This corrects the earlier interpretation that a mismatch itself retries the fill/scan. The retry is the intentional second pattern pass after the first pattern succeeds; a mismatch exits to the clear-and-return path.
 
-At `27CCh`, ZF=1 continues the segment loop; otherwise the code sets BP bit 14 and jumps to `8D83h` with a crafted return at `27DAh`. The error helper returns to `27DCh`, which jumps to the cleanup path at `2800h`.
+At `27CCh`, ZF=1 continues the segment loop; otherwise the code sets BP bit 14 and jumps to `8D83h` with a crafted return at `27DAh`. The ALi/memory fallback reconfiguration helper returns to `27DCh`, which jumps to the cleanup path at `2800h`. This is a recovery/configuration path, not a fatal error logger.
 
 On success, DS advances by 0400h (16 KiB physical) and the 16-KiB test window is repeated from segment 1000h through 8C00h. The final path reads CMOS B3h through EE94h, sets bit 0, writes it back through EE9Dh, updates ALi register 19h, performs a final protected-mode read at 2686h, updates ALi register 19h again, emits POST code 40h to port 80h, restores the saved SS:SP/DS/ES and returns.
 
