@@ -1489,6 +1489,16 @@ SEEDS.extend([
     (0x2EF2, "direct CALL target from F109h; Setup exit/relocation transition saves old SS:SP, switches to 0100:DFFEh, copies 7000h words from CS:0000h to 0100:0000h, clears 0FF1h bytes at 0100:E000h and jumps to 3C5Eh"),
 ])
 
+
+LIMITS.update({
+    0xAAEF: 0x04, 0xAAF3: 0x41,
+})
+
+SEEDS.extend([
+    (0xAAEF, "epilogue of the ATA-ready timeout caller: complements carry, restores AX/CX and returns at AAF2h"),
+    (0xAAF3, "ATA drive-ready poll helper called from AAD8h; waits on port 80h, checks BSY on 01F7h, selects A0h/B0h through 01F6h and tests DRDY with bounded caller retry"),
+])
+
 def main():
     rom = ROM_PATH.read_bytes()
     if len(rom) != 65536:
