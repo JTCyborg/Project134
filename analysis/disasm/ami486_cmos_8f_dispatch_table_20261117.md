@@ -1237,3 +1237,22 @@ This is direct evidence that `2Fh` is the **no matching predefined geometry** pa
 `5B7Ch` saves `SI`, `DI`, `DS`, pushes `AX`, adds `43h` to `AL`, and stores the result at `3C52h`; it then compares this selector with `BBh` and `3Ch` before calling the shared UI helper at `5959h`. This is a per-drive prompt/selection path, not part of the ATA IDENTIFY transfer itself. Full prompt outcomes and copy ranges are to be mapped from the remaining branch targets before assigning final meanings to its record fields.
 
 **Correction to the immediately preceding note:** the nonzero-drive copy direction and branch conditions above supersede the earlier provisional statement that index zero copied the 20h-byte block. The ROM bytes show a 14h-byte copy for nonzero index.
+
+### 5B7Ch: exact entry contract and confirmed control-flow skeleton
+
+The call site at `508Ch..5091` loads `AL=[E189h]` immediately before `CALL 5B7Ch`; the helper therefore receives drive index 0 or 1 in the normal two-drive setup loop.
+
+Instruction-level facts:
+
+- Saves `SI`, `DI`, `DS`, and incoming `AX`.
+- Computes `AL += 43h` and stores it at `DS:3C52h`. With the normal caller this stores `43h` for drive 0 and `44h` for drive 1.
+- Compares this selector with `BBh` and `3Ch`; the normal drive indices do not match either special selector.
+- Calls `5959h`, the shared Y/N/ESC/Enter prompt helper. It compares the returned `AL` with ASCII `Y` (`59h`), then restores the saved `AX`. If the answer was Y, it exits through the common register-restore/RET at `5BD1h`.
+- For non-Y, `DEC AL` tests the original drive index (the `POP AX` does not alter the comparison flags). Index 1 takes the branch at `5BA8h`; index 0 follows the other branch at `5B9Bh`.
+- The two branches select different source records: index 0 uses `DS:0019h`, length `1Bh`; index 1 uses `DS:001Ah`, length `24h`. They then merge, combine the selected byte with `E080h`-based data, and copy 9 bytes into `E000h`-based destination data. The helper restores `DS`, `DI`, `SI` and returns.
+
+This confirms that `5B7Ch` is drive-index-aware and that Y bypasses its fallback/restore path. It does **not** yet prove that every non-Y key means “load defaults”: `5959h` returns several distinct keys (Y, N, ESC, Enter), while this caller only tests Y versus non-Y. The exact meaning of the selected `E019h`/`E01Ah` source blocks and the 9-byte copy must be resolved against the `E000h`/`E080h` data layouts and other callers before assigning a user-visible label.
+
+### E401h geometry-table eligibility marker
+
+The scan in `AB34h` advances through 46 records of 10h bytes. Its eligibility test is specifically `WORD [SI+05h] == FFFFh`; records without that marker are skipped even if cylinder/head/SPT values match. This is a validity/selection marker within the ROM's geometry candidate list, not a comparison against the IDENTIFY result. Example: the record at `E451h` has geometry 615/4/17 but `[+05h]=FFFFh`, whereas the earlier 306/4/17 record at `E401h` has `[+05h]=0080h` and is not eligible for this scan. Therefore the list contains entries that are descriptive but deliberately excluded from automatic geometry matching.
