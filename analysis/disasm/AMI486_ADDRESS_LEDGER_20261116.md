@@ -618,3 +618,12 @@ Detailed map: [AMI486_ADDRESS_LEDGER_REGION_639C_6615_20261117.md](AMI486_ADDRES
 Mapped the RTC Setup editor continuation: day/month/year fields use INT 1Ah AH=04h/AH=05h; hour/minute/second use AH=02h/AH=03h. The visible UI explicitly specifies 24-hour time and date/year ranges. Helper 6774h validates RTC date (1901–2099; invalid values default to 1980-01-01); 67AEh validates time (invalid values default to 00:00:00); 65BFh/65C4h validate month/day with February leap-year handling. The adjacent 6616h display routine calculates weekday from the 6164h/616Bh tables and uses weekday/month abbreviations at 7829h/7845h.
 
 Candidate generation now includes bounded seeds for the editor and its field-rendering/date-validation helpers. GitHub Actions run 44084872234 passed: 819 windows / 238 data ranges, 59,134 covered bytes (90.23%), 66 uncovered intervals. The next largest uncovered interval is AF86h–B1E8h (611 bytes).
+
+
+## 27. INT 09h keyboard IRQ scan-code handler — AF86h–B1E8h (2026-11-17)
+
+Detailed map: [AMI486_ADDRESS_LEDGER_REGION_AF86_B1E8_20261117.md](AMI486_ADDRESS_LEDGER_REGION_AF86_B1E8_20261117.md).
+
+The IVT INT 09h entry at E987h jumps to AF60h. The AF60h prelude selects the AF84h/B2E5h path, AF87h/B1DFh common exit, AF8Ah/B1E4h alternate exit, or the main scan-code body at AF8Dh. The body updates BDA keyboard state bytes 0017h/0018h/0019h, handles SysRq via INT 15h/AH=85h, Ctrl+Alt+Delete via warm-boot flag 0000:0072h=1234h and jump to F000:E05Bh, Ctrl-Break via INT 1Bh, PrintScreen and extended-key paths, and Alt-numeric entry. The shared IRQ tail clears BDA:0096h as appropriate, sends PIC EOI and restores the interrupt frame.
+
+The candidate generator now includes the split branch and bounded entries for the main handler and alternate epilogues. GitHub Actions run 44085161932 passed: 825 windows / 238 data ranges, 59,745 covered bytes (91.16%), 65 uncovered intervals. The next largest uncovered interval is 10DFh–131Eh (576 bytes).
