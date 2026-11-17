@@ -347,7 +347,15 @@ The candidate-window generator now emits 64 explicitly identified data ranges, i
 | 3624h–36A3h | Secondary Setup keyboard legend and F-key captions | Contains B5h/C6h UI control bytes; not plain ASCII |
 | 37C3h–3805h | Setup page legends and border/control bytes | Separate page variants; embedded CP437 navigation symbols |
 | 3806h–381Bh | Menu border fill and disk-utility exit legend | Includes CDh border bytes and control prefix |
-| 3873h–387Ch | Five hard-disk menu string pointers | Five little-endian pointers into the labels at 381Ch–3865h |\n| 387Dh–38ACh | Hard-disk utility menu strings | Three NUL-terminated labels |\n| 38ADh–38B8h | Three hard-disk menu descriptors | Four bytes per descriptor: label pointer plus selector/flag bytes |\n| 38B9h–38C2h | Five callback pointers | Targets 4AEEh, 4B68h, 4B96h, 4BB1h, 5985h |\n| 38C3h–3934h | Bad-track editor labels | NUL-terminated headings and action labels |\n| 3935h–3944h | Eight-word bad-track action table | Four string pointers followed by four callback targets |\n| 3945h–3C5Bh | Bad-track prompts and error strings | Mixed text and lookup data |\n| 8EA7h–8EB0h | Five-word interrupt-dispatch table | Overlaps the linear decode at the 8E89h IRET dispatcher |\n| 90BAh–90DDh | INT 15h AH=80h–91h dispatch table | Eighteen little-endian handler offsets |
+| 3873h–387Ch | Five hard-disk menu string pointers | Five little-endian pointers into the labels at 381Ch–3865h |
+| 387Dh–38ACh | Hard-disk utility menu strings | Three NUL-terminated labels |
+| 38ADh–38B8h | Three hard-disk menu descriptors | Four bytes per descriptor: label pointer plus selector/flag bytes |
+| 38B9h–38C2h | Five callback pointers | Targets 4AEEh, 4B68h, 4B96h, 4BB1h, 5985h |
+| 38C3h–3934h | Bad-track editor labels | NUL-terminated headings and action labels |
+| 3935h–3944h | Eight-word bad-track action table | Four string pointers followed by four callback targets |
+| 3945h–3C5Bh | Bad-track prompts and error strings | Mixed text and lookup data |
+| 8EA7h–8EB0h | Five-word interrupt-dispatch table | Overlaps the linear decode at the 8E89h IRET dispatcher |
+| 90BAh–90DDh | INT 15h AH=80h–91h dispatch table | Eighteen little-endian handler offsets |
 | 59C0h–59C5h | Three-word prompt pointer table | Raw little-endian words 59C6h, 59E3h and 5A19h resolve to the three prompt strings |
 | 59C6h–5A4Bh | Setup load-original/default-values prompts | Three NUL-terminated confirmation strings |
 | 7145h–714Dh | Inline “KB/sec ms” throughput label | No terminating NUL before following code at 714Eh |
