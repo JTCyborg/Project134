@@ -838,3 +838,12 @@ Detailed map: [AMI486_ADDRESS_LEDGER_REGION_72D8_732D_20261117.md](AMI486_ADDRES
 Mapped four distinct helpers: the BP-relative register-context save routine at 72D8h, its restore counterpart at 72F1h, the recursive unsigned decimal printer at 730Ah, and the AX/BX/DX-preserving output wrapper at 7323h. Direct near-CALL sites were found for both context helpers and for the wrapper. The wrapper's final POP AX and RET are at 732Bh–732Ch, so the existing navigation-legend data range was incorrectly starting two bytes early; its start is corrected from 732Bh to 732Dh.
 
 Generator update: pending commit. The projected range mask is 64,553/65,536 bytes (98.50%), with 45 uncovered intervals and 217 fully covered 256-byte pages. The next largest uncovered interval is 83AEh–83FFh (82 bytes). These are range-mask projections, not semantic-completion or reachability percentages. The Capstone listing still requires regeneration after running the updated generator.
+
+
+## 48. Register-context save/restore and decimal-output helpers — 72D8h–732Ch (2026-11-17)
+
+Detailed map: [AMI486_ADDRESS_LEDGER_REGION_72D8_732D_20261117.md](AMI486_ADDRESS_LEDGER_REGION_72D8_732D_20261117.md).
+
+Mapped four distinct helpers: the BP-relative register-context save routine at 72D8h, its restore counterpart at 72F1h, the recursive unsigned decimal printer at 730Ah, and the AX/BX/DX-preserving output wrapper at 7323h. Direct near-CALL sites were found for both context helpers and for the wrapper. The wrapper's final POP AX and RET are at 732Bh–732Ch, so the existing navigation-legend data range was incorrectly starting two bytes early; its start is corrected from 732Bh to 732Dh.
+
+Generator update: pending commit. The projected range mask is 64,553/65,536 bytes (98.50%), with 45 uncovered intervals and 217 fully covered 256-byte pages. The next largest uncovered interval is 83AEh–83FFh (82 bytes). These are range-mask projections, not semantic-completion or reachability percentages. The Capstone listing still requires regeneration after running the updated generator.
