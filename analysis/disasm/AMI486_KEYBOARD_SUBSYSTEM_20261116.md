@@ -5,7 +5,8 @@ Decode: Capstone x86-16 seeded windows in ami486_candidate_windows_20261116.txt.
 
 ## 1. Data and entry regions
 
-- AD00h–AE5Fh is keyboard translation data, not code. It contains scan-code/character mappings with recognizable QWERTY, ASDF, ZXCVBNM and numeric-key sequences. Exact subtable boundaries and modifier columns remain to be established.
+- AC60h–ACFFh is an additional keyboard scan-code translation table, not code. The handler at B031h loads BX=AC60h before calling its mapping helper. The bytes include F0h/FFh markers and scan-code-like values; AC5Bh–AC5Fh is retained as the adjacent table prefix/header, with its exact role unresolved.
+- AD00h–AE5Fh is a second keyboard translation-data region, not code. It contains scan-code/character mappings with recognizable QWERTY, ASDF, ZXCVBNM and numeric-key sequences. Exact subtable boundaries and modifier columns remain to be established.
 - AE60h–AE6Ch is a wrapper that enables interrupts, calls 90B2h, saves registers, sets DS=0040h and jumps to 88CBh.
 - AE6Fh onward is a scan-code processing path. It invokes BIOS INT 15h with AH=4Fh and processes the returned scan code and carry status.
 - AEE3h onward is a branch-targeted continuation of that path; AF00h is not a safe entry boundary by itself.
