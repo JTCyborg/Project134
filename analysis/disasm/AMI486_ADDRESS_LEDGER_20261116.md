@@ -575,3 +575,12 @@ Mapped the former 1,432-byte gap as Setup/configuration callbacks (5AA2h, 5AB5h,
 The POST copies a 40-word offset table from FEE3h–FF32h into IVT vectors 00h–1Fh and 70h–77h, after filling vectors 00h–77h with the common CS:EA97h entry. The 5E88h–5F64h block and called helpers at 5F65h/5FA7h remain opaque; no unsupported code/data label was assigned.
 
 The candidate generator now contains bounded entries and stack-return data boundaries for this region. GitHub Actions run 44082883079 passed and produced 753 windows / 228 data ranges, 54,620 covered bytes (83.34%), 70 uncovered intervals. The next largest uncovered interval is 1365h–188Dh (1,321 bytes).
+
+
+## 22. POST initialization, RTC, FPU, CMOS and I/O — 1364h–188Dh (2026-11-17)
+
+Detailed map: [AMI486_ADDRESS_LEDGER_REGION_1364_188D_20261117.md](AMI486_ADDRESS_LEDGER_REGION_1364_188D_20261117.md).
+
+The actual entry is 1364h, reached by the stack-threaded continuation at 135Dh after the FA4Eh integrity check. The 1364h–1655h POST stream updates conventional-memory size, validates RTC time and converts BCD time to BIOS ticks, enumerates I/O resources, detects the FPU, performs CMOS/ALi configuration, scans option-ROM/shadow windows and continues video setup. An eight-byte XLAT table at 15CEh–15D5h is split out as data. Helper 1656h displays RUN SETUP UTILITY / Press <F1> to RESUME and waits for F1 when warning flags require it. Other mapped helpers include BCD conversion, CMOS pair reads, I/O resource probes, CMOS checksum accumulation/storage, ATA device-control reset and 8042 output-buffer drain.
+
+The second CMOS checksum loop has a variable upper bound at CS:82B3h and skips BFh/C0h when CX reaches BEh; preserve that behavior rather than hard-coding a range. Candidate generation was updated to split the embedded lookup table and seed the helper entries. GitHub Actions run 44083305295 passed: 772 windows / 229 data ranges, 55,941 covered bytes (85.36%), 69 uncovered intervals. The next largest gap is E481h–E830h (944 bytes).
