@@ -1680,3 +1680,76 @@ The wrapper's INT 13h call at 3006h-3009h is not a successful controller-diagnos
 If the initial AH=14h call had returned with CF clear, the wrapper would instead set AL=02h. Thus the two paths are a feature probe followed by a legacy fallback, not evidence that the BIOS's AH=14h diagnostic command actually executed successfully. The exact semantic labels for the wrapper's AL=02h/03h result values remain unassigned until all consumers of that result are traced.
 
 The ordinary INT 13h path at 9220h has not yet been shown to read E411-E420 directly. The IVT DPT pointer may be consumed by the chained firmware/BIOS path, but this needs a separate trace of the 9220h dispatch and its selected jump table; do not claim the A08Dh hook itself dereferences the DPT.
+
+## Critical correction: A08Dh does NOT enter the 90E7h/9220h dispatcher
+
+A byte-for-byte re-decode of the original 64 KiB ROM corrects the earlier control-flow interpretation. The relative call at A09Ch is `CALL 90B2h` (next IP A09Fh plus signed F013h = 90B2h), and ROM byte 90B2h is `RET`. The second call at A0DEh also targets 90B2h and is likewise a no-op return. Therefore the A08Dh INT 13h hook does **not** call 90E7h or 9220h. The earlier section claiming that AH=14h flows from A08D through 90E7h to 9220h is withdrawn.
+
+Exact A08Dh entry and branch:
+
+```asm
+A08D  CMP DL,80h
+A090  STI
+A091  CLD
+A092  JB  A0ECh           ; DL < 80h
+A094  OR AH,AH
+A096  JNZ A09Ch
+A098  INT 40h
+A09A  XOR AH,AH
+A09C  CALL 90B2h          ; RET (effectively a no-op)
+A09F  PUSH AX
+A0A0  PUSH CX
+A0A1  PUSH DX
+A0A2  PUSH BX
+A0A3  PUSH SI
+A0A4  PUSH DI
+A0A5  PUSH DS
+A0A6  PUSH ES
+A0A7  SUB SP,8
+A0AA  PUSH BP
+A0AB  MOV BP,SP
+A0AD  PUSH 0040h
+A0AF  POP DS
+A0B0  PUSH AX
+A0B1  MOV AL,AH
+A0B3  CBW
+A0B4  MOV DI,AX
+A0B6  CMP AL,19h
+A0B8  POP AX
+A0B9  JA A0E2h
+A0BB  SHL DI,1
+A0BD  JMP WORD CS:[DI+ A0F1h]
+...
+A0DE  CALL 90B2h          ; RET
+A0E1  IRET
+A0E2  MOV AX,0100h
+A0E5  MOV [0074h],AH       ; BDA hard-disk status byte
+A0E9  STC
+A0EA  JMP A0C2h
+A0EC  INT 40h
+A0EE  RETF 2
+```
+
+The actual INT 13h dispatch table is the 26-word table at CS:A0F1h, indexed by `AH*2` after checking AH<=19h. This is the next target to decode. DL<80h is delegated through INT 40h and a far return that discards the interrupt's two-byte flags frame (`RETF 2`); DL>=80h stays in this hook. AH>19h sets BDA status 01h and CF before joining the common epilogue. AH=00h calls INT 40h first, then clears AH before dispatch.
+
+## Separate 90E7h dispatcher: function table discovery
+
+The 90E7h code is a separate entry, not called by A08Dh. Its ordinary dispatcher at 9220h computes `index = AH - 80h`, accepts indices 0..12, then loads a word target from `CS:[90BAh + 2*index]` and performs an indirect near jump. The first 13 table entries are:
+
+| INT 13h AH | Target | Notes |
+|---:|---:|---|
+| 80h | 9294h | |
+| 81h | 9294h | |
+| 82h | 9294h | |
+| 83h | 92E3h | |
+| 84h | 9309h | |
+| 85h | 9294h | |
+| 86h | 929Bh | |
+| 87h | 90E1h | special extended transfer branch |
+| 88h | 927Ch | |
+| 89h | 933Ah | |
+| 8Ah | 9271h | |
+| 8Bh | 9271h | |
+| 8Ch | 9271h | |
+
+This is a separate AH=80h..8Ch service table; it must not be conflated with the AH=00h..19h dispatch table at A0F1h. The next pass should decode A0F1h and the 26 individual INT 13h services in the actual A08Dh hook, then separately identify which caller enters 90E7h.
