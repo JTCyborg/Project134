@@ -768,3 +768,23 @@ The caller then tests carry/status and the state byte `[E3B9h]`, and may call th
 A second boundary correction is also recorded: `6CE5h` is not a code entry. The bytes at `6CE4h` begin `C6 06 AB E1 01` (a store to `[E1ABh]`), followed at `6CE9h` by `C8 10 00 00` (`ENTER 0010h,0`). Thus `6CE4h` is the start of this instruction sequence and `6CE9h` is the ENTER instruction within it; neither has a direct near-relative branch reference in the current scan. The preceding routine ends at `6CE3h: RET`. Do not refer to `6CE5h` as an entry point.
 
 This pass therefore resolves one missing call graph: `6AF9h` and `6BB8h` both call the actual `69D1h` worker. The separate `6CE4h` sequence and the UI-to-disk confirmation relationship remain open questions.
+
+
+### Argument and prologue audit for the 69D1h worker
+
+The entry at `69D1h` begins `PUSH BP; MOV BP,SP; SUB SP,0010h`. Its first relative call is at `69D7h` and targets `72D7h`, a register-save helper that copies the general registers and segment registers into the local frame. The worker then loads `SI=[BP+4]`, `CX=[BP+6]`, and sets `BX=E1B8h`. This is consistent with a buffer/record operation parameterized by a word and a second word, but it is not enough to label those values as cylinder/head/count.
+
+For the confirmed caller at `6BB8h`, the stack arguments immediately before the call are pushed in reverse order:
+
+- `6BA0h`: push zero-extended `[E1B4h]`;
+- `6BA6h`: push `WORD [E1B2h]`;
+- `6BAAh`: push zero-extended `[E1B7h]`;
+- `6BB0h`: push `WORD [E1B5h]`;
+- `6BB4h`: set `[E3BBh]=10h`;
+- `6BB8h`: call `69D1h`.
+
+Therefore, at the callee the four arguments are exactly `[BP+4]=E1B5h`, `[BP+6]=zero_extend(E1B7h)`, `[BP+8]=E1B2h`, and `[BP+10]=zero_extend(E1B4h)`. The last argument is not zero; the prior addendum's description of a zero fourth argument applied to a different call context and must not be reused for `6BB8h`.
+
+The other direct caller at `6AF9h` builds its arguments from a record currently addressed through `SI`: it pushes the record's byte at `[SI+2]` (zero-extended), the word at `[SI]`, plus the current loop/index registers. It then calls `69D1h` and removes ten argument bytes. This is consistent with the same worker being used both for a table-driven record path and for a geometry-derived setup path.
+
+The return handling at `6BB8h` is also now clearer: the caller executes `PUSHF; POP AX; ADD SP,000Ah; PUSH AX; POPF`, then branches on carry. Thus the callee's CF is deliberately preserved across stack cleanup and is a meaningful status result, not incidental flag state. The subsequent checks of `[E3B9h]` select additional helper/error handling. The exact semantic meaning of CF and of the E3B9h substate remains to be decoded from the callee's exits and the helper calls it makes.
