@@ -14184,7 +14184,7 @@ Reason: shared alternate return path in the 25C4h AUTO Config selector
 2642  8E DA                   mov ds, dx
 2644  FF              db 0xFF
 
-===== 26D6h-2715h =====
+===== 26D6h-26F8h =====
 Reason: post-memory-test helper continuation after the protected-mode memory scan
 26D6  1E                      push ds
 26D7  56                      push si
@@ -14204,18 +14204,6 @@ Reason: post-memory-test helper continuation after the protected-mode memory sca
 26F6  5E                      pop si
 26F7  1F                      pop ds
 26F8  C3                      ret
-26F9  FA                      cli
-26FA  2E A0 18 B5             mov al, byte ptr cs:[0xb518]
-26FE  E8 FF 5B                call 0x8300
-2701  75 03                   jne 0x2706
-2703  E9 49 01                jmp 0x284f
-2706  1E                      push ds
-2707  06                      push es
-2708  FF 36 67 00             push word ptr [0x67]
-270C  FF 36 69 00             push word ptr [0x69]
-2710  89 26 67 00             mov word ptr [0x67], sp
-2714  8C              db 0x8C
-2715  16                      push ss
 
 ===== 27A0h-27C9h =====
 Reason: aligned continuation of the protected-mode memory-pattern loop
