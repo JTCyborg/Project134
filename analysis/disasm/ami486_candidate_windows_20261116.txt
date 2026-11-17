@@ -27773,7 +27773,7 @@ Reason: option-ROM scan invalid-candidate helper: advances BX by 0080h, restores
 1BF4  1F                      pop ds
 1BF5  C3                      ret
 
-===== 1364h-1655h =====
+===== 1364h-15CDh =====
 Reason: stack-threaded POST continuation: 135Dh pushes 1364h then FA4Eh and RETs into the checksum helper
 1364  B0 94                   mov al, 0x94
 1366  E6 80                   out 0x80, al
@@ -28030,10 +28030,9 @@ Reason: stack-threaded POST continuation: 135Dh pushes 1364h then FA4Eh and RETs
 15C5  E8 74 D3                call 0xe93c
 15C8  E8 A6 DF                call 0xf571
 15CB  E9 97 0A                jmp 0x2065
-15CE  12 0F                   adc cl, byte ptr [bx]
-15D0  0C 0A                   or al, 0xa
-15D2  08 04                   or byte ptr [si], al
-15D4  02 00                   add al, byte ptr [bx + si]
+
+===== 15D6h-1655h =====
+Reason: POST continuation after embedded eight-byte CMOS/keyboard XLAT table at 15CEh
 15D6  B0 A3                   mov al, 0xa3
 15D8  E6 80                   out 0x80, al
 15DA  2E A0 08 B5             mov al, byte ptr cs:[0xb508]
