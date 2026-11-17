@@ -80,6 +80,16 @@ DATA_RANGES = [
     (0x78B6, 0x7CE9, "POST error messages, boot/password prompts and keyboard-controller warning strings", "ascii"),
     (0x8000, 0x81EE, "AMI BIOS identification, OEM ID/configuration strings and padded banner data", "hexascii"),
     (0xB528, 0xB55F, "ASCII character/glyph lookup bytes preceding Setup option labels", "hexascii"),
+    (0x8EA7, 0x8EB1, "Five-word indirect target table used by the 8E89h IRET dispatcher; overlaps linear instruction decode", "words"),
+    (0x90BA, 0x90DE, "Eighteen-word INT 15h AH=80h..91h service dispatch table", "words"),
+    (0x94FA, 0x950A, "Eight-word PS/2 auxiliary-device service callback table; target 9590h is an alternate entry", "words"),
+    (0x9589, 0x9590, "Seven-byte PS/2 mouse sample-rate table (0Ah,14h,28h,3Ch,50h,64h,C8h)", "hexascii"),
+    (0x9784, 0x9794, "Eight-word IRQ12 mouse-packet dispatch table; overlaps linear instruction decode", "words"),
+    (0x9848, 0x9870, "Twenty-word INT 10h AH=00h..13h video-service dispatch table", "words"),
+    (0xB7B1, 0xB7B2, "Unresolved Setup option-table header byte (0Ch)", "hexascii"),
+    (0xB7B2, 0xB7D0, "Fifteen-word Advanced Setup option callback table", "words"),
+    (0xB7D0, 0xBD54, "Advanced CMOS Setup labels, help strings and variable-length option metadata", "hexascii"),
+    (0xBD54, 0xC5FA, "Advanced Chipset Setup labels, help strings and variable-length option metadata", "hexascii"),
 ]
 
 SEEDS = [
