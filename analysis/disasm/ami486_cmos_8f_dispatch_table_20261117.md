@@ -879,3 +879,19 @@ This means the batch caller's final status is based on the latched BIOS status b
 The earlier shorthand that described the worker's `I` response as “clear CF and return” was too strong. At `69D1h`, after the `I` comparison, the equal branch enters code at `6A5Dh`, which modifies the record/geometry progress state using the current stack arguments and updates `[E1B5h]` / `[E1B7h]`. Depending on the bounds checks it either advances the progress pair or clears it, then rejoins the worker's operation path. It is therefore an in-operation Ignore/advance path, not a direct epilogue. The exact semantic names of those two state fields remain intentionally unresolved.
 
 The `A` response is still directly confirmed to reach `STC` and the worker epilogue. The non-`I`/non-`A` accepted response (`R`) takes the retry branch back to the operation loop. ESC remains the separate `[E3B9h]=1Bh` path.
+
+
+### Exact Ignore progress update in 69D1h (6A5Eh–6A92h)
+
+The `I` response is selected at `6A43h`; the code preserves the original INT 13h flags around the character-register exchange and branches to `6A5Eh` when AL is `'I'`. The update block is:
+
+- `6A5Eh`: `XOR CH,CH` (clear the high byte of CX).
+- `6A60h`: compare CX with the word argument at `[BP+0Ah]`.
+- If CX is below that limit, branch to `6A80h`, increment CX, and loop to the field-update sequence.
+- Otherwise set CX=0, increment SI, store SI to `[E1B5h]`, and store CL to `[E1B7h]`.
+- Compare the updated SI against the two word bounds `[BP+08h]` and `[BP+0Ah]`; if the bound tests permit continuation, jump back to the disk-operation loop at `69FEh`.
+- If the bounds are exceeded, clear `[E1B5h]` and `[E1B7h]`, then rejoin the worker's common status/return path at `6A4Fh`.
+
+This proves the structural behavior: Ignore advances the worker's current SI/CX position across a bounded range and updates the persistent progress pair `E1B5h:E1B7h`; it may restart the disk operation at the next position, or terminate the range and clear the progress pair. It is not a generic “ignore this one error and continue the same request” action.
+
+Do not yet rename SI/CX or E1B5/E1B7 as cylinder/head/sector/count. Their caller-provided bounds differ between the record-based caller at `6AF9h` and the geometry-derived caller at `6BB8h`; the semantic unit still needs confirmation from the record layout and the caller's state setup.
