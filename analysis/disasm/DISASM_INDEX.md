@@ -1356,3 +1356,17 @@ Detailed map: [AMI486_ADDRESS_LEDGER_REGION_D104_D603_20261117.md](AMI486_ADDRES
 - Candidate-window seeds for this area were already present in `tools/disasm_ami486_candidate_windows.py`; this ledger adds semantic classification and cross-reference evidence rather than duplicating the linear listing.
 
 The candidate-mask figures in earlier sections are historical snapshots. The checked-in manifest currently reports 904 candidate windows, 250 data ranges and a 64,925-byte (99.07%) code/data union, with the largest listed uncovered intervals at 566Bh–56ADh, 55ECh–562Ah, 235Bh–2380h, 2207h–222Ch and D7B3h–D7D7h. Treat these as generator inspection metrics only; they are not a measure of semantic completion, and the manifest still requests regeneration from the current generator before being treated as a final reproducibility result.
+
+
+## Setup video-mode / attribute-palette initialization — 2026-11-17
+
+Detailed byte map: [AMI486_SETUP_VIDEO_MODE_PALETTE_INIT_20261117.md](AMI486_SETUP_VIDEO_MODE_PALETTE_INIT_20261117.md).
+
+- 3C67h directly calls 566Bh from the Setup main-menu path.
+- 566Bh queries INT 10h video mode, preserves mode 07h and switches other modes to 03h.
+- On the mode-07 path it checks the INT 10h vector segment at IVT 0000:0042h and conditionally sets the attribute mask [55EAh].
+- It sets the text-buffer segment [55E8h]=B000h and copies the 64-byte palette source table 55EBh–562Ah to the working table 562Bh–566Ah before jumping to 56CBh.
+- 566Ah is the final byte of the palette table, not an opcode. 566Bh is the actual called code entry. The candidate generator now includes the bounded 566Bh seed and both source/working palette data ranges.
+- The screen-renderer helper report now links this initializer to the existing 56AEh palette selector and E1A2h–E1A9h attribute consumers.
+
+The candidate listing/manifest have not yet been regenerated after this generator change. Existing mask metrics are therefore stale for this update; do not use them to claim current byte-union coverage.
