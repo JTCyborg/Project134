@@ -1221,3 +1221,6 @@ The 00EFh cleanup target is byte-verified as 62BDh, not 6220h. The 626Bh install
 
 
 Byte-aligned target correction: the cleanup CALL at 0210h resolves to 62BDh (bytes E8 AA 60), not 6220h. The IVT helper pair is 626Bh (install) / 62BDh (restore); 62ECh, 62FCh and 631Ch are the installed INT 10h/1Ah/1Ch handler entries. The INT 1Ch handler calls 6616h; these entries and helper are seeded for cross-reference analysis.
+
+
+The temporary INT 1Ch handler at 631Ch uses the BIOS tick count at 0040:006Ch and calls 6616h when its timing threshold is reached and the INT 10h/1Ah nesting counter at 028Eh is zero. The 6616h helper reads/validates the BIOS date via 6774h and performs calendar calculations through CS tables at 6164h/616Bh. The candidate window is extended through its RET at 6757h; BCD/date conversion helpers 68E2h and 68FDh are seeded separately.
