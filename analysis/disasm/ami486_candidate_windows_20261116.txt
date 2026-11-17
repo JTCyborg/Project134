@@ -13454,12 +13454,20 @@ Reason: stack-return continuation after the 8DCFh indexed read
 8979  B0 C2                   mov al, 0xc2
 897B  90                      nop
 
-===== 8975h-897Bh =====
+===== 8974h-897Bh =====
 Reason: conditional ALi C2h update continuation
-8975  C9                      leave
-8976  02 8A E3 B0             add cl, byte ptr [bp + si - 0x4f1d]
-897A  C2              db 0xC2
+8974  80 C9 02                or cl, 2
+8977  8A E3                   mov ah, bl
+8979  B0 C2                   mov al, 0xc2
 897B  90                      nop
+
+===== 8977h-8981h =====
+Reason: conditional ALi C2h write continuation
+8977  8A E3                   mov ah, bl
+8979  B0 C2                   mov al, 0xc2
+897B  90                      nop
+897C  BC 82 89                mov sp, 0x8982
+897F  E9 5A 04                jmp 0x8ddc
 
 ===== 8984h-898Dh =====
 Reason: stack-return continuation after the 8DDCh indexed write
@@ -13508,8 +13516,17 @@ Reason: stack-return continuation after the 8DCFh indexed read
 89CB  B0 C3                   mov al, 0xc3
 89CD  90                      nop
 
+===== 89C6h-89D1h =====
+Reason: conditional ALi C3h update continuation after the 89A8h bit test
+89C6  80 C9 01                or cl, 1
+89C9  8A E3                   mov ah, bl
+89CB  B0 C3                   mov al, 0xc3
+89CD  90                      nop
+89CE  BC D4 89                mov sp, 0x89d4
+89D1  E9              db 0xE9
+
 ===== 89C9h-89D1h =====
-Reason: conditional ALi C3h update continuation
+Reason: branch continuation after the 89C4h bit test
 89C9  8A E3                   mov ah, bl
 89CB  B0 C3                   mov al, 0xc3
 89CD  90                      nop
@@ -13710,6 +13727,59 @@ Reason: direct JMP target from D60Ch; alternate entry in the 88CBh overlapping s
 89FE  75 02                   jne 0x8a02
 8A00  B4 08                   mov ah, 8
 8A02  FF E7                   jmp di
+
+===== 8A38h-8A41h =====
+Reason: stack-return continuation after the EE94h CMOS B3h read
+8A38  A8 0C                   test al, 0xc
+8A3A  74 34                   je 0x8a70
+8A3C  8A D0                   mov dl, al
+8A3E  66 C1 C8 10             ror eax, 0x10
+
+===== 8A68h-8A71h =====
+Reason: stack-return continuation after the 8DDCh ALi indexed write
+8A68  E2 F1                   loop 0x8a5b
+8A6A  8B C3                   mov ax, bx
+8A6C  66 C1 C8 10             ror eax, 0x10
+8A70  0C FF                   or al, 0xff
+
+===== 8A90h-8A99h =====
+Reason: stack-return continuation after the 8D83h ALi indexed-register sequence
+8A90  B8 B3 B3                mov ax, 0xb3b3
+8A93  90                      nop
+8A94  BC 9A 8A                mov sp, 0x8a9a
+8A97  E9 FA 63                jmp 0xee94
+
+===== 8A9Ch-8AA5h =====
+Reason: stack-return continuation after the EE94h CMOS B3h read
+8A9C  24 FE                   and al, 0xfe
+8A9E  86 C4                   xchg ah, al
+8AA0  BC A6 8A                mov sp, 0x8aa6
+8AA3  E9 F7 63                jmp 0xee9d
+
+===== 8AA8h-8AB1h =====
+Reason: stack-return continuation after the EE9Dh CMOS register write
+8AA8  B8 03 C5                mov ax, 0xc503
+8AAB  90                      nop
+8AAC  BC B2 8A                mov sp, 0x8ab2
+8AAF  E9 2A 03                jmp 0x8ddc
+
+===== 8AB4h-8ABDh =====
+Reason: stack-return continuation after the 8DDCh ALi indexed write
+8AB4  B8 13 13                mov ax, 0x1313
+8AB7  90                      nop
+8AB8  BC BE 8A                mov sp, 0x8abe
+8ABB  E9 11 03                jmp 0x8dcf
+
+===== 8AC0h-8AC9h =====
+Reason: stack-return continuation after the 8DCFh ALi indexed read
+8AC0  24 3F                   and al, 0x3f
+8AC2  86 E0                   xchg al, ah
+8AC4  BC CA 8A                mov sp, 0x8aca
+8AC7  E9 12 03                jmp 0x8ddc
+
+===== 8ACCh-8ACEh =====
+Reason: stack-return continuation after the 8DDCh ALi indexed write
+8ACC  E9 A8 4C                jmp 0xd777
 
 ===== 8A04h-8A1Fh =====
 Reason: direct JMP target from D612h; short JMP DI trampoline candidate
