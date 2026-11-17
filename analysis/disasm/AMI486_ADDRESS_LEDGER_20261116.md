@@ -523,4 +523,19 @@ The former 19F8h–20FFh gap is fully covered. The region includes cache/CPU-spe
 
 The exact stack-return words are at 1B04h (->1B06h), 1B2Ah (->1B2Ch), 2096h (->2098h), 20C2h (->20C4h), 20CCh (->20CEh), 20D8h (->20DAh) and 20FAh (->20FCh). D9D9h directly jumps to 1AFBh. The 20DAh transition loads ES=0008h; AX=4410h is an ALi register 10h/value 44h write, not a segment selector. The memory-probe entry is 20FCh; the first ES:66-prefixed dword store starts at 20FEh and crosses 2100h.
 
-Latest mask: 597 code windows, 154 data ranges, 31,189 unique code bytes, 15,829 unique data bytes, 117 overlap bytes, 46,901-byte union (71.57%), 69 uncovered intervals, 210 pages touched and 133 fully covered pages. The next largest uncovered range is CA16h–D0FFh (1,770 bytes). This is still a seeded inspection mask, not semantic completion.
+Historical mask before the INT 13h diskette expansion: 597 code windows, 154 data ranges, 31,189 unique code bytes, 15,829 unique data bytes, 117 overlap bytes, 46,901-byte union (71.57%), 69 uncovered intervals, 210 pages touched and 133 fully covered pages. Superseded by section 18.
+
+
+## 18. INT 13h diskette / drive-parameter subsystem — 2026-11-17
+
+Detailed map: [AMI486_ADDRESS_LEDGER_REGION_CA15_D103_20261117.md](AMI486_ADDRESS_LEDGER_REGION_CA15_D103_20261117.md).
+
+The former CA16h–D0FFh gap (1,770 bytes) is now covered by byte-aligned code windows and explicit data ranges. CA15h is the fall-through entry, CA17h is a confirmed branch target, and the region contains INT 13h geometry/parameter selection, CMOS drive-state handling, controller-presence checks, floppy command/status routines, motor/readiness control and INT 1Eh geometry comparison.
+
+The two tables at CAA7h are:
+- Geometry/signature words: 2709h, 4F0Fh, 4F09h, 4F12h, 4F24h.
+- Parameter-record pointers: CABBh, C8CAh, CAD5h, CAE2h, CAFCh.
+
+Six 13-byte parameter records occupy CABBh–CB08h. The C8CAh record is a data view that overlaps an executable continuation after CALL D0D9h at C8C7h. CB09h and CBF8h are coherent code candidates without direct near xrefs; entry provenance remains open. D0D9h ends at D103h, including POP AX/RET.
+
+Current mask: 610 code windows, 163 data ranges, 32,861 unique code bytes, 15,940 unique data bytes, 130 overlap bytes, 48,671-byte union (74.27%), 68 uncovered intervals, 216 pages touched and 140 fully covered pages. The next largest uncovered interval is 873Ch–8DCEh (1,683 bytes). This remains a candidate inspection mask, not semantic completion.
