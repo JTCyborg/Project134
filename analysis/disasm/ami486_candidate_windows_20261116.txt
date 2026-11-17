@@ -4,17 +4,17 @@ Window length: 0x80 bytes by default; selected handler windows stop at known dat
 WARNING: independently seeded linear decodes; not a CFG and not proof of entry points.
 Relative near-branch targets are normalized to 16-bit IP wraparound.
 
-===== DATA 3100h-3187h =====
-Reason: Setup main-menu captions
-ASCII: 'H POWER-ON DEFAULTS \x00 CHANGE PASSWORD \x00 AUTO DETECT HARD DISK \x00 HARD DISK UTILITY \x00 WRITE TO CMOS AND EXIT \x00 DO NOT WRITE TO CMOS AND EX'
+===== DATA 3100h-318Bh =====
+Reason: Setup main-menu captions, ending at the final NUL
+ASCII: 'H POWER-ON DEFAULTS \x00 CHANGE PASSWORD \x00 AUTO DETECT HARD DISK \x00 HARD DISK UTILITY \x00 WRITE TO CMOS AND EXIT \x00 DO NOT WRITE TO CMOS AND EXIT \x00'
 
-===== DATA 3188h-319Fh =====
+===== DATA 318Ch-31A3h =====
 Reason: Setup main-menu caption pointer table (12 words)
-Words: 5449, 0020, 3044, 305A, 3070, 3089, 30A2, 30C1, 30E9, 3115, 3127, 313F
+Words: 3044, 305A, 3070, 3089, 30A2, 30C1, 30E9, 3115, 3127, 313F, 3153, 316C
 
-===== DATA 31A0h-342Dh =====
+===== DATA 31A4h-342Dh =====
 Reason: Setup menu descriptions and help strings
-ASCII: 'S1l1Standard CMOS Setup for Changing Time, Date, Hard Disk Type, etc.\x00Advanced CMOS Setup for Configuring System Options\x00Advanced CHIPSET Setup for Configuring the CHIPSET Registers\x00Power Management Setup for Configuring Power Management Registers\x00Peripheral Management Setup for Configuring Peripheral Registers\x00Load BIOS Setup Default Values for Advanced CMOS and Advanced CHIPSET Setup\x00Load Power-On Default Values for Advanced CMOS and Advanced CHIPSET Setup\x00Change the User Password stored in the CMOS\x00Auto Detection of Hard Disk Type\x00Format the Hard Disk, Auto Interleave Detection and Media Analysis\x00Do Not Write the settings to the CMOS and Exit\x00'
+ASCII: 'Standard CMOS Setup for Changing Time, Date, Hard Disk Type, etc.\x00Advanced CMOS Setup for Configuring System Options\x00Advanced CHIPSET Setup for Configuring the CHIPSET Registers\x00Power Management Setup for Configuring Power Management Registers\x00Peripheral Management Setup for Configuring Peripheral Registers\x00Load BIOS Setup Default Values for Advanced CMOS and Advanced CHIPSET Setup\x00Load Power-On Default Values for Advanced CMOS and Advanced CHIPSET Setup\x00Change the User Password stored in the CMOS\x00Auto Detection of Hard Disk Type\x00Format the Hard Disk, Auto Interleave Detection and Media Analysis\x00Do Not Write the settings to the CMOS and Exit\x00'
 
 ===== DATA 342Eh-3453h =====
 Reason: Setup menu string-pointer and metadata block
@@ -22,9 +22,13 @@ Reason: Setup menu string-pointer and metadata block
 343E  9B 33 BC 33 06 34 FF 33 EC 00 DE 0B 05 0C 2C 0C .3.3.4.3......,.
 344E  53 0C 7A 5A 7A 5A                               S.zZzZ
 
-===== DATA 3454h-3473h =====
-Reason: AMI BIOS Setup Utilities title graphic/text
-ASCII: '��8P(Fg/v/BIOS SETUP UTILITIES\x00�'
+===== DATA 3454h-3455h =====
+Reason: Two-byte Setup title graphic prefix
+3454  C8 F1                                           ..
+
+===== DATA 3456h-3473h =====
+Reason: AMI BIOS Setup Utilities title text
+ASCII: '8P(Fg/v/BIOS SETUP UTILITIES\x00�'
 
 ===== DATA 3474h-34AAh =====
 Reason: Setup keyboard navigation legend
@@ -376,7 +380,7 @@ Reason: stack-frame routine following E1xx state-update helper
 0EE0  5D                      pop bp
 0EE1  C3                      ret
 
-===== 0EE2h-10D7h =====
+===== 0EE2h-10DEh =====
 Reason: second stack-frame routine in E1xx state/menu rendering cluster
 0EE2  55                      push bp
 0EE3  8B EC                   mov bp, sp
@@ -564,91 +568,12 @@ Reason: second stack-frame routine in E1xx state/menu rendering cluster
 10CC  03 46 F0                add ax, word ptr [bp - 0x10]
 10CF  8D 1E DB 36             lea bx, [0x36db]
 10D3  E8 E8 47                call 0x58be
-10D6  E8              db 0xE8
-10D7  29              db 0x29
-
-===== 1000h-10D7h =====
-Reason: continuation of the 0EE2h stack-frame menu-list routine across 1000h
-1000  46                      inc si
-1001  F0              db 0xF0
-1002  80 C4 01                add ah, 1
-1005  8B 1E 8F E1             mov bx, word ptr [0xe18f]
-1009  E8 B2 48                call 0x58be
-100C  80 7E F8 00             cmp byte ptr [bp - 8], 0
-1010  74 26                   je 0x1038
-1012  8B 76 F4                mov si, word ptr [bp - 0xc]
-1015  8B DE                   mov bx, si
-1017  E8 10 49                call 0x592a
-101A  88 46 FF                mov byte ptr [bp - 1], al
-101D  0A C0                   or al, al
-101F  74 17                   je 0x1038
-1021  8B DE                   mov bx, si
-1023  A1 80 E1                mov ax, word ptr [0xe180]
-1026  E8 AA 48                call 0x58d3
-1029  8A 46 FF                mov al, byte ptr [bp - 1]
-102C  2A E4                   sub ah, ah
-102E  40                      inc ax
-102F  03 F0                   add si, ax
-1031  80 06 81 E1 01          add byte ptr [0xe181], 1
-1036  EB DD                   jmp 0x1015
-1038  80 7E F9 00             cmp byte ptr [bp - 7], 0
-103C  75 03                   jne 0x1041
-103E  E9 83 00                jmp 0x10c4
-1041  8D 1E AB 36             lea bx, [0x36ab]
-1045  A1 80 E1                mov ax, word ptr [0xe180]
-1048  E8 64 48                call 0x58af
-104B  80 06 81 E1 01          add byte ptr [0xe181], 1
-1050  8B 7E F2                mov di, word ptr [bp - 0xe]
-1053  8A 46 FB                mov al, byte ptr [bp - 5]
-1056  88 46 FD                mov byte ptr [bp - 3], al
-1059  3A 46 FA                cmp al, byte ptr [bp - 6]
-105C  76 08                   jbe 0x1066
-105E  8A 46 FA                mov al, byte ptr [bp - 6]
-1061  2C 02                   sub al, 2
-1063  88 46 FD                mov byte ptr [bp - 3], al
-1066  C6 46 FF 00             mov byte ptr [bp - 1], 0
-106A  8B F7                   mov si, di
-106C  EB 1B                   jmp 0x1089
-106E  AC                      lodsb al, byte ptr [si]
-106F  88 46 FE                mov byte ptr [bp - 2], al
-1072  0A C0                   or al, al
-1074  74 F8                   je 0x106e
-1076  E8 A9 50                call 0x6122
-1079  8B D8                   mov bx, ax
-107B  A1 80 E1                mov ax, word ptr [0xe180]
-107E  E8 52 48                call 0x58d3
-1081  80 06 81 E1 01          add byte ptr [0xe181], 1
-1086  FE 46 FF                inc byte ptr [bp - 1]
-1089  8A 46 FD                mov al, byte ptr [bp - 3]
-108C  38 46 FF                cmp byte ptr [bp - 1], al
-108F  72 DD                   jb 0x106e
-1091  8A 46 FB                mov al, byte ptr [bp - 5]
-1094  38 46 FA                cmp byte ptr [bp - 6], al
-1097  73 2B                   jae 0x10c4
-1099  8D 1E A6 36             lea bx, [0x36a6]
-109D  A1 80 E1                mov ax, word ptr [0xe180]
-10A0  E8 30 48                call 0x58d3
-10A3  8B 76 F9                mov si, word ptr [bp - 7]
-10A6  81 E6 FF 00             and si, 0xff
-10AA  03 F7                   add si, di
-10AC  4E                      dec si
-10AD  8A 04                   mov al, byte ptr [si]
-10AF  88 46 FE                mov byte ptr [bp - 2], al
-10B2  0A C0                   or al, al
-10B4  74 F6                   je 0x10ac
-10B6  E8 69 50                call 0x6122
-10B9  8B D8                   mov bx, ax
-10BB  A1 80 E1                mov ax, word ptr [0xe180]
-10BE  80 C4 01                add ah, 1
-10C1  E8 0F 48                call 0x58d3
-10C4  8A 66 FC                mov ah, byte ptr [bp - 4]
-10C7  80 EC 02                sub ah, 2
-10CA  2A C0                   sub al, al
-10CC  03 46 F0                add ax, word ptr [bp - 0x10]
-10CF  8D 1E DB 36             lea bx, [0x36db]
-10D3  E8 E8 47                call 0x58be
-10D6  E8              db 0xE8
-10D7  29              db 0x29
+10D6  E8 29 48                call 0x5902
+10D9  5E                      pop si
+10DA  5F                      pop di
+10DB  8B E5                   mov sp, bp
+10DD  5D                      pop bp
+10DE  C3                      ret
 
 ===== 60BBh-613Ah =====
 Reason: direct CALL site and caller context for E1xx state/menu helper at 0E7Ch
