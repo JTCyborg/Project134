@@ -1141,17 +1141,51 @@ def main():
                 lines.append(f"{off:04X}  {raw.hex(' ').upper():<23} {mnemonic} {op_str}".rstrip())
                 off += ins.size
         lines.append("")
+    # Compute the byte-union inspection mask from the exact emitted windows and data ranges.
+    code_mask = bytearray(len(rom))
+    data_mask = bytearray(len(rom))
+    for start in seen:
+        end = min(start + LIMITS.get(start, WINDOW), len(rom))
+        code_mask[start:end] = b"\x01" * (end - start)
+    for start, end, _label, _kind in DATA_RANGES:
+        data_mask[start:end] = b"\x01" * (end - start)
+    code_bytes = sum(code_mask)
+    data_bytes = sum(data_mask)
+    overlap_bytes = sum(1 for i in range(len(rom)) if code_mask[i] and data_mask[i])
+    union_mask = bytearray(1 if code_mask[i] or data_mask[i] else 0 for i in range(len(rom)))
+    union_bytes = sum(union_mask)
+    gaps = []
+    pos = 0
+    while pos < len(rom):
+        if union_mask[pos]:
+            pos += 1
+            continue
+        gap_start = pos
+        while pos < len(rom) and not union_mask[pos]:
+            pos += 1
+        gaps.append((pos - gap_start, gap_start, pos - 1))
+    touched_pages = sum(any(union_mask[p:p + 0x100]) for p in range(0, len(rom), 0x100))
+    full_pages = sum(all(union_mask[p:p + 0x100]) for p in range(0, len(rom), 0x100))
+    largest_gaps = sorted(gaps, reverse=True)[:10]
     OUT_PATH.write_text("\n".join(lines) + "\n", encoding="utf-8")
     MANIFEST_PATH.write_text(
         "Target: ami486.bin\n"
         "ROM size: 65536 bytes\n"
         f"Candidate windows: {len(seen)}\n"
         f"Data ranges: {len(DATA_RANGES)}\n"
-        f"Window bytes: 0x{WINDOW:X} default; selected handler windows clipped at known data boundaries\n"
-        "Decoder: Capstone x86 16-bit\n"
-        "Relative near-branch targets normalized to 16-bit IP.\n"
-        "Known tables and strings are emitted separately as data.\n"
-        "Interpretation: independently seeded linear windows only; no CFG or entry-point proof.\n",
+        f"Unique code-window bytes: {code_bytes}\n"
+        f"Unique data-range bytes: {data_bytes}\n"
+        f"Overlap bytes: {overlap_bytes}\n"
+        f"Code/data union: {union_bytes}/65536 ({union_bytes / 65536 * 100:.2f}%)\n"
+        f"Uncovered intervals: {len(gaps)}\n"
+        f"Pages touched/full: {touched_pages}/256, {full_pages}/256\n"
+        "Largest uncovered intervals (length, start, end):\n"
+        + "".join(f"  {n}, {a:04X}-{b:04X}\n" for n, a, b in largest_gaps)
+        + f"Window bytes: 0x{WINDOW:X} default; selected handler windows clipped at known data boundaries\n"
+        + "Decoder: Capstone x86 16-bit\n"
+        + "Relative near-branch targets normalized to 16-bit IP.\n"
+        + "Known tables and strings are emitted separately as data.\n"
+        + "Interpretation: independently seeded linear windows only; no CFG or entry-point proof.\n",
         encoding="utf-8",
     )
     print(f"Wrote {len(seen)} candidate windows to {OUT_PATH}")
