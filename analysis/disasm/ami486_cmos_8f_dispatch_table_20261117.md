@@ -409,3 +409,16 @@ A ROM-wide byte scan found direct `INT 13h` instructions at offsets:
 These are not all formatter calls; several are clearly in the boot path (F777h/F81Ah/F822h), and the 70xx/6Cxx locations are generic disk-service support. The hard-disk utility's 4Axx–50xx control path contains no literal `CD 13` instruction, so its disk operation must be reached through a wrapper/indirect dispatch or a different controller interface.
 
 The code at `AA70h` issues INT 13h with AH=08h (get drive parameters), then AH=04h (verify sectors), and later AH=09h/11h in its retry/status path. This is a disk-parameter/verification routine, not yet proven to be the low-level formatter. No direct IDE data-port accesses were identified in the immediate 4Axx–50xx utility path. The formatter's actual write operation remains unresolved; do not label any of these helpers as the format engine until the AH=05h/format-track or equivalent command path is traced.
+
+
+### Byte-level continuation: 4CA2h / 4CE5h overlap and 4Fxx boundary (2026-11-17)
+
+A fresh decode of the current `ami486.bin` (65536 bytes) confirms an important entry-point distinction:
+
+- `4CE5h` is the single-byte instruction `RET`. The call at `4CA7h` targets `4CE5h`, not the arithmetic helper at `4CE6h`. Thus the call from `4CA2h` is a no-op/early-return stub when entered at that exact address.
+- `4CE6h` is a separate overlapping entry: `MOV AH,AL; SUB AL,AL; ADD AX,0C3Bh; RET`. The call at `4E70h` targets this entry. It returns the computed value `0C3Bh + (AL << 8)`.
+- `4CA2h` is a list-record processing routine, not a disk I/O worker. After the no-op call it uses the caller's stack argument at `[BP-2]`, works with the `E436h` record area and fixed three-byte record stride, and calls shared helpers outside this local range. The instruction sequence performs indexed record/field processing; it contains no INT 13h or controller-port transaction.
+
+The `4F00h–50A0h` bytes were also checked as a separate boundary. The apparent entry at `4FD0h` is a frame-based routine that formats/displays values from the `3AECh`-based table, calls UI helpers, compares a selected record, and updates that record; it does not itself contain an INT 13h instruction or direct IDE data-port access. At `50A0h` a distinct port-80h diagnostic/POST trace sequence begins (writes marker bytes such as 40h–59h), so this boundary must not be misclassified as the disk formatter merely because it follows the menu code in ROM address order.
+
+No formatter command has been established by this pass. The next trace target is the call graph reached from the confirmation/record-update routine at `4FD0h`, plus the indirect service wrappers it invokes; the physical write operation remains unlocated.
