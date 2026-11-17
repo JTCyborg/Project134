@@ -2,14 +2,13 @@ Target: ami486.bin
 ROM size: 65536 bytes
 Candidate windows: 889
 Data ranges: 248
-Unique code-window bytes: 44013
+Unique code-window bytes: 44109
 Unique data-range bytes: 20517
 Overlap bytes: 334
-Code/data union: 64196/65536 (97.96%)
-Uncovered intervals: 49
-Pages touched/full: 256/256, 212/256
+Code/data union: 64292/65536 (98.10%)
+Uncovered intervals: 48
+Pages touched/full: 256/256, 213/256
 Largest uncovered intervals (length, start, end):
-  96, 4831-4890
   92, 0454-04AF
   86, 596A-59BF
   83, 72D8-732A
@@ -19,6 +18,7 @@ Largest uncovered intervals (length, start, end):
   69, AAEF-AB33
   69, 8E09-8E4D
   67, 566B-56AD
+  63, 55EC-562A
 Window bytes: 0x80 default; selected handler windows clipped at known data boundaries
 Decoder: Capstone x86 16-bit
 Relative near-branch targets normalized to 16-bit IP.

@@ -22778,7 +22778,7 @@ Reason: coordinate helper called by the 4628h screen stream
 4758  05 1F 10                add ax, 0x101f
 475B  C3                      ret
 
-===== 475Ch-4830h =====
+===== 475Ch-4890h =====
 Reason: drive-type/status display helper called by the 4628h and 5038h streams
 475C  55                      push bp
 475D  8B EC                   mov bp, sp
@@ -22853,7 +22853,40 @@ Reason: drive-type/status display helper called by the 4628h and 5038h streams
 4827  05 2C 00                add ax, 0x2c
 482A  8A 1E 13 E4             mov bl, byte ptr [0xe413]
 482E  2A FF                   sub bh, bh
-4830  BA              db 0xBA
+4830  BA 03 00                mov dx, 3
+4833  E8 B5 C1                call 0x9eb
+4836  A1 80 E1                mov ax, word ptr [0xe180]
+4839  05 32 00                add ax, 0x32
+483C  BA 05 00                mov dx, 5
+483F  8B 1E 16 E4             mov bx, word ptr [0xe416]
+4843  E8 A5 C1                call 0x9eb
+4846  A1 80 E1                mov ax, word ptr [0xe180]
+4849  05 38 00                add ax, 0x38
+484C  BA 05 00                mov dx, 5
+484F  8B 1E 1D E4             mov bx, word ptr [0xe41d]
+4853  E8 95 C1                call 0x9eb
+4856  A1 80 E1                mov ax, word ptr [0xe180]
+4859  05 3E 00                add ax, 0x3e
+485C  8A 1E 1F E4             mov bl, byte ptr [0xe41f]
+4860  2A FF                   sub bh, bh
+4862  BA 03 00                mov dx, 3
+4865  E8 83 C1                call 0x9eb
+4868  83 06 80 E1 44          add word ptr [0xe180], 0x44
+486D  E8 65 13                call 0x5bd5
+4870  8B F0                   mov si, ax
+4872  83 FE FF                cmp si, -1
+4875  75 0A                   jne 0x4881
+4877  8D 1E BD 37             lea bx, [0x37bd]
+487B  A1 80 E1                mov ax, word ptr [0xe180]
+487E  E9 5D FF                jmp 0x47de
+4881  8B D8                   mov bx, ax
+4883  A1 80 E1                mov ax, word ptr [0xe180]
+4886  BA 05 00                mov dx, 5
+4889  E8 5F C1                call 0x9eb
+488C  5E                      pop si
+488D  8B E5                   mov sp, bp
+488F  5D                      pop bp
+4890  C3                      ret
 
 ===== 4891h-4AEDh =====
 Reason: hard-disk utility option-panel renderer and callback dispatcher
