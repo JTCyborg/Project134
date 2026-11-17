@@ -6,29 +6,29 @@ Input: `ami486.bin`, 65,536 bytes (blob SHA `480c7520c93e6c7ed437cf3ad214da7503f
 
 ## 1. A real indexed-register interface is present
 
-The code at `8DD0–8DEC` implements two small helpers:
+The code at `8DCF–8DEC` implements two small helpers:
 
 ```
-8DD0: E6 22       OUT 22h,AL
-8DD2: E3 00       JCXZ $+2
-8DD4: E3 00       JCXZ $+2
-8DD6: E4 23       IN  AL,23h
-8DD8: E3 00
-8DDA: E3 00
-8DDC: C3          RET
+8DCF: E6 22       OUT 22h,AL
+8DD1: E3 00       JCXZ $+2
+8DD3: E3 00       JCXZ $+2
+8DD5: E4 23       IN  AL,23h
+8DD7: E3 00
+8DD9: E3 00
+8DDB: C3          RET
 
-8DDD: E6 22       OUT 22h,AL
-8DDF: E3 00
-8DE1: E3 00
-8DE3: 86 C4       XCHG AH,AL
-8DE5: E6 23       OUT 23h,AL
-8DE7: E3 00
-8DE9: E3 00
-8DEB: 86 C4
-8DEC: C3          RET
+8DDC: E6 22       OUT 22h,AL
+8DDE: E3 00
+8DE0: E3 00
+8DE2: 86 C4       XCHG AH,AL
+8DE4: E6 23       OUT 23h,AL
+8DE6: E3 00
+8DE8: E3 00
+8DEA: 86 C4
+8DEB: C3          RET
 ```
 
-The first helper writes the index to port `22h`, then reads the selected byte from `23h`. The second writes the index from AL to `22h`, exchanges AL/AH, writes the data byte to `23h`, exchanges back, and returns. Thus the caller convention for the write helper is `AL=index, AH=data`.
+The first helper at `8DCF` writes the index to port `22h`, then reads the selected byte from `23h`. The second helper at `8DDC` writes the index from AL to `22h`, exchanges AL/AH, writes the data byte to `23h`, exchanges back, and returns. Thus the caller convention for the write helper is `AL=index, AH=data`.
 
 This is an indexed configuration-register interface. It is distinct from the previously documented PIT ports 42h/43h and speaker port 61h. The port pair is consistent with legacy motherboard chipset configuration access, but this report does not assign a specific chipset vendor/model or register names.
 
@@ -44,12 +44,12 @@ The sequence around `1C88–1DBB` repeatedly:
 Example for register index `20h`:
 
 ```
-1C8A: B8 20 20       MOV AX,2020h
-1C8D: E8 3B 71       CALL 8DD0h       ; read config[20h]
-1C90: 24 F8          AND AL,F8h
-1C92: 0A C3          OR  AL,BL
-1C94: 86 E0          XCHG AH,AL
-1C96: E8 3F 71       CALL 8DDCh       ; write config[20h]
+1C8E: B8 20 20       MOV AX,2020h
+1C91: E8 3B 71       CALL 8DCFh       ; read config[20h]
+1C94: 24 F8          AND AL,F8h
+1C96: 0A C3          OR  AL,BL
+1C98: 86 E0          XCHG AH,AL
+1C9A: E8 3F 71       CALL 8DDCh       ; write config[20h]
 ```
 
 This is direct evidence of a chipset configuration read-modify-write operation. The low three bits are replaced with the value in BL; the upper five bits are preserved.
