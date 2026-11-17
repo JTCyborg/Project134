@@ -878,3 +878,12 @@ Detailed map: [AMI486_ADDRESS_LEDGER_REGION_2ED8_2F24_20261117.md](AMI486_ADDRES
 Mapped the 2ED8h–2EF0h continuation of the ROM-segment selector loop and the independent Setup exit/relocation routine at 2EF2h–2F23h. The latter is called from F109h, saves the old SS:SP in the BIOS Data Area, switches to stack 0100:DFFEh, copies 7000h words from CS:0000h to 0100:0000h, clears 0FF1h bytes at 0100:E000h and jumps to 3C5Eh. The isolated 00h at 2EF1h is provisionally classified as unreferenced padding.
 
 Generator update: pending commit. The projected range mask is 64,787/65,536 bytes (98.86%), with 42 uncovered intervals and 220 fully covered 256-byte pages. The next largest gaps are AAEFh–AB33h and 8E09h–8E4Dh (69 bytes each). These are range-mask projections, not semantic-completion or reachability percentages. The full Capstone listing must be regenerated after the updated generator is committed.
+
+
+## 52. ATA drive-ready poll helper — AAEFh–AB33h (2026-11-17)
+
+Detailed map: [AMI486_ADDRESS_LEDGER_REGION_AAEF_AB34_20261117.md](AMI486_ADDRESS_LEDGER_REGION_AAEF_AB34_20261117.md).
+
+Mapped the epilogue at AAEFh–AAF2h and the ATA drive-ready poll helper at AAF3h–AB33h. The helper is called from AAD8h, waits on port 80h, checks BSY at ATA status port 01F7h, selects A0h/B0h through 01F6h, and tests DRDY. It returns CF=0 when ready and CF=1 on the observed failure/not-ready paths. The caller at AAD8h performs a CX=4000h retry/delay loop.
+
+Generator update: pending commit. The projected range mask is 64,856/65,536 bytes (98.96%), with 41 uncovered intervals and 222 fully covered 256-byte pages. The next largest gap is 8E09h–8E4Dh (69 bytes). These are range-mask projections, not semantic-completion or reachability percentages. The Capstone listing must be regenerated after the updated generator is committed.
