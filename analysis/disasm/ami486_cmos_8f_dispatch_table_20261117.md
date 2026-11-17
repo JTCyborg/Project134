@@ -553,3 +553,26 @@ A further exact relative-target calculation corrects the preceding dual-writer c
 Accordingly, the previous section's statement that both AH=05h callsites reach the common INT 13h path is withdrawn. The only presently confirmed actual AH=05h BIOS write path is the call from the worker at `6F75h` through `6C15h`. The `69D0h` frame-based routine's `6A1Ah` AH=05h setup remains a prepared-but-not-issued operation at this particular callsite; do not classify it as a second disk write.
 
 This is another case where linear disassembly obscures intentional/overlapping entry points. Keep the disk formatter link open: the confirmed sector write still needs to be connected to the hard-disk menu's confirmation handler, and the worker's caller parameters must be resolved.
+
+
+### Cross-reference inventory for E41Fh and the 6F75h worker (2026-11-17)
+
+A fresh byte-pattern scan confirms direct moffs references to `E41Fh` at:
+
+- `5BD5h`
+- `6984h`, `69A2h`, `69A7h`, `69BAh`
+- `6A1Dh` (AH=05h setup whose CALL target is the overlapping `6C14h RET`, not INT 13h)
+- `6AC1h`
+- `6D09h`, `6DD2h`
+- `6EFFh`
+- `6F58h`, `6F96h`, `6FA6h`
+- `706Ch`
+- `723Fh`
+
+No direct `A2/A3` moffs store to `E41Fh` appears in this scan; this does not exclude stores through ModR/M addressing, string operations, or a table/indirect pointer. In particular, `706Ch` loads CL from `E41Fh` in a separate path that subsequently issues `INT 13h AH=02h, AL=28h` at `7075h`. This is evidence that E41Fh is shared state used by more than the AH=05h worker; it is not yet safe to label it simply as the write-sector count.
+
+The confirmed direct CALL xref into the worker entry `6F75h` remains `6F23h`. At `6F75h` the bytes begin an ENTER frame (`C8 10 00 00)); the worker then calls a register/frame helper at `72D8h` and another internal entry at `6F3Eh`. The call at `6F98h` reaches `6C15h`, the wrapper entry that conditionally reaches `INT 13h` at `6C1Fh`. The worker's success/failure handling follows at `6F9Bh–6FA7h`. The worker's caller state and the producer of the `E1B8h` buffer remain unresolved.
+
+A separate path at `706Ch` loads `CL=[E41Fh]`, decrements CX, then sets `AX=0228h` and performs a 40-sector read at `7075h`. Do not conflate that read with the AH=05h write worker. This further supports treating E41Fh as shared disk-operation state until its producer and complete dataflow are traced.
+
+Current classification: one confirmed AH=05h INT 13h write callsite (`6F98h -> 6C15h -> 6C1Fh`); no proof yet that this worker is the menu's low-level format implementation.
