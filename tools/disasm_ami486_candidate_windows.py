@@ -19,12 +19,15 @@ LIMITS = {0xCA15: 0x92, 0xCB09: 0xEF, 0xCBF8: 0x8F, 0xCC87: 0x9B, 0xCD22: 0x48, 
 # Additional independently seeded entries for the 873Ch–8DCEh address-ledger pass.
 # Short limits preserve known adjacent entry boundaries and avoid implying one CFG.
 LIMITS.update({
+    0x8378: 0x30, 0x85B3: 0x0D, 0x85CB: 0x0A, 0x85D6: 0x28, 0x85F5: 0x39,
     0x8898: 0x33, 0x88CB: 0x03, 0x88CE: 0x80,
     0x8A04: 0x1C, 0x8A20: 0x55, 0x8A75: 0x03, 0x8A78: 0x57,
     0x8ACF: 0x03, 0x8AD2: 0x16, 0x8AD5: 0x13, 0x8AD6: 0x12,
     0x8AE8: 0x28, 0x8B09: 0x07, 0x8B10: 0x07, 0x8B11: 0x06,
     0x8B2D: 0x31, 0x8B5E: 0x45, 0x8BA3: 0x45,
-    0x8CB2: 0x1B, 0x8CCD: 0x3C, 0x8D83: 0x4C,
+    0x8BE8: 0x65, 0x8C4D: 0x65, 0x8CB2: 0x1B, 0x8CCD: 0x3C,
+    0x8CEA: 0x1F, 0x8D09: 0x30, 0x8D39: 0x1D, 0x8D56: 0x2D,
+    0x8D83: 0x4C, 0x8DCF: 0x0D, 0x8DDC: 0x12, 0x8DED: 0x0E, 0x8DFB: 0x0E,
 })
 
 DATA_RANGES = [
@@ -194,6 +197,9 @@ DATA_RANGES = [
     (0x8750, 0x87A4, "Overlapping 21-record subset walked by the POST ALi register initializer at 2098h; four-byte records", "hexascii"),
     (0x87A9, 0x88BB, "Overlapping 14-row AUTO Config lookup view; 20-byte row stride with 16-bit fields at offsets +00h/+04h/+08h/+0Ch; overlaps other data and code views", "hexascii"),
     (0x8880, 0x8888, "Adjacent POST configuration constants; word at 8886h is the 0051h (81-record) loop count used at 844Ah", "words"),
+    (0x8E4E, 0x8E62, "Ten-word ALi indexed-register profile list selected by the CMOS B3h profile path", "words"),
+    (0x8E62, 0x8E76, "Ten-word alternate ALi indexed-register profile list selected by the CMOS B3h profile path", "words"),
+    (0x8E76, 0x8E7E, "Four-word short ALi indexed-register profile list selected by the CMOS B3h profile path", "words"),
     (0x2068, 0x208D, "LGDT pseudo-descriptor at 2068h plus adjacent descriptor/parameter bytes used by the PM memory probe", "hexascii"),
 ]
 
@@ -468,6 +474,19 @@ SEEDS = [
     (0x8CB2, "direct JMP targets from 1F26h/271Fh/2859h; protected-mode/cache-state helper candidate"),
     (0x8CCD, "direct JMP targets from 1EF7h/1F37h; alternate protected-mode/cache-state helper"),
     (0x8D83, "direct JMP targets from 27D7h/28D8h; chipset configuration callback candidate"),
+    (0x8378, "CMOS/ALi configuration selector: searches the 873Ch record array and returns record byte 3"),
+    (0x85B3, "POST CMOS/ALi state-application wrapper; calls the 873Ch record walkers"),
+    (0x85CB, "record walker over the CS:8880h metadata block"),
+    (0x85D6, "dynamic record walker using CS:82C0h/82C2h and CS:82CAh"),
+    (0x85F5, "five-record E000h state-bit updater using records at 873Ch"),
+    (0x8BE8, "direct CALL target from the 8B2Dh controller-state dispatcher"),
+    (0x8C4D, "direct CALL target from the 8B2Dh alternate controller-state branch"),
+    (0x8CEA, "8042 command/data transaction helper called by 8B5Eh/8BA3h"),
+    (0x8D09, "ALi indexed-register setup helper called by 8BAFh"),
+    (0x8D39, "ALi indexed-register alternate setup helper called by 8B6Ah"),
+    (0x8D56, "ALi register-18h state test and conditional update helper"),
+    (0x8DED, "indexed ALi register read-and-indirect-continuation helper"),
+    (0x8DFB, "indexed ALi register write-and-indirect-continuation helper"),
     (0x8DCF, "indexed chipset-register read helper using ports 22h/23h"),
     (0x8DDC, "indexed chipset-register write helper using ports 22h/23h"),
     (0x2253, "second memory-pattern probe stream"),
