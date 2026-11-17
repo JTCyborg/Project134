@@ -84,4 +84,4 @@ The interval is split as follows:
 
 The candidate generator now seeds the video, keyboard-test, Enabled/Disabled, four fixed-disk nibble handlers and shared type chooser separately. The 0294h–02A3h table is a data range.
 
-The CI manifest is the verification gate for this update; the next largest uncovered interval will be taken from the completed run.
+GitHub Actions run 44086705207 completed successfully. The manifest reports 851 candidate windows, 240 data ranges, 42,274 unique code-window bytes, 19,721 unique data-range bytes, 293 overlap bytes, and a 61,702-byte union (94.15%). There are 61 uncovered intervals; the next largest is 81EEh–8377h (394 bytes).
