@@ -755,4 +755,12 @@ Detailed map: [AMI486_ADDRESS_LEDGER_REGION_AC5B_AD00_20261117.md](AMI486_ADDRES
 
 Corrected the AC00h ATA identify/read-transfer candidate boundary: the routine ends at AC5Ah with RET, so its code window is now 5Bh bytes. AC5Bh–ACFFh is data, not code. The confirmed 160-byte table at AC60h is referenced by the keyboard handler at B031h, which loads BX=AC60h before calling its mapping helper. It contains F0h/FFh markers and scan-code-like groups. The adjacent AC5Bh–AC5Fh prefix/header is retained as data but not semantically named. The existing AD00h–AE5Fh keyboard table remains a separate region.
 
-Generator update: 7227215784dca6c9ffd34174cca3e3adaeb92a66. The latest generated manifest still predates this correction. The previous projected union was 63,947 bytes (97.58%); adding the 128-byte gap AC80h–ACFFh gives a projected 64,075/65,536 bytes (97.77%) and 50 uncovered intervals. The next largest remaining interval is expected to be 61B2h–622Ah (121 bytes). These are range-union calculations, not a regenerated manifest or CI result.
+Generator update: 7227215784dca6c9ffd34174cca3e3adaeb92a66. The latest generated manifest still predates this correction. The previous projected union was 63,947 bytes (97.58%); adding the 128-byte gap AC80h–ACFFh gives a projected 64,075/65,536 bytes (97.77%) and 50 uncovered intervals. Section 43 below closes the 61B2h–622Ah interval. The next largest interval must be selected from a regenerated manifest; no unverified next-gap estimate is carried forward. These are range-union calculations, not a regenerated manifest or CI result.
+
+## 43. Calendar display grid template — 61B2h–622Ah (2026-11-17)
+
+Detailed map: [AMI486_ADDRESS_LEDGER_REGION_61B2_622B_20261117.md](AMI486_ADDRESS_LEDGER_REGION_61B2_622B_20261117.md).
+
+Extended the existing data range at 6194h–61B1h through 622Ah. The continuation contains the calendar's blank day cells, vertical separators, horizontal borders and box-drawing corners/junctions. The renderer begins at 622Bh and is called directly from the 00EFh screen-presentation stream. The interval is data, not code.
+
+Generator update: dc1b930b4e68ccce53251df74f60be8f6cbfcdd0. The latest generated manifest still predates this update. The previous projected union was 64,075 bytes (97.77%); adding this 121-byte data interval gives a projected 64,196/65,536 bytes (97.96%) and 49 uncovered intervals. This is range-union arithmetic, not a regenerated manifest or CI result.
