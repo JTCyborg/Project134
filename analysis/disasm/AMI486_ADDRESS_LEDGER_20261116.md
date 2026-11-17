@@ -763,4 +763,36 @@ Detailed map: [AMI486_ADDRESS_LEDGER_REGION_61B2_622B_20261117.md](AMI486_ADDRES
 
 Extended the existing data range at 6194h–61B1h through 622Ah. The continuation contains the calendar's blank day cells, vertical separators, horizontal borders and box-drawing corners/junctions. The renderer begins at 622Bh and is called directly from the 00EFh screen-presentation stream. The interval is data, not code.
 
-Generator update: dc1b930b4e68ccce53251df74f60be8f6cbfcdd0. The latest generated manifest still predates this update. The previous projected union was 64,075 bytes (97.77%); adding this 121-byte data interval gives a projected 64,196/65,536 bytes (97.96%) and 49 uncovered intervals. This is range-union arithmetic, not a regenerated manifest or CI result.
+Generator update: dc1b930b4e68ccce53251df74f60be8f6cbfcdd0. The candidate-window manifest was subsequently regenerated and reconciled; see section 44 for the confirmed aggregate coverage.
+
+## 44. Candidate-window manifest regenerated and reconciled — 2026-11-17
+
+The current generator and manifest are now reconciled. The regenerated file [ami486_candidate_windows_20261116.manifest.txt](ami486_candidate_windows_20261116.manifest.txt) reports:
+
+- Candidate windows: 889
+- Data ranges: 248
+- Unique code-window bytes: 44,013
+- Unique data-range bytes: 20,517
+- Code/data overlap: 334 bytes
+- Code/data union: 64,196 / 65,536 bytes (**97.96%**)
+- Uncovered intervals: 49
+- Pages touched/full: 256 / 256
+
+Manifest blob SHA: 5664f8e85f95416f347378523798a1125b335ee7. The metrics match an independent range-union calculation from the current generator source (1c8d3ab536d36eb3578ea14d358c09cc470973b0).
+
+The ten largest remaining uncovered intervals are:
+
+| Length | Start–end (inclusive) |
+|---:|---|
+| 96 | 4831h–4890h |
+| 92 | 0454h–04AFh |
+| 86 | 596Ah–59BFh |
+| 83 | 72D8h–732Ah |
+| 82 | 83AEh–83FFh |
+| 76 | ABB4h–ABFFh |
+| 76 | 2ED8h–2F23h |
+| 69 | AAEFh–AB33h |
+| 69 | 8E09h–8E4Dh |
+| 67 | 566Bh–56ADh |
+
+Next region selected for analysis: 4831h–4890h (96 bytes). The 97.96% figure is byte-range coverage by independently seeded candidate windows and classified data ranges; it is not a claim that 97.96% of the BIOS has been semantically understood or proven reachable.
