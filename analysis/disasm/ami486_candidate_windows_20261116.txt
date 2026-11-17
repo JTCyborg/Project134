@@ -228,30 +228,6 @@ Words: B6FB, B700, B708, B70F, B717, B71C, B724, B729, B731, B736, B73E, B745, B
 Reason: Setup option labels: clock, speed, cache, wait states and timing
 ASCII: 'Reserved\x00Disabled\x00Enabled\x00Absent\x00Present\x00Low\x00High\x00Off\x00On\x00No\x00Yes\x00Setup\x00Always\x000:300\x00DOS 1KB\x00A:, C:\x00C:, A:\x00250\x00500\x00750\x001000\x0030\x0024\x0020\x0015\x0012\x0010\x008\x006\x00Video\x00Main\x00Both\x00Slow\x00Normal\x00Fast\x00Fastest\x002t\x003t\x004t\x006t\x008t\x00WB\x00WT\x007.19MHz\x0014.32MHz\x0028.64MHz\x00CLK2\x00CLK2 /2\x00CLK2 /3\x00CLK2 /4\x00CLK2 /5\x00CLK2 /6\x00CLK2 /8\x00CLK2 /10\x00CLK2 /12\x00ATCLK\x00ATCLK/2\x00ATCLK2\x00ATCLK2/2\x00ATCLK2/4\x00ATCLK2/8\x00OSC\x00CLKIO\x0064KB\x00128KB\x000 WS\x001 WS\x002 WS\x003 WS\x000 ns\x001 ns\x002 ns\x003 ns\x000 us\x000.25 us\x000.5 us\x000.75 us\x001 us\x001.25 us\x001.5u\x001.75 us\x002 us\x002.25 us\x002.5 us\x002.75 us\x003 us\x003.25 us\x003.5 us\x003.75 us\x0015u \x0030u\x0060u\x00120u\x000 CLK2\x001 CLK2\x002 CLK2\x003 CLK2\x001st T2\x00T1 end\x00SYN.\x00Bypass\x00'
 
-===== DATA 2AB3h-2AC2h =====
-Reason: Eight Setup clock-label string pointers
-Words: B62D, B65C, B664, B66C, B674, B67C, B685, 5756
-
-===== DATA 2B0Bh-2B12h =====
-Reason: Four Setup speed-label string pointers
-Words: B5FF, B604, B60B, B610
-
-===== DATA 2B8Dh-2B90h =====
-Reason: Two Setup wait-state label string pointers
-Words: B6D3, B6D8
-
-===== DATA 2C15h-2C1Ch =====
-Reason: Four Setup mode-label string pointers
-Words: B55F, B60B, B604, B5FF
-
-===== DATA 2CAFh-2CCEh =====
-Reason: Sixteen Setup timing-label string pointers
-Words: B6FB, B700, B708, B70F, B717, B71C, B724, B729, B731, B736, B73E, B745, B74D, B752, B75A, B761
-
-===== DATA B55Fh-B7B0h =====
-Reason: Setup option labels: clock, speed, cache, wait states and timing
-ASCII: 'Reserved\x00Disabled\x00Enabled\x00Absent\x00Present\x00Low\x00High\x00Off\x00On\x00No\x00Yes\x00Setup\x00Always\x000:300\x00DOS 1KB\x00A:, C:\x00C:, A:\x00250\x00500\x00750\x001000\x0030\x0024\x0020\x0015\x0012\x0010\x008\x006\x00Video\x00Main\x00Both\x00Slow\x00Normal\x00Fast\x00Fastest\x002t\x003t\x004t\x006t\x008t\x00WB\x00WT\x007.19MHz\x0014.32MHz\x0028.64MHz\x00CLK2\x00CLK2 /2\x00CLK2 /3\x00CLK2 /4\x00CLK2 /5\x00CLK2 /6\x00CLK2 /8\x00CLK2 /10\x00CLK2 /12\x00ATCLK\x00ATCLK/2\x00ATCLK2\x00ATCLK2/2\x00ATCLK2/4\x00ATCLK2/8\x00OSC\x00CLKIO\x0064KB\x00128KB\x000 WS\x001 WS\x002 WS\x003 WS\x000 ns\x001 ns\x002 ns\x003 ns\x000 us\x000.25 us\x000.5 us\x000.75 us\x001 us\x001.25 us\x001.5u\x001.75 us\x002 us\x002.25 us\x002.5 us\x002.75 us\x003 us\x003.25 us\x003.5 us\x003.75 us\x0015u \x0030u\x0060u\x00120u\x000 CLK2\x001 CLK2\x002 CLK2\x003 CLK2\x001st T2\x00T1 end\x00SYN.\x00Bypass\x00'
-
 ===== 0C7Dh-0CFFh =====
 Reason: direct CALL target at 0C79h; Setup item-list initializer prologue
 0C7D  55                      push bp
