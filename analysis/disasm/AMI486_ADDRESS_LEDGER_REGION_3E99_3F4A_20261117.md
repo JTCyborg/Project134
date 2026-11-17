@@ -53,7 +53,7 @@ The nearby “KB/sec ms” label and the display routines mapped in 714Eh–71E3
 | 3EBDh | 3EE5h | Initial skip to parser loop-bound check |
 | 3EEBh | 3EBFh | Parser loop back-edge |
 | 3E99h | 592Ah | Field text/input helper |
-| 3EC Eh | 58F1h | Colon delimiter helper |
+| 3ECEh | 58F1h | Colon delimiter helper |
 | 3ED9h | 58B5h | Space delimiter helper |
 | 3EE2h | 58EEh | Character output helper |
 | 3EF2h | 5928h | Value/input measurement helper |
