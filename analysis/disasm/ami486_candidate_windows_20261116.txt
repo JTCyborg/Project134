@@ -27910,6 +27910,250 @@ Reason: option-ROM scan invalid-candidate helper: advances BX by 0080h, restores
 1BF4  1F                      pop ds
 1BF5  C3                      ret
 
+===== 10DFh-131Eh =====
+Reason: POST hardware-initialization continuation: 8042 self-test, CMOS/memory configuration checks, setup-warning path and video/chipset initialization; entry provenance unresolved
+10DF  00 B0 F4 E6             add byte ptr [bx + si - 0x190c], dh
+10E3  80 E8 CC                sub al, 0xcc
+10E6  7F B0                   jg 0x1098
+10E8  80 E6 80                and dh, 0x80
+10EB  2E F6 06 80 82 10       test byte ptr cs:[0x8280], 0x10
+10F1  B0 4D                   mov al, 0x4d
+10F3  74 02                   je 0x10f7
+10F5  B0 6C                   mov al, 0x6c
+10F7  E8 57 E5                call 0xf651
+10FA  E8 73 07                call 0x1870
+10FD  B9 00 40                mov cx, 0x4000
+1100  51                      push cx
+1101  E3 00                   jcxz 0x1103
+1103  E4 64                   in al, 0x64
+1105  A8 01                   test al, 1
+1107  E1 F8                   loope 0x1101
+1109  59                      pop cx
+110A  74 04                   je 0x1110
+110C  E4 60                   in al, 0x60
+110E  33 C9                   xor cx, cx
+1110  51                      push cx
+1111  B9 03 00                mov cx, 3
+1114  51                      push cx
+1115  B8 FF FA                mov ax, 0xfaff
+1118  E8 AE E4                call 0xf5c9
+111B  59                      pop cx
+111C  E0 F6                   loopne 0x1114
+111E  59                      pop cx
+111F  E3 09                   jcxz 0x112a
+1121  75 07                   jne 0x112a
+1123  E8 D3 E4                call 0xf5f9
+1126  3C AA                   cmp al, 0xaa
+1128  74 1B                   je 0x1145
+112A  E8 35 75                call 0x8662
+112D  74 16                   je 0x1145
+112F  B0 81                   mov al, 0x81
+1131  E6 80                   out 0x80, al
+1133  B8 AB 00                mov ax, 0xab
+1136  E8 83 E4                call 0xf5bc
+1139  75 06                   jne 0x1141
+113B  81 CD 00 02             or bp, 0x200
+113F  EB 04                   jmp 0x1145
+1141  81 CD 00 04             or bp, 0x400
+1145  B0 82                   mov al, 0x82
+1147  E6 80                   out 0x80, al
+1149  2E F6 06 80 82 10       test byte ptr cs:[0x8280], 0x10
+114F  B0 45                   mov al, 0x45
+1151  74 02                   je 0x1155
+1153  B0 65                   mov al, 0x65
+1155  E8 F9 E4                call 0xf651
+1158  B8 1E 00                mov ax, 0x1e
+115B  A3 1A 00                mov word ptr [0x1a], ax
+115E  A3 1C 00                mov word ptr [0x1c], ax
+1161  A3 80 00                mov word ptr [0x80], ax
+1164  05 20 00                add ax, 0x20
+1167  A3 82 00                mov word ptr [0x82], ax
+116A  E4 21                   in al, 0x21
+116C  24 B8                   and al, 0xb8
+116E  E3 00                   jcxz 0x1170
+1170  E3 00                   jcxz 0x1172
+1172  E6 21                   out 0x21, al
+1174  B0 83                   mov al, 0x83
+1176  E6 80                   out 0x80, al
+1178  FB                      sti
+1179  E4 64                   in al, 0x64
+117B  A8 10                   test al, 0x10
+117D  75 04                   jne 0x1183
+117F  81 CD 00 01             or bp, 0x100
+1183  B8 8E 8E                mov ax, 0x8e8e
+1186  E8 0B DD                call 0xee94
+1189  A8 C0                   test al, 0xc0
+118B  75 3A                   jne 0x11c7
+118D  50                      push ax
+118E  B0 84                   mov al, 0x84
+1190  E6 80                   out 0x80, al
+1192  E8 14 E4                call 0xf5a9
+1195  B8 96 95                mov ax, 0x9596
+1198  E8 36 05                call 0x16d1
+119B  3B 06 13 00             cmp ax, word ptr [0x13]
+119F  74 08                   je 0x11a9
+11A1  81 CD 00 08             or bp, 0x800
+11A5  58                      pop ax
+11A6  0C 10                   or al, 0x10
+11A8  50                      push ax
+11A9  B8 B1 B0                mov ax, 0xb0b1
+11AC  E8 22 05                call 0x16d1
+11AF  8B C8                   mov cx, ax
+11B1  B8 98 97                mov ax, 0x9798
+11B4  E8 1A 05                call 0x16d1
+11B7  3B C1                   cmp ax, cx
+11B9  58                      pop ax
+11BA  74 06                   je 0x11c2
+11BC  81 CD 00 08             or bp, 0x800
+11C0  0C 10                   or al, 0x10
+11C2  86 C4                   xchg ah, al
+11C4  E8 D6 DC                call 0xee9d
+11C7  FB                      sti
+11C8  B8 B3 B3                mov ax, 0xb3b3
+11CB  E8 C6 DC                call 0xee94
+11CE  24 7F                   and al, 0x7f
+11D0  81 3E 13 00 00 02       cmp word ptr [0x13], 0x200
+11D6  76 02                   jbe 0x11da
+11D8  0C 80                   or al, 0x80
+11DA  86 C4                   xchg ah, al
+11DC  E8 BE DC                call 0xee9d
+11DF  55                      push bp
+11E0  E8 7F 74                call 0x8662
+11E3  75 04                   jne 0x11e9
+11E5  81 E5 FF F8             and bp, 0xf8ff
+11E9  E8 5D 74                call 0x8649
+11EC  75 04                   jne 0x11f2
+11EE  81 E5 3F FF             and bp, 0xff3f
+11F2  C7 06 78 00 14 14       mov word ptr [0x78], 0x1414
+11F8  E8 DF 04                call 0x16da
+11FB  33 C9                   xor cx, cx
+11FD  81 E5 FF 7F             and bp, 0x7fff
+1201  74 17                   je 0x121a
+1203  B0 85                   mov al, 0x85
+1205  E6 80                   out 0x80, al
+1207  BE 76 78                mov si, 0x7876
+120A  BB 78 08                mov bx, 0x878
+120D  E8 46 04                call 0x1656
+1210  FB                      sti
+1211  B9 FF FF                mov cx, 0xffff
+1214  75 04                   jne 0x121a
+1216  85 EB                   test bx, bp
+1218  75 21                   jne 0x123b
+121A  B0 8E                   mov al, 0x8e
+121C  E8 75 DC                call 0xee94
+121F  A8 01                   test al, 1
+1221  75 18                   jne 0x123b
+1223  2E A0 1C B5             mov al, byte ptr cs:[0xb51c]
+1227  E8 D6 70                call 0x8300
+122A  74 0D                   je 0x1239
+122C  A0 12 00                mov al, byte ptr [0x12]
+122F  A8 20                   test al, 0x20
+1231  74 06                   je 0x1239
+1233  E8 DE 04                call 0x1714
+1236  B9 FF FF                mov cx, 0xffff
+1239  EB 75                   jmp 0x12b0
+123B  B0 86                   mov al, 0x86
+123D  E6 80                   out 0x80, al
+123F  FA                      cli
+1240  E8 0B 0A                call 0x1c4e
+1243  FB                      sti
+1244  B0 87                   mov al, 0x87
+1246  E6 80                   out 0x80, al
+1248  FF 36 67 00             push word ptr [0x67]
+124C  FF 36 69 00             push word ptr [0x69]
+1250  1E                      push ds
+1251  06                      push es
+1252  A0 12 00                mov al, byte ptr [0x12]
+1255  A8 20                   test al, 0x20
+1257  74 03                   je 0x125c
+1259  E8 A8 DE                call 0xf104
+125C  FB                      sti
+125D  33 C0                   xor ax, ax
+125F  8E D8                   mov ds, ax
+1261  8C C8                   mov ax, cs
+1263  3B 06 42 00             cmp ax, word ptr [0x42]
+1267  75 31                   jne 0x129a
+1269  CD 11                   int 0x11
+126B  24 30                   and al, 0x30
+126D  3C 30                   cmp al, 0x30
+126F  74 29                   je 0x129a
+1271  B0 8E                   mov al, 0x8e
+1273  E8 1E DC                call 0xee94
+1276  A8 20                   test al, 0x20
+1278  B8 01 10                mov ax, 0x1001
+127B  75 10                   jne 0x128d
+127D  50                      push ax
+127E  B0 94                   mov al, 0x94
+1280  E8 11 DC                call 0xee94
+1283  24 30                   and al, 0x30
+1285  3C 10                   cmp al, 0x10
+1287  58                      pop ax
+1288  74 03                   je 0x128d
+128A  B8 03 20                mov ax, 0x2003
+128D  80 26 10 04 CF          and byte ptr [0x410], 0xcf
+1292  08 26 10 04             or byte ptr [0x410], ah
+1296  32 E4                   xor ah, ah
+1298  CD 10                   int 0x10
+129A  07                      pop es
+129B  1F                      pop ds
+129C  8F 06 69 00             pop word ptr [0x69]
+12A0  8F 06 67 00             pop word ptr [0x67]
+12A4  B0 88                   mov al, 0x88
+12A6  E6 80                   out 0x80, al
+12A8  FA                      cli
+12A9  E8 A3 09                call 0x1c4f
+12AC  FB                      sti
+12AD  B9 FF FF                mov cx, 0xffff
+12B0  B0 89                   mov al, 0x89
+12B2  E6 80                   out 0x80, al
+12B4  E8 1F 4D                call 0x5fd6
+12B7  E3 1A                   jcxz 0x12d3
+12B9  E8 FB 03                call 0x16b7
+12BC  E8 4F 2E                call 0x410e
+12BF  BE 00 81                mov si, 0x8100
+12C2  E8 69 E2                call 0xf52e
+12C5  FB                      sti
+12C6  E8 65 E1                call 0xf42e
+12C9  B0 8A                   mov al, 0x8a
+12CB  E6 80                   out 0x80, al
+12CD  BE A0 7C                mov si, 0x7ca0
+12D0  E8 5B E2                call 0xf52e
+12D3  5D                      pop bp
+12D4  81 E5 00 C0             and bp, 0xc000
+12D8  B0 8B                   mov al, 0x8b
+12DA  E6 80                   out 0x80, al
+12DC  1E                      push ds
+12DD  06                      push es
+12DE  FA                      cli
+12DF  E8 6E 09                call 0x1c50
+12E2  07                      pop es
+12E3  1F                      pop ds
+12E4  B0 8C                   mov al, 0x8c
+12E6  E6 80                   out 0x80, al
+12E8  FA                      cli
+12E9  E8 72 09                call 0x1c5e
+12EC  FB                      sti
+12ED  B0 8D                   mov al, 0x8d
+12EF  E6 80                   out 0x80, al
+12F1  2E F6 06 80 82 10       test byte ptr cs:[0x8280], 0x10
+12F7  74 20                   je 0x1319
+12F9  2E A0 0B B5             mov al, byte ptr cs:[0xb50b]
+12FD  E8 00 70                call 0x8300
+1300  74 17                   je 0x1319
+1302  06                      push es
+1303  33 C0                   xor ax, ax
+1305  8E C0                   mov es, ax
+1307  26 C7 06 D0 01 12 97    mov word ptr es:[0x1d0], 0x9712
+130E  07                      pop es
+130F  B0 F5                   mov al, 0xf5
+1311  E6 80                   out 0x80, al
+1313  E8 9D 7D                call 0x90b3
+1316  E8 E8 84                call 0x9801
+1319  B0 8E                   mov al, 0x8e
+131B  E6 80                   out 0x80, al
+131D  E8              db 0xE8
+131E  3A              db 0x3A
+
 ===== AF84h-AF86h =====
 Reason: INT 09h keyboard IRQ path: final near-JMP byte completes the AF84h->B2E5h dispatch branch
 AF84  E9 5E 03                jmp 0xb2e5
