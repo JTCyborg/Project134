@@ -1202,3 +1202,8 @@ The Capstone candidate generator now emits 221 code windows and 56 explicit data
 Newly mapped data regions include POST conflict strings (188Eh–18E4h), cache/CPU labels (19CAh–19F7h), Setup exit prompts (2F24h–2F65h), Setup legends (3624h–381Bh), hard-disk utility strings/tables (3900h–3C5Bh), load-default prompts (59C0h–5A4Bh), POST throughput label (7145h–714Dh), POST/help/error text and lookup data (732Bh–7CE8h), AMI/OEM identity block (8000h–81EDh), and ASCII lookup bytes (B528h–B55Eh).
 
 The 2D11h timing benchmark candidate is now seeded at its aligned byte stream; 2D00h redundant and 2D80h misaligned sample seeds were removed. Its actual runtime entry remains unproven; do not infer reachability from the seed alone.
+
+
+## Low-ROM identity/data split — 2026-11-17
+
+Raw-byte inspection separates 0000h–00EEh as AMI identity/copyright/pattern data from the executable-looking stream beginning at 00EFh. The generator now seeds 00EFh–01EEh as an unresolved code candidate and emits 0000h–00EEh as data. No direct near CALL/JMP xref or literal 00EFh pointer was found; entry provenance remains open. See AMI486_ADDRESS_LEDGER_20261116.md section 11.1. The workflow output is pending verification; do not include this new seed in the published candidate-footprint counts until the generated listing and manifest update.
