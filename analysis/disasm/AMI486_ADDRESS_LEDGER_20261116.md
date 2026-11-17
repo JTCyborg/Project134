@@ -408,3 +408,12 @@ Detailed byte-backed report: [AMI486_TEMPORARY_IVT_CALENDAR_REFRESH_20261117.md]
 - The INT 1Ch hook uses the BIOS tick count, defers while the nesting counter is nonzero, and calls 6616h to refresh a calendar/date display; it then invokes INT A2h.
 - `6616h` reads the BIOS date through INT 1Ah AH=04h (6774h), validates BCD through 68E2h, converts through 68FDh, and uses CS tables 6164h/616Bh for calendar placement.
 - The raw 6616h stream has been checked through RET at 6757h. The generator source requests a 0142h window, but the generated listing still shows the previous 0080h window; this generation mismatch remains open.
+
+
+### 11.4 16-bit sign-extension mnemonic correction — 2026-11-17
+
+The candidate-window generator and full-linear GitHub Actions workflow now normalize unprefixed opcodes:
+- `98h` -> `CBW` (not `CWDE`)
+- `99h` -> `CWD` (not `CDQ`)
+
+The previous candidate listing contained 31 such mislabeled lines. After regeneration, the candidate listing contains zero `cwde`/`cdq` mnemonics. The full linear listing blob changed after the workflow update; its manifest still reports 29,731 decode records and complete 65,536-byte linear coverage. Operand-size-prefixed forms are not rewritten.
