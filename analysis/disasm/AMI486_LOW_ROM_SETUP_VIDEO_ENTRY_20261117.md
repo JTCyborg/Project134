@@ -189,7 +189,7 @@ The visible stream pushes ES and DS, but does not push BP, SI or DI before using
 ## 6. Next unresolved checks
 
 1. Find the runtime caller or installed pointer that enters 00EFh and prove the required BP/SI/DI stack frame.
-2. Decode the contracts of 3E3Fh, 0995h, F52Eh, 622Bh, 09CEh, 05EBh, 578Dh, 08C8h, 0A15h, 0597h, 03D4h, 0AADh, 0862h, 626Bh, 099Dh, 6220h and 09C1h only as needed to identify the screen's runtime role.
+2. Decode the contracts of 3E3Fh, 0995h, F52Eh, 622Bh, 09CEh, 05EBh, 578Dh, 08C8h, 0A15h, 0597h, 03D4h, 0AADh, 0862h, 626Bh, 099Dh, 62BDh and 09C1h only as needed to identify the screen's runtime role.
 3. Trace the E1A2h/E1A6h state producers and the BP-relative source block.
 4. Preserve the distinction between this 00EFh walker and the 05B4h dispatcher when documenting the 0AF5h records.
 
