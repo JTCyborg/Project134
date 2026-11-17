@@ -13568,6 +13568,15 @@ Reason: return-to-stack code continuation
 2250  B3 FF                   mov bl, 0xff
 2252  26              db 0x26
 
+===== 235Bh-2380h =====
+Reason: fall-through continuation of protected-mode extended-memory alias probe; compare at 04001000h and 04002000h
+235B  26 67 66 81 3D 00 10 00 04 AA AA 55 55 cmp dword ptr es:[0x4001000], 0x5555aaaa
+2368  0F 84 15 00             je 0x2381
+236C  B7 03                   mov bh, 3
+236E  26 67 66 81 3D 00 20 00 04 AA AA 55 55 cmp dword ptr es:[0x4002000], 0x5555aaaa
+237B  0F 84 02 00             je 0x2381
+237F  B7 04                   mov bh, 4
+
 ===== 2381h-2393h =====
 Reason: second memory-alias result path; chipset register 10h write trampoline
 2381  81 E2 0F 0F             and dx, 0xf0f
