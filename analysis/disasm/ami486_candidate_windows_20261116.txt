@@ -61,8 +61,8 @@ Reason: Two zero-byte alignment padding before the BIOS Setup main-menu entry
 Reason: Eight-word internal selector/dispatch table with offsets 029Ch, 0288h, 029Ch, 0288h, 0294h, 028Eh, 0294h, 028Eh; consumer semantics unresolved
 Words: 029C, 0288, 029C, 0288, 0294, 028E, 0294, 028E
 
-===== DATA 81EEh-8327h =====
-Reason: Advanced CMOS/CPU-profile data block: board configuration words, COM/LPT I/O base addresses, and pointers to CPU/cache profile records around 19A2h-19AFh
+===== DATA 81EEh-8325h =====
+Reason: Advanced CMOS/CPU-profile data block: board configuration words, COM/LPT I/O base addresses, and pointers to CPU/cache profile records around 19A2h-19AFh; ends before executable entry 8326h
 81EE  0D 0A 00 00 00 00 00 00 00 00 00 00 00 00 00 00 ................
 81FE  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 ................
 820E  00 00 00 BB 00 BC 3D 80 02 00 00 00 00 00 00 00 ......=.........
@@ -82,7 +82,7 @@ Reason: Advanced CMOS/CPU-profile data block: board configuration words, COM/LPT
 82EE  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 ................
 82FE  00 00 53 E8 02 00 5B C3 BB D0 B7 0A C0 74 42 32 ..S...[......tB2
 830E  E4 BB 5D B5 81 EB 08 B5 3B C3 BB D0 B7 72 12 BB ..].....;....r..
-831E  5D B5 81 EB 08 B5 2B C3 2E 8B                   ].....+...
+831E  5D B5 81 EB 08 B5 2B C3                         ].....+.
 
 ===== DATA 0B2Dh-0BE0h =====
 Reason: 45-entry CMOS Setup descriptor/handler table; final record 8300h/CA3Eh overlaps the Advanced CMOS handler entry at 0BDEh
@@ -28000,15 +28000,34 @@ Reason: CPU clock/cache profile page initializer; loads profile pointers at 82C6
 0C75  8B 1E CE 82             mov bx, word ptr [0x82ce]
 0C79  E8 01 00                call 0xc7d
 
-===== 8328h-832Dh =====
-Reason: wrapper entry preserving BX around CPU-profile/CMOS 8Eh configuration helper
-8328  1E                      push ds
-8329  C6 82 0A C0 74          mov byte ptr [bp + si - 0x3ff6], 0x74
+===== 8300h-8305h =====
+Reason: wrapper entry: preserves BX around CPU-profile/CMOS 8Eh configuration helper
+8300  53                      push bx
+8301  E8 02 00                call 0x8306
+8304  5B                      pop bx
+8305  C3                      ret
 
-===== 832Eh-8377h =====
-Reason: CPU clock/cache profile selector: walks 32-byte records rooted at CS:82C6h and updates CMOS register 8Eh
-832E  20 2E 8A 67             and byte ptr [0x678a], ch
-8332  1E                      push ds
+===== 8306h-8325h =====
+Reason: CPU-profile selector: compares the incoming AL index and selects the B7D0h profile-record path
+8306  BB D0 B7                mov bx, 0xb7d0
+8309  0A C0                   or al, al
+830B  74 42                   je 0x834f
+830D  32 E4                   xor ah, ah
+830F  BB 5D B5                mov bx, 0xb55d
+8312  81 EB 08 B5             sub bx, 0xb508
+8316  3B C3                   cmp ax, bx
+8318  BB D0 B7                mov bx, 0xb7d0
+831B  72 12                   jb 0x832f
+831D  BB 5D B5                mov bx, 0xb55d
+8320  81 EB 08 B5             sub bx, 0xb508
+8324  2B C3                   sub ax, bx
+
+===== 8326h-8377h =====
+Reason: CPU/cache profile-record walker: starts from CS:82C6h or alternate BX entry, advances 20h-byte records and updates CMOS register 8Eh
+8326  2E 8B 1E C6 82          mov bx, word ptr cs:[0x82c6]
+832B  0A C0                   or al, al
+832D  74 20                   je 0x834f
+832F  2E 8A 67 1E             mov ah, byte ptr cs:[bx + 0x1e]
 8333  2E 02 5F 1F             add bl, byte ptr cs:[bx + 0x1f]
 8337  80 D7 00                adc bh, 0
 833A  83 C3 20                add bx, 0x20
