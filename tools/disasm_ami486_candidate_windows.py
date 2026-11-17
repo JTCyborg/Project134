@@ -76,6 +76,10 @@ LIMITS.update({0xFA4E: 0x17, 0xFE6E: 0x03})
 # Main POST continuation and bounded helper entries in 1364h–188Dh.
 # Fixed-disk parameter continuation, embedded data, and keyboard-controller helpers.
 LIMITS.update({
+    0x10DF: 0x240,
+})
+
+LIMITS.update({
     0xAF84: 0x03, 0xAF87: 0x03, 0xAF8A: 0x03,
     0xAF8D: 0x252, 0xB1DF: 0x0A, 0xB1E4: 0x05,
 })
@@ -1133,6 +1137,11 @@ SEEDS = [
     (0x1BF0, "option-ROM scan invalid-candidate helper: advances BX by 0080h, restores DS and returns"),
     (0x1E9A, "OR SP,SP / RET status-success stub between POST callback entries"),
 ]
+
+SEEDS.extend([
+    (0x10DF, "POST hardware-initialization continuation: 8042 self-test, CMOS/memory configuration checks, setup-warning path and video/chipset initialization; entry provenance unresolved"),
+])
+
 
 SEEDS.extend([
     (0xAF84, "INT 09h keyboard IRQ path: final near-JMP byte completes the AF84h->B2E5h dispatch branch"),
