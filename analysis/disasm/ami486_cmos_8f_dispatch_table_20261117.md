@@ -393,3 +393,19 @@ A byte-accurate relative-CALL recalculation corrects the preceding summary: the 
 - 4EC3h -> 4BDAh
 
 The 581Ch and 5902h helpers belong to the display/input support layer; the 4CE6h and 4BDAh helpers remain to be decoded. Remove the earlier shorthand claim that this handler itself calls 578Dh. The geometry-entry handlers at 4DE7h/4E1Fh still call the shared 4EE7h numeric-input routine, which independently calls 578Dh.
+
+### Follow-up: list helpers and the disk-service boundary
+
+Further inspection of the 4BDAh/4CE6h call chain confirms these are support routines for the menu/list layer, not the formatter's disk-write worker:
+
+- `4BDAh` builds/refreshes the on-screen list and maintains the E423h/E425h/E427h list counters and indices. It calls display/input helpers (`578Dh`, `58D3h`, `5891h`, `581Ch`, `58B5h`, `5862h`) and list-processing code at `4CA2h`.
+- `4CA2h` calls `4CE6h` and iterates fixed-stride entries, copying/normalizing fields in the E4xx list area. `4CE6h` itself is a tiny arithmetic helper: it forms AX from AL shifted into AH, clears AL, adds 0C3Bh, and returns. It is not a disk-service call.
+- `4CEEh` is a separate list/menu processing routine. Its calls include `578Dh`, `58BEh`, `5862h`, `4DDDh`, and `58D3h`; it updates E185h (selected item index) and redisplays the selected entry. This reinforces that the 4E2Eh callback is part of the interactive list editor.
+- Error/status processing around `4AF0h–4B66h` maps controller status bytes (E1ADh/E1AEh) to user-visible error letters/messages, including the disk-controller/drive-failure strings. It is diagnostic handling, not evidence of a successful format operation.
+- Keyboard input helper `4B68h` waits for a key and recognizes Escape; the adjacent code handles a Y/N confirmation and associated UI state.
+
+A ROM-wide byte scan found direct `INT 13h` instructions at offsets:
+`3008h, 6C1Fh, 7018h, 701Ch, 7024h, 7075h, AA19h, AA72h, AA7Ch, AAA9h, AAAFh, CC29h, CC3Bh, F777h, F81Ah, F822h`.
+These are not all formatter calls; several are clearly in the boot path (F777h/F81Ah/F822h), and the 70xx/6Cxx locations are generic disk-service support. The hard-disk utility's 4Axx–50xx control path contains no literal `CD 13` instruction, so its disk operation must be reached through a wrapper/indirect dispatch or a different controller interface.
+
+The code at `AA70h` issues INT 13h with AH=08h (get drive parameters), then AH=04h (verify sectors), and later AH=09h/11h in its retry/status path. This is a disk-parameter/verification routine, not yet proven to be the low-level formatter. No direct IDE data-port accesses were identified in the immediate 4Axx–50xx utility path. The formatter's actual write operation remains unresolved; do not label any of these helpers as the format engine until the AH=05h/format-track or equivalent command path is traced.
