@@ -182,7 +182,7 @@ Entry from `1ECBh`. It:
 
 ### 7.2 28F2h — PIT-based memory scan
 
-Entry by CALL from `2893h`. It reads 16 KiB at a time from segment 9C00h down to 1C00h, stepping by 0400h paragraphs (16 KiB). This is 32 windows / 512 KiB. It then selects the timing-sample continuation through DI.
+Entry by CALL from `2893h`. It first reads 16 KiB at a time from segment 9C00h down to 1C00h, stepping by 0400h paragraphs (16 KiB): 32 windows / 512 KiB. It then selects the timing-sample continuation through DI. The timing path samples the PIT around another 16-KiB read at each segment while walking upward from 1800h through 9C00h.
 
 The continuations at `2911h`, `291Bh` and `2937h`:
 - retain the first PIT sample in DX;
