@@ -13,14 +13,15 @@ ROM_PATH = ROOT / "ami486.bin"
 OUT_PATH = ROOT / "analysis" / "disasm" / "ami486_candidate_windows_20261116.txt"
 MANIFEST_PATH = ROOT / "analysis" / "disasm" / "ami486_candidate_windows_20261116.manifest.txt"
 WINDOW = 0x80
-LIMITS = {0x0E00: 0x1A, 0x0E19: 0x63, 0x0E47: 0x35, 0x0E7C: 0x66, 0x0EE2: 0x11E, 0x0D00: 0x80, 0x0D84: 0x7C, 0x0EE2: 0x1F6, 0x1000: 0xD8, 0x60BB: 0x80, 0x41C0: 0x80, 0x427D: 0x06, 0x431B: 0x05, 0xA08D: 0x64, 0xA0A0: 0x51, 0xA0BD: 0x34, 0xE845: 0x20, 0x2238: 0x0A, 0x2244: 0x0B, 0x2250: 0x03, 0xF8E7: 0x43, 0xD46D: 0x2D, 0x131F: 0x46}
+LIMITS = {0x0E00: 0x1A, 0x0E19: 0x63, 0x0E47: 0x35, 0x0E7C: 0x66, 0x0EE2: 0x11E, 0x0D00: 0x80, 0x0D84: 0x7C, 0x0EE2: 0x1FD, 0x60BB: 0x80, 0x41C0: 0x80, 0x427D: 0x06, 0x431B: 0x05, 0xA08D: 0x64, 0xA0A0: 0x51, 0xA0BD: 0x34, 0xE845: 0x20, 0x2238: 0x0A, 0x2244: 0x0B, 0x2250: 0x03, 0xF8E7: 0x43, 0xD46D: 0x2D, 0x131F: 0x46}
 
 DATA_RANGES = [
-    (0x3100, 0x3188, "Setup main-menu captions", "ascii"),
-    (0x3188, 0x31A0, "Setup main-menu caption pointer table (12 words)", "words"),
-    (0x31A0, 0x342E, "Setup menu descriptions and help strings", "ascii"),
+    (0x3100, 0x318C, "Setup main-menu captions, ending at the final NUL", "ascii"),
+    (0x318C, 0x31A4, "Setup main-menu caption pointer table (12 words)", "words"),
+    (0x31A4, 0x342E, "Setup menu descriptions and help strings", "ascii"),
     (0x342E, 0x3454, "Setup menu string-pointer and metadata block", "hexascii"),
-    (0x3454, 0x3474, "AMI BIOS Setup Utilities title graphic/text", "ascii"),
+    (0x3454, 0x3456, "Two-byte Setup title graphic prefix", "hexascii"),
+    (0x3456, 0x3474, "AMI BIOS Setup Utilities title text", "ascii"),
     (0x3474, 0x34AB, "Setup keyboard navigation legend", "hexascii"),
     (0x34AB, 0x3501, "No-CMOS warning and Setup warning text", "ascii"),
     (0x3501, 0x3601, "Setup entry/help instructions", "ascii"),
@@ -57,7 +58,6 @@ SEEDS = [
     (0x0E47, "direct CALL target; increment/wrap state-update helper"),
     (0x0E7C, "stack-frame routine following E1xx state-update helper"),
     (0x0EE2, "second stack-frame routine in E1xx state/menu rendering cluster"),
-    (0x1000, "continuation of the 0EE2h stack-frame menu-list routine across 1000h"),
     (0x60BB, "direct CALL site and caller context for E1xx state/menu helper at 0E7Ch"),
     (0x41C0, "POST display/status routine candidate preceding 4200h"),
     (0x427D, "short code/data boundary candidate before AMIBIOS banner"),
