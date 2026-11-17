@@ -23277,3 +23277,26 @@ Reason: alternate INT 13h AH=11h status/diagnostic sequence
 7026  E8 01 00                call 0x702a
 7029  C3                      ret
 
+===== 6936h-696Eh =====
+Reason: direct-call disk state initializer; resets geometry and invokes 6BDEh mode dispatcher
+6936  33 C0                   xor ax, ax
+6938  38 06 AB E1             cmp byte ptr [0xe1ab], al
+693C  75 25                   jne 0x6963
+693E  A3 AF E1                mov word ptr [0xe1af], ax
+6941  A2 B1 E1                mov byte ptr [0xe1b1], al
+6944  A3 B5 E1                mov word ptr [0xe1b5], ax
+6947  A2 B7 E1                mov byte ptr [0xe1b7], al
+694A  C6 06 B9 E3 00          mov byte ptr [0xe3b9], 0
+694F  C6 06 BD E3 00          mov byte ptr [0xe3bd], 0
+6954  A1 11 E4                mov ax, word ptr [0xe411]
+6957  48                      dec ax
+6958  A3 B2 E1                mov word ptr [0xe1b2], ax
+695B  A0 13 E4                mov al, byte ptr [0xe413]
+695E  FE C8                   dec al
+6960  A2 B4 E1                mov byte ptr [0xe1b4], al
+6963  FF 36 21 E4             push word ptr [0xe421]
+6967  E8 74 02                call 0x6bde
+696A  58                      pop ax
+696B  A2 21 E4                mov byte ptr [0xe421], al
+696E  C3                      ret
+
