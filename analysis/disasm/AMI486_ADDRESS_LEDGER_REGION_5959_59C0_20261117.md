@@ -100,9 +100,9 @@ These strings corroborate the Setup load-values prompt context. They remain in t
 
 ## 6. Generator integration and coverage
 
-Add seed 5959h with a 67h-byte limit. Keep the existing 592Ah string-length candidate unchanged; the overlap is intentional because 5959h is a distinct entry immediately following the RET at 5958h.
+Added seed 5959h with a 67h-byte limit in generator commit baee67301ab87673ab39e188311e997d8c5b20ae. Keep the existing 592Ah string-length candidate unchanged; the overlap is intentional because 5959h is a distinct entry immediately following the RET at 5958h.
 
-Expected range-mask result after the generator update:
+Projected range-mask result (generator execution still pending):
 - Candidate windows: 891
 - Data ranges: 248
 - Unique code-window bytes: 44,287
