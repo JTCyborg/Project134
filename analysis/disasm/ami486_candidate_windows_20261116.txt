@@ -24973,13 +24973,114 @@ Reason: aligned continuation after the 849Eh CMOS-read stack return slot
 84B6  BC BC 84                mov sp, 0x84bc
 84B9  E9 E1 69                jmp 0xee9d
 
-===== 84BEh-84C9h =====
+===== 84BEh-84CAh =====
 Reason: aligned continuation after the 84BCh CMOS-read stack return slot
 84BE  83 C6 04                add si, 4
 84C1  2E 3B 36 C2 82          cmp si, word ptr cs:[0x82c2]
 84C6  72 CB                   jb 0x8493
-84C8  E9              db 0xE9
-84C9  42                      inc dx
+84C8  E9 42 54                jmp 0xd90d
+
+===== 84CBh-85B2h =====
+Reason: CMOS Setup/profile staging, checksum calculation, and CMOS 8Eh writeback routine; begins after the completed near JMP at 84C8h
+84CB  FA                      cli
+84CC  56                      push si
+84CD  57                      push di
+84CE  1E                      push ds
+84CF  07                      pop es
+84D0  BF 10 E0                mov di, 0xe010
+84D3  B0 8E                   mov al, 0x8e
+84D5  E8 BC 69                call 0xee94
+84D8  A8 C0                   test al, 0xc0
+84DA  75 17                   jne 0x84f3
+84DC  2E 8B 0E B3 82          mov cx, word ptr cs:[0x82b3]
+84E1  81 E9 8F 00             sub cx, 0x8f
+84E5  B0 90                   mov al, 0x90
+84E7  50                      push ax
+84E8  E8 A9 69                call 0xee94
+84EB  AA                      stosb byte ptr es:[di], al
+84EC  58                      pop ax
+84ED  FE C0                   inc al
+84EF  E2 F6                   loop 0x84e7
+84F1  EB 18                   jmp 0x850b
+84F3  B9 30 00                mov cx, 0x30
+84F6  BE 10 82                mov si, 0x8210
+84F9  2E F3 A4                rep movsb byte ptr es:[di], byte ptr cs:[si]
+84FC  B0 01                   mov al, 1
+84FE  E8 B2 00                call 0x85b3
+8501  B0 01                   mov al, 1
+8503  E8 C5 00                call 0x85cb
+8506  B0 01                   mov al, 1
+8508  E8 CB 00                call 0x85d6
+850B  E8 27 85                call 0xa35
+850E  E8 7E 95                call 0x1a8f
+8511  BE 00 E0                mov si, 0xe000
+8514  BF 80 E0                mov di, 0xe080
+8517  B9 80 00                mov cx, 0x80
+851A  F3 A4                   rep movsb byte ptr es:[di], byte ptr [si]
+851C  80 26 AA E1 FE          and byte ptr [0xe1aa], 0xfe
+8521  E8 C4 62                call 0xe7e8
+8524  75 05                   jne 0x852b
+8526  80 0E AA E1 01          or byte ptr [0xe1aa], 1
+852B  5F                      pop di
+852C  5E                      pop si
+852D  FB                      sti
+852E  C3                      ret
+852F  E8 5E 95                call 0x1a90
+8532  9C                      pushf
+8533  E8 19 00                call 0x854f
+8536  9D                      popf
+8537  74 0D                   je 0x8546
+8539  33 C0                   xor ax, ax
+853B  8E D8                   mov ds, ax
+853D  C7 06 72 04 00 00       mov word ptr [0x472], 0
+8543  E9 15 5B                jmp 0xe05b
+8546  C3                      ret
+8547  33 C0                   xor ax, ax
+8549  AC                      lodsb al, byte ptr [si]
+854A  03 D8                   add bx, ax
+854C  E2 FB                   loop 0x8549
+854E  C3                      ret
+854F  56                      push si
+8550  33 DB                   xor bx, bx
+8552  B9 1E 00                mov cx, 0x1e
+8555  BE 10 E0                mov si, 0xe010
+8558  E8 EC FF                call 0x8547
+855B  86 DF                   xchg bh, bl
+855D  89 1E 2E E0             mov word ptr [0xe02e], bx
+8561  33 DB                   xor bx, bx
+8563  BE 34 E0                mov si, 0xe034
+8566  B9 0A 00                mov cx, 0xa
+8569  E8 DB FF                call 0x8547
+856C  BE 40 E0                mov si, 0xe040
+856F  2E 8B 0E B3 82          mov cx, word ptr cs:[0x82b3]
+8574  81 E9 BF 00             sub cx, 0xbf
+8578  E3 03                   jcxz 0x857d
+857A  E8 CA FF                call 0x8547
+857D  86 FB                   xchg bl, bh
+857F  89 1E 3E E0             mov word ptr [0xe03e], bx
+8583  FA                      cli
+8584  BE 0E E0                mov si, 0xe00e
+8587  C7 04 00 00             mov word ptr [si], 0
+858B  2E 8B 0E B3 82          mov cx, word ptr cs:[0x82b3]
+8590  81 E9 8D 00             sub cx, 0x8d
+8594  B0 8E                   mov al, 0x8e
+8596  81 FE 32 E0             cmp si, 0xe032
+859A  75 08                   jne 0x85a4
+859C  46                      inc si
+859D  46                      inc si
+859E  FE C0                   inc al
+85A0  FE C0                   inc al
+85A2  49                      dec cx
+85A3  49                      dec cx
+85A4  8A E0                   mov ah, al
+85A6  AC                      lodsb al, byte ptr [si]
+85A7  86 E0                   xchg al, ah
+85A9  E8 F1 68                call 0xee9d
+85AC  FE C0                   inc al
+85AE  E2 E6                   loop 0x8596
+85B0  FB                      sti
+85B1  5E                      pop si
+85B2  C3                      ret
 
 ===== E831h-E844h =====
 Reason: sibling POST notification handler; sets BDA 40:3Eh and invokes INT 15h AX=9101h
