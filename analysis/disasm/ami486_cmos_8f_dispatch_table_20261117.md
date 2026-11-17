@@ -1520,3 +1520,9 @@ At 6955h the BIOS loads the cylinder word from E411h, decrements it, and stores 
 ### Reference-scan qualification
 
 A raw search for the little-endian byte pairs corresponding to E418h/E41Ah also finds occurrences inside unrelated instruction streams (for example short conditional-branch displacements followed by opcode bytes). Those are not valid evidence of memory operands. In the code examined so far, direct data accesses are established for E411h, E413h, E416h, E41Dh, and E41Fh. No genuine direct read of E418h, E419h, E41Ah, E41Bh, E41Ch, or E420h has yet been established. These locations should remain classified as reserved/padding or compatibility bytes pending a verified consumer, rather than assigning them invented semantics.
+
+## Geometry editor bounds (4F43h-4F6Ah)
+
+The setup editor also uses the active DPT values as input limits. At 4F43h it loads `DX=[E411]`, decrements DX, and calls the numeric-entry routine at 06C9h with the destination local at `[BP-6]`. At 4F5Ch it loads `DL=[E413]`, clears DH, decrements DX, and calls the same entry routine with `[BP-4]`. The helper at 06C9h compares the entered value against the caller-supplied DX limit (`CMP DX,[BP-4]` in its frame) and rejects values above it. This means the editor's maximum accepted cylinder index is cylinders-1 and its maximum head index is heads-1; the UI stores zero-based CHS indices, while the DPT itself stores the corresponding counts.
+
+This is a separate use from the display at 481Fh onward: the DPT values are both shown as geometry counts and used as upper bounds when editing a particular CHS address. The code therefore confirms the distinction between count fields (cylinders/heads) and the zero-based maximum indices derived from them.
