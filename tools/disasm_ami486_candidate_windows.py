@@ -13,9 +13,22 @@ ROM_PATH = ROOT / "ami486.bin"
 OUT_PATH = ROOT / "analysis" / "disasm" / "ami486_candidate_windows_20261116.txt"
 MANIFEST_PATH = ROOT / "analysis" / "disasm" / "ami486_candidate_windows_20261116.manifest.txt"
 WINDOW = 0x80
-LIMITS = {0xA08D: 0x64, 0xA0A0: 0x51, 0xA0BD: 0x34, 0xE845: 0x20, 0x2238: 0x0A, 0x2244: 0x0B, 0x2250: 0x03, 0xF8E7: 0x43, 0xD46D: 0x2D, 0x131F: 0x46}
+LIMITS = {0x0E00: 0x1A, 0x0E1A: 0x62, 0x0E7C: 0x66, 0x0EE2: 0x11E, 0x41C0: 0x80, 0x427D: 0x06, 0x431B: 0x05, 0xA08D: 0x64, 0xA0A0: 0x51, 0xA0BD: 0x34, 0xE845: 0x20, 0x2238: 0x0A, 0x2244: 0x0B, 0x2250: 0x03, 0xF8E7: 0x43, 0xD46D: 0x2D, 0x131F: 0x46}
 
 DATA_RANGES = [
+    (0x3100, 0x3188, "Setup main-menu captions", "ascii"),
+    (0x3188, 0x31A0, "Setup main-menu caption pointer table (12 words)", "words"),
+    (0x31A0, 0x342E, "Setup menu descriptions and help strings", "ascii"),
+    (0x342E, 0x3454, "Setup menu string-pointer and metadata block", "hexascii"),
+    (0x3454, 0x3474, "AMI BIOS Setup Utilities title graphic/text", "ascii"),
+    (0x3474, 0x34AB, "Setup keyboard navigation legend", "hexascii"),
+    (0x34AB, 0x3501, "No-CMOS warning and Setup warning text", "ascii"),
+    (0x3501, 0x3601, "Setup entry/help instructions", "ascii"),
+    (0x3601, 0x3624, "AMI BIOS Setup Program title", "ascii"),
+    (0x36AB, 0x37C3, "Available-options and hard-disk help strings", "ascii"),
+    (0x381C, 0x3873, "Hard-disk format menu labels", "ascii"),
+    (0x3874, 0x3900, "Hard-disk format menu title and labels", "ascii"),
+
     (0xA0F1, 0xA125, "INT 13h AH function table", "words"),
     (0xA125, 0xA18E, "Format / BootSector Write / Possible VIRUS prompt", "ascii"),
     (0xAD00, 0xAE60, "Keyboard translation data candidates", "hexascii"),
@@ -37,6 +50,14 @@ DATA_RANGES = [
 ]
 
 SEEDS = [
+    (0x0E00, "unaligned Setup/POST control-flow fragment; short branch stub"),
+    (0x0E1A, "direct continuation candidate in E1xx state-update logic"),
+    (0x0E7C, "stack-frame routine following E1xx state-update helper"),
+    (0x0EE2, "second stack-frame routine in E1xx state-update cluster"),
+    (0x41C0, "POST display/status routine candidate preceding 4200h"),
+    (0x427D, "short code/data boundary candidate before AMIBIOS banner"),
+    (0x431B, "short code/data boundary candidate before POST field labels"),
+
     (0xA000, "code-dense raw window; entry not yet caller-verified"),
     (0xA080, "continuation candidate after initial A000h helper group"),
     (0xA08D, "INT 13h hard-disk handler entry; forwards DL<80h to INT 40h"),
