@@ -1224,3 +1224,6 @@ Byte-aligned target correction: the cleanup CALL at 0210h resolves to 62BDh (byt
 
 
 The temporary INT 1Ch handler at 631Ch uses the BIOS tick count at 0040:006Ch and calls 6616h when its timing threshold is reached and the INT 10h/1Ah nesting counter at 028Eh is zero. The 6616h helper reads/validates the BIOS date via 6774h and performs calendar calculations through CS tables at 6164h/616Bh. The candidate window is extended through its RET at 6757h; BCD/date conversion helpers 68E2h and 68FDh are seeded separately.
+
+
+The calendar updater at 6616h is now decoded as a complete candidate stream through its RET at 6757h (LIMITS 0142h). It reads and validates the BIOS date with 6774h/68E2h, converts packed BCD components through 68FDh, computes weekday/month offsets using tables 6164h/616Bh, and writes the calendar grid. The generated candidate listing is being refreshed for this full window.
