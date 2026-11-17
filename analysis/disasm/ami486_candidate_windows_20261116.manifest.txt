@@ -1,6 +1,6 @@
 Target: ami486.bin
 ROM size: 65536 bytes
-Candidate windows: 582
+Candidate windows: 583
 Data ranges: 153
 Window bytes: 0x80 default; selected handler windows clipped at known data boundaries
 Decoder: Capstone x86 16-bit

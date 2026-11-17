@@ -24308,3 +24308,9 @@ Reason: clear CR0.PE and restore real-mode execution
 Reason: A20-disable tail jump to F66Eh
 23CB  E9 A0 D2                jmp 0xf66e
 
+===== 1BF0h-1BF5h =====
+Reason: option-ROM scan invalid-candidate helper: advances BX by 0080h, restores DS and returns
+1BF0  81 C3 80 00             add bx, 0x80
+1BF4  1F                      pop ds
+1BF5  C3                      ret
+
