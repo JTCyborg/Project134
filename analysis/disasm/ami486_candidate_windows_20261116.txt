@@ -523,7 +523,7 @@ B538  30 31 32 33 34 35 36 37 38 39 3A 3B 3C 3D 3E 3F 0123456789:;<=>?
 B548  40 41 42 43 44 45 46 47 48 49 4A 4B 4C 4D 4E 4F @ABCDEFGHIJKLMNO
 B558  50 51 52 53 54 52 02                            PQRSTR.
 
-===== 00EFh-01EEh =====
+===== 00EFh-0235h =====
 Reason: low-ROM executable-looking stream after the AMI copyright block; entry xrefs unresolved
 00EF  06                      push es
 00F0  1E                      push ds
@@ -619,8 +619,41 @@ Reason: low-ROM executable-looking stream after the AMI copyright block; entry x
 01E4  BA 16 0D                mov dx, 0xd16
 01E7  E8 78 06                call 0x862
 01EA  E8 7E 60                call 0x626b
-01ED  BB              db 0xBB
-01EE  F5                      cmc
+01ED  BB F5 0A                mov bx, 0xaf5
+01F0  EB 03                   jmp 0x1f5
+01F2  83 C3 04                add bx, 4
+01F5  2E 8B 07                mov ax, word ptr cs:[bx]
+01F8  89 46 00                mov word ptr [bp], ax
+01FB  E8 97 07                call 0x995
+01FE  2E 8B 47 02             mov ax, word ptr cs:[bx + 2]
+0202  53                      push bx
+0203  FF D0                   call ax
+0205  58                      pop ax
+0206  8B 5E 00                mov bx, word ptr [bp]
+0209  73 E7                   jae 0x1f2
+020B  74 E8                   je 0x1f5
+020D  E8 8D 07                call 0x99d
+0210  E8 AA 60                call 0x62bd
+0213  FA                      cli
+0214  BF 00 E0                mov di, 0xe000
+0217  8B F4                   mov si, sp
+0219  B9 20 00                mov cx, 0x20
+021C  1E                      push ds
+021D  07                      pop es
+021E  36 F3 A5                rep movsw word ptr es:[di], word ptr ss:[si]
+0221  81 C4 80 00             add sp, 0x80
+0225  B7 00                   mov bh, 0
+0227  58                      pop ax
+0228  E8 96 07                call 0x9c1
+022B  59                      pop cx
+022C  B4 01                   mov ah, 1
+022E  CD 10                   int 0x10
+0230  1F                      pop ds
+0231  07                      pop es
+0232  5F                      pop di
+0233  5E                      pop si
+0234  5D                      pop bp
+0235  C3                      ret
 
 ===== 56F1h-5730h =====
 Reason: text-mode cell-offset helper: DI=(row*80+column)*2
