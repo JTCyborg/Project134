@@ -22,8 +22,10 @@ The original `ami486.bin` remains immutable reference input. This reconstruction
 
 - Source: repository-root `ami486.bin`
 - Git blob: `480c7520c93e6c7ed437cf3ad214da7503f82ec6`
-- The binary endpoint returned a Base64 payload of 88,841 characters in this session. Its length is not valid Base64 (not divisible by four), so the payload is treated as incomplete and no decoded file size or checksum is claimed here.
-- Before generating a clone, verify the exact byte length and cryptographic hash from a complete binary download. Then map the file against the chipset's ROM decode and reset-vector alias before choosing a final linker origin.
+- Verified reference size: 65,536 bytes.
+- Verified Git blob: `480c7520c93e6c7ed437cf3ad214da7503f82ec6`.
+- Verified SHA-256: `91fd62ce3ccb0b79b42f5fd6c6a7262ed52824b8ade917181b8a12267fec003b`.
+- The 64 KiB image and F0000h mapping remain a working build assumption until confirmed against the exact PCem ROM loader and configured chipset ROM window.
 - Existing disassembly notes: `analysis/disasm/`
 
 ## Reconstruction strategy
@@ -73,6 +75,10 @@ Do not implement the disk service as complete until read, write, verify, format,
 - Differential trace has no unexplained differences in port I/O, IVT, BDA, CMOS, memory initialization, or externally visible status.
 - Unknown/inherited code is reported explicitly; it is never silently described as reimplemented.
 
-## Current status
+## Current implementation status
 
-Architecture/scaffold only. No replacement BIOS binary has been built yet. The existing disassembly is not yet sufficient to claim a complete functional clone.
+- `bios/src/disk/int13.asm` now contains a first native INT 13h dispatch slice: selector guard AH=00h..19h, a 26-entry near-offset table, and the verified shared unsupported-function return behavior (AX=0100h, BDA 0040:0074h=01h, CF=1).
+- The known unsupported selectors (06h, 07h, 0Eh, 0Fh, 12h, 13h, 16h, 17h, 18h) route to that reproduced error path.
+- Other selectors currently route to an explicitly temporary failure fallback. They are NOT implemented disk services and must be replaced only after their full register, flag, BDA, DPT and ATA side-effect contracts are ported.
+- The module is included in the flat ROM build and listed in the Visual Studio project, but is not yet installed into the IVT. The reset path still halts; this commit does not make the ROM bootable or PCem-ready.
+- No native replacement image has been validated in PCem yet. The disassembly and current first implementation slice are insufficient to claim a functional clone.
