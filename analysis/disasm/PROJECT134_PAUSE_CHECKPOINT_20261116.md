@@ -254,3 +254,10 @@ New text/table classifications are documented in AMI486_ADDRESS_LEDGER_20261116.
 
 
 The low-ROM 00EFh candidate seed is extended through 0235h to include the observed RET. Candidate output regeneration/byte-mask refresh is pending verification.
+
+
+## Low-ROM screen-presentation decode completed — 2026-11-17
+
+The generated candidate window 00EFh–0235h is now byte-aligned through RET. The report AMI486_LOW_ROM_SETUP_VIDEO_ENTRY_20261117.md documents the display/cursor preservation path and the 0AF5h callback-record walker. No direct near CALL/JMP entry or literal 00EFh pointer was found; incoming stack convention remains unresolved.
+
+Current generated candidate footprint: 222 code windows, 57 data ranges, 12,140 code-window bytes, 9,197 data-range bytes, 113 overlap bytes, 21,224-byte union (32.39%) across 108 pages. This remains a sampling footprint, not semantic completion.
