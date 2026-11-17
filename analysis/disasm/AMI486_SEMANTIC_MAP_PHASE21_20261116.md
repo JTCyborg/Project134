@@ -91,3 +91,8 @@ Confirmed from instruction flow: the branch conditions, lookup call sites, ALi i
 Strongly supported: the 32-KiB helper family performs ROM-shadow initialization based on ALi 13h/14h behavior and the PCem model.
 
 Unresolved: the exact B51x Setup labels in the stock image, the runtime/OEM source of the optional record table, the physical mapping of the ALi windows, and the hardware meanings of the affected register bits.
+
+
+## Audit clarification — ROM-shadow copy lengths (2026-11-17)
+
+The 32-KiB same-segment copy description in section 3 applies to the C000h–E000h option-gated helpers (2415h, 2420h, 242Bh, 2436h, 2441h, 244Ch), each of which sets CX=4000h words. A separate POST helper at 240Ah is called from 23ECh: it sets BX=F000h, CX=8000h words (64 KiB), DL=C0h, then enters the same common copy body at 2457h. The common body stages ALi registers 13h/14h, copies from DS:0000 to ES:0000 with REP MOVSW, then changes register 14h to the final state. The exact hardware mapping remains chipset-dependent. See `AMI486_ADDRESS_LEDGER_REGION_23CE_29F6_20261117.md`.
