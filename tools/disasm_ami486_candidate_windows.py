@@ -227,7 +227,7 @@ DATA_RANGES = [
     (0x59C0, 0x59C6, "Three-word pointer table for Setup load-value confirmation prompts", "words"),
     (0x59C6, 0x5A4C, "Setup load-original/default-values confirmation prompts", "ascii"),
     (0x7145, 0x714E, "Inline POST memory-throughput unit label (not NUL terminated)", "ascii"),
-    (0x732B, 0x737F, "POST summary navigation legend, box-drawing fill and CR/LF control bytes", "hexascii"),
+    (0x732D, 0x737F, "POST summary navigation legend, box-drawing fill and CR/LF control bytes; starts after the 7323h decimal-print wrapper RET at 732Ch", "hexascii"),
     (0x7380, 0x78B6, "POST summary, device labels, Setup help, calendar names and adjacent pointer tables", "hexascii"),
     (0x78B6, 0x7CE9, "POST error messages, boot/password prompts and keyboard-controller warning strings", "ascii"),
     (0x8000, 0x81EE, "AMI BIOS identification, OEM ID/configuration strings and padded banner data", "hexascii"),
@@ -1444,6 +1444,18 @@ LIMITS.update({
 
 SEEDS.extend([
     (0x04AA, "field-value helper wrapper called at 048Ah; loads selector byte E1A3h and enters common calculation at 04BBh"),
+])
+
+
+LIMITS.update({
+    0x72D8: 0x19, 0x72F1: 0x19, 0x730A: 0x19, 0x7323: 0x0A,
+})
+
+SEEDS.extend([
+    (0x72D8, "save AX/BX/CX/DX/SI/DI/DS/ES into the BP-relative 10h-byte context frame; direct callers include 6975h, 69D7h, 6C3Fh, 6CECh, 6E34h, 6EA7h, 6F42h, 6F79h, 6FB1h and 71A5h"),
+    (0x72F1, "restore AX/BX/CX/DX/SI/DI/DS/ES from the BP-relative context frame; direct callers include 69C8h, 6A4Eh, 6C99h, 6D8Ch, 6E6Dh, 6ECBh, 6F70h, 6F9Eh, 6FDEh and 71DDh"),
+    (0x730A, "recursive unsigned decimal conversion/output helper; divides by ten and emits digits through BIOS INT 10h teletype"),
+    (0x7323, "register-preserving wrapper around the unsigned decimal output helper at 730Ah; direct callers 6C75h, 6C96h, 7179h, 719Bh and 71DAh"),
 ])
 
 def main():
