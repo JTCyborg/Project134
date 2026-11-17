@@ -361,12 +361,12 @@ The updated generator also removes the redundant 2D00h and misaligned 2D80h expl
 
 ### Current reproducible candidate footprint
 
-The regenerated manifest reports 221 code windows and 56 data ranges. A byte-mask recomputation from the generated listing yields:
-- code-window bytes: 11,813;
-- data-range bytes: 8,958;
+The regenerated manifest reports 222 code windows and 57 data ranges (279 headers). A byte-mask recomputation from the generated listing yields:
+- code-window bytes: 12,140;
+- data-range bytes: 9,197;
 - overlap: 113;
-- union: 20,658 bytes (31.52%);
-- touched 256-byte pages: 105/256.
+- union: 21,224 bytes (32.39%);
+- touched 256-byte pages: 108/256.
 
 Do not interpret 31.52% as BIOS semantic completion. The code windows are independent linear decodes; the data ranges include confirmed strings/tables and some mixed blocks whose internal table consumers remain open.
 
@@ -385,3 +385,14 @@ At 00EFh the bytes switch to an executable-looking stream:
 The initial aligned instructions are PUSH ES, PUSH DS, PUSH SS, POP ES, MOV AH,03h, MOV BH,00h, INT 10h, PUSH CX, PUSH DX, SUB SP,0080h, MOV BP,SP, MOV DI,SP, MOV CX,0020h, MOV SI,E000h, REP MOVSW. This is a candidate code stream seeded separately at 00EFh; it is **not yet a proven function entry**. A raw-byte scan found no direct near CALL/JMP target or literal little-endian 00EFh pointer in the ROM. The caller/entry mechanism and the meaning of the copied DS:E000h block remain unresolved. Do not infer reachability from the new seed.
 
 The generator change is committed, but the generated candidate artifact must be checked after the workflow refresh; until then the manifest's 221/56 counts remain the last verified generated output.
+
+
+## 11.2 Low-ROM screen-presentation stream — 2026-11-17
+
+Detailed byte-aligned report: [AMI486_LOW_ROM_SETUP_VIDEO_ENTRY_20261117.md](AMI486_LOW_ROM_SETUP_VIDEO_ENTRY_20261117.md).
+
+- `0000h–00EEh` is an AMI BIOS identity/copyright/pattern data block; `00EFh–0235h` is a separately seeded executable-looking screen-presentation stream.
+- The stream saves/restores a 64-byte block at `DS:E000h` through an 80h-byte stack allocation, reads the current INT 10h cursor state, writes Setup/System Configuration field labels and values, and restores cursor state before returning.
+- It walks four-byte `next/callback` records beginning directly at `BX=0AF5h`. This differs from the 05B4h dispatcher, which starts at the selected base plus four. The first raw record at 0AF5h is `next=0AEDh, callback=6373h`.
+- Runtime entry is still unproven: no direct near CALL/JMP target or literal 00EFh pointer was found. The visible epilogue pops BP/SI/DI that are not pushed within this stream, so the required caller stack frame remains unresolved.
+- Do not equate this renderer with the separate 3F7Bh POST summary renderer solely because the screen labels overlap.
