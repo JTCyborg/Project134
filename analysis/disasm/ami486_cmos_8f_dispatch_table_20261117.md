@@ -846,3 +846,16 @@ The error-message pointer table is located at `3BEEh` and contains 13 little-end
 | 13 | `CCh` | `3BD0h` | Write Fault on Selected Drive |
 
 The adjacent string at `3C0Dh` is `Abort, Retry, Ignore ?`. The presence of this prompt is byte-confirmed, but the exact key-to-action dispatch and whether every listed error uses the same prompt must be established by tracing the continuation of `4FCFh` and its caller(s). The table mapping above is established by the status-code array and pointer array ordering, not by assuming standard PC BIOS error text.
+
+
+### Abort / Retry / Ignore key path
+
+The prompt string at `3C0Dh` is consumed by the UI path reached from the error-message display routine at `4FCFh`. The key-input loop in that routine stores the accepted key in `[E182h]` and accepts only ASCII `A` (`41h`), `I` (`49h`) and `R` (`52h`); other keys loop back for another input. The routine returns the selected key in AL.
+
+The worker at `69D1h` compares this returned AL:
+
+- `A`: branches to a path that explicitly sets CF, then restores saved registers and returns. This is the Abort result.
+- `I`: enters the branch that clears CF and returns from the worker. This is the Ignore result (the failed operation is accepted as non-fatal by the caller).
+- `R`: takes the retry branch back to the disk-operation loop.
+
+This establishes the actual user-action semantics from the character comparisons and branch destinations; it is not merely inferred from the prompt wording. The status code `1Bh` remains a separate ESC/user-break sentinel and is not one of the three A/R/I responses.
