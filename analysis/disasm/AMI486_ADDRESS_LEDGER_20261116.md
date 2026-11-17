@@ -510,3 +510,12 @@ Report: [AMI486_ADDRESS_LEDGER_REGION_696F_72D8_20261117.md](AMI486_ADDRESS_LEDG
 The D697Dh–D7144h gap is now mapped as part of the Hard Disk Setup subsystem. The UI at 4628h–46E8h cycles E1ACh through three options and displays drive geometry headings and “No Hard Disk Installed” / “Hard Disk Type can be changed from”. The direct dispatcher caller is 6936h; it calls 6BDEh, which selects one of three handlers through the three-word table at 6BD8h: 6B14h, 71E4h or 6CE3h. The subsystem includes an INT 13h wrapper at 6C15h, disk request/transfer loops at 6D94h/6E30h, status-token lookup at 6CB4h, and a 40-sector repeated-read benchmark at 7033h that prints “KB/sec ms” at 7145h.
 
 Latest candidate mask: 541 code windows, 140 data ranges, 29,460 unique code-window bytes, 15,775 unique data-range bytes, 117 overlap bytes, 45,118-byte union (68.84%), 71 uncovered intervals, 203 pages touched and 125 fully covered. This is still a seeded inspection mask. The next largest uncovered interval is 19F8h–20FFh (1,800 bytes).
+
+
+## 17. POST/cache/ALi/option-ROM/A20 region — 2026-11-17
+
+Report: [AMI486_ADDRESS_LEDGER_REGION_19B0_23CE_20261117.md](AMI486_ADDRESS_LEDGER_REGION_19B0_23CE_20261117.md).
+
+The 19F8h–20FFh gap is now fully covered. The region includes the cache and CPU-speed lookup/display paths, CMOS B3h-selected ALi profile table application, option-ROM scanning and checksum validation, C0000h/E0000h shadow-window paths, manual CMOS-to-ALi1429 read/modify/write configuration, POST 8042/A20 feature detection, POST A1h/A4h handlers, the 8750h–87A4h 21-record ALi table walker, and the protected-mode memory-address test bracketed by A20 enable/disable. Crafted return words at 1B04h, 1B2Ah, 2096h, 20C2h, 20CCh and 20D8h are explicitly separated from executable code.
+
+Latest mask: 597 code windows, 153 data ranges, 31,279 unique code bytes, 15,827 unique data bytes, 121 overlap bytes, 46,985-byte union (71.69%), 66 uncovered intervals, 210 pages touched and 135 fully covered. The next largest uncovered range is CA16h–D0FFh (1,770 bytes). This is still a seeded inspection mask, not semantic completion.
