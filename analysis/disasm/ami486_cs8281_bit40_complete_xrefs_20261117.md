@@ -17,9 +17,9 @@ The ROM image has `CS:[8280]=2Fh` and `CS:[8281]=00h` initially. The bit-40 dire
 | `5478h` | `JZ 5483h` | `JMP 8AD6h` — 8042 reset body | `JMP F068h` — final mode decision |
 | `8B11h` | `JNZ 8B2Dh` | skips CMOS[2Dh] read/convert sequence | reads CMOS[2Dh], returns transformed value |
 | `8BE9h` | `JNZ 8BF2h` | skips 32-bit register push | executes `PUSH EAX` |
-| `8C41h` | `JNZ 8CA6h` | skips 32-bit register pop / restore path | executes restore sequence |
+| `8C41h` | `JNZ 8C4Ah` | skips the `66h` operand-size prefix, changing `POP EAX` to `POP AX` | executes `POP EAX` |
 | `8C4Eh` | `JNZ 8CAFh` | takes alternate path around save/restore setup | executes `PUSH EAX` and setup |
-| `8CA6h` | `JNZ 8D02h` | skips 32-bit register pop | executes `POP EAX` / return sequence |
+| `8CA6h` | `JNZ 8CAFh` | skips the `66h` operand-size prefix, changing `POP EAX` to `POP AX` | executes `POP EAX` |
 | `9150h` | `JNZ 91B4h` | skips a block-copy / CPU-transition setup path | executes the copy and subsequent mode setup |
 | `91FBh` | `JNZ 91BCh` | loops to the marker/transition continuation | takes the alternate near-jump path |
 | `D657h` | `JNZ D690h` | bypasses the CR0/descriptor transition block | executes SMSW, CR0 test/update, then common setup |
