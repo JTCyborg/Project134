@@ -79,7 +79,7 @@ This confirms that the earlier POST scans over C800h–DFFFh and E000h–E7FFh e
 
 F724h calls EF36h, invokes INT 19h, and if that returns emits POST AAh to port 80h before entering a STI/HLT loop.
 
-F731h reads the keyboard data port 60h, sends EOI 20h to the master PIC command port 20h, then chains through the far pointer at BDA/low-memory offset 0067h.
+F731h reads the keyboard data port 60h, sends EOI 20h to the master PIC command port 20h, then chains through the far pointer at low-memory address 0000:0067h.
 
 F73Bh checks the caller's saved CS:IP against the expected CS:F7AFh return frame. If it matches, it discards six stack bytes and resumes at F7B2h. Otherwise it selects the boot error string at 7B15h and jumps to the F509h diagnostic display path.
 
