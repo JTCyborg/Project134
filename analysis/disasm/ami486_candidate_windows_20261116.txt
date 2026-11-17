@@ -1365,6 +1365,18 @@ Reason: Overlapping 14-row AUTO Config lookup view; 20-byte row stride with 16-b
 Reason: Adjacent POST configuration constants; word at 8886h is the 0051h (81-record) loop count used at 844Ah
 Words: 0005, 004C, 0000, 0051
 
+===== DATA 8E4Eh-8E61h =====
+Reason: Ten-word ALi indexed-register profile list selected by the CMOS B3h profile path
+Words: 21C0, 00C1, 00C5, 0FC6, 00C8, 00C9, 00CB, 00CC, 00CE, 00CF
+
+===== DATA 8E62h-8E75h =====
+Reason: Ten-word alternate ALi indexed-register profile list selected by the CMOS B3h profile path
+Words: 21C0, 00C1, 0AC5, 06C6, 0CC8, 07C9, 00CB, 00CC, 00CE, 00CF
+
+===== DATA 8E76h-8E7Dh =====
+Reason: Four-word short ALi indexed-register profile list selected by the CMOS B3h profile path
+Words: 00C1, 00C2, 10C1, 00C2
+
 ===== DATA 2068h-208Ch =====
 Reason: LGDT pseudo-descriptor at 2068h plus adjacent descriptor/parameter bytes used by the PM memory probe
 2068  17 00 70 20 0F 93 00 00 00 00 00 00 00 00 00 00 ..p ............
@@ -13629,7 +13641,268 @@ Reason: direct JMP targets from 27D7h/28D8h; chipset configuration callback cand
 8DCB  B9 FF FF                mov cx, 0xffff
 8DCE  C3                      ret
 
-===== 8DCFh-8E4Eh =====
+===== 8378h-83A7h =====
+Reason: CMOS/ALi configuration selector: searches the 873Ch record array and returns record byte 3
+8378  BB 3C 87                mov bx, 0x873c
+837B  2E 3A 06 88 88          cmp al, byte ptr cs:[0x8888]
+8380  76 05                   jbe 0x8387
+8382  2E 8B 1E C0 82          mov bx, word ptr cs:[0x82c0]
+8387  2E 38 07                cmp byte ptr cs:[bx], al
+838A  74 05                   je 0x8391
+838C  83 C3 04                add bx, 4
+838F  EB F6                   jmp 0x8387
+8391  2E 8A 47 03             mov al, byte ptr cs:[bx + 3]
+8395  8A DC                   mov bl, ah
+8397  B7 08                   mov bh, 8
+8399  B4 00                   mov ah, 0
+839B  D0 C3                   rol bl, 1
+839D  73 04                   jae 0x83a3
+839F  D1 C0                   rol ax, 1
+83A1  EB 02                   jmp 0x83a5
+83A3  D0 C0                   rol al, 1
+83A5  FE CF                   dec bh
+83A7  75              db 0x75
+
+===== 85B3h-85BFh =====
+Reason: POST CMOS/ALi state-application wrapper; calls the 873Ch record walkers
+85B3  50                      push ax
+85B4  E8 3E 00                call 0x85f5
+85B7  58                      pop ax
+85B8  E8 10 00                call 0x85cb
+85BB  50                      push ax
+85BC  E8 17 00                call 0x85d6
+85BF  58                      pop ax
+
+===== 85CBh-85D4h =====
+Reason: record walker over the CS:8880h metadata block
+85CB  56                      push si
+85CC  2E 8B 0E 84 88          mov cx, word ptr cs:[0x8884]
+85D1  BE 80 88                mov si, 0x8880
+85D4  EB              db 0xEB
+
+===== 85D6h-85FDh =====
+Reason: dynamic record walker using CS:82C0h/82C2h and CS:82CAh
+85D6  56                      push si
+85D7  33 DB                   xor bx, bx
+85D9  33 C9                   xor cx, cx
+85DB  2E 8A 1E B0 82          mov bl, byte ptr cs:[0x82b0]
+85E0  FE CB                   dec bl
+85E2  78 0A                   js 0x85ee
+85E4  D1 E3                   shl bx, 1
+85E6  2E 8B 36 CA 82          mov si, word ptr cs:[0x82ca]
+85EB  2E 8B 08                mov cx, word ptr cs:[bx + si]
+85EE  2E 8B 36 C0 82          mov si, word ptr cs:[0x82c0]
+85F3  EB 09                   jmp 0x85fe
+85F5  56                      push si
+85F6  2E 8B 0E 80 88          mov cx, word ptr cs:[0x8880]
+85FB  BE 3C 87                mov si, 0x873c
+
+===== 85F5h-862Dh =====
+Reason: five-record E000h state-bit updater using records at 873Ch
+85F5  56                      push si
+85F6  2E 8B 0E 80 88          mov cx, word ptr cs:[0x8880]
+85FB  BE 3C 87                mov si, 0x873c
+85FE  E3 2E                   jcxz 0x862e
+8600  32 FF                   xor bh, bh
+8602  50                      push ax
+8603  2E 8A 1C                mov bl, byte ptr cs:[si]
+8606  FE C8                   dec al
+8608  8A 87 80 E0             mov al, byte ptr [bx - 0x1f80]
+860C  78 0A                   js 0x8618
+860E  2E 8A 44 02             mov al, byte ptr cs:[si + 2]
+8612  74 04                   je 0x8618
+8614  2E 8A 44 03             mov al, byte ptr cs:[si + 3]
+8618  2E 8A 54 01             mov dl, byte ptr cs:[si + 1]
+861C  22 C2                   and al, dl
+861E  F6 D2                   not dl
+8620  20 97 00 E0             and byte ptr [bx - 0x2000], dl
+8624  08 87 00 E0             or byte ptr [bx - 0x2000], al
+8628  83 C6 04                add si, 4
+862B  58                      pop ax
+862C  E2 D4                   loop 0x8602
+
+===== 8BE8h-8C4Ch =====
+Reason: direct CALL target from the 8B2Dh controller-state dispatcher
+8BE8  52                      push dx
+8BE9  2E F6 06 81 82 40       test byte ptr cs:[0x8281], 0x40
+8BEF  75 01                   jne 0x8bf2
+8BF1  66 50                   push eax
+8BF3  57                      push di
+8BF4  BF FA 8B                mov di, 0x8bfa
+8BF7  E9 D3 00                jmp 0x8ccd
+8BFA  5F                      pop di
+8BFB  B5 00                   mov ch, 0
+8BFD  75 02                   jne 0x8c01
+8BFF  B5 FF                   mov ch, 0xff
+8C01  2E 80 3E 68 82 00       cmp byte ptr cs:[0x8268], 0
+8C07  74 07                   je 0x8c10
+8C09  51                      push cx
+8C0A  E8 76 01                call 0x8d83
+8C0D  58                      pop ax
+8C0E  0A EC                   or ch, ah
+8C10  2E A0 69 82             mov al, byte ptr cs:[0x8269]
+8C14  0A C0                   or al, al
+8C16  74 05                   je 0x8c1d
+8C18  E8 CF 00                call 0x8cea
+8C1B  B5 FF                   mov ch, 0xff
+8C1D  2E 8B 16 6A 82          mov dx, word ptr cs:[0x826a]
+8C22  0B D2                   or dx, dx
+8C24  74 12                   je 0x8c38
+8C26  EC                      in al, dx
+8C27  E3 00                   jcxz 0x8c29
+8C29  E3 00                   jcxz 0x8c2b
+8C2B  2E 22 06 6D 82          and al, byte ptr cs:[0x826d]
+8C30  2E 0A 06 6C 82          or al, byte ptr cs:[0x826c]
+8C35  EE                      out dx, al
+8C36  B5 FF                   mov ch, 0xff
+8C38  0A ED                   or ch, ch
+8C3A  74 05                   je 0x8c41
+8C3C  80 26 16 00 EF          and byte ptr [0x16], 0xef
+8C41  2E F6 06 81 82 40       test byte ptr cs:[0x8281], 0x40
+8C47  75 01                   jne 0x8c4a
+8C49  66 58                   pop eax
+8C4B  5A                      pop dx
+8C4C  C3                      ret
+
+===== 8C4Dh-8CB1h =====
+Reason: direct CALL target from the 8B2Dh alternate controller-state branch
+8C4D  52                      push dx
+8C4E  2E F6 06 81 82 40       test byte ptr cs:[0x8281], 0x40
+8C54  75 01                   jne 0x8c57
+8C56  66 50                   push eax
+8C58  57                      push di
+8C59  BF 5F 8C                mov di, 0x8c5f
+8C5C  EB 54                   jmp 0x8cb2
+8C5E  90                      nop
+8C5F  5F                      pop di
+8C60  B5 00                   mov ch, 0
+8C62  75 02                   jne 0x8c66
+8C64  B5 FF                   mov ch, 0xff
+8C66  2E 80 3E 58 82 00       cmp byte ptr cs:[0x8258], 0
+8C6C  74 07                   je 0x8c75
+8C6E  51                      push cx
+8C6F  E8 E4 00                call 0x8d56
+8C72  58                      pop ax
+8C73  0A EC                   or ch, ah
+8C75  2E A0 59 82             mov al, byte ptr cs:[0x8259]
+8C79  0A C0                   or al, al
+8C7B  74 05                   je 0x8c82
+8C7D  E8 6A 00                call 0x8cea
+8C80  B5 FF                   mov ch, 0xff
+8C82  2E 8B 16 5A 82          mov dx, word ptr cs:[0x825a]
+8C87  0B D2                   or dx, dx
+8C89  74 12                   je 0x8c9d
+8C8B  EC                      in al, dx
+8C8C  E3 00                   jcxz 0x8c8e
+8C8E  E3 00                   jcxz 0x8c90
+8C90  2E 22 06 5D 82          and al, byte ptr cs:[0x825d]
+8C95  2E 0A 06 5C 82          or al, byte ptr cs:[0x825c]
+8C9A  EE                      out dx, al
+8C9B  B5 FF                   mov ch, 0xff
+8C9D  0A ED                   or ch, ch
+8C9F  74 05                   je 0x8ca6
+8CA1  80 0E 16 00 10          or byte ptr [0x16], 0x10
+8CA6  2E F6 06 81 82 40       test byte ptr cs:[0x8281], 0x40
+8CAC  75 01                   jne 0x8caf
+8CAE  66 58                   pop eax
+8CB0  5A                      pop dx
+8CB1  C3                      ret
+
+===== 8CEAh-8D08h =====
+Reason: 8042 command/data transaction helper called by 8B5Eh/8BA3h
+8CEA  8A E0                   mov ah, al
+8CEC  33 C9                   xor cx, cx
+8CEE  E3 00                   jcxz 0x8cf0
+8CF0  E4 64                   in al, 0x64
+8CF2  A8 02                   test al, 2
+8CF4  E0 F8                   loopne 0x8cee
+8CF6  75 10                   jne 0x8d08
+8CF8  8A C4                   mov al, ah
+8CFA  E6 64                   out 0x64, al
+8CFC  33 C9                   xor cx, cx
+8CFE  E3 00                   jcxz 0x8d00
+8D00  E4 64                   in al, 0x64
+8D02  A8 01                   test al, 1
+8D04  E1 F8                   loope 0x8cfe
+8D06  E4 60                   in al, 0x60
+8D08  C3                      ret
+
+===== 8D09h-8D38h =====
+Reason: ALi indexed-register setup helper called by 8BAFh
+8D09  B8 03 C5                mov ax, 0xc503
+8D0C  E8 CD 00                call 0x8ddc
+8D0F  B8 18 18                mov ax, 0x1818
+8D12  E8 BA 00                call 0x8dcf
+8D15  0C 04                   or al, 4
+8D17  86 E0                   xchg al, ah
+8D19  E8 C0 00                call 0x8ddc
+8D1C  80 E4 FB                and ah, 0xfb
+8D1F  E8 BA 00                call 0x8ddc
+8D22  B8 23 23                mov ax, 0x2323
+8D25  E8 A7 00                call 0x8dcf
+8D28  0C 02                   or al, 2
+8D2A  86 E0                   xchg al, ah
+8D2C  E8 AD 00                call 0x8ddc
+8D2F  B8 03 55                mov ax, 0x5503
+8D32  E8 A7 00                call 0x8ddc
+8D35  B9 00 00                mov cx, 0
+8D38  C3                      ret
+
+===== 8D39h-8D55h =====
+Reason: ALi indexed-register alternate setup helper called by 8B6Ah
+8D39  B8 03 C5                mov ax, 0xc503
+8D3C  E8 9D 00                call 0x8ddc
+8D3F  B8 23 23                mov ax, 0x2323
+8D42  E8 8A 00                call 0x8dcf
+8D45  24 FD                   and al, 0xfd
+8D47  86 E0                   xchg al, ah
+8D49  E8 90 00                call 0x8ddc
+8D4C  B8 03 55                mov ax, 0x5503
+8D4F  E8 8A 00                call 0x8ddc
+8D52  B9 00 00                mov cx, 0
+8D55  C3                      ret
+
+===== 8D56h-8D82h =====
+Reason: ALi register-18h state test and conditional update helper
+8D56  B8 03 C5                mov ax, 0xc503
+8D59  E8 80 00                call 0x8ddc
+8D5C  B8 18 18                mov ax, 0x1818
+8D5F  E8 6D 00                call 0x8dcf
+8D62  A8 02                   test al, 2
+8D64  75 19                   jne 0x8d7f
+8D66  BF 6C 8D                mov di, 0x8d6c
+8D69  E9 1A 99                jmp 0x2686
+8D6C  BF 72 8D                mov di, 0x8d72
+8D6F  E9 B7 98                jmp 0x2629
+8D72  B8 18 18                mov ax, 0x1818
+8D75  E8 57 00                call 0x8dcf
+8D78  0C 02                   or al, 2
+8D7A  86 E0                   xchg al, ah
+8D7C  E8 5D 00                call 0x8ddc
+8D7F  B9 FF FF                mov cx, 0xffff
+8D82  C3                      ret
+
+===== 8DEDh-8DFAh =====
+Reason: indexed ALi register read-and-indirect-continuation helper
+8DED  E6 22                   out 0x22, al
+8DEF  E3 00                   jcxz 0x8df1
+8DF1  E3 00                   jcxz 0x8df3
+8DF3  E4 23                   in al, 0x23
+8DF5  E3 00                   jcxz 0x8df7
+8DF7  E3 00                   jcxz 0x8df9
+8DF9  FF E7                   jmp di
+
+===== 8DFBh-8E08h =====
+Reason: indexed ALi register write-and-indirect-continuation helper
+8DFB  E6 22                   out 0x22, al
+8DFD  E3 00                   jcxz 0x8dff
+8DFF  E3 00                   jcxz 0x8e01
+8E01  86 C4                   xchg ah, al
+8E03  E6 23                   out 0x23, al
+8E05  E3 00                   jcxz 0x8e07
+8E07  E3 00                   jcxz 0x8e09
+
+===== 8DCFh-8DDBh =====
 Reason: indexed chipset-register read helper using ports 22h/23h
 8DCF  E6 22                   out 0x22, al
 8DD1  E3 00                   jcxz 0x8dd3
@@ -13638,68 +13911,8 @@ Reason: indexed chipset-register read helper using ports 22h/23h
 8DD7  E3 00                   jcxz 0x8dd9
 8DD9  E3 00                   jcxz 0x8ddb
 8DDB  C3                      ret
-8DDC  E6 22                   out 0x22, al
-8DDE  E3 00                   jcxz 0x8de0
-8DE0  E3 00                   jcxz 0x8de2
-8DE2  86 C4                   xchg ah, al
-8DE4  E6 23                   out 0x23, al
-8DE6  E3 00                   jcxz 0x8de8
-8DE8  E3 00                   jcxz 0x8dea
-8DEA  86 C4                   xchg ah, al
-8DEC  C3                      ret
-8DED  E6 22                   out 0x22, al
-8DEF  E3 00                   jcxz 0x8df1
-8DF1  E3 00                   jcxz 0x8df3
-8DF3  E4 23                   in al, 0x23
-8DF5  E3 00                   jcxz 0x8df7
-8DF7  E3 00                   jcxz 0x8df9
-8DF9  FF E7                   jmp di
-8DFB  E6 22                   out 0x22, al
-8DFD  E3 00                   jcxz 0x8dff
-8DFF  E3 00                   jcxz 0x8e01
-8E01  86 C4                   xchg ah, al
-8E03  E6 23                   out 0x23, al
-8E05  E3 00                   jcxz 0x8e07
-8E07  E3 00                   jcxz 0x8e09
-8E09  86 C4                   xchg ah, al
-8E0B  FF E7                   jmp di
-8E0D  16                      push ss
-8E0E  16                      push ss
-8E0F  17                      pop ss
-8E10  19 20                   sbb word ptr [bx + si], sp
-8E12  20 16 17 19             and byte ptr [0x1917], dl
-8E16  20 25                   and byte ptr [di], ah
-8E18  16                      push ss
-8E19  17                      pop ss
-8E1A  19 20                   sbb word ptr [bx + si], sp
-8E1C  33 16 17 19             xor dx, word ptr [0x1917]
-8E20  20 40 16                and byte ptr [bx + si + 0x16], al
-8E23  17                      pop ss
-8E24  19 20                   sbb word ptr [bx + si], sp
-8E26  50                      push ax
-8E27  16                      push ss
-8E28  17                      pop ss
-8E29  19 20                   sbb word ptr [bx + si], sp
-8E2B  66 16                   push ss
-8E2D  17                      pop ss
-8E2E  19 20                   sbb word ptr [bx + si], sp
-8E30  24 16                   and al, 0x16
-8E32  17                      pop ss
-8E33  19 20                   sbb word ptr [bx + si], sp
-8E35  25 16 17                and ax, 0x1716
-8E38  19 20                   sbb word ptr [bx + si], sp
-8E3A  33 16 17 19             xor dx, word ptr [0x1917]
-8E3E  20 40 16                and byte ptr [bx + si + 0x16], al
-8E41  17                      pop ss
-8E42  19 20                   sbb word ptr [bx + si], sp
-8E44  8D 36 0D 8E             lea si, [0x8e0d]
-8E48  2C 80                   sub al, 0x80
-8E4A  03 F0                   add si, ax
-8E4C  AC                      lodsb al, byte ptr [si]
-8E4D  C3                      ret
-8E4E  C0              db 0xC0
 
-===== 8DDCh-8E5Bh =====
+===== 8DDCh-8DEDh =====
 Reason: indexed chipset-register write helper using ports 22h/23h
 8DDC  E6 22                   out 0x22, al
 8DDE  E3 00                   jcxz 0x8de0
@@ -13710,63 +13923,7 @@ Reason: indexed chipset-register write helper using ports 22h/23h
 8DE8  E3 00                   jcxz 0x8dea
 8DEA  86 C4                   xchg ah, al
 8DEC  C3                      ret
-8DED  E6 22                   out 0x22, al
-8DEF  E3 00                   jcxz 0x8df1
-8DF1  E3 00                   jcxz 0x8df3
-8DF3  E4 23                   in al, 0x23
-8DF5  E3 00                   jcxz 0x8df7
-8DF7  E3 00                   jcxz 0x8df9
-8DF9  FF E7                   jmp di
-8DFB  E6 22                   out 0x22, al
-8DFD  E3 00                   jcxz 0x8dff
-8DFF  E3 00                   jcxz 0x8e01
-8E01  86 C4                   xchg ah, al
-8E03  E6 23                   out 0x23, al
-8E05  E3 00                   jcxz 0x8e07
-8E07  E3 00                   jcxz 0x8e09
-8E09  86 C4                   xchg ah, al
-8E0B  FF E7                   jmp di
-8E0D  16                      push ss
-8E0E  16                      push ss
-8E0F  17                      pop ss
-8E10  19 20                   sbb word ptr [bx + si], sp
-8E12  20 16 17 19             and byte ptr [0x1917], dl
-8E16  20 25                   and byte ptr [di], ah
-8E18  16                      push ss
-8E19  17                      pop ss
-8E1A  19 20                   sbb word ptr [bx + si], sp
-8E1C  33 16 17 19             xor dx, word ptr [0x1917]
-8E20  20 40 16                and byte ptr [bx + si + 0x16], al
-8E23  17                      pop ss
-8E24  19 20                   sbb word ptr [bx + si], sp
-8E26  50                      push ax
-8E27  16                      push ss
-8E28  17                      pop ss
-8E29  19 20                   sbb word ptr [bx + si], sp
-8E2B  66 16                   push ss
-8E2D  17                      pop ss
-8E2E  19 20                   sbb word ptr [bx + si], sp
-8E30  24 16                   and al, 0x16
-8E32  17                      pop ss
-8E33  19 20                   sbb word ptr [bx + si], sp
-8E35  25 16 17                and ax, 0x1716
-8E38  19 20                   sbb word ptr [bx + si], sp
-8E3A  33 16 17 19             xor dx, word ptr [0x1917]
-8E3E  20 40 16                and byte ptr [bx + si + 0x16], al
-8E41  17                      pop ss
-8E42  19 20                   sbb word ptr [bx + si], sp
-8E44  8D 36 0D 8E             lea si, [0x8e0d]
-8E48  2C 80                   sub al, 0x80
-8E4A  03 F0                   add si, ax
-8E4C  AC                      lodsb al, byte ptr [si]
-8E4D  C3                      ret
-8E4E  C0 21 C1                shl byte ptr [bx + di], 0xc1
-8E51  00 C5                   add ch, al
-8E53  00 C6                   add dh, al
-8E55  0F C8                   bswap ax
-8E57  00 C9                   add cl, cl
-8E59  00 CB                   add bl, cl
-8E5B  00              db 0x00
+8DED  E6              db 0xE6
 
 ===== 2253h-22D2h =====
 Reason: second memory-pattern probe stream
