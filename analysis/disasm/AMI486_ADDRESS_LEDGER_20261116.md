@@ -40,7 +40,7 @@ Legend:
 | e0 R | e1 R | e2 R | e3 R | e4 — | e5 R | e6 — | e7 — | e8 R | e9 R | ea R | eb — | ec — | ed R | ee R | ef R |
 | f0 R | f1 R | f2 — | f3 R | f4 R | f5 R | f6 R | f7 R | f8 R | f9 — | fa R | fb — | fc R | fd — | fe — | ff R |
 
-## 3. Pages without explicit phase-address references
+## 3. Historical pages without explicit phase-address references (2026-11-16 snapshot)
 
 The following 103 pages are the current *reference-scan gaps*, not proven analysis gaps:
 
@@ -52,17 +52,19 @@ These ranges are candidates for prioritization. They must be checked against raw
 
 The following samples were read directly from the checked-in ROM, not inferred from the phase index.
 
-### 4.1 2100h — memory-test code candidate
+### 4.1 20FCh–2100h — memory-test entry and prefix alignment (corrected 2026-11-17)
 
-At 2100h the bytes begin:
+The actual entry is the stack-return continuation at 20FCh. At 20F4h the BIOS sets SP=20FAh and jumps to 8DDCh; the word at 20FAh–20FBh is 20FCh, so RET resumes there. The aligned bytes are:
 
-```
-2100: C7 06 00 00 55 55 AA AA 26 66 C7 06 00 01 FF FF
-2110: FF FF 26 66 81 3E 00 00 55 55 AA AA 0F 85 67 00
-2120: 26 66 C7 06 00 00 AA AA 55 55 26 66 C7 06
-```
+\`\`\`asm
+20FC  B2 FF                         MOV DL,FFh
+20FE  26 66 C7 06 00 00 55 55 AA AA  ES: MOV DWORD PTR [0000h],AAAA5555h
+2108  26 66 C7 06 00 01 FF FF FF FF  ES: MOV DWORD PTR [0100h],FFFFFFFFh
+2112  26 66 81 3E 00 00 55 55 AA AA  ES: CMP DWORD PTR [0000h],AAAA5555h
+211C  0F 85 67 00                    JNE 2187h
+\`\`\`
 
-This is an executable-looking pattern-write/compare stream with 16-/32-bit operand/address prefixes and conditional branches. The two AA bytes at 2106h–2107h are STOSB instructions and must not be omitted. A full raw scan found no direct near CALL/JMP target to 2100h and no literal F000:2100h far pointer; 2100h remains an entry candidate with unresolved indirect/stack entry and caller context. Internal branches to 2187h and 222Dh are confirmed. See AMI486_MEMORY_CHIPSET_INITIALIZATION_20261116.md for the byte-aligned decode and segment-state caveats.
+The opcode byte at 2100h is inside the instruction beginning at 20FEh; 2100h is not an independent entry. The two AA bytes at 2106h–2107h are the high half of the immediate AAAA5555h, not STOSB instructions. The previous DS word-store/STOSB interpretation and unresolved-entry statement are withdrawn. The preceding local setup loads ES=0008h from the GDT, a base-zero writable 4-GiB data segment. The first pattern is therefore a 32-bit ES write, not a DS:[0000h] word write. Internal branches to 2187h and 222Dh are confirmed. See AMI486_MEMORY_CHIPSET_INITIALIZATION_20261116.md and AMI486_ADDRESS_LEDGER_REGION_19F8_20FB_20261117.md for the complete corrected path.
 
 ### 4.2 A000h–AFFFh — mixed code, pointer data, message text and keyboard tables
 
