@@ -665,10 +665,29 @@ Mapped the video display type field (options at 769Dh), keyboard-test Installed/
 GitHub Actions run 44086705207 passed: 851 windows / 240 data ranges, 61,702 covered bytes (94.15%), 61 uncovered intervals. The next largest uncovered interval is 81EEh–8377h (394 bytes).
 
 
-## 32. Advanced CMOS CPU/cache profile data — 81EEh–8377h (2026-11-17)
+## 32. Advanced CMOS CPU/cache profile data and CMOS 8Eh selector — 81EEh–8377h (2026-11-17)
 
-Detailed map: [AMI486_ADDRESS_LEDGER_REGION_81EE_8377_20261117.md](AMI486_ADDRESS_LEDGER_REGION_81EE_8377_20261117.md).
+Detailed map: [AMI486_ADDRESS_LEDGER_REGION_81EE_8378_20261117.md](AMI486_ADDRESS_LEDGER_REGION_81EE_8378_20261117.md).
 
-Classified 81EEh–8327h as structured board/CPU-profile data, including COM/LPT I/O base addresses and pointers into records around 19A2h–19AFh. Those records contain the strings “20 KB CACHE MEMORY”, “MHz CPU Clock” and “MHz DX2 CPU”. Mapped the BX-preserving wrapper at 8328h and the 832Eh helper, which walks 32-byte CPU profile records rooted at CS:82C6h and updates CMOS register 8Eh. Exact per-record CPU frequency mapping and the indirect caller remain open.
+Corrected the previous boundary error. The data block ends at 8325h, not 8327h. Executable entries are 8300h (BX-preserving wrapper), 8306h (profile-index selector) and 8326h (shared profile-record walker). The 831Bh branch enters the walker at 832Fh with BX=B7D0h. The path that subtracts 0055h from AX falls through into 8326h; there is no RET at 8325h. The walker uses 20h-byte profile records and updates CMOS register 8Eh. The old seeds 8328h and 832Eh were removed because they split instructions.
 
-GitHub Actions run 44086995346 passed: 853 windows / 241 data ranges, 62,096 covered bytes (94.75%), 60 uncovered intervals. The next largest uncovered interval is 0B2Dh–0C7Ch (336 bytes).
+Generator boundary correction: a263b7baf68c45be27e3d1aefde63efd0fdc7251. Corrected semantic report: 6232d1771e4b9552bc7df9fbeceb6c10635ff23d.
+
+The last generated manifest (commit 81616282fb759ee64603a84a7fc43f1c5170961c) reports 858 windows, 242 data ranges, 62,431 covered bytes (95.26%), and 60 uncovered intervals. That manifest predates the later 84CBh boundary correction below and is not the final current coverage result.
+
+## 33. Advanced CMOS Setup descriptor table and page initializers — 0B2Dh–0C7Ch (2026-11-17)
+
+Detailed map: [AMI486_ADDRESS_LEDGER_REGION_0B2D_0C7D_20261117.md](AMI486_ADDRESS_LEDGER_REGION_0B2D_0C7D_20261117.md).
+
+Mapped the 45-entry descriptor/handler table at 0B2Dh–0BE0h and the code/data overlap at 0BDEh. The final table record begins at 0BDDh (words 8300h/CA3Eh); executable code begins at 0BDEh and consumes three bytes of that record. Corrected the following entry boundaries: 0C04h, 0C2Bh and 0C52h are one-byte RET stubs, not page initializer entries. The actual initializers begin at 0C05h (B7CCh gate), 0C2Ch (B7CEh gate) and 0C53h (CPU clock/cache profile page). Each configures the E191h–E197h parameter block and calls the shared page engine at 0C7Dh.
+
+Generator boundary correction: 0f65a99fd1a1675c6bcae794eb2ff3e1c0da8388. A post-correction manifest has not yet been generated.
+
+## 34. CMOS Setup staging, checksum and CMOS writeback — 84BEh–85B2h (2026-11-17)
+
+Detailed map: [AMI486_ADDRESS_LEDGER_REGION_84BE_85B3_20261117.md](AMI486_ADDRESS_LEDGER_REGION_84BE_85B3_20261117.md).
+
+The 84BEh window was clipped in the middle of the near JMP at 84C8h. Extended it by one byte to include the final displacement byte at 84CAh; the JMP target is D90Dh. The next candidate stream starts at 84CBh. Mapped the CMOS Setup staging path, which loads configuration bytes from CMOS or the profile defaults into E010h, runs helper/update calls, copies the 80h-byte E000h buffer, calculates checksums for the staged blocks, and writes the configuration back to CMOS beginning at register 8Eh. The separate 8530h validation path preserves flags from 1A92h and clears the warm-boot flag/jumps to the BIOS reset entry if the saved status is not successful.
+
+Generator boundary correction: 8870769cf5fe72ff720f5cca99c29ca012baea13. The next manifest must be regenerated before reporting a new global coverage percentage or selecting the next largest uncovered interval.
+
