@@ -18,6 +18,7 @@ Largest uncovered intervals (length, start, end):
   38, 235B-2380
   38, 2207-222C
   37, D7B3-D7D7
+  36, 5410-5433
 Window bytes: 0x80 default; selected handler windows clipped at known data boundaries
 Decoder: Capstone x86 16-bit
 Relative near-branch targets normalized to 16-bit IP.
