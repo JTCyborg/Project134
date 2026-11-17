@@ -818,6 +818,277 @@ C5D4  60 54 41 47 57 45 4A 20 44 65 6C 61 79 20 52 69 `TAGWEJ Delay Ri
 C5E4  73 69 6E 67 20 54 69 6D 69 6E 67 20 00 57 C0 00 sing Timing .W..
 C5F4  04 45 46 47 48 00                               .EFGH.
 
+===== DATA D650h-D651h =====
+Reason: Stack return word consumed by the EEE7h POST helper; returns to D652h
+Words: D652
+
+===== DATA D6A8h-D6BDh =====
+Reason: Eleven-word CMOS 8Fh indexed near-jump table used by D6A2h; see phases 51–52
+Words: D724, 91D1, F71E, 5280, F724, F731, 5486, 1B5B, 8A1D, 9206, F737
+
+===== DATA D7D8h-D7D9h =====
+Reason: Stack return word consumed by the POST helper; resumes at D7DAh
+Words: D7DA
+
+===== DATA D7E4h-D7E5h =====
+Reason: Stack return word consumed by the POST helper; resumes at D7E6h
+Words: D7E6
+
+===== DATA D806h-D807h =====
+Reason: Stack return word consumed by the POST helper; resumes at D808h
+Words: D808
+
+===== DATA D826h-D827h =====
+Reason: Stack return word consumed by the POST helper; resumes at D828h
+Words: D828
+
+===== DATA D83Ah-D83Bh =====
+Reason: Stack return word consumed by the POST helper; resumes at D83Ch
+Words: D83C
+
+===== DATA D854h-D855h =====
+Reason: Stack return word consumed by the POST helper; resumes at D856h
+Words: D856
+
+===== DATA D86Eh-D86Fh =====
+Reason: Stack return word consumed by the POST helper; resumes at D870h
+Words: D870
+
+===== DATA D882h-D883h =====
+Reason: Stack return word consumed by the POST helper; resumes at D884h
+Words: D884
+
+===== DATA D892h-D893h =====
+Reason: Stack return word consumed by the POST helper; resumes at D894h
+Words: D894
+
+===== DATA D89Ah-D89Bh =====
+Reason: Stack return word consumed by the POST helper; resumes at D89Ch
+Words: D89C
+
+===== DATA D8AAh-D8ABh =====
+Reason: Stack return word consumed by the POST helper; resumes at D8ACh
+Words: D8AC
+
+===== DATA D8B2h-D8B3h =====
+Reason: Stack return word consumed by the POST helper; resumes at D8B4h
+Words: D8B4
+
+===== DATA D8CAh-D8CBh =====
+Reason: Stack return word consumed by the POST helper; resumes at D8CCh
+Words: D8CC
+
+===== DATA D8D8h-D8D9h =====
+Reason: Stack return word consumed by the POST helper; resumes at D8DAh
+Words: D8DA
+
+===== DATA D904h-D905h =====
+Reason: Stack return word consumed by the POST helper; resumes at D906h
+Words: D906
+
+===== DATA D91Ah-D91Bh =====
+Reason: Stack return word consumed by the POST helper; resumes at D91Ch
+Words: D91C
+
+===== DATA D926h-D927h =====
+Reason: Stack return word consumed by the POST helper; resumes at D928h
+Words: D928
+
+===== DATA D930h-D931h =====
+Reason: Stack return word consumed by the POST helper; resumes at D932h
+Words: D932
+
+===== DATA D93Ch-D93Dh =====
+Reason: Stack return word consumed by the POST helper; resumes at D93Eh
+Words: D93E
+
+===== DATA D94Ch-D94Dh =====
+Reason: Stack return word consumed by the POST helper; resumes at D94Eh
+Words: D94E
+
+===== DATA D958h-D959h =====
+Reason: Stack return word consumed by the POST helper; resumes at D95Ah
+Words: D95A
+
+===== DATA D96Eh-D96Fh =====
+Reason: Stack return word consumed by the POST helper; resumes at D970h
+Words: D970
+
+===== DATA D97Ah-D97Bh =====
+Reason: Stack return word consumed by the POST helper; resumes at D97Ch
+Words: D97C
+
+===== DATA D986h-D987h =====
+Reason: Stack return word consumed by the POST helper; resumes at D988h
+Words: D988
+
+===== DATA D9A0h-D9A1h =====
+Reason: Stack return word consumed by the POST helper; resumes at D9A2h
+Words: D9A2
+
+===== DATA DA64h-DA65h =====
+Reason: Stack return word consumed by the POST helper; resumes at DA66h
+Words: DA66
+
+===== DATA DAA2h-DFFFh =====
+Reason: Zero-filled ROM padding after the DA9Fh near JMP immediate; verified 0x55Eh consecutive zero bytes
+DAA2  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 ................
+DAB2  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 ................
+DAC2  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 ................
+DAD2  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 ................
+DAE2  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 ................
+DAF2  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 ................
+DB02  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 ................
+DB12  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 ................
+DB22  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 ................
+DB32  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 ................
+DB42  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 ................
+DB52  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 ................
+DB62  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 ................
+DB72  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 ................
+DB82  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 ................
+DB92  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 ................
+DBA2  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 ................
+DBB2  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 ................
+DBC2  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 ................
+DBD2  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 ................
+DBE2  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 ................
+DBF2  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 ................
+DC02  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 ................
+DC12  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 ................
+DC22  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 ................
+DC32  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 ................
+DC42  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 ................
+DC52  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 ................
+DC62  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 ................
+DC72  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 ................
+DC82  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 ................
+DC92  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 ................
+DCA2  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 ................
+DCB2  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 ................
+DCC2  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 ................
+DCD2  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 ................
+DCE2  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 ................
+DCF2  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 ................
+DD02  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 ................
+DD12  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 ................
+DD22  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 ................
+DD32  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 ................
+DD42  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 ................
+DD52  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 ................
+DD62  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 ................
+DD72  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 ................
+DD82  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 ................
+DD92  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 ................
+DDA2  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 ................
+DDB2  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 ................
+DDC2  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 ................
+DDD2  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 ................
+DDE2  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 ................
+DDF2  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 ................
+DE02  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 ................
+DE12  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 ................
+DE22  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 ................
+DE32  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 ................
+DE42  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 ................
+DE52  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 ................
+DE62  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 ................
+DE72  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 ................
+DE82  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 ................
+DE92  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 ................
+DEA2  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 ................
+DEB2  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 ................
+DEC2  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 ................
+DED2  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 ................
+DEE2  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 ................
+DEF2  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 ................
+DF02  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 ................
+DF12  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 ................
+DF22  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 ................
+DF32  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 ................
+DF42  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 ................
+DF52  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 ................
+DF62  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 ................
+DF72  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 ................
+DF82  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 ................
+DF92  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 ................
+DFA2  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 ................
+DFB2  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 ................
+DFC2  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 ................
+DFD2  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 ................
+DFE2  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 ................
+DFF2  00 00 00 00 00 00 00 00 00 00 00 00 00 00       ..............
+
+===== DATA E008h-E00Dh =====
+Reason: Zero padding between the E005h jump stub and IBM trademark string
+E008  00 00 00 00 00 00                               ......
+
+===== DATA E00Eh-E057h =====
+Reason: IBM-compatible trademark string
+ASCII: 'IBM COMPATIBLE IBM IS A TRADEMARK OF INTERNATIONAL BUSINESS MACHINES CORP.'
+
+===== DATA E058h-E05Ah =====
+Reason: Three zero terminator/padding bytes before the reset entry at E05Bh
+E058  00 00 00                                        ...
+
+===== DATA E05Eh-E0CAh =====
+Reason: Opaque binary block after the reset-entry JMP; contents not yet semantically identified
+E05E  F1 A3 02 71 83 A5 A5 C5 A6 A6 71 44 C5 B6 F5 66 ...q......qD...f
+E06E  B5 A6 71 04 56 A5 52 71 82 03 F2 C2 32 71 82 03 ..q.V.Rq....2q..
+E07E  F2 D2 40 10 C2 03 72 71 71 D4 85 36 36 C5 07 71 ..@...rqq..66..q
+E08E  94 66 85 B5 32 71 C4 76 76 C5 96 71 44 66 56 B6 .f..2q.vv..qDfV.
+E09E  A5 36 85 06 96 32 40 10 71 54 C5 E6 71 14 C5 96 .6...2@.qT..q...
+E0AE  A6 C5 07 71 42 71 72 E2 72 B2 A2 32 40 10 F1 92 ...qBqr.r..2@...
+E0BE  72 82 02 71 E2 B2 B2 42 03 82 92 D2 52          r..q...B....R
+
+===== DATA E0CBh-E138h =====
+Reason: AMI copyright and address/telephone string
+ASCII: '(C)1985-1993,American Megatrends Inc.,All Rights Reserved,6145F Northbelt Parkway,GA-30071,USA.(404)-263-8181.'
+
+===== DATA E139h-E15Fh =====
+Reason: Zero padding before the descriptor-like record array
+E139  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 ................
+E149  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 ................
+E159  00 00 00 00 00 00 00                            .......
+
+===== DATA E160h-E25Fh =====
+Reason: Thirty-two 8-byte descriptor-like records; selector/access fields repeat (0020h/87h), consumer and architectural role unresolved
+E160  68 F0 20 00 00 87 00 00 68 F0 20 00 00 87 00 00 h. .....h. .....
+E170  68 F0 20 00 00 87 00 00 68 F0 20 00 00 87 00 00 h. .....h. .....
+E180  68 F0 20 00 00 87 00 00 68 F0 20 00 00 87 00 00 h. .....h. .....
+E190  68 F0 20 00 00 87 00 00 68 F0 20 00 00 87 00 00 h. .....h. .....
+E1A0  36 1E 20 00 00 87 00 00 68 F0 20 00 00 87 00 00 6. .....h. .....
+E1B0  68 F0 20 00 00 87 00 00 68 F0 20 00 00 87 00 00 h. .....h. .....
+E1C0  68 F0 20 00 00 87 00 00 68 F0 20 00 00 87 00 00 h. .....h. .....
+E1D0  68 F0 20 00 00 87 00 00 53 FF 20 00 00 87 00 00 h. .....S. .....
+E1E0  68 F0 20 00 00 87 00 00 68 F0 20 00 00 87 00 00 h. .....h. .....
+E1F0  68 F0 20 00 00 87 00 00 68 F0 20 00 00 87 00 00 h. .....h. .....
+E200  68 F0 20 00 00 87 00 00 68 F0 20 00 00 87 00 00 h. .....h. .....
+E210  68 F0 20 00 00 87 00 00 68 F0 20 00 00 87 00 00 h. .....h. .....
+E220  68 F0 20 00 00 87 00 00 68 F0 20 00 00 87 00 00 h. .....h. .....
+E230  68 F0 20 00 00 87 00 00 68 F0 20 00 00 87 00 00 h. .....h. .....
+E240  68 F0 20 00 00 87 00 00 68 F0 20 00 00 87 00 00 h. .....h. .....
+E250  68 F0 20 00 00 87 00 00 68 F0 20 00 00 87 00 00 h. .....h. .....
+
+===== DATA E260h-E2BFh =====
+Reason: 96-byte protected-mode parameter/descriptor block copied to ES:0600h before INT 15h AH=89h; internal field semantics partly unresolved
+E260  00 00 00 00 00 00 00 00 60 00 60 E2 0F 93 00 00 ........`.`.....
+E270  00 01 60 E1 0F 00 00 00 00 FC 00 04 00 93 00 00 ..`.............
+E280  FF FF 00 00 0F 9B 00 00 00 01 00 03 00 93 00 00 ................
+E290  FF FF 00 00 0F 9B 00 00 00 00 00 00 00 00 00 00 ................
+E2A0  FF FF 00 00 00 93 00 00 00 00 00 00 00 00 00 00 ................
+E2B0  00 00 00 00 00 00 00 00 FF 03 00 00 00 00 00 00 ................
+
+===== DATA E2C0h-E2C2h =====
+Reason: Three zero bytes before alternate E2C3h jump-stub entry
+E2C0  00 00 00                                        ...
+
+===== DATA E3D7h-E3FFh =====
+Reason: Zero padding after the E3D6h RET and before the E400h parameter-table region
+E3D7  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 ................
+E3E7  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 ................
+E3F7  00 00 00 00 00 00 00 00 00                      .........
+
 ===== 3E3Fh-3EBEh =====
 Reason: direct CALL target from 00EFh screen-presentation stream
 3E3F  55                      push bp
@@ -19483,4 +19754,687 @@ Reason: PIT channel-2/speaker timing or beep helper called from 548Bh
 55A2  24 FC                   and al, 0xfc
 55A4  E6 61                   out 0x61, al
 55A6  C3                      ret
+
+===== D655h-D6A7h =====
+Reason: POST CMOS 8Fh selector continuation reached from the 8A20h alternate path; aligned code, not a D65Bh entry
+D655  74 39                   je 0xd690
+D657  2E F6 06 81 82 40       test byte ptr cs:[0x8281], 0x40
+D65D  75 31                   jne 0xd690
+D65F  8B C6                   mov ax, si
+D661  3C 05                   cmp al, 5
+D663  74 08                   je 0xd66d
+D665  3C 09                   cmp al, 9
+D667  74 04                   je 0xd66d
+D669  3C 0A                   cmp al, 0xa
+D66B  75 23                   jne 0xd690
+D66D  66 C1 C8 10             ror eax, 0x10
+D671  8B C8                   mov cx, ax
+D673  0F 01 E0                smsw ax
+D676  0A E4                   or ah, ah
+D678  0F 20 C0                mov eax, cr0
+D67B  74 04                   je 0xd681
+D67D  0C 10                   or al, 0x10
+D67F  EB 06                   jmp 0xd687
+D681  66 25 FF FF FF 9F       and eax, 0x9fffffff
+D687  0F 22 C0                mov cr0, eax
+D68A  8B C1                   mov ax, cx
+D68C  66 C1 C8 10             ror eax, 0x10
+D690  B8 40 00                mov ax, 0x40
+D693  8E D8                   mov ds, ax
+D695  B0 00                   mov al, 0
+D697  8E C0                   mov es, ax
+D699  B0 30                   mov al, 0x30
+D69B  8E D0                   mov ss, ax
+D69D  BC 00 01                mov sp, 0x100
+D6A0  D1 E6                   shl si, 1
+D6A2  2E FF A4 A8 D6          jmp word ptr cs:[si - 0x2958]
+D6A7  90                      nop
+
+===== D6BEh-D6C3h =====
+Reason: POST error path selected by the D6A2h jump table and by register/stack-test failures
+D6BE  BD 05 00                mov bp, 5
+D6C1  E9 E1 1D                jmp 0xf4a5
+
+===== D6C4h-D6DDh =====
+Reason: stack-threaded register/segment test trampoline ending in JMP SP
+D6C4  8B D8                   mov bx, ax
+D6C6  8B CB                   mov cx, bx
+D6C8  8B D1                   mov dx, cx
+D6CA  8B F2                   mov si, dx
+D6CC  8B FE                   mov di, si
+D6CE  8B EF                   mov bp, di
+D6D0  8E C5                   mov es, bp
+D6D2  8C C0                   mov ax, es
+D6D4  8E D8                   mov ds, ax
+D6D6  8C D8                   mov ax, ds
+D6D8  8E D0                   mov ss, ax
+D6DA  8C D0                   mov ax, ss
+D6DC  FF E4                   jmp sp
+
+===== D6DEh-D70Fh =====
+Reason: POST stack-pointer and register-pattern test (5555h/AAAAh); D6FCh and D709h are JMP-SP continuations
+D6DE  B0 01                   mov al, 1
+D6E0  E6 80                   out 0x80, al
+D6E2  BC 55 55                mov sp, 0x5555
+D6E5  81 FC 55 55             cmp sp, 0x5555
+D6E9  75 D3                   jne 0xd6be
+D6EB  BC AA AA                mov sp, 0xaaaa
+D6EE  81 FC AA AA             cmp sp, 0xaaaa
+D6F2  75 CA                   jne 0xd6be
+D6F4  B8 55 55                mov ax, 0x5555
+D6F7  BC FC D6                mov sp, 0xd6fc
+D6FA  EB C8                   jmp 0xd6c4
+D6FC  35 55 55                xor ax, 0x5555
+D6FF  75 BD                   jne 0xd6be
+D701  B8 AA AA                mov ax, 0xaaaa
+D704  BC 09 D7                mov sp, 0xd709
+D707  EB BB                   jmp 0xd6c4
+D709  35 AA AA                xor ax, 0xaaaa
+D70C  75 B0                   jne 0xd6be
+D70E  B0 8D                   mov al, 0x8d
+
+===== D710h-D723h =====
+Reason: POST diagnostic and chipset/8042 continuation after the pattern test
+D710  E6 70                   out 0x70, al
+D712  B0 02                   mov al, 2
+D714  E6 80                   out 0x80, al
+D716  2E A0 84 82             mov al, byte ptr cs:[0x8284]
+D71A  0A C0                   or al, al
+D71C  74 06                   je 0xd724
+D71E  E2 FE                   loop 0xd71e
+D720  FE C8                   dec al
+D722  75 FA                   jne 0xd71e
+
+===== D724h-D74Bh =====
+Reason: POST continuation for chipset/CR0 feature test and status 03h
+D724  2E F6 06 81 82 40       test byte ptr cs:[0x8281], 0x40
+D72A  75 0F                   jne 0xd73b
+D72C  0F 01 E0                smsw ax
+D72F  0A E4                   or ah, ah
+D731  74 08                   je 0xd73b
+D733  0F 20 C0                mov eax, cr0
+D736  0C 10                   or al, 0x10
+D738  0F 22 C0                mov cr0, eax
+D73B  B0 03                   mov al, 3
+D73D  E6 80                   out 0x80, al
+D73F  8C C8                   mov ax, cs
+D741  8E D0                   mov ss, ax
+D743  33 ED                   xor bp, bp
+D745  8E DD                   mov ds, bp
+D747  8E C5                   mov es, bp
+D749  E9 29 B3                jmp 0x8a75
+
+===== D74Ch-D776h =====
+Reason: alternate POST status-04h path; checks 8042 status and equipment signature
+D74C  B0 04                   mov al, 4
+D74E  E6 80                   out 0x80, al
+D750  8C C8                   mov ax, cs
+D752  8E D0                   mov ss, ax
+D754  33 C0                   xor ax, ax
+D756  8E D8                   mov ds, ax
+D758  8E C0                   mov es, ax
+D75A  E4 64                   in al, 0x64
+D75C  24 04                   and al, 4
+D75E  74 10                   je 0xd770
+D760  81 CD 00 10             or bp, 0x1000
+D764  81 3E 72 04 34 12       cmp word ptr [0x472], 0x1234
+D76A  75 04                   jne 0xd770
+D76C  81 CD 00 80             or bp, 0x8000
+D770  B0 05                   mov al, 5
+D772  E6 80                   out 0x80, al
+D774  E9 01 B3                jmp 0x8a78
+
+===== D777h-D799h =====
+Reason: POST status-06h path; computes the CS:0000h word checksum and polls the 8042
+D777  B0 06                   mov al, 6
+D779  E6 80                   out 0x80, al
+D77B  8C C8                   mov ax, cs
+D77D  8E D0                   mov ss, ax
+D77F  33 C0                   xor ax, ax
+D781  8E D8                   mov ds, ax
+D783  8E C0                   mov es, ax
+D785  33 DB                   xor bx, bx
+D787  B9 00 80                mov cx, 0x8000
+D78A  33 F6                   xor si, si
+D78C  2E AD                   lodsw ax, word ptr cs:[si]
+D78E  03 D8                   add bx, ax
+D790  E2 FA                   loop 0xd78c
+D792  74 06                   je 0xd79a
+D794  BD 09 00                mov bp, 9
+D797  E9 0B 1D                jmp 0xf4a5
+
+===== D79Ah-D7B2h =====
+Reason: POST 8042 status/data polling loop and command handshake
+D79A  33 C9                   xor cx, cx
+D79C  E4 64                   in al, 0x64
+D79E  8A E0                   mov ah, al
+D7A0  A8 01                   test al, 1
+D7A2  74 02                   je 0xd7a6
+D7A4  E4 60                   in al, 0x60
+D7A6  F6 C4 02                test ah, 2
+D7A9  E0 F1                   loopne 0xd79c
+D7AB  B0 07                   mov al, 7
+D7AD  E6 80                   out 0x80, al
+D7AF  E3 00                   jcxz 0xd7b1
+D7B1  E3 00                   jcxz 0xd7b3
+
+===== D7DAh-D7E3h =====
+Reason: stack-return continuation after F659h; POST status-08h path
+D7DA  B0 08                   mov al, 8
+D7DC  E6 80                   out 0x80, al
+D7DE  BC E4 D7                mov sp, 0xd7e4
+D7E1  E9 2B 1E                jmp 0xf60f
+
+===== D7E6h-D805h =====
+Reason: stack-return continuation after F60Fh; checks the 8042 response and feature flag
+D7E6  3C 55                   cmp al, 0x55
+D7E8  74 0E                   je 0xd7f8
+D7EA  2E F6 06 80 82 80       test byte ptr cs:[0x8280], 0x80
+D7F0  74 06                   je 0xd7f8
+D7F2  BD 06 00                mov bp, 6
+D7F5  E9 AD 1C                jmp 0xf4a5
+D7F8  0B FF                   or di, di
+D7FA  74 2C                   je 0xd828
+D7FC  B0 A1                   mov al, 0xa1
+D7FE  E6 64                   out 0x64, al
+D800  BC 06 D8                mov sp, 0xd806
+D803  E9 53 1E                jmp 0xf659
+
+===== D808h-D81Bh =====
+Reason: stack-return continuation after F659h; reads and checks 8042 response
+D808  33 C9                   xor cx, cx
+D80A  E4 64                   in al, 0x64
+D80C  A8 01                   test al, 1
+D80E  E1 FA                   loope 0xd80a
+D810  74 0A                   je 0xd81c
+D812  E4 60                   in al, 0x60
+D814  34 38                   xor al, 0x38
+D816  75 04                   jne 0xd81c
+D818  81 CD 00 00             or bp, 0
+
+===== D81Ch-D825h =====
+Reason: alternate POST 8042 command FFh continuation
+D81C  B0 FF                   mov al, 0xff
+D81E  E6 64                   out 0x64, al
+D820  BC 26 D8                mov sp, 0xd826
+D823  E9 33 1E                jmp 0xf659
+
+===== D828h-D82Eh =====
+Reason: POST status-09h continuation and transfer to 1AF8h
+D828  B0 09                   mov al, 9
+D82A  E6 80                   out 0x80, al
+D82C  E9 C9 42                jmp 0x1af8
+
+===== D82Fh-D839h =====
+Reason: alternate POST 8042 command-byte write path
+D82F  B0 60                   mov al, 0x60
+D831  E6 64                   out 0x64, al
+D833  90                      nop
+D834  BC 3A D8                mov sp, 0xd83a
+D837  E9 1F 1E                jmp 0xf659
+
+===== D83Ch-D853h =====
+Reason: stack-return continuation for POST status-0Ah; writes 8042 data byte
+D83C  B0 0A                   mov al, 0xa
+D83E  E6 80                   out 0x80, al
+D840  2E F6 06 80 82 10       test byte ptr cs:[0x8280], 0x10
+D846  B0 55                   mov al, 0x55
+D848  74 02                   je 0xd84c
+D84A  B0 74                   mov al, 0x74
+D84C  E6 60                   out 0x60, al
+D84E  BC 54 D8                mov sp, 0xd854
+D851  E9 05 1E                jmp 0xf659
+
+===== D856h-D86Dh =====
+Reason: stack-return continuation for POST status-0Bh; feature-selects 8042 command C8h/C9h
+D856  B0 0B                   mov al, 0xb
+D858  E6 80                   out 0x80, al
+D85A  2E F6 06 80 82 20       test byte ptr cs:[0x8280], 0x20
+D860  B0 C8                   mov al, 0xc8
+D862  74 02                   je 0xd866
+D864  B0 C9                   mov al, 0xc9
+D866  E6 64                   out 0x64, al
+D868  BC 6E D8                mov sp, 0xd86e
+D86B  E9 EB 1D                jmp 0xf659
+
+===== D870h-D881h =====
+Reason: stack-return continuation for POST status-0Ch; sends 8042 command FFh
+D870  B0 0C                   mov al, 0xc
+D872  E6 80                   out 0x80, al
+D874  E3 00                   jcxz 0xd876
+D876  E3 00                   jcxz 0xd878
+D878  B0 FF                   mov al, 0xff
+D87A  E6 64                   out 0x64, al
+D87C  BC 82 D8                mov sp, 0xd882
+D87F  E9 D7 1D                jmp 0xf659
+
+===== D884h-D891h =====
+Reason: POST status-0Dh CMOS register test setup
+D884  B0 0D                   mov al, 0xd
+D886  E6 80                   out 0x80, al
+D888  B8 8F 55                mov ax, 0x558f
+D88B  90                      nop
+D88C  BC 92 D8                mov sp, 0xd892
+D88F  E9 0B 16                jmp 0xee9d
+
+===== D894h-D899h =====
+Reason: stack-return continuation after CMOS write helper EE9Dh
+D894  BC 9A D8                mov sp, 0xd89a
+D897  E9 FA 15                jmp 0xee94
+
+===== D89Ch-D8A3h =====
+Reason: CMOS 8Fh write/readback comparison continuation
+D89C  32 C4                   xor al, ah
+D89E  75 18                   jne 0xd8b8
+D8A0  B8 8F AA                mov ax, 0xaa8f
+D8A3  90                      nop
+
+===== D8A4h-D8A9h =====
+Reason: stack-return continuation after CMOS write helper EE9Dh
+D8A4  BC AA D8                mov sp, 0xd8aa
+D8A7  E9 F3 15                jmp 0xee9d
+
+===== D8ACh-D8B1h =====
+Reason: stack-return continuation after CMOS read helper EE94h
+D8AC  BC B2 D8                mov sp, 0xd8b2
+D8AF  E9 E2 15                jmp 0xee94
+
+===== D8B4h-D8BDh =====
+Reason: CMOS 8Fh readback comparison and failure path
+D8B4  32 C4                   xor al, ah
+D8B6  74 06                   je 0xd8be
+D8B8  BD 0A 00                mov bp, 0xa
+D8BB  E9 E7 1B                jmp 0xf4a5
+
+===== D8BEh-D8C9h =====
+Reason: POST status-0Eh and CMOS register 8Dh read
+D8BE  B0 0E                   mov al, 0xe
+D8C0  E6 80                   out 0x80, al
+D8C2  B0 8D                   mov al, 0x8d
+D8C4  BC CA D8                mov sp, 0xd8ca
+D8C7  E9 CA 15                jmp 0xee94
+
+===== D8CCh-D8D1h =====
+Reason: stack-return continuation after CMOS read helper EE94h; reads CMOS 8Eh next
+D8CC  0A C0                   or al, al
+D8CE  B8 8E 8E                mov ax, 0x8e8e
+D8D1  90                      nop
+
+===== D8DAh-D8FDh =====
+Reason: CMOS 8Eh bit tests and conditional BP error-state updates
+D8DA  78 07                   js 0xd8e3
+D8DC  83 CD 08                or bp, 8
+D8DF  0C DC                   or al, 0xdc
+D8E1  EB 17                   jmp 0xd8fa
+D8E3  0A C0                   or al, al
+D8E5  78 0C                   js 0xd8f3
+D8E7  E9 A1 AD                jmp 0x868b
+D8EA  74 0C                   je 0xd8f8
+D8EC  0C 5C                   or al, 0x5c
+D8EE  83 CD 20                or bp, 0x20
+D8F1  EB 07                   jmp 0xd8fa
+D8F3  83 CD 10                or bp, 0x10
+D8F6  EB 02                   jmp 0xd8fa
+D8F8  24 8B                   and al, 0x8b
+D8FA  24 FE                   and al, 0xfe
+D8FC  86 C4                   xchg ah, al
+
+===== D906h-D90Ch =====
+Reason: stack-return continuation/status-0Fh error path
+D906  B0 0F                   mov al, 0xf
+D908  E6 80                   out 0x80, al
+D90A  E9 F3 AA                jmp 0x8400
+
+===== D90Dh-D919h =====
+Reason: POST status-10h and CMOS register 8Bh test
+D90D  B0 10                   mov al, 0x10
+D90F  E6 80                   out 0x80, al
+D911  B8 8B 8B                mov ax, 0x8b8b
+D914  BC 1A D9                mov sp, 0xd91a
+D917  E9 7A 15                jmp 0xee94
+
+===== D91Ch-D925h =====
+Reason: stack-return continuation after CMOS read helper EE94h
+D91C  24 07                   and al, 7
+D91E  86 C4                   xchg ah, al
+D920  BC 26 D9                mov sp, 0xd926
+D923  E9 77 15                jmp 0xee9d
+
+===== D928h-D92Fh =====
+Reason: stack-return continuation after CMOS write helper EE9Dh
+D928  B0 8C                   mov al, 0x8c
+D92A  BC 30 D9                mov sp, 0xd930
+D92D  E9 64 15                jmp 0xee94
+
+===== D932h-D93Bh =====
+Reason: stack-return continuation after CMOS read helper EE94h
+D932  B8 8A 8A                mov ax, 0x8a8a
+D935  90                      nop
+D936  BC 3C D9                mov sp, 0xd93c
+D939  E9 58 15                jmp 0xee94
+
+===== D93Eh-D94Bh =====
+Reason: CMOS result-bit handling and writeback setup
+D93E  24 0F                   and al, 0xf
+D940  75 0C                   jne 0xd94e
+D942  B0 26                   mov al, 0x26
+D944  86 C4                   xchg ah, al
+D946  BC 4C D9                mov sp, 0xd94c
+D949  E9 51 15                jmp 0xee9d
+
+===== D94Eh-D957h =====
+Reason: stack-return continuation; enables 8042 keyboard interface with command AEh
+D94E  B0 AE                   mov al, 0xae
+D950  E6 64                   out 0x64, al
+D952  BC 58 D9                mov sp, 0xd958
+D955  E9 01 1D                jmp 0xf659
+
+===== D95Ah-D96Fh =====
+Reason: stack-return continuation; bounded 8042 response poll
+D95A  B9 00 40                mov cx, 0x4000
+D95D  E4 60                   in al, 0x60
+D95F  3C 52                   cmp al, 0x52
+D961  E0 FA                   loopne 0xd95d
+D963  75 17                   jne 0xd97c
+D965  B8 8E 8E                mov ax, 0x8e8e
+D968  BC 6E D9                mov sp, 0xd96e
+D96B  E9 26 15                jmp 0xee94
+D96E  70 D9                   jo 0xd949
+
+===== D970h-D979h =====
+Reason: CMOS 8Eh update continuation after EE94h read
+D970  0C 01                   or al, 1
+D972  86 C4                   xchg ah, al
+D974  BC 7A D9                mov sp, 0xd97a
+D977  E9 23 15                jmp 0xee9d
+
+===== D97Ch-D985h =====
+Reason: stack-return continuation; disables 8042 keyboard interface with command ADh
+D97C  B0 AD                   mov al, 0xad
+D97E  E6 64                   out 0x64, al
+D980  BC 86 D9                mov sp, 0xd986
+D983  E9 D3 1C                jmp 0xf659
+
+===== D988h-D99Fh =====
+Reason: POST status-11h and chipset/port programming continuation
+D988  B0 11                   mov al, 0x11
+D98A  E6 80                   out 0x80, al
+D98C  B0 04                   mov al, 4
+D98E  E6 08                   out 8, al
+D990  E3 00                   jcxz 0xd992
+D992  E3 00                   jcxz 0xd994
+D994  E6 D0                   out 0xd0, al
+D996  BB 70 08                mov bx, 0x870
+D999  90                      nop
+D99A  BC A0 D9                mov sp, 0xd9a0
+D99D  E9 4F 15                jmp 0xeeef
+
+===== D9A2h-D9D8h =====
+Reason: stack-return continuation for PIC initialization; alternate alignment differs from linear listing
+D9A2  B0 12                   mov al, 0x12
+D9A4  E6 80                   out 0x80, al
+D9A6  33 C0                   xor ax, ax
+D9A8  BA D8 03                mov dx, 0x3d8
+D9AB  EE                      out dx, al
+D9AC  E3 00                   jcxz 0xd9ae
+D9AE  E3 00                   jcxz 0xd9b0
+D9B0  40                      inc ax
+D9B1  B2 B8                   mov dl, 0xb8
+D9B3  EE                      out dx, al
+D9B4  E3 00                   jcxz 0xd9b6
+D9B6  E3 00                   jcxz 0xd9b8
+D9B8  B2 BA                   mov dl, 0xba
+D9BA  EC                      in al, dx
+D9BB  E3 00                   jcxz 0xd9bd
+D9BD  E3 00                   jcxz 0xd9bf
+D9BF  B2 DA                   mov dl, 0xda
+D9C1  EC                      in al, dx
+D9C2  E3 00                   jcxz 0xd9c4
+D9C4  E3 00                   jcxz 0xd9c6
+D9C6  B2 C0                   mov dl, 0xc0
+D9C8  B0 00                   mov al, 0
+D9CA  EE                      out dx, al
+D9CB  E3 00                   jcxz 0xd9cd
+D9CD  E3 00                   jcxz 0xd9cf
+D9CF  33 C0                   xor ax, ax
+D9D1  8E C0                   mov es, ax
+D9D3  8E D8                   mov ds, ax
+D9D5  B0 13                   mov al, 0x13
+D9D7  E6 80                   out 0x80, al
+
+===== D9DCh-DA63h =====
+Reason: POST status-14h path; PIT channel-2 and channel-0 programming/check sequence
+D9DC  B0 14                   mov al, 0x14
+D9DE  E6 80                   out 0x80, al
+D9E0  8C C8                   mov ax, cs
+D9E2  8E D0                   mov ss, ax
+D9E4  33 C0                   xor ax, ax
+D9E6  8E C0                   mov es, ax
+D9E8  8E D8                   mov ds, ax
+D9EA  B0 FC                   mov al, 0xfc
+D9EC  E6 61                   out 0x61, al
+D9EE  E3 00                   jcxz 0xd9f0
+D9F0  E3 00                   jcxz 0xd9f2
+D9F2  B0 B4                   mov al, 0xb4
+D9F4  E6 43                   out 0x43, al
+D9F6  B0 55                   mov al, 0x55
+D9F8  E3 00                   jcxz 0xd9fa
+D9FA  E3 00                   jcxz 0xd9fc
+D9FC  E6 42                   out 0x42, al
+D9FE  B0 AA                   mov al, 0xaa
+DA00  E3 00                   jcxz 0xda02
+DA02  E3 00                   jcxz 0xda04
+DA04  E6 42                   out 0x42, al
+DA06  B0 80                   mov al, 0x80
+DA08  E3 00                   jcxz 0xda0a
+DA0A  E3 00                   jcxz 0xda0c
+DA0C  E6 43                   out 0x43, al
+DA0E  E3 00                   jcxz 0xda10
+DA10  E3 00                   jcxz 0xda12
+DA12  E4 42                   in al, 0x42
+DA14  8A E0                   mov ah, al
+DA16  E3 00                   jcxz 0xda18
+DA18  E3 00                   jcxz 0xda1a
+DA1A  E4 42                   in al, 0x42
+DA1C  3D AA 55                cmp ax, 0x55aa
+DA1F  74 0B                   je 0xda2c
+DA21  2E F6 06 80 82 80       test byte ptr cs:[0x8280], 0x80
+DA27  74 03                   je 0xda2c
+DA29  83 CD 01                or bp, 1
+DA2C  B0 15                   mov al, 0x15
+DA2E  E6 80                   out 0x80, al
+DA30  E3 00                   jcxz 0xda32
+DA32  E3 00                   jcxz 0xda34
+DA34  B0 36                   mov al, 0x36
+DA36  E6 43                   out 0x43, al
+DA38  B0 00                   mov al, 0
+DA3A  E3 00                   jcxz 0xda3c
+DA3C  E3 00                   jcxz 0xda3e
+DA3E  E6 40                   out 0x40, al
+DA40  E3 00                   jcxz 0xda42
+DA42  E3 00                   jcxz 0xda44
+DA44  E6 40                   out 0x40, al
+DA46  2E F6 06 80 82 80       test byte ptr cs:[0x8280], 0x80
+DA4C  74 4D                   je 0xda9b
+DA4E  2E A0 85 82             mov al, byte ptr cs:[0x8285]
+DA52  0A C0                   or al, al
+DA54  75 45                   jne 0xda9b
+DA56  33 DB                   xor bx, bx
+DA58  B4 10                   mov ah, 0x10
+DA5A  BA 61 00                mov dx, 0x61
+DA5D  90                      nop
+DA5E  BC 64 DA                mov sp, 0xda64
+DA61  E9 34 1B                jmp 0xf598
+
+===== DA66h-DAA1h =====
+Reason: stack-return continuation after F598h; PIT channel-2 timing measurement
+DA66  E3 25                   jcxz 0xda8d
+DA68  B0 1A                   mov al, 0x1a
+DA6A  E6 80                   out 0x80, al
+DA6C  E4 61                   in al, 0x61
+DA6E  84 C4                   test ah, al
+DA70  74 FA                   je 0xda6c
+DA72  33 C9                   xor cx, cx
+DA74  E4 61                   in al, 0x61
+DA76  84 C4                   test ah, al
+DA78  E0 FA                   loopne 0xda74
+DA7A  87 D9                   xchg cx, bx
+DA7C  E4 61                   in al, 0x61
+DA7E  84 C4                   test ah, al
+DA80  E1 FA                   loope 0xda7c
+DA82  2B CB                   sub cx, bx
+DA84  79 02                   jns 0xda88
+DA86  F7 D9                   neg cx
+DA88  83 F9 0A                cmp cx, 0xa
+DA8B  72 0E                   jb 0xda9b
+DA8D  2E F6 06 80 82 80       test byte ptr cs:[0x8280], 0x80
+DA93  74 06                   je 0xda9b
+DA95  BD 01 00                mov bp, 1
+DA98  E9 0A 1A                jmp 0xf4a5
+DA9B  B0 1B                   mov al, 0x1b
+DA9D  E6 80                   out 0x80, al
+DA9F  E9 56 81                jmp 0x5bf8
+
+===== E000h-E004h =====
+Reason: alternate ROM entry: far JMP F000:E005h
+E000  EA 05 E0 00 F0          ljmp 0xf000:0xe005
+
+===== E005h-E007h =====
+Reason: ROM entry trampoline: near JMP F000:F73Bh
+E005  E9 33 17                jmp 0xf73b
+
+===== E05Bh-E05Dh =====
+Reason: reset-vector entry target: near JMP F000:D604h
+E05B  E9 A6 F5                jmp 0xd604
+
+===== E2C3h-E2C5h =====
+Reason: alternate jump-stub entry; JMPs to 90B7h, which forwards to E98Ah; caller unresolved
+E2C3  E9 F1 AD                jmp 0x90b7
+
+===== E2C6h-E3D6h =====
+Reason: separate POST chipset-port programming stream; alternate entry source remains unresolved
+E2C6  E6 0D                   out 0xd, al
+E2C8  E3 00                   jcxz 0xe2ca
+E2CA  E3 00                   jcxz 0xe2cc
+E2CC  E6 DA                   out 0xda, al
+E2CE  B0 04                   mov al, 4
+E2D0  E3 00                   jcxz 0xe2d2
+E2D2  E3 00                   jcxz 0xe2d4
+E2D4  E6 08                   out 8, al
+E2D6  E3 00                   jcxz 0xe2d8
+E2D8  E3 00                   jcxz 0xe2da
+E2DA  E6 D0                   out 0xd0, al
+E2DC  33 DB                   xor bx, bx
+E2DE  BA 80 00                mov dx, 0x80
+E2E1  B9 0E 00                mov cx, 0xe
+E2E4  42                      inc dx
+E2E5  E8 D0 13                call 0xf6b8
+E2E8  E1 FA                   loope 0xe2e4
+E2EA  74 0B                   je 0xe2f7
+E2EC  2E F6 06 80 82 80       test byte ptr cs:[0x8280], 0x80
+E2F2  74 03                   je 0xe2f7
+E2F4  E9 8B 00                jmp 0xe382
+E2F7  B0 60                   mov al, 0x60
+E2F9  E6 80                   out 0x80, al
+E2FB  E8 DD 10                call 0xf3db
+E2FE  B0 61                   mov al, 0x61
+E300  E6 80                   out 0x80, al
+E302  E3 00                   jcxz 0xe304
+E304  E3 00                   jcxz 0xe306
+E306  E6 0C                   out 0xc, al
+E308  E3 00                   jcxz 0xe30a
+E30A  E3 00                   jcxz 0xe30c
+E30C  E6 D8                   out 0xd8, al
+E30E  4B                      dec bx
+E30F  BA FF FF                mov dx, 0xffff
+E312  B9 08 00                mov cx, 8
+E315  51                      push cx
+E316  42                      inc dx
+E317  E8 9E 13                call 0xf6b8
+E31A  E1 FA                   loope 0xe316
+E31C  74 08                   je 0xe326
+E31E  2E F6 06 80 82 80       test byte ptr cs:[0x8280], 0x80
+E324  75 68                   jne 0xe38e
+E326  B0 62                   mov al, 0x62
+E328  E6 80                   out 0x80, al
+E32A  BA BE 00                mov dx, 0xbe
+E32D  59                      pop cx
+E32E  42                      inc dx
+E32F  42                      inc dx
+E330  E8 85 13                call 0xf6b8
+E333  E1 F9                   loope 0xe32e
+E335  74 08                   je 0xe33f
+E337  2E F6 06 80 82 80       test byte ptr cs:[0x8280], 0x80
+E33D  75 49                   jne 0xe388
+E33F  B0 63                   mov al, 0x63
+E341  E6 80                   out 0x80, al
+E343  E8 D3 10                call 0xf419
+E346  B0 64                   mov al, 0x64
+E348  E6 80                   out 0x80, al
+E34A  68 51 E3                push 0xe351
+E34D  68 4E FA                push 0xfa4e
+E350  C3                      ret
+E351  B0 65                   mov al, 0x65
+E353  E6 80                   out 0x80, al
+E355  E3 00                   jcxz 0xe357
+E357  E3 00                   jcxz 0xe359
+E359  E6 0C                   out 0xc, al
+E35B  E3 00                   jcxz 0xe35d
+E35D  E3 00                   jcxz 0xe35f
+E35F  E6 D8                   out 0xd8, al
+E361  B0 00                   mov al, 0
+E363  E3 00                   jcxz 0xe365
+E365  E3 00                   jcxz 0xe367
+E367  E6 08                   out 8, al
+E369  E3 00                   jcxz 0xe36b
+E36B  E3 00                   jcxz 0xe36d
+E36D  E6 D0                   out 0xd0, al
+E36F  E8 3D 00                call 0xe3af
+E372  B0 66                   mov al, 0x66
+E374  E6 80                   out 0x80, al
+E376  B0 00                   mov al, 0
+E378  E6 D2                   out 0xd2, al
+E37A  E3 00                   jcxz 0xe37c
+E37C  E3 00                   jcxz 0xe37e
+E37E  E6 D4                   out 0xd4, al
+E380  EB 12                   jmp 0xe394
+E382  BE FD 7A                mov si, 0x7afd
+E385  E9 81 11                jmp 0xf509
+E388  BE E3 7A                mov si, 0x7ae3
+E38B  E9 7B 11                jmp 0xf509
+E38E  BE F0 7A                mov si, 0x7af0
+E391  E9 75 11                jmp 0xf509
+E394  FA                      cli
+E395  BB 70 08                mov bx, 0x870
+E398  E8 4C 0B                call 0xeee7
+E39B  B0 67                   mov al, 0x67
+E39D  E6 80                   out 0x80, al
+E39F  B0 FA                   mov al, 0xfa
+E3A1  E6 21                   out 0x21, al
+E3A3  B0 FF                   mov al, 0xff
+E3A5  E3 00                   jcxz 0xe3a7
+E3A7  E3 00                   jcxz 0xe3a9
+E3A9  E6 A1                   out 0xa1, al
+E3AB  FB                      sti
+E3AC  E9 31 2D                jmp 0x10e0
+E3AF  E3 00                   jcxz 0xe3b1
+E3B1  E3 00                   jcxz 0xe3b3
+E3B3  B0 C0                   mov al, 0xc0
+E3B5  E6 D6                   out 0xd6, al
+E3B7  B0 40                   mov al, 0x40
+E3B9  E3 00                   jcxz 0xe3bb
+E3BB  E3 00                   jcxz 0xe3bd
+E3BD  E6 0B                   out 0xb, al
+E3BF  E8 07 00                call 0xe3c9
+E3C2  E8 04 00                call 0xe3c9
+E3C5  E8 01 00                call 0xe3c9
+E3C8  C3                      ret
+E3C9  E3 00                   jcxz 0xe3cb
+E3CB  E3 00                   jcxz 0xe3cd
+E3CD  40                      inc ax
+E3CE  E6 0B                   out 0xb, al
+E3D0  E3 00                   jcxz 0xe3d2
+E3D2  E3 00                   jcxz 0xe3d4
+E3D4  E6 D6                   out 0xd6, al
+E3D6  C3                      ret
 
