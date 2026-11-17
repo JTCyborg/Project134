@@ -1074,7 +1074,7 @@ Detailed report: [AMI486_STORAGE_AND_DISPATCH_REGIONS_20261116.md](AMI486_STORAG
 - D100h–D5FFh is the independent floppy controller/DMA subsystem using 03F2h/03F4h/03F5h/03F7h and DMA ports 0Ch/0Bh/05h/04h.
 - AD00h–AE5Fh is keyboard translation data candidate; AE60h onward includes INT 15h AH=4Fh keyboard intercept handling.
 - F92Ah–F935h is the six-entry INT 14h serial-service table; F977h is the AH=03h status entry overlapping the F936h initialization stream. F8E7h INT 14h vector installation remains unresolved.
-- Historical candidate-window snapshot: 168 code windows plus 18 data ranges (186 headers; 10,700-byte union). The current generated artifact has 330 code windows and 64 data ranges (394 headers; 29,072-byte union across 141 pages, 44.36%). Unique code/data bytes are 19,883/9,302 with 113 overlap bytes. This is a selected-window footprint, not semantic coverage; see AMI486_ADDRESS_LEDGER_20261116.md section 11.
+- Historical candidate-window snapshot: 168 code windows plus 18 data ranges (186 headers; 10,700-byte union). The current generated artifact has 386 code windows and 74 data ranges (460 headers; 35,960-byte union across 169 pages, 54.87%). Unique code/data bytes are 22,989/13,084 with 113 overlap bytes. This is a selected-window footprint, not semantic coverage; see AMI486_ADDRESS_LEDGER_20261116.md section 11.
 
 Do not merge ATA, FDC, keyboard and F9xx dispatch code into one subsystem.
 
@@ -1191,13 +1191,13 @@ The 2100h raw-byte correction is recorded in AMI486_ADDRESS_LEDGER_20261116.md: 
 - [AMI486_SETUP_EDITOR_RENDERING_EXTENSION_20261117.md](AMI486_SETUP_EDITOR_RENDERING_EXTENSION_20261117.md) extends phase 12 with byte-aligned 0D84h event dispatch, 0E19h/0E47h selection wrap helpers, 0E7Ch single-item rendering, and the 0EE2h–10DEh option-list/auxiliary-description renderer. It refines E18Ch as absolute selected-record index and E185 as on-screen row.
 - [AMI486_POST_SUMMARY_DISPLAY_20261117.md](AMI486_POST_SUMMARY_DISPLAY_20261117.md) maps the 3F4Ah/3F7Bh POST summary frame and fields, CPU/numeric-processor selection, floppy/HDD/display formatting, BDA COM/LPT enumeration and decimal/line-rendering helpers.
 - Setup data boundaries are distinct: 3044h–318Bh short captions; 318Ch–31A3h 12 caption pointers; 31A4h–342Dh long descriptions; 342Eh–3443h 11 long-description pointers; 3444h–3445h separate Do Not Write pointer; 3446h–345Bh 11 handler pointers.
-- Previous candidate artifact: 187 code windows plus 35 data ranges, 15,639-byte union. Superseded by the current 330-window/64-range artifact (29,072-byte union across 141 pages). This is a sampling footprint, not semantic coverage.
+- Previous candidate artifact: 187 code windows plus 35 data ranges, 15,639-byte union. Superseded by the current 386-window/74-range artifact (35,960-byte union across 169 pages). This is a sampling footprint, not semantic coverage.
 - Do not start phase 97. Continue from the address ledger's unresolved ranges and cross-reference gaps.
 
 
 ## Candidate address/data map update — 2026-11-17
 
-The Capstone candidate generator now emits 330 code windows and 64 explicit data ranges (394 headers). Recomputed union is 29,072/65,536 bytes (44.36%) across 141 pages: 19,883 unique code-window bytes, 9,302 unique data-range bytes, 113 overlap bytes. This is only a seeded inspection footprint, not semantic coverage. See AMI486_ADDRESS_LEDGER_20261116.md section 11 for the newly classified strings, labels, embedded pointer tables and OEM identity block.
+The Capstone candidate generator now emits 386 code windows and 74 explicit data ranges (460 headers). Recomputed union is 35,960/65,536 bytes (54.87%) across 169 pages: 22,989 unique code-window bytes, 13,084 unique data-range bytes, 113 overlap bytes. This is only a seeded inspection footprint, not semantic coverage. See AMI486_ADDRESS_LEDGER_20261116.md section 11 for the newly classified strings, labels, embedded pointer tables and OEM identity block.
 
 Newly mapped data regions include POST conflict strings (188Eh–18E4h), cache/CPU labels (19CAh–19F7h), Setup exit prompts (2F24h–2F65h), Setup legends (3624h–381Bh), hard-disk utility strings/tables (3900h–3C5Bh), load-default prompts (59C0h–5A4Bh), POST throughput label (7145h–714Dh), POST/help/error text and lookup data (732Bh–7CE8h), AMI/OEM identity block (8000h–81EDh), and ASCII lookup bytes (B528h–B55Eh).
 
@@ -1251,5 +1251,16 @@ The screen-renderer helper map is documented in AMI486_SCREEN_RENDERER_HELPERS_2
 - Hard-disk utility / POST memory paths: [AMI486_ADDRESS_LEDGER_REGION_4628_55A7_20261117.md](AMI486_ADDRESS_LEDGER_REGION_4628_55A7_20261117.md).
 - Timing calibration / INT 15h services: [AMI486_ADDRESS_LEDGER_REGION_8E89_93F7_20261117.md](AMI486_ADDRESS_LEDGER_REGION_8E89_93F7_20261117.md).
 - Candidate generator includes the new bounded code windows and separately emitted pointer tables. GitHub Actions completed successfully for generator commit 661e6521e13a9880e951838dd3c4e2c9a8fe4bf2.
-- Current artifact: 330 code windows, 64 data ranges; 19,883 unique code-window bytes, 9,302 unique data bytes, 113 overlap, 29,072-byte union (44.36%), 141 pages touched, 73 pages fully covered. Candidate listing blob SHA: 426aa9903c473c7de7c879300358c0b6979dd83c.
+- Current artifact: 386 code windows, 74 data ranges; 22,989 unique code-window bytes, 13,084 unique data bytes, 113 overlap, 35,960-byte union (54.87%), 169 pages touched, 98 pages fully covered. Candidate listing blob SHA: 64c64b7250b8c9271635f38230a89a43a71b34ec.
 - Next uncovered interval selected by subsystem continuity and reference density: 93F8h–9FFFh. Larger queued intervals include B7B1h–C5F9h, D65Bh–E400h, E865h–F52Dh and 81EEh–8DCEh.
+
+
+## Further address-ledger expansion — 2026-11-17
+
+- [PS/2 auxiliary device and IRQ12 mouse path](AMI486_ADDRESS_LEDGER_REGION_93F8_9870_20261117.md).
+- [INT 10h video BIOS services](AMI486_ADDRESS_LEDGER_REGION_9848_A017_20261117.md).
+- [Advanced CMOS/Chipset Setup option catalog](AMI486_ADDRESS_LEDGER_REGION_B7B1_C5FA_20261117.md).
+
+The latest successful generator run emits all confirmed dispatch tables as data, not as accidental linear opcodes. Current footprint is 386 code windows and 74 data ranges: 35,960 bytes (54.87%), 169 pages touched and 98 fully covered. This is still only a candidate inspection footprint.
+
+Next selected interval: D65Bh–E400h (3,494 bytes). It will first be classified as code/data/mixed by string density and aligned incoming references before code seeds are added.
