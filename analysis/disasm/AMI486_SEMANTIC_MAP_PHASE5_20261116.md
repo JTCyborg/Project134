@@ -19,7 +19,7 @@ Little-endian interpretation:
 
 | Address | Value | Consumer | Proven use |
 |---|---:|---|---|
-| `8880` | `0005h` (5) | 85F5, 85D6 default path | Number of four-byte entries at 873Ch |
+| `8880` | `0005h` (5) | 85F5 | Number of four-byte entries at 873Ch |
 | `8882` | `004Ch` (76) | 85C0 | Number of four-byte entries at 8750h |
 | `8884` | `0000h` (0) | 85CB | Empty/default table at 8880h |
 | `8886` | `0051h` (81) | 8400 | Number of entries starting at 873Ch; 5 + 76 |
@@ -110,7 +110,7 @@ The remaining records (keys 80h–B6h, with some non-contiguous fields) are pres
 
 The 76-entry suffix is not a second unrelated table: it is the contiguous tail of the same array used by 8400. Separate consumers choose different slices:
 - 8400: all 81 records;
-- 85F5/85D6 default: first 5 records;
+- 85F5: first 5 records; 85D6: optional runtime table (stock no-op when 82B0h=0);
 - 85C0: last 76 records;
 - 85CB: zero records.
 
