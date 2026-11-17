@@ -23954,7 +23954,7 @@ Reason: POST A1h memory setup wrapper; calls 2850h and gated memory-test path 26
 1F41  80 0E 16 00 10          or byte ptr [0x16], 0x10
 1F46  C3                      ret
 
-===== 1F47h-203Dh =====
+===== 1F47h-203Eh =====
 Reason: POST A4h AUTO/manual CMOS-to-ALi1429 configuration handler
 1F47  B8 03 C5                mov ax, 0xc503
 1F4A  E8 8F 6E                call 0x8ddc
@@ -24057,6 +24057,7 @@ Reason: POST A4h AUTO/manual CMOS-to-ALi1429 configuration handler
 2037  B0 1A                   mov al, 0x1a
 2039  8A E3                   mov ah, bl
 203B  E8 9E 6D                call 0x8ddc
+203E  C3                      ret
 
 ===== 203Fh-2041h =====
 Reason: OR SP,SP / RET status-normalization stub
@@ -24279,4 +24280,9 @@ Reason: option-ROM scan invalid-candidate helper: advances BX by 0080h, restores
 1BF0  81 C3 80 00             add bx, 0x80
 1BF4  1F                      pop ds
 1BF5  C3                      ret
+
+===== 1E9Ah-1E9Ch =====
+Reason: OR SP,SP / RET status-success stub between POST callback entries
+1E9A  0B E4                   or sp, sp
+1E9C  C3                      ret
 
