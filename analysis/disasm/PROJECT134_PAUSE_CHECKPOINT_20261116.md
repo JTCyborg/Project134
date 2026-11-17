@@ -315,7 +315,7 @@ Report: `AMI486_ADDRESS_LEDGER_REGION_D655_E3FF_20261117.md`.
 - D6C4h/D6DEh are a stack/register/segment integrity test; the D7xx–DAA1h stream contains 8042, CMOS, chipset and PIT POST work with explicit stack-return words classified as data.
 - DAA2h–DFFFh is 1,374 zero bytes. E000h/E005h are jump stubs, E05Bh is the reset entry, E00Eh/E0CBh are ROM strings, E160h–E25Fh is descriptor-like data and E260h–E2BFh is the 96-byte protected-mode parameter block copied before INT 15h/AH=89h.
 - D906h is a confirmed direct JMP to 8400h after the EE9Dh helper returns through stack slot D904h. 8400h clears/restores CMOS 8Eh–FFh; AND BP,FFC7h preserves BP.13. The producer remains unresolved.
-- Candidate mask: 541 code windows, 140 data ranges, 45,118-byte union (68.84%), 71 uncovered intervals, 203 pages touched and 125 fully covered. This is not semantic completion.
+- Candidate mask: 597 code windows, 153 data ranges, 46,985-byte union (71.69%), 66 uncovered intervals, 210 pages touched and 135 fully covered. This is not semantic completion.
 - Historical next-gap selection before the E862h–F52Dh expansion; this interval has since been mapped.
 
 
@@ -334,4 +334,13 @@ Report: `AMI486_ADDRESS_LEDGER_REGION_696F_72D8_20261117.md`.
 
 The former D697Dh–D7144h gap is mapped as a Hard Disk Setup/INT 13h diagnostic subsystem. E1ACh is a three-value UI selector; the 6BD8h near-call table dispatches to 6B14h, 71E4h and 6CE3h; the direct dispatcher caller is 6936h. The subsystem includes disk read/write/verify paths, a 13-byte status table and a repeated 40-sector throughput benchmark.
 
-Current candidate mask: 541 code windows, 140 data ranges, 45,118-byte union (68.84%). The next largest uncovered interval is 19F8h–20FFh (1,800 bytes). This is not semantic completion.
+Current candidate mask: 541 code windows, 140 data ranges, 45,118-byte union (68.84%). The 19F8h–20FFh interval is now fully covered. The next largest uncovered interval is CA16h–D0FFh (1,770 bytes). This is not semantic completion.
+
+
+## Address-ledger continuation — 19B0h–23CEh POST/ALi/A20 region (2026-11-17)
+
+Report: `AMI486_ADDRESS_LEDGER_REGION_19B0_23CE_20261117.md`.
+
+The former 19F8h–20FFh gap is fully covered by code/data windows. The map reconciles the cache/CPU display, B3h profile trampoline, option-ROM scan/validator, C0000h/E0000h window setup, CMOS-to-ALi manual configuration, POST A1h/A4h handlers, 8750h table walker and A20-bracketed protected-mode memory test. Stack-return words and descriptor data are separately classified.
+
+Current candidate mask: 597 code windows, 153 data ranges, 46,985-byte union (71.69%), 66 uncovered intervals, 210 pages touched and 135 fully covered. This is not semantic completion. Next largest gap: CA16h–D0FFh (1,770 bytes).
