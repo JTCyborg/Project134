@@ -602,3 +602,10 @@ Detailed map: [AMI486_ADDRESS_LEDGER_REGION_F5AE_F8E6_20261117.md](AMI486_ADDRES
 Mapped the 8042 command/data/status helpers F5BCh–F670h, generic I/O port test F691h/F6B8h, option-ROM scanner F6D9h, INT 19h bootstrap F758h, four-retry INT 13h read helper F810h, INT 11h/12h handlers F84Dh/F841h, INT 14h serial handler trampoline E739h→F8E3h, INT 15h trampoline F859h→90B4h, INT 16h trampoline E82Eh→B3DEh, and INT 17h printer handler trampoline EFD2h→F85Eh. The INT 14h dispatcher uses six handler offsets at F92Ah–F935h. F82Ch–F840h and F85Ch–F85Dh are padding; F5AEh–F5B1h remains opaque.
 
 The candidate generator now includes bounded seeds and data/padding boundaries for this region. GitHub Actions run 44084310128 passed: 811 windows / 237 data ranges, 57,709 covered bytes (88.06%), 68 uncovered intervals. The next largest uncovered interval is 7CE9h–7FFFh (791 bytes).
+
+
+## 25. Zero-filled ROM tail — 7CE9h–7FFFh (2026-11-17)
+
+Detailed verification: [AMI486_ADDRESS_LEDGER_REGION_7CE9_7FFF_20261117.md](AMI486_ADDRESS_LEDGER_REGION_7CE9_7FFF_20261117.md).
+
+The entire 791-byte interval 7CE9h–7FFFh is verified as 00h (791 zero bytes, zero nonzero bytes). It is padding/reserved ROM space, not code or an embedded table. The candidate generator now includes it as a single zero-filled data range. GitHub Actions run 44084573238 passed: 811 windows / 238 data ranges, 58,500 covered bytes (89.26%), 67 uncovered intervals. The next largest uncovered interval is 639Ch–6615h (634 bytes).
