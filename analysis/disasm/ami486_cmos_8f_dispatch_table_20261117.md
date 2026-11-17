@@ -674,3 +674,18 @@ A control-flow scan found two actual near-CALL references to the routine entry `
 The first caller, `6D2Ch`, is in the `6CF0h–6D8xh` state/geometry path and also invokes `6D94h`; its arguments and role are still being decoded. The entry `6D94h` takes two stack arguments into SI and DI, sets CX=3, and calls the pattern generator `6FAEh`, which fills the write buffer with the selected three-byte repeating pattern. It then processes retry/abort and track-state variables.
 
 This is now strong evidence that the ROM contains a low-level disk formatting/write-track workflow: record-driven repeated calls to `INT 13h AH=05h`, with a synthesized repeating fill pattern. What remains unproven is the final UI linkage: the explicit hard-disk warning/confirmation string and Y/N handler have not yet been connected by a verified call path to the `6D94h / 6EF0h` sequence. Keep that distinction in the documentation.
+
+
+### Hard-disk destructive-operation confirmation path (2026-11-17)
+
+The UI confirmation sequence is now located precisely in the large routine spanning at least `4890h–4AEFh`:
+
+- `499Fh` loads the string at `3982h` (`All Data on Specified`).
+- `49A9h` loads `3998h` (`Harddisk will be LOST`).
+- `49B3h` loads `39AEh` (`Want to Continue (Y/N) ?`).
+- `49BDh` stores `0E49h` in `[E180h]`, then calls keyboard/input helpers at `49C0h` and `49C3h`.
+- `49C6h: CMP AL,59h`; `49C8h: JE 49CDh`. Thus only uppercase `Y` follows the continue branch at `49CDh`; all other returned characters take the jump at `49CAh` to `4ACCh`.
+
+The Y branch then presents further data-entry/status UI and processes additional state at `E1A4h`, `E1A7h`, `E1ACh`, and local stack variables. It reaches the helper calls in the `4Axxh` range and eventually returns at `4AEFh`. The non-Y branch jumps to `4ACCh`, which also flows through the tail of this routine. This confirms the warning and explicit Y gate are executable code, not merely unused strings.
+
+Important limitation: a static near-CALL xref scan finds no direct CALL to the `4890h`-range routine or to `6D94h` from the UI block. The two direct calls to `6D94h` remain `6D2Ch` and `6F12h`. The Y-confirmation routine is therefore now identified, but the interprocedural bridge from its caller/return path to the disk-track worker has not yet been proven. The `6D2Ch` caller still appears to be entered through a non-near-CALL dispatch or an indirect control transfer; do not claim the UI Y branch directly invokes formatting until that dispatch is traced.
