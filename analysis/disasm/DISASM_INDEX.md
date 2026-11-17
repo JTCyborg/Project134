@@ -1264,3 +1264,17 @@ The screen-renderer helper map is documented in AMI486_SCREEN_RENDERER_HELPERS_2
 The latest successful generator run emits all confirmed dispatch tables as data, not as accidental linear opcodes. Current footprint is 386 code windows and 74 data ranges: 35,960 bytes (54.87%), 169 pages touched and 98 fully covered. This is still only a candidate inspection footprint.
 
 Next selected interval: D65Bh–E400h (3,494 bytes). It will first be classified as code/data/mixed by string density and aligned incoming references before code seeds are added.
+
+
+## POST CMOS 8Fh / CMOS 8Eh region — 2026-11-17
+
+Report: [AMI486_ADDRESS_LEDGER_REGION_D655_E3FF_20261117.md](AMI486_ADDRESS_LEDGER_REGION_D655_E3FF_20261117.md).
+
+- D655h is an aligned continuation; D65Bh is inside the TEST instruction at D657h, not an entry.
+- D6A8h–D6BDh is the eleven-word CMOS 8Fh near-jump table for D6A2h. D6BEh is the BP=5 error path.
+- D6C4h/D6DEh implement a stack/register/segment test; D6FCh and D709h are JMP-SP continuations, not data.
+- The D7xx–DAA1h stream performs POST 8042, CMOS, chipset and PIT checks. Stack-return words are emitted as separate data ranges.
+- DAA2h–DFFFh is 1,374 zero bytes. E000h/E005h are entry stubs; E05Bh is the reset entry target; E160h–E25Fh and E260h–E2BFh are separately classified descriptor-like/parameter blocks.
+- New direct entry: the stack-return continuation D906h executes `JMP 8400h`. This corrects phase 52's former unresolved dynamic-entry note; it does not contradict phase 51's table-target statement. The 8400h path clears/restores CMOS 8Eh–FFh and preserves BP.13.
+- Candidate generator: 440 code windows, 120 data ranges; 24,435 unique code-window bytes, 15,285 unique data-range bytes, 117 overlap bytes, 39,603-byte union (60.43%), 183 pages touched and 109 fully covered. These are seeded inspection masks, not semantic-completion percentages.
+- Largest remaining uncovered intervals now begin E865h–F52Dh (3,273 bytes), 697Dh–7144h (1,992 bytes), 19F8h–20FFh (1,800 bytes), CA16h–D0FFh (1,770 bytes), and 873Ch–8DCEh (1,683 bytes).
