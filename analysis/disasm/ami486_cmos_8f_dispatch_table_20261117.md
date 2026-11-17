@@ -823,3 +823,26 @@ On a match, it returns the one-based position in the list in AL (1 through 13). 
 The source of `E3B9h` is now confirmed in the INT 13h wrapper at `6C15h`: immediately after `INT 13h`, it stores the BIOS status register `AH` to `[E3B9h]`. The wrapper returns CF clear when the BIOS call succeeded and CF set when it failed. Thus `E3B9h` is the latched INT 13h status byte used by both the retry classifier and the later status-list lookup. The worker can also explicitly overwrite it with `1Bh` on ESC abort; callers test that sentinel separately.
 
 Do not infer the semantic labels of the 13 status codes from their numeric values alone. The table ordering and index mapping are byte-confirmed; the corresponding UI strings and user choices still need cross-reference.
+
+
+### INT 13h error index -> message pointer table
+
+The error-message pointer table is located at `3BEEh` and contains 13 little-endian offsets. Its order exactly matches the 13-byte status-code list at `6CB5h`, because `6CC2h` returns a one-based index into that list and calls the display routine at `4FCFh` with that index.
+
+| Index | INT 13h status | Message offset | ROM text |
+|---:|---:|---:|---|
+| 1 | `01h` | `3AAEh` | Undefined Error - Command Aborted |
+| 2 | `02h` | `3AD0h` | Address Mark Not Found |
+| 3 | `04h` | `3AE7h` | Requested Sector Not Found |
+| 4 | `05h` | `3B02h` | Reset Failed |
+| 5 | `07h` | `3B0Fh` | Drive Parameter Activity Failed |
+| 6 | `0Ah` | `3B2Fh` | Bad Sector Flag Detected |
+| 7 | `10h` | `3B49h` | Bad ECC on Disk Read |
+| 8 | `11h` | `3B5Eh` | ECC Corrected Data Error |
+| 9 | `20h` | `3B77h` | Controller has Failed |
+| 10 | `40h` | `3B8Dh` | Seek Operation Failed |
+| 11 | `80h` | `3BA3h` | Attachment Failed to Respond |
+| 12 | `AAh` | `3BC0h` | Drive Not Ready |
+| 13 | `CCh` | `3BD0h` | Write Fault on Selected Drive |
+
+The adjacent string at `3C0Dh` is `Abort, Retry, Ignore ?`. The presence of this prompt is byte-confirmed, but the exact key-to-action dispatch and whether every listed error uses the same prompt must be established by tracing the continuation of `4FCFh` and its caller(s). The table mapping above is established by the status-code array and pointer array ordering, not by assuming standard PC BIOS error text.
