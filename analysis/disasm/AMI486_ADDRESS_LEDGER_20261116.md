@@ -813,3 +813,19 @@ Detailed map: [AMI486_ADDRESS_LEDGER_REGION_03D4_04B0_20261117.md](AMI486_ADDRES
 Extended the 03D4h screen-presentation field-record renderer from the default 80h-byte window to 0D6h bytes, covering the clipped CALL displacement at 0454h and the full routine through RET at 04A9h. The routine computes a 16-byte record offset from E401h and copies record fields into BP+40h–BP+47h. Added the six-byte E1A3h selector wrapper at 04AAh, called from 048Ah; it joins the common field-value calculation at 04BBh. The existing 04B0h entry and alternate 04B2h wrapper remain separate.
 
 Generator update: fee1d36bc61ef71410e760d1bbb7b9d92608a9f8. The refreshed range-mask summary reports 64,384/65,536 bytes (98.24%), 47 uncovered intervals, and 214 fully covered 256-byte pages. The next largest gap is 596Ah–59BFh (86 bytes). The per-window Capstone listing remains pending regeneration.
+
+
+## 47. Setup load-values confirmation prompt/input handler — 5959h–59BFh (2026-11-17)
+
+Detailed map: [AMI486_ADDRESS_LEDGER_REGION_5959_59C0_20261117.md](AMI486_ADDRESS_LEDGER_REGION_5959_59C0_20261117.md).
+
+Added an independent candidate window at 5959h, immediately after the RET at 5958h. The routine snapshots E1A3h into E19Fh, obtains the prompt layout through the existing string-length helper at 592Ah, computes and stores the display cursor in E180h, invokes the existing text/cursor helpers, and enters a keyboard-input loop. The input helper at 591Ah converts lowercase ASCII letters to uppercase. The handler echoes Y/N characters and continues waiting; ESC (1Bh) or Enter (0Dh) reaches the common return path at 59BAh–59BFh. Other keys are ignored.
+
+The adjacent data already classified at 59C0h–5A4Bh is a three-word prompt pointer table followed by the strings:
+- 59C6h: "Load Original Values (Y/N) ?"
+- 59E3h: "Load BIOS Setup Default Values from ROM Table (Y/N) ?"
+- 5A19h: "Load Power-On Default Values from ROM Table (Y/N) ?"
+
+The new code window ends at 59BFh, immediately before the pointer table at 59C0h. It overlaps the prior 592Ah candidate window by 17 bytes (5959h–5969h); only the previously uncovered 596Ah–59BFh interval adds new coverage.
+
+Generator update: pending commit. The recalculated range mask is 64,470/65,536 bytes (98.37%), with 46 uncovered intervals and 215 fully covered 256-byte pages. The next largest uncovered interval is 72D8h–732Ah (83 bytes). These are byte-range coverage metrics, not semantic-completion or reachability percentages. The full Capstone candidate listing still requires regeneration with the updated script.
