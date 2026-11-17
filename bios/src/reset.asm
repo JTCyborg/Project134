@@ -35,6 +35,10 @@ bios_entry:
     hlt
     jmp .bootstrap_halt
 
+; INT 13h reconstruction slice. It is compiled into the ROM but is not yet
+; installed in the IVT: POST/vector installation is still pending.
+%include "disk/int13.asm"
+
 ; x86 reset vector at physical FFFF0h (offset FFF0h in this 64 KiB image).
 times 0xFFF0 - ($ - $$) db 0xFF
     db 0xEA             ; JMP FAR ptr16:16
