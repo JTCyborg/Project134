@@ -73,6 +73,15 @@ LIMITS.update({
 # Upper-ROM tail: POST complement-check entry and the post-font JMP trampoline.
 LIMITS.update({0xFA4E: 0x17, 0xFE6E: 0x03})
 # POST/Setup continuations in the former 5A4Ch–5FE3h gap.
+# Main POST continuation and bounded helper entries in 1364h–188Dh.
+LIMITS.update({
+    0x1364: 0x2F2, 0x1656: 0x61, 0x16B7: 0x09, 0x16C0: 0x07,
+    0x16C7: 0x0A, 0x16D1: 0x09, 0x16DA: 0x1A, 0x16F4: 0x0C,
+    0x1700: 0x14, 0x1714: 0x4F, 0x1763: 0x08, 0x176B: 0x7E,
+    0x17E9: 0x09, 0x17F2: 0x1D, 0x180F: 0x27, 0x1836: 0x14,
+    0x184A: 0x10, 0x185A: 0x16, 0x1870: 0x1E,
+})
+
 LIMITS.update({
     0x5A4C: 0x56, 0x5AA2: 0x13, 0x5AB5: 0x37, 0x5AEC: 0x90,
     0x5B7C: 0x59, 0x5BD5: 0x23, 0x5BF8: 0x0A,
@@ -298,6 +307,7 @@ DATA_RANGES = [
     (0x2834, 0x2836, "Crafted near-return word 2836h consumed by the 8DDCh indexed-write helper", "words"),
 
 
+    (0x15CE, 0x15D6, "Eight-byte XLAT lookup table selected by the CMOS/keyboard diagnostic at 15D6h", "hexascii"),
     (0x5C02, 0x5C04, "Crafted stack-return word 5C04h consumed by the F5A9h POST diagnostic trampoline", "words"),
     (0x5C24, 0x5C26, "Crafted stack-return word 5C26h consumed by the 5520h helper", "words"),
     (0x5C56, 0x5C58, "Crafted stack-return word 5C58h consumed by the F5A9h POST diagnostic trampoline", "words"),
@@ -1087,6 +1097,28 @@ SEEDS = [
     (0x1BF0, "option-ROM scan invalid-candidate helper: advances BX by 0080h, restores DS and returns"),
     (0x1E9A, "OR SP,SP / RET status-success stub between POST callback entries"),
 ]
+
+SEEDS.extend([
+    (0x1364, "stack-threaded POST continuation: 135Dh pushes 1364h then FA4Eh and RETs into the checksum helper"),
+    (0x1656, "direct CALL targets from 120Dh and 158Ch; POST status/warning display and F1-key wait"),
+    (0x16B7, "direct CALL targets from 12B9h, 1613h, 16AFh and 1714h; INT 10h mode reset helper"),
+    (0x16C0, "direct CALL targets from 166Fh, 1680h and 1686h; POST text output helper"),
+    (0x16C7, "direct CALL targets from 142Eh, 1436h and 1442h; packed-BCD to binary conversion"),
+    (0x16D1, "direct CALL targets from 1198h, 11ACh and 11B4h; CMOS BCD read helper"),
+    (0x16DA, "direct CALL targets from 11F8h and 147Fh; four-entry I/O-resource table walker"),
+    (0x16F4, "direct CALL target from 16EEh; checks and stores a discovered I/O base"),
+    (0x1700, "direct CALL target from 1499h; probes an I/O base and stores the port address"),
+    (0x1714, "direct CALL targets from 1233h and F104h; POST display/input diagnostic path"),
+    (0x1763, "direct CALL target from A9BBh; constructs an ES:DI hardware/configuration record"),
+    (0x176B, "direct CALL target from A9F8h; alternate entry in the ES:DI record builder"),
+    (0x17E9, "internal helper called by the 1763h/176Bh record builder; reads and writes CMOS"),
+    (0x17F2, "CMOS checksum accumulator over registers 90h–ADh; continuation selected through DI"),
+    (0x180F, "CMOS checksum accumulator over registers B4h–BEh; continuation selected through DI"),
+    (0x1836, "direct CALL targets from 14F9h and 1C3Eh; computes and writes CMOS AEh/AFh checksum"),
+    (0x184A, "direct CALL target from 1C41h; computes and writes CMOS BEh/BFh checksum"),
+    (0x185A, "direct CALL targets from 131Dh, AB3Fh and ABA3h; ATA device-control reset/delay"),
+    (0x1870, "direct CALL targets from 10FAh and 9812h; drains the 8042 output buffer"),
+])
 
 SEEDS.extend([
     (0x5A4C, "Setup/POST code candidate immediately after the Power-On Defaults prompt; entry xref unresolved"),
