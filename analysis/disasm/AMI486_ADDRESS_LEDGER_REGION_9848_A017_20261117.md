@@ -119,7 +119,7 @@ The table maps these three services to a one-byte RET stub. This ROM path does n
 
 ### 5.4 AH=13h — 9F7Eh write string
 
-9F7Eh consumes a string at ES:BP, length CX, page BH and mode/attribute flags in AL/BL. It iterates the string, routes control characters through AH=0Eh, writes printable characters through AH=09h, and restores cursor state. Its final helper tail reaches A017h; this window intentionally overlaps the already-seeded A018h graphics helper boundary only at the next byte.
+9F7Eh consumes a string at ES:BP, length CX, page BH and mode/attribute flags in AL/BL. It iterates the string, routes control characters through AH=0Eh, writes printable characters through AH=09h, and restores cursor state. It calls the separate cursor-wrap helper at 9FD9h (and the line-advance alternate entry at 9FE8h) and returns at 9FD8h.
 
 ## 6. Data/code boundary and alternate entries
 
@@ -128,7 +128,7 @@ The table maps these three services to a one-byte RET stub. This ROM path does n
 - 9DADh branches to the graphics-specific continuation at 9E20h.
 - 9F21h has internal control-character branches to 9FD9h and 9FE8h.
 - 9F7Dh is a shared RET target for AH=10h/11h/12h.
-- 9F7Eh continues through 9FD8h and A017h; A018h is a separate helper entry.
+- 9F7Eh ends at 9FD8h; the separate cursor-wrap/line-advance helpers at 9FD9h/9FE8h end at A017h; A018h is a separate graphics helper entry.
 
 The byte at 9847h before the pointer table remains unclassified; do not absorb it into the table without a consumer.
 
