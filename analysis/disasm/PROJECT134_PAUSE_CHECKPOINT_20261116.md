@@ -246,3 +246,8 @@ Two previously under-described regions now have byte-backed reports:
 The Capstone candidate generator has been expanded: 221 code windows, 56 data ranges. Recomputed candidate footprint is 20,658/65,536 bytes (31.52%) across 105 pages, comprising 11,813 code-window bytes, 8,958 data-range bytes and 113 overlap bytes. This is a sampling footprint only, not semantic coverage.
 
 New text/table classifications are documented in AMI486_ADDRESS_LEDGER_20261116.md section 11. The 2D11h timing benchmark is now an aligned candidate window; its runtime entry and stack precondition remain unresolved. The next step remains range-driven reconciliation of unclassified bytes and alternate entries, not a numbered phase.
+
+
+## Low-ROM range investigation — 2026-11-17
+
+0000h–00EEh is now classified as AMI BIOS identity/copyright/pattern data. 00EFh begins an executable-looking stream with an INT 10h call and stack-frame setup, but no direct ROM CALL/JMP target or literal 00EFh pointer was found. Its runtime entry and DS:E000h source block remain unresolved. The candidate generator is updated to emit this data range and seed 00EFh–01EEh; generated artifact/manifest refresh is pending and counts have not been advanced on this basis.
