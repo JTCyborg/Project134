@@ -24630,6 +24630,28 @@ D7AD  E6 80                   out 0x80, al
 D7AF  E3 00                   jcxz 0xd7b1
 D7B1  E3 00                   jcxz 0xd7b3
 
+===== D7B3h-D7D7h =====
+Reason: 8042 keyboard-controller self-test command path; ends before crafted return word at D7D8h
+D7B3  B0 AA                   mov al, 0xaa
+D7B5  87 DB                   xchg bx, bx
+D7B7  87 DB                   xchg bx, bx
+D7B9  87 DB                   xchg bx, bx
+D7BB  87 DB                   xchg bx, bx
+D7BD  87 DB                   xchg bx, bx
+D7BF  87 DB                   xchg bx, bx
+D7C1  87 DB                   xchg bx, bx
+D7C3  90                      nop
+D7C4  EB 00                   jmp 0xd7c6
+D7C6  E6 64                   out 0x64, al
+D7C8  E4 64                   in al, 0x64
+D7CA  33 FF                   xor di, di
+D7CC  A8 01                   test al, 1
+D7CE  74 01                   je 0xd7d1
+D7D0  4F                      dec di
+D7D1  90                      nop
+D7D2  BC D8 D7                mov sp, 0xd7d8
+D7D5  E9 81 1E                jmp 0xf659
+
 ===== D7DAh-D7E3h =====
 Reason: stack-return continuation after F659h; POST status-08h path
 D7DA  B0 08                   mov al, 8
