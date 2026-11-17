@@ -67,4 +67,4 @@ The candidate generator now:
 - seeds 8328h as the BX-preserving wrapper;
 - seeds 832Eh through 8377h as the CMOS 8Eh CPU-profile helper.
 
-The CI manifest is the verification gate for this update; the next largest uncovered interval will be taken from the completed run.
+GitHub Actions run 44086995346 completed successfully. The manifest reports 853 candidate windows, 241 data ranges, 42,354 unique code-window bytes, 20,035 unique data-range bytes, 293 overlap bytes, and a 62,096-byte union (94.75%). There are 60 uncovered intervals; the next largest is 0B2Dh–0C7Ch (336 bytes).
