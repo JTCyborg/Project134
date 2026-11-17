@@ -305,6 +305,7 @@ def main():
         "Target: ami486.bin\n"
         "ROM size: 65536 bytes\n"
         f"Candidate windows: {len(seen)}\n"
+        f"Data ranges: {len(DATA_RANGES)}\n"
         f"Window bytes: 0x{WINDOW:X} default; selected handler windows clipped at known data boundaries\n"
         "Decoder: Capstone x86 16-bit\n"
         "Relative near-branch targets normalized to 16-bit IP.\n"
