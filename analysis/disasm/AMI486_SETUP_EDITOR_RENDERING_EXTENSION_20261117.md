@@ -62,7 +62,7 @@ The 0DB4h branch saves [E185], divides ([E185]+12h) by 24h, stores the remainder
 0E46  RET
 ```
 
-This path decrements the current position. At the zero boundary it loads the last valid page/row values from [E18E]-1 and [E18D]-1; on the ordinary path it decrements [E18C] and [E185] and clamps the row to zero on underflow. It clears the editor event-state byte [E18B] before returning.
+This path decrements the absolute selected-record index [E18C] and the on-screen row [E185]. At absolute index zero it wraps to [E18C]=[E18E]-1 and [E185]=[E18D]-1; on the ordinary path it decrements both and clamps the on-screen row to zero on underflow. It clears the editor event-state byte [E18B] before returning.
 
 ### 0E47h — increment/wrap
 
@@ -86,7 +86,7 @@ This path decrements the current position. At the zero boundary it loads the las
 0E7B  RET
 ```
 
-This is the corresponding increment path. It wraps [E18C] to zero when it reaches [E18E], resets [E185] at that boundary, otherwise increments [E185] and clamps it to [E18D]-1. It also clears [E18B].
+This is the corresponding increment path. [E18C] is the absolute selected-record index and [E185] is its on-screen row. The index wraps to zero when it reaches [E18E]; otherwise the row increments until it reaches [E18D], then remains clamped at [E18D]-1 while the absolute index continues forward. It also clears [E18B].
 
 ## 5. Single-item renderer at 0E7Ch
 
