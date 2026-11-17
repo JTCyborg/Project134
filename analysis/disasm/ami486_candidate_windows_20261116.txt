@@ -1639,24 +1639,30 @@ E6E1  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 ................
 Reason: Single zero padding byte between fixed-disk parameter records and near-JMP entry
 E6F1  00                                              .
 
-===== DATA E6F5h-E7E7h =====
-Reason: Opaque embedded binary payload; contains a 16-byte timing/threshold table at E729h
+===== DATA E6F5h-E728h =====
+Reason: Opaque embedded data preamble before UART baud-divisor table
 E6F5  08 00 FC 01 00 70 00 00 00 00 00 00 00 00 00 00 .....p..........
 E705  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 ................
 E715  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 ................
-E725  00 00 00 00 17 04 00 03 80 01 C0 00 60 00 30 00 ............`.0.
-E735  18 00 0C 00 E9 A7 11 89 71 61 60 09 41 71 91 F7 ........qa`.Aq..
-E745  38 11 40 80 C0 C0 78 F7 01 62 22 8A 42 12 02 6A 8.@...x..b".B..j
-E755  F7 61 22 32 02 9A 8A 22 6A 1A 92 F7 41 6A 12 5F .a"2..."j...Aj._
-E765  47 47 FE 63 D5 A5 3D D1 45 D2 B8 02 90 60 DA 41 GG.c..=.E....`.A
-E775  C4 76 E8 8F 1D AD E0 19 83 5D 12 11 04 DA F4 C3 .v.......]......
-E785  8D BE 72 FA D0 E4 19 E7 B3 AF 90 01 20 0E 0D DA ..r......... ...
-E795  02 C3 F4 E0 AF 10 D1 FC 04 FD 43 79 CD 31 BC FA ..........Cy.1..
-E7A5  81 D6 CF BF 54 89 DE BD 83 1D A2 BC 53 C7 3B BB ....T.......S.;.
-E7B5  F3 FD 43 77 DA B4 F4 90 38 02 1D 80 F5 21 D7 79 ..Cw....8....!.y
-E7C5  D2 4B F2 8D C7 B4 12 99 F7 37 F1 7F F8 FB 42 9F .K.......7....B.
-E7D5  F8 42 89 33 FD D8 DA 24 17 D7 BF 94 B8 7F 1F 97 .B.3...$........
-E7E5  CE 77 DC                                        .w.
+E725  00 00 00 00                                     ....
+
+===== DATA E729h-E738h =====
+Reason: Eight-word UART baud-divisor table: 110, 150, 300, 600, 1200, 2400, 4800 and 9600 baud
+Words: 0417, 0300, 0180, 00C0, 0060, 0030, 0018, 000C
+
+===== DATA E73Ch-E7E7h =====
+Reason: Opaque embedded binary payload after INT 14h serial-service trampoline
+E73C  89 71 61 60 09 41 71 91 F7 38 11 40 80 C0 C0 78 .qa`.Aq..8.@...x
+E74C  F7 01 62 22 8A 42 12 02 6A F7 61 22 32 02 9A 8A ..b".B..j.a"2...
+E75C  22 6A 1A 92 F7 41 6A 12 5F 47 47 FE 63 D5 A5 3D "j...Aj._GG.c..=
+E76C  D1 45 D2 B8 02 90 60 DA 41 C4 76 E8 8F 1D AD E0 .E....`.A.v.....
+E77C  19 83 5D 12 11 04 DA F4 C3 8D BE 72 FA D0 E4 19 ..]........r....
+E78C  E7 B3 AF 90 01 20 0E 0D DA 02 C3 F4 E0 AF 10 D1 ..... ..........
+E79C  FC 04 FD 43 79 CD 31 BC FA 81 D6 CF BF 54 89 DE ...Cy.1......T..
+E7AC  BD 83 1D A2 BC 53 C7 3B BB F3 FD 43 77 DA B4 F4 .....S.;...Cw...
+E7BC  90 38 02 1D 80 F5 21 D7 79 D2 4B F2 8D C7 B4 12 .8....!.y.K.....
+E7CC  99 F7 37 F1 7F F8 FB 42 9F F8 42 89 33 FD D8 DA ..7....B..B.3...
+E7DC  24 17 D7 BF 94 B8 7F 1F 97 CE 77 DC             $.........w.
 
 ===== DATA FA00h-FA4Bh =====
 Reason: 76-byte POST integrity comparison block; bytewise complement of FF70h-FFBBh
@@ -27841,6 +27847,14 @@ Reason: option-ROM scan invalid-candidate helper: advances BX by 0080h, restores
 ===== E6F2h-E6F4h =====
 Reason: near-JMP trampoline to F758h, skipping the fixed-disk parameter table and embedded payload
 E6F2  E9 63 10                jmp 0xf758
+
+===== E739h-E73Bh =====
+Reason: INT 14h vector target: near-JMP trampoline to the serial service dispatcher at F8E3h
+E739  E9 A7 11                jmp 0xf8e3
+
+===== EFD2h-EFD4h =====
+Reason: INT 17h vector target: near-JMP trampoline to printer service handler at F85Eh
+EFD2  E9 89 08                jmp 0xf85e
 
 ===== E7E8h-E7FFh =====
 Reason: direct CALL targets from 1506h, 8521h and A826h; 8042 keyboard-controller status/command check
