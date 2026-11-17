@@ -749,13 +749,15 @@ Corrected the 3E3Fh window, which previously crossed the RET at 3E98h and includ
 
 Generator update: 3c87a27e0d387c1cce8d39a6c64c4db2d699661e. The latest generated manifest still predates this phase. The previous projected union was 63,808 bytes (97.36%); adding this 139-byte interval gives a projected 63,947/65,536 bytes (97.58%) and 51 uncovered intervals. The next largest remaining interval is expected to be AC80h–ACFFh (128 bytes). These are range-union calculations, not a regenerated manifest or CI result.
 
-## 42. Keyboard scan-code table prefix and AC60h translation map — AC5Bh–ACFFh (2026-11-17)
+## 42. ATA command tail and AC60h keyboard translation map — AC5Fh–ACFFh (2026-11-17)
 
 Detailed map: [AMI486_ADDRESS_LEDGER_REGION_AC5B_AD00_20261117.md](AMI486_ADDRESS_LEDGER_REGION_AC5B_AD00_20261117.md).
 
-Corrected the AC00h ATA identify/read-transfer candidate boundary: the routine ends at AC5Ah with RET, so its code window is now 5Bh bytes. AC5Bh–ACFFh is data, not code. The confirmed 160-byte table at AC60h is referenced by the keyboard handler at B031h, which loads BX=AC60h before calling its mapping helper. It contains F0h/FFh markers and scan-code-like groups. The adjacent AC5Bh–AC5Fh prefix/header is retained as data but not semantically named. The existing AD00h–AE5Fh keyboard table remains a separate region.
+A later control-flow pass corrected the earlier AC00h boundary: AC00h–AC33h is the first ATA transfer helper; AC34h–AC5Eh is a second ATA recalibrate helper, ending at RET AC5Eh. The bytes AC5Bh–AC5Eh are therefore executable code, not keyboard-table prefix data. The keyboard data range begins at AC5Fh, where a single 00h prefix byte precedes the confirmed 160-byte table at AC60h. The table is referenced by the keyboard handler at B031h, which loads BX=AC60h. It contains F0h/FFh markers and scan-code-like groups. The existing AD00h–AE5Fh keyboard table remains a separate region.
 
-Generator update: 7227215784dca6c9ffd34174cca3e3adaeb92a66. The latest generated manifest still predates this correction. The previous projected union was 63,947 bytes (97.58%); adding the 128-byte gap AC80h–ACFFh gives a projected 64,075/65,536 bytes (97.77%) and 50 uncovered intervals. Section 43 below closes the 61B2h–622Ah interval. The next largest interval must be selected from a regenerated manifest; no unverified next-gap estimate is carried forward. These are range-union calculations, not a regenerated manifest or CI result.
+The ATA wrapper at ABADh dispatches indirectly to the ABDDh IDENTIFY DEVICE path or the AC34h recalibrate path. The wrapper is called directly at AB45h and AB50h. Section 50 documents the complete wrapper and its two command helpers.
+
+Generator update: pending commit. The corrected code/data boundary and three ATA helper windows will be included in the next range-mask regeneration.
 
 ## 43. Calendar display grid template — 61B2h–622Ah (2026-11-17)
 
@@ -858,3 +860,12 @@ Detailed map: [AMI486_ADDRESS_LEDGER_REGION_83AE_8400_20261117.md](AMI486_ADDRES
 Corrected the previous split-window interpretation: 83C0h is MOV BX,B7D0h, not a RET. The code from 83AEh through 83FFh is one selector-to-descriptor resolver. It has direct near-CALL sites at 2E84h, 2EC4h and 86F2h. AL=0 selects the default word at CS:B7ECh; otherwise the selector is normalized at the 55h bank boundary, then used to walk 20h-byte variable-length descriptors through CS:[82C6h]. The routine conditionally skips a zero-terminated word list and returns descriptor bytes +1Ch/+1Dh. The exact descriptor schema and pointer provenance remain unresolved.
 
 Generator update: pending commit. The projected range mask is 64,635/65,536 bytes (98.63%), with 44 uncovered intervals and 217 fully covered 256-byte pages. The next largest gaps are ABB4h–ABFFh and 2ED8h–2F23h (76 bytes each). These are range-mask projections, not semantic-completion or reachability percentages. The previous generated Capstone listing contains the superseded split at 83C1h and must be regenerated after the corrected single-window definition is committed.
+
+
+## 50. ATA command wrapper, IDENTIFY transfer and recalibrate helper — ABADh–AC5Eh (2026-11-17)
+
+Detailed map: [AMI486_ADDRESS_LEDGER_REGION_ABAD_AC5F_20261117.md](AMI486_ADDRESS_LEDGER_REGION_ABAD_AC5F_20261117.md).
+
+Mapped the wrapper at ABADh and its two indirect command targets. The wrapper is called at AB45h/AB50h and selects ABDDh when AH=0 or AC34h when AH is nonzero. ABDDh issues ATA command ECh and transfers 256 words from data port 01F0h; AC34h issues command 10h and checks completion, returning at AC5Eh. This corrects the keyboard-data boundary: AC5Bh–AC5Eh are code and the AC60h scan-code table's only leading prefix byte is AC5Fh.
+
+Generator update: pending commit. The projected range mask is 64,711/65,536 bytes (98.74%), with 43 uncovered intervals and 218 fully covered 256-byte pages. The next largest uncovered interval is 2ED8h–2F23h (76 bytes). These are range-mask projections, not semantic-completion or reachability percentages. The Capstone listing must be regenerated after running the updated generator.
