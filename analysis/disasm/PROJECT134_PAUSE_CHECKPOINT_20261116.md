@@ -363,3 +363,23 @@ Detailed map: `AMI486_ADDRESS_LEDGER_REGION_CA15_D103_20261117.md`.
 The former CA16h–D0FFh gap (1,770 bytes) is now covered. The region maps the INT 13h drive-geometry/parameter response, CMOS-selected media profiles, six 13-byte diskette parameter records, controller-presence checks, FDC command/status tests, per-drive media detection, motor/readiness timing and INT 1Eh geometry comparisons. C8CAh is both a parameter-table view and an executable continuation after CALL D0D9h at C8C7h. CB09h and CBF8h remain candidate entries without direct near xrefs. D0D9h continues through D103h (POP AX/RET).
 
 Current candidate mask: 610 code windows, 163 data ranges, 32,861 unique code bytes, 15,940 unique data bytes, 130 overlap bytes, 48,671-byte union (74.27%), 68 uncovered intervals, 216 pages touched and 140 fully covered pages. This is not semantic completion. Next largest gap: 873Ch–8DCEh (1,683 bytes).
+
+
+## Address-ledger progress — 873Ch–8DCEh completed in candidate mask (2026-11-17)
+
+Completed the region pass and committed:
+- `analysis/disasm/AMI486_ADDRESS_LEDGER_REGION_873C_8DCE_20261117.md`
+- Updated `AMI486_ADDRESS_LEDGER_20261116.md`, `DISASM_INDEX.md`, phase 5 and phase 6 reports.
+- Expanded candidate seeds and explicit data/stack-return ranges in `tools/disasm_ami486_candidate_windows.py`; GitHub Actions regenerated the listing successfully.
+
+The 873Ch–8DCEh interval (1,683 bytes) now has no uncovered byte in the candidate code/data union. This is not proof that every byte's runtime meaning is resolved. In particular, 8889h–8897h, optional runtime-table provenance, ALi register names and some upstream entry references remain open.
+
+Key correction: 85B3h falls through from 85BFh into the 76-record worker at 85C0h; it does not return after 85D6h. In the stock image, 85F5h applies five records, 85CBh has count zero, 85D6h is a no-op because 82B0h=0, then 85C0h applies 76 records and returns at 862Fh. The 8750h–87A3h 21-record ALi write view is an overlapping use of the first 21 entries of the 76-record suffix.
+
+Latest candidate mask:
+- 678 code windows / 205 data ranges
+- 34,292 unique code bytes / 16,419 unique data bytes
+- 213 overlap bytes; 50,498-byte union (77.05%)
+- 70 uncovered intervals; 223 pages touched / 147 fully covered
+
+Next largest uncovered interval: **2436h–29F5h (1,472 bytes)**. Continue by address-ledger gaps and unresolved overlaps, not by creating phase numbers. **Phase 97 has not been started.**
