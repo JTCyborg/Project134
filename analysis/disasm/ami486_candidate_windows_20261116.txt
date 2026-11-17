@@ -1551,7 +1551,7 @@ Reason: temporary INT 1Ch timer handler installed by 626Bh
 639A  8A C6                   mov al, dh
 
 ===== 6616h-6695h =====
-Reason: direct CALL target from temporary INT 1Ch watchdog handler at 631Ch
+Reason: direct CALL target from temporary INT 1Ch calendar-refresh handler at 631Ch
 6616  55                      push bp
 6617  83 EC 0A                sub sp, 0xa
 661A  8B EC                   mov bp, sp
@@ -1609,6 +1609,134 @@ Reason: direct CALL target from temporary INT 1Ch watchdog handler at 631Ch
 6690  B2 07                   mov dl, 7
 6692  F6 F2                   div dl
 6694  8A C4                   mov al, ah
+
+===== 68E2h-6961h =====
+Reason: direct CALL target from BIOS INT 1Ah date/time BCD validation helpers
+68E2  50                      push ax
+68E3  25 0F 0F                and ax, 0xf0f
+68E6  3C 0A                   cmp al, 0xa
+68E8  73 11                   jae 0x68fb
+68EA  80 FC 0A                cmp ah, 0xa
+68ED  73 0C                   jae 0x68fb
+68EF  58                      pop ax
+68F0  50                      push ax
+68F1  25 F0 F0                and ax, 0xf0f0
+68F4  3C A0                   cmp al, 0xa0
+68F6  73 03                   jae 0x68fb
+68F8  80 FC A0                cmp ah, 0xa0
+68FB  58                      pop ax
+68FC  C3                      ret
+68FD  50                      push ax
+68FE  B9 64 00                mov cx, 0x64
+6901  8A C4                   mov al, ah
+6903  C0 EC 04                shr ah, 4
+6906  24 0F                   and al, 0xf
+6908  D5 0A                   aad 0xa
+690A  F7 E1                   mul cx
+690C  8B D0                   mov dx, ax
+690E  58                      pop ax
+690F  8A E0                   mov ah, al
+6911  C0 EC 04                shr ah, 4
+6914  24 0F                   and al, 0xf
+6916  D5 0A                   aad 0xa
+6918  03 C2                   add ax, dx
+691A  C3                      ret
+691B  00 FA                   add dl, bh
+691D  FC                      cld
+691E  60                      pushaw
+691F  1E                      push ds
+6920  1E                      push ds
+6921  07                      pop es
+6922  FB                      sti
+6923  E4 21                   in al, 0x21
+6925  24 FE                   and al, 0xfe
+6927  E3 00                   jcxz 0x6929
+6929  E3 00                   jcxz 0x692b
+692B  E6 21                   out 0x21, al
+692D  E8 06 00                call 0x6936
+6930  1F                      pop ds
+6931  61                      popaw
+6932  8C C0                   mov ax, es
+6934  FC                      cld
+6935  C3                      ret
+6936  33 C0                   xor ax, ax
+6938  38 06 AB E1             cmp byte ptr [0xe1ab], al
+693C  75 25                   jne 0x6963
+693E  A3 AF E1                mov word ptr [0xe1af], ax
+6941  A2 B1 E1                mov byte ptr [0xe1b1], al
+6944  A3 B5 E1                mov word ptr [0xe1b5], ax
+6947  A2 B7 E1                mov byte ptr [0xe1b7], al
+694A  C6 06 B9 E3 00          mov byte ptr [0xe3b9], 0
+694F  C6 06 BD E3 00          mov byte ptr [0xe3bd], 0
+6954  A1 11 E4                mov ax, word ptr [0xe411]
+6957  48                      dec ax
+6958  A3 B2 E1                mov word ptr [0xe1b2], ax
+695B  A0 13 E4                mov al, byte ptr [0xe413]
+695E  FE C8                   dec al
+6960  A2              db 0xA2
+6961  B4              db 0xB4
+
+===== 68FDh-697Ch =====
+Reason: direct CALL target from calendar/date display updater at 6616h
+68FD  50                      push ax
+68FE  B9 64 00                mov cx, 0x64
+6901  8A C4                   mov al, ah
+6903  C0 EC 04                shr ah, 4
+6906  24 0F                   and al, 0xf
+6908  D5 0A                   aad 0xa
+690A  F7 E1                   mul cx
+690C  8B D0                   mov dx, ax
+690E  58                      pop ax
+690F  8A E0                   mov ah, al
+6911  C0 EC 04                shr ah, 4
+6914  24 0F                   and al, 0xf
+6916  D5 0A                   aad 0xa
+6918  03 C2                   add ax, dx
+691A  C3                      ret
+691B  00 FA                   add dl, bh
+691D  FC                      cld
+691E  60                      pushaw
+691F  1E                      push ds
+6920  1E                      push ds
+6921  07                      pop es
+6922  FB                      sti
+6923  E4 21                   in al, 0x21
+6925  24 FE                   and al, 0xfe
+6927  E3 00                   jcxz 0x6929
+6929  E3 00                   jcxz 0x692b
+692B  E6 21                   out 0x21, al
+692D  E8 06 00                call 0x6936
+6930  1F                      pop ds
+6931  61                      popaw
+6932  8C C0                   mov ax, es
+6934  FC                      cld
+6935  C3                      ret
+6936  33 C0                   xor ax, ax
+6938  38 06 AB E1             cmp byte ptr [0xe1ab], al
+693C  75 25                   jne 0x6963
+693E  A3 AF E1                mov word ptr [0xe1af], ax
+6941  A2 B1 E1                mov byte ptr [0xe1b1], al
+6944  A3 B5 E1                mov word ptr [0xe1b5], ax
+6947  A2 B7 E1                mov byte ptr [0xe1b7], al
+694A  C6 06 B9 E3 00          mov byte ptr [0xe3b9], 0
+694F  C6 06 BD E3 00          mov byte ptr [0xe3bd], 0
+6954  A1 11 E4                mov ax, word ptr [0xe411]
+6957  48                      dec ax
+6958  A3 B2 E1                mov word ptr [0xe1b2], ax
+695B  A0 13 E4                mov al, byte ptr [0xe413]
+695E  FE C8                   dec al
+6960  A2 B4 E1                mov byte ptr [0xe1b4], al
+6963  FF 36 21 E4             push word ptr [0xe421]
+6967  E8 74 02                call 0x6bde
+696A  58                      pop ax
+696B  A2 21 E4                mov byte ptr [0xe421], al
+696E  C3                      ret
+696F  55                      push bp
+6970  8B EC                   mov bp, sp
+6972  83 EC 10                sub sp, 0x10
+6975  E8 60 09                call 0x72d8
+6978  C5 76 04                lds si, ptr [bp + 4]
+697B  8B FE                   mov di, si
 
 ===== 099Dh-0A1Ch =====
 Reason: direct CALL target from 00EFh screen-presentation stream
@@ -10873,72 +11001,6 @@ Reason: BIOS INT10 character output helper
 6941  A2 B1 E1                mov byte ptr [0xe1b1], al
 6944  A3 B5 E1                mov word ptr [0xe1b5], ax
 6947  A2              db 0xA2
-
-===== 68E2h-6961h =====
-Reason: numeric/date formatting helper
-68E2  50                      push ax
-68E3  25 0F 0F                and ax, 0xf0f
-68E6  3C 0A                   cmp al, 0xa
-68E8  73 11                   jae 0x68fb
-68EA  80 FC 0A                cmp ah, 0xa
-68ED  73 0C                   jae 0x68fb
-68EF  58                      pop ax
-68F0  50                      push ax
-68F1  25 F0 F0                and ax, 0xf0f0
-68F4  3C A0                   cmp al, 0xa0
-68F6  73 03                   jae 0x68fb
-68F8  80 FC A0                cmp ah, 0xa0
-68FB  58                      pop ax
-68FC  C3                      ret
-68FD  50                      push ax
-68FE  B9 64 00                mov cx, 0x64
-6901  8A C4                   mov al, ah
-6903  C0 EC 04                shr ah, 4
-6906  24 0F                   and al, 0xf
-6908  D5 0A                   aad 0xa
-690A  F7 E1                   mul cx
-690C  8B D0                   mov dx, ax
-690E  58                      pop ax
-690F  8A E0                   mov ah, al
-6911  C0 EC 04                shr ah, 4
-6914  24 0F                   and al, 0xf
-6916  D5 0A                   aad 0xa
-6918  03 C2                   add ax, dx
-691A  C3                      ret
-691B  00 FA                   add dl, bh
-691D  FC                      cld
-691E  60                      pushaw
-691F  1E                      push ds
-6920  1E                      push ds
-6921  07                      pop es
-6922  FB                      sti
-6923  E4 21                   in al, 0x21
-6925  24 FE                   and al, 0xfe
-6927  E3 00                   jcxz 0x6929
-6929  E3 00                   jcxz 0x692b
-692B  E6 21                   out 0x21, al
-692D  E8 06 00                call 0x6936
-6930  1F                      pop ds
-6931  61                      popaw
-6932  8C C0                   mov ax, es
-6934  FC                      cld
-6935  C3                      ret
-6936  33 C0                   xor ax, ax
-6938  38 06 AB E1             cmp byte ptr [0xe1ab], al
-693C  75 25                   jne 0x6963
-693E  A3 AF E1                mov word ptr [0xe1af], ax
-6941  A2 B1 E1                mov byte ptr [0xe1b1], al
-6944  A3 B5 E1                mov word ptr [0xe1b5], ax
-6947  A2 B7 E1                mov byte ptr [0xe1b7], al
-694A  C6 06 B9 E3 00          mov byte ptr [0xe3b9], 0
-694F  C6 06 BD E3 00          mov byte ptr [0xe3bd], 0
-6954  A1 11 E4                mov ax, word ptr [0xe411]
-6957  48                      dec ax
-6958  A3 B2 E1                mov word ptr [0xe1b2], ax
-695B  A0 13 E4                mov al, byte ptr [0xe413]
-695E  FE C8                   dec al
-6960  A2              db 0xA2
-6961  B4              db 0xB4
 
 ===== D100h-D17Fh =====
 Reason: FDC I/O code candidate; references ports 03F4h/03F7h
