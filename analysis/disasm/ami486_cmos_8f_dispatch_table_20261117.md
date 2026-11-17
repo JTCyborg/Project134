@@ -1214,3 +1214,26 @@ The current ROM bytes confirm the following data flow at `5AECh` (the helper cal
 The important separation is now clear: `AB34h` returns the geometry-table match result in `AL`; `5AECh` preserves the caller's original drive index in `E18Ah` and performs post-probe state updates; `475Ch` later converts the current `E012h`/`E019h` state into the `E1ADh` per-drive geometry index. Do not describe the return from `AB34h` as directly setting `E1ADh`.
 
 A further correction to the previous note: `AB34h` scans 46 records at `CS:E401h`, but its loop's result encoding and the `+05h == FFFFh` eligibility filter are separate from the `5AECh` state machine. The mapping of result `2Fh` and indices `00h..2Eh` into setup-visible disk types still requires tracing `5B7Ch` and its caller's UI branch.
+
+### 5AECh–5B7Bh: corrected instruction-level state transitions
+
+A byte-for-byte re-decode corrects the earlier description of the initial copy in `5AECh`: the copy is performed for a **nonzero** incoming drive index, not for index zero. Entry sequence:
+
+- `DEC AL; JZ 5B07h` skips the copy when index is zero.
+- For nonzero index, copy 14h bytes from `DS:E019h` to `ES:E099h` (`REP MOVSB`).
+- Restore original index from the stack, store it in `E18Ah`, then form `DL=index+80h` and call `AB34h`.
+
+After `AB34h`, `AH` is reloaded from `E18Ah`; `AL` remains the geometry-detection result. The code then has these exact branches:
+
+- `AL <= 0Eh`: decrement drive index in `AH`. If it becomes zero (the second drive, index 1), OR `AL` into `E012h`. Otherwise shift `AX` left four places and store `AL` in `E012h`. This means the ordinary detected geometry result is encoded into a different nibble/bit position according to drive index.
+- `AL > 0Eh`: decrement drive index. For index 0, set `E012h=F0h` and save result in `E019h`; for index 1, OR `0Fh` into `E012h` and save result in `E01Ah`.
+- If the result is not `2Fh`, the helper restores flags and returns after these state updates.
+- If result is `2Fh`, it captures the geometry data still held in registers from the IDENTIFY processing into a per-drive record. `SI=0` for index 0 and `SI=9` for index 1; it writes `CX` at `E01B/ E024`, `DH` at `E01D/E026`, initializes the word at `E01E/E027` to `FFFFh`, clamps `DH` to at most 8 for the byte at `E020/E029`, writes `CX` at `E021/E02A`, and `BL` at `E023/E02C`. (The second-drive record is offset 9 bytes from the first.)
+
+This is direct evidence that `2Fh` is the **no matching predefined geometry** path: rather than just returning a generic failure, it preserves the IDENTIFY geometry values (`CX`, `DH`, `BL`) in the BIOS's per-drive scratch/translation records. The exact semantic labels of each field are not yet established, but the register origins are: `CX` and `DH` are retained from IDENTIFY cylinders/heads handling, while `BL` is sectors-per-track.
+
+### 5B7Ch: confirmation/restore helper entry
+
+`5B7Ch` saves `SI`, `DI`, `DS`, pushes `AX`, adds `43h` to `AL`, and stores the result at `3C52h`; it then compares this selector with `BBh` and `3Ch` before calling the shared UI helper at `5959h`. This is a per-drive prompt/selection path, not part of the ATA IDENTIFY transfer itself. Full prompt outcomes and copy ranges are to be mapped from the remaining branch targets before assigning final meanings to its record fields.
+
+**Correction to the immediately preceding note:** the nonzero-drive copy direction and branch conditions above supersede the earlier provisional statement that index zero copied the 20h-byte block. The ROM bytes show a 14h-byte copy for nonzero index.
