@@ -1117,3 +1117,13 @@ This independently confirms the same two-entry index range seen in the earlier s
 The caller also performs per-index work around the producer: `5AEAh` is called with AL=E189h before the UI/helper sequence, then `475Ch` populates E1ADh[E189h], and `5B7Ch` is called with the same index afterward. Their internal semantics are not inferred here. In particular, the two-entry bound is proven by the caller's loop, while the user-facing meaning of the two slots and the E019h replacement bytes remains open.
 
 ROM bytes remain unchanged; this is a documentation-only update.
+
+### Per-index helpers surrounding the E1ADh write (5AECh and 5B7Ch)
+
+The `5038h` caller does more than invoke the E1ADh producer. Its loop body calls `5AECh` with `AL=E189h`, calls `475Ch`, then calls `5B7Ch` with the same index. The two helpers are distinct routines; the call at `5076h` resolves to `5AECh` (not `5AEAh, which is only the preceding POP SI / RET epilogue).
+
+At `5AECh`, the routine saves SI/DI/DS, establishes ES from DS, and saves AX. It decrements AL and conditionally copies a 20-byte block from `DS:E019h` to `ES:E099h`: for caller index 0 the copy is performed; for caller index 1 the `JZ` skips it. It then restores the original AX and stores AL at `E18Ah`, adds 4 to AL and stores the result at `E08Ah`, and calls `AB34h`. The remainder branches on E18Ah and updates E012h and/or E019h/E01Ah; the exact higher-level meaning of those fields is not assigned here because this helper has additional branches, including a special AL=2Fh path.
+
+At `5B7Ch`, the routine saves SI/DI/DS and AX, adds 43h to AL, stores that value at `3C52h`, and calls `595Ah`. It compares the returned AL with 59h ('Y'); on equality it exits through its register-restore epilogue. Otherwise it proceeds to combine masked portions of E092h and E012h and writes the result back to E012h. It then copies a 9-byte block from the E080h area to the corresponding E000h area, using the index-dependent offset selected in the routine. This establishes that E012h can be changed by the post-producer helper between loop iterations; therefore the candidate consumed by the second `475Ch` call need not be identical to the first candidate even though both calls share the same E012h source variable.
+
+These are byte-level control/data-flow observations, not a claim that E019h is a disk geometry array or that E012h is a user-visible drive type. The semantic names of the per-index UI/configuration fields still require tracing `AB34h`, `595Ah`, and the remaining branches in `5AECh`/`5B7Ch`. ROM bytes remain unchanged.
