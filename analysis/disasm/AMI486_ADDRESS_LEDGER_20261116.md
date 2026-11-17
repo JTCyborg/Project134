@@ -564,3 +564,14 @@ The former candidate-mask gap FA53h–FFFFh has been inspected, with the checksu
 FA6Eh–FE6Dh is a 1-KiB structured bitmap/glyph candidate (128 eight-byte records); the bitmap ends at FE6Dh and the three-byte near JMP begins at FE6Eh. FE71h–FEA0h is structured data, FEA1h–FEA7h is a short record, and FEA8h–FEE3h is zero-filled. FEE3h–FF32h is now confirmed as a 40-word POST IVT offset table: 32 offsets for vectors 00h–1Fh and eight offsets for 70h–77h; FF33h–FF4Fh is zero padding. FF59h–FF6Fh contains the printable identification string (1992AMI,404-263-8181; FF70h–FFBBh is the verified complement data. FFC7h–FFEFh duplicates FE75h–FE9Dh. FFF0h–FFF4h is the reset vector EA 5B E0 00 F0, and FFF5h–FFFCh is the date 04/04/93.
 
 This closes the byte-inspection pass for the largest remaining gap in the 79.30% candidate-mask snapshot. The candidate generator now includes the FA4Eh and FE6Eh seeds plus the confirmed bitmap/data ranges. The generator was extended to calculate the exact code/data union mask and largest uncovered intervals. GitHub Actions run 44082883079 completed successfully: 753 windows, 228 data ranges, 36,898 unique code-window bytes, 18,012 unique data-range bytes, 290 overlap bytes, and a 54,620-byte union (83.34%), with 70 uncovered intervals and 236 touched / 161 fully covered pages. The next largest uncovered interval is 1365h–188Dh (1,321 bytes). This remains candidate-mask coverage, not semantic completion. No whole-ROM semantic completion percentage is claimed.
+
+
+## 21. POST/Setup and IVT initialization — 5A4Ch–5FE3h (2026-11-17)
+
+Detailed map: [AMI486_ADDRESS_LEDGER_REGION_5A4C_5FE3_20261117.md](AMI486_ADDRESS_LEDGER_REGION_5A4C_5FE3_20261117.md).
+
+Mapped the former 1,432-byte gap as Setup/configuration callbacks (5AA2h, 5AB5h, 5AECh, 5B7Ch, 5BD5h), stack-threaded POST memory-test continuations (5BF8h–5C68h), keyboard-controller initialization, IVT/BDA/PIC setup, option-ROM/shadow-window scanning, and video-adapter selection. Four crafted return words at 5C02h, 5C24h, 5C56h and 5C66h are data, not linear instructions.
+
+The POST copies a 40-word offset table from FEE3h–FF32h into IVT vectors 00h–1Fh and 70h–77h, after filling vectors 00h–77h with the common CS:EA97h entry. The 5E88h–5F64h block and called helpers at 5F65h/5FA7h remain opaque; no unsupported code/data label was assigned.
+
+The candidate generator now contains bounded entries and stack-return data boundaries for this region. GitHub Actions run 44082883079 passed and produced 753 windows / 228 data ranges, 54,620 covered bytes (83.34%), 70 uncovered intervals. The next largest uncovered interval is 1365h–188Dh (1,321 bytes).
