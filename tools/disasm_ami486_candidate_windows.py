@@ -18,7 +18,7 @@ LIMITS = {0xCA15: 0x92, 0xCB09: 0xEF, 0xCBF8: 0x8F, 0xCC87: 0x9B, 0xCD22: 0x48, 
 
 # Correctly bounded stack-threaded chipset/CR0 continuations at 2381h–23E4h.
 LIMITS.update({
-    0x235B: 0x26, 0x2381: 0x13, 0x2396: 0x14, 0x23AC: 0x0A, 0x23B8: 0x16,
+    0x2207: 0x26, 0x235B: 0x26, 0x2381: 0x13, 0x2396: 0x14, 0x23AC: 0x0A, 0x23B8: 0x16,
     0x23D0: 0x0A, 0x23DC: 0x2E,
 })
 
@@ -660,6 +660,7 @@ SEEDS = [
     (0x2238, "return-to-stack code: read-modify-write chipset register 16h"),
     (0x2244, "return-to-stack code: write chipset register 11h"),
     (0x2250, "return-to-stack code continuation"),
+    (0x2207, "fall-through continuation of protected-mode extended-memory alias probe; DH selector and compares at 04001000h and 04002000h"),
     (0x235B, "fall-through continuation of protected-mode extended-memory alias probe; compare at 04001000h and 04002000h"),
     (0x2381, "second memory-alias result path; chipset register 10h write trampoline"),
     (0x2396, "return-to-stack code: mask and write chipset register 10h"),
