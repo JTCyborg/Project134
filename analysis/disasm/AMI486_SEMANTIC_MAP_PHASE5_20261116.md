@@ -54,9 +54,9 @@ After those 81 records, it separately walks the optional runtime range [82C0,82C
 
 Loads CX=[8882]=76 and SI=8750h. This is the suffix of the same 81-entry array.
 
-### 85F5 / 85D6 default path: five-entry prefix
+### 85F5: five-entry prefix; 85D6: optional runtime table
 
-Loads CX=[8880]=5 and SI=873Ch. This is the five-entry prefix.
+85F5 loads CX=[8880]=5 and SI=873Ch. 85D6 uses the optional runtime table at [82C0h] with its selector/count at [82B0h]/[82CAh]; in the stock ROM the selector is zero, CX remains zero and no records are processed (phase 8 correction).
 
 ### 85CB: zero-entry table
 
