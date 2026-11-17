@@ -1503,50 +1503,19 @@ Words: 8AC0
 Reason: Crafted near-return word 8ACCh used by the 8DDCh ALi indexed-write helper
 Words: 8ACC
 
-===== DATA 8A36h-8A37h =====
-Reason: Crafted near-return word 8A38h used by the EE94h CMOS-read trampoline
-Words: 8A38
-
-===== DATA 8A66h-8A67h =====
-Reason: Crafted near-return word 8A68h used by the 8DDCh ALi indexed-write helper
-Words: 8A68
-
-===== DATA 8A8Eh-8A8Fh =====
-Reason: Crafted near-return word 8A90h used by the 8D83h ALi indexed-register sequence
-Words: 8A90
-
-===== DATA 8A9Ah-8A9Bh =====
-Reason: Crafted near-return word 8A9Ch used by the EE94h CMOS-read trampoline
-Words: 8A9C
-
-===== DATA 8AA6h-8AA7h =====
-Reason: Crafted near-return word 8AA8h used by the EE9Dh CMOS-write trampoline
-Words: 8AA8
-
-===== DATA 8AB2h-8AB3h =====
-Reason: Crafted near-return word 8AB4h used by the 8DDCh ALi indexed-write helper
-Words: 8AB4
-
-===== DATA 8ABEh-8ABFh =====
-Reason: Crafted near-return word 8AC0h used by the 8DCFh ALi indexed-read helper
-Words: 8AC0
-
-===== DATA 8ACAh-8ACBh =====
-Reason: Crafted near-return word 8ACCh used by the 8DDCh ALi indexed-write helper
-Words: 8ACC
-
 ===== DATA 2068h-208Ch =====
 Reason: LGDT pseudo-descriptor at 2068h plus adjacent descriptor/parameter bytes used by the PM memory probe
 2068  17 00 70 20 0F 93 00 00 00 00 00 00 00 00 00 00 ..p ............
 2078  FF FF 00 00 00 93 8F 00 FF FF 00 00 00 93 00 00 ................
 2088  01 04 02 10 40                                  ....@
 
-===== DATA 2646h-2685h =====
-Reason: Eight-entry GDT used by the protected-mode memory probe; entry 1 at 264Eh overlays the six-byte GDTR pseudo-descriptor, selectors 0010h and 0038h select the 64-KiB and flat 4-GiB data descriptors
+===== DATA 2646h-2686h =====
+Reason: GDT object: GDTR at 264Eh has limit 0040h and base F2646h; selectors 0010h and 0038h select the 64-KiB and flat 4-GiB data descriptors. The inclusive limit reaches byte 2686h, which also begins executable code.
 2646  00 00 00 00 00 00 00 00 40 00 46 26 0F 00 00 00 ........@.F&....
 2656  FF FF 00 00 00 93 00 00 FF FF 00 80 83 93 00 03 ................
 2666  FF FF 00 00 A3 93 00 03 FF FF 00 00 82 93 00 03 ................
 2676  FF FF 00 00 84 93 00 03 FF FF 00 00 00 93 8F 00 ................
+2686  66                                              f
 
 ===== DATA 27CAh-27CBh =====
 Reason: Crafted stack-return word 27CCh consumed by RET at 29EAh; the following bytes are the aligned JE continuation
@@ -1563,6 +1532,22 @@ Words: 27F4
 ===== DATA 27FEh-27FFh =====
 Reason: Crafted stack-return word 2800h consumed by the EE9Dh CMOS-write helper
 Words: 2800
+
+===== DATA 280Ah-280Bh =====
+Reason: Crafted near-return word 280Ch consumed by the 8DCFh indexed-read helper
+Words: 280C
+
+===== DATA 2816h-2817h =====
+Reason: Crafted near-return word 2818h consumed by the 8DDCh indexed-write helper
+Words: 2818
+
+===== DATA 2828h-2829h =====
+Reason: Crafted near-return word 282Ah consumed by the 8DCFh indexed-read helper
+Words: 282A
+
+===== DATA 2834h-2835h =====
+Reason: Crafted near-return word 2836h consumed by the 8DDCh indexed-write helper
+Words: 2836
 
 ===== CA15h-CAA6h =====
 Reason: fall-through continuation from the CA13h selector branch; builds INT 13h drive geometry and ES:DI parameter pointer
@@ -13534,6 +13519,41 @@ Reason: direct POST option-gated alternate C800h ROM-shadow helper
 2477  8E D8                   mov ds, ax
 2479  8E C0                   mov es, ax
 247B  33              db 0x33
+
+===== 2457h-2494h =====
+Reason: common ROM-window mapping helper reached by the 240Ah–244Ch segment-select entries
+2457  06                      push es
+2458  1E                      push ds
+2459  B8 13 13                mov ax, 0x1313
+245C  E8 70 69                call 0x8dcf
+245F  0A C2                   or al, dl
+2461  86 E0                   xchg al, ah
+2463  E8 76 69                call 0x8ddc
+2466  B8 14 14                mov ax, 0x1414
+2469  E8 63 69                call 0x8dcf
+246C  24 FC                   and al, 0xfc
+246E  0C 02                   or al, 2
+2470  86 E0                   xchg al, ah
+2472  E8 67 69                call 0x8ddc
+2475  8B C3                   mov ax, bx
+2477  8E D8                   mov ds, ax
+2479  8E C0                   mov es, ax
+247B  33 F6                   xor si, si
+247D  33 FF                   xor di, di
+247F  F3 A5                   rep movsw word ptr es:[di], word ptr [si]
+2481  B8 14 14                mov ax, 0x1414
+2484  E8 48 69                call 0x8dcf
+2487  86 C4                   xchg ah, al
+2489  80 E4 FD                and ah, 0xfd
+248C  80 CC 01                or ah, 1
+248F  E8 4A 69                call 0x8ddc
+2492  1F                      pop ds
+2493  07                      pop es
+2494  C3                      ret
+
+===== 29EBh-29ECh =====
+Reason: two-byte FF E7 JMP DI trampoline adjacent to the 29BBh memory-test RET; entry provenance unresolved
+29EB  FF E7                   jmp di
 
 ===== 2495h-24D4h =====
 Reason: POST/ALi helper called from the 23E4h continuation
