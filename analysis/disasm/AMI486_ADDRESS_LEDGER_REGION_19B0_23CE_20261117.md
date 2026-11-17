@@ -107,7 +107,7 @@ The table walker uses stack-return trampolines:
 - 20CEh loads BX=0800h, sets SP=20D8h and jumps to EEEFh; the return word at 20D8h–20D9h resumes at 20DAh.
 - 20DAh reads CR0, sets PE, loads the GDT pointer at CS:2068h, then loads ES=0008h (the flat 4-GiB data selector). It loads AX=4410h as an ALi indexed-register write (index 10h, value 44h), not as a segment selector. After the 8DDCh helper returns through stack word 20FAh, execution resumes at 20FCh and begins the 32-bit ES memory-alias test.
 - 20F4h sets SP=20FAh and jumps to 8DDCh; the word at 20FAh–20FBh is 20FCh. RET resumes at 20FCh, where MOV DL,FFh precedes the first prefixed dword store at 20FEh. The opcode byte at 2100h is inside that instruction, not a separate entry.
-- The later 23BDh–23CAh continuation clears CR0.PE and returns to real mode; 23CBh jumps to F66Eh to disable A20; 23CEh resumes the ordinary POST continuation.
+- The later 23BDh–23CAh continuation clears CR0.PE and returns to real mode; 23CBh jumps to F66Eh to disable A20; 23CEh–23CFh is a crafted stack-return word containing 23D0h; F66Eh returns to the 2-KiB 552Dh pattern test at 23D0h, whose RET resumes at 23DCh. The full continuation is mapped in `AMI486_ADDRESS_LEDGER_REGION_23CE_29F6_20261117.md`.
 
 This establishes the local A20/PE ordering and the 1B58h -> 208Dh -> 20C9h path. The upstream entry into the larger 1AFBh B3h profile block remains unresolved; no conventional direct CALL/JMP to its start has been established.
 
