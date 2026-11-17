@@ -14542,6 +14542,57 @@ Reason: common continuation reached by the 28F2h memory scan
 29E8  F3 AB                   rep stosw word ptr es:[di], ax
 29EA  C3                      ret
 
+===== 2937h-2976h =====
+Reason: conditional continuation after the 291Bh memory-scan timing threshold
+2937  8B DD                   mov bx, bp
+2939  8B EC                   mov bp, sp
+293B  8B C3                   mov ax, bx
+293D  E6 81                   out 0x81, al
+293F  83 FB 20                cmp bx, 0x20
+2942  0F 86 03 00             jbe 0x2949
+2946  BB 40 00                mov bx, 0x40
+2949  B9 08 00                mov cx, 8
+294C  D0 E3                   shl bl, 1
+294E  0F 82 02 00             jb 0x2954
+2952  E2 F8                   loop 0x294c
+2954  80 E1 07                and cl, 7
+2957  8A E1                   mov ah, cl
+2959  B1 04                   mov cl, 4
+295B  D2 E4                   shl ah, cl
+295D  1E                      push ds
+295E  BB 40 00                mov bx, 0x40
+2961  8E DB                   mov ds, bx
+2963  8A C4                   mov al, ah
+2965  88 26 E0 00             mov byte ptr [0xe0], ah
+2969  1F                      pop ds
+296A  C3                      ret
+296B  33 F6                   xor si, si
+296D  B9 00 20                mov cx, 0x2000
+2970  B0 00                   mov al, 0
+2972  E6 43                   out 0x43, al
+2974  EB 00                   jmp 0x2976
+2976  EB              db 0xEB
+
+===== 299Ah-29BAh =====
+Reason: candidate secondary memory sweep reached only if an indirect DI continuation selects 299Ah; direct caller not found
+299A  1E                      push ds
+299B  56                      push si
+299C  B8 00 10                mov ax, 0x1000
+299F  8E D8                   mov ds, ax
+29A1  BB 08 00                mov bx, 8
+29A4  33 F6                   xor si, si
+29A6  B9 00 80                mov cx, 0x8000
+29A9  F3 AD                   rep lodsw ax, word ptr [si]
+29AB  8C D8                   mov ax, ds
+29AD  05 00 10                add ax, 0x1000
+29B0  8E D8                   mov ds, ax
+29B2  4B                      dec bx
+29B3  80 FB 00                cmp bl, 0
+29B6  75 EC                   jne 0x29a4
+29B8  5E                      pop si
+29B9  1F                      pop ds
+29BA  C3                      ret
+
 ===== 88F0h-8907h =====
 Reason: stack-return continuation after the 8921h arithmetic/flag probe
 88F0  75 08                   jne 0x88fa
