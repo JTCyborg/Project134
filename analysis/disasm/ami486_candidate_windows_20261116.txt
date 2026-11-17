@@ -1323,6 +1323,70 @@ Reason: direct CALL target from 00EFh screen-presentation stream
 62E9  58                      pop ax
 62EA  FB                      sti
 
+===== 62BDh-633Ch =====
+Reason: direct CALL target from 00EFh screen-presentation stream; restores temporary IVT hooks
+62BD  FA                      cli
+62BE  50                      push ax
+62BF  1E                      push ds
+62C0  33 C0                   xor ax, ax
+62C2  8E D8                   mov ds, ax
+62C4  A1 80 02                mov ax, word ptr [0x280]
+62C7  A3 40 00                mov word ptr [0x40], ax
+62CA  A1 82 02                mov ax, word ptr [0x282]
+62CD  A3 42 00                mov word ptr [0x42], ax
+62D0  A1 84 02                mov ax, word ptr [0x284]
+62D3  A3 68 00                mov word ptr [0x68], ax
+62D6  A1 86 02                mov ax, word ptr [0x286]
+62D9  A3 6A 00                mov word ptr [0x6a], ax
+62DC  A1 88 02                mov ax, word ptr [0x288]
+62DF  A3 70 00                mov word ptr [0x70], ax
+62E2  A1 8A 02                mov ax, word ptr [0x28a]
+62E5  A3 72 00                mov word ptr [0x72], ax
+62E8  1F                      pop ds
+62E9  58                      pop ax
+62EA  FB                      sti
+62EB  C3                      ret
+62EC  50                      push ax
+62ED  1E                      push ds
+62EE  33 C0                   xor ax, ax
+62F0  8E D8                   mov ds, ax
+62F2  FE 06 8E 02             inc byte ptr [0x28e]
+62F6  1F                      pop ds
+62F7  58                      pop ax
+62F8  CD A0                   int 0xa0
+62FA  EB 0E                   jmp 0x630a
+62FC  50                      push ax
+62FD  1E                      push ds
+62FE  33 C0                   xor ax, ax
+6300  8E D8                   mov ds, ax
+6302  FE 06 8E 02             inc byte ptr [0x28e]
+6306  1F                      pop ds
+6307  58                      pop ax
+6308  CD A1                   int 0xa1
+630A  9C                      pushf
+630B  FA                      cli
+630C  50                      push ax
+630D  1E                      push ds
+630E  33 C0                   xor ax, ax
+6310  8E D8                   mov ds, ax
+6312  FE 0E 8E 02             dec byte ptr [0x28e]
+6316  1F                      pop ds
+6317  58                      pop ax
+6318  9D                      popf
+6319  CA 02 00                retf 2
+631C  50                      push ax
+631D  1E                      push ds
+631E  33 C0                   xor ax, ax
+6320  8E D8                   mov ds, ax
+6322  A1 6C 04                mov ax, word ptr [0x46c]
+6325  2B 06 8C 02             sub ax, word ptr [0x28c]
+6329  3D 0B 00                cmp ax, 0xb
+632C  72 26                   jb 0x6354
+632E  81 3E 82 02 00 C8       cmp word ptr [0x282], 0xc800
+6334  72 15                   jb 0x634b
+6336  81 3E 82 02 00 E0       cmp word ptr [0x282], 0xe000
+633C  72              db 0x72
+
 ===== 099Dh-0A1Ch =====
 Reason: direct CALL target from 00EFh screen-presentation stream
 099D  53                      push bx
@@ -1396,60 +1460,6 @@ Reason: direct CALL target from 00EFh screen-presentation stream
 0A19  CD 10                   int 0x10
 0A1B  B9              db 0xB9
 0A1C  09              db 0x09
-
-===== 6220h-629Fh =====
-Reason: direct CALL target from 00EFh screen-presentation stream
-6220  CD CF                   int 0xcf
-6222  CD CD                   int 0xcd
-6224  CD CF                   int 0xcf
-6226  CD CD                   int 0xcd
-6228  CD BC                   int 0xbc
-622A  00 BE 77 61             add byte ptr [bp + 0x6177], bh
-622E  BA 33 0A                mov dx, 0xa33
-6231  E8 3B A6                call 0x86f
-6234  BE 95 61                mov si, 0x6195
-6237  BA 33 0B                mov dx, 0xb33
-623A  E8 32 A6                call 0x86f
-623D  BE B3 61                mov si, 0x61b3
-6240  BA 33 0C                mov dx, 0xc33
-6243  E8 29 A6                call 0x86f
-6246  BA 33 0D                mov dx, 0xd33
-6249  B9 06 00                mov cx, 6
-624C  BE D1 61                mov si, 0x61d1
-624F  52                      push dx
-6250  E8 1C A6                call 0x86f
-6253  5A                      pop dx
-6254  FE C6                   inc dh
-6256  BE EF 61                mov si, 0x61ef
-6259  52                      push dx
-625A  E8 12 A6                call 0x86f
-625D  5A                      pop dx
-625E  FE C6                   inc dh
-6260  E2 EA                   loop 0x624c
-6262  BE 0D 62                mov si, 0x620d
-6265  FE CE                   dec dh
-6267  E8 05 A6                call 0x86f
-626A  C3                      ret
-626B  FA                      cli
-626C  50                      push ax
-626D  1E                      push ds
-626E  33 C0                   xor ax, ax
-6270  8E D8                   mov ds, ax
-6272  B8 EC 62                mov ax, 0x62ec
-6275  87 06 40 00             xchg word ptr [0x40], ax
-6279  A3 80 02                mov word ptr [0x280], ax
-627C  8C C8                   mov ax, cs
-627E  87 06 42 00             xchg word ptr [0x42], ax
-6282  A3 82 02                mov word ptr [0x282], ax
-6285  B8 FC 62                mov ax, 0x62fc
-6288  87 06 68 00             xchg word ptr [0x68], ax
-628C  A3 84 02                mov word ptr [0x284], ax
-628F  8C C8                   mov ax, cs
-6291  87 06 6A 00             xchg word ptr [0x6a], ax
-6295  A3 86 02                mov word ptr [0x286], ax
-6298  B8 1C 63                mov ax, 0x631c
-629B  87 06 70 00             xchg word ptr [0x70], ax
-629F  A3              db 0xA3
 
 ===== 09C1h-0A40h =====
 Reason: direct CALL target from 00EFh screen-presentation stream
