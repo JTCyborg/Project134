@@ -1137,3 +1137,30 @@ The strings immediately following the helper include `Load Original Values (Y/N)
 The routine at `5AECh` calls `AB34h` at `5B0Fh` after computing `DL = original_index + 80h` and storing the original index in `E18Ah`. `AB34h` is a substantial routine that scans/compares 16-byte entries through a far/segment-based table path and has its own nested calls; its full data contract is not yet established. Do not describe it as a simple defaults loader until the called helpers and table source have been traced.
 
 The `5B7Ch` caller invokes `5959h` after setting `[3C52h]` from `AL = E189h + 43h`. The nearby strings establish the UI context as a Y/N confirmation flow for loading original or ROM-default setup values. The later branch in `5B7Ch` updates `E012h` when the returned key is not `Y`; the exact field-level effect is still being followed through the remaining code. ROM bytes remain unchanged.
+
+### AB34h: confirmed IDE Device Control reset branch and table-comparison path
+
+A fresh decode of `AB34h` shows that this routine is not merely a settings-copy helper. Its entry begins `MOV SI,FFFFh; CALL AABFh; MOV AL,00h; JC ...`. If the carry gate is passed, it saves DX, calls `185Ah`, restores DX, then invokes `ABADh` twice: first with `AH=01h`, then with `AH=00h` after setting `ES=DS` and `BX=E1B8h`.
+
+The helper at `185Ah` is unambiguous:
+
+~~~asm
+185A  MOV AL,04h
+185C  MOV DX,03F6h
+185F  OUT DX,AL
+1860  MOV CX,0100h
+1863  CALL D096h
+1866  MOV AL,00h
+1868  OUT DX,AL
+1869  MOV CX,8000h
+186C  CALL D096h
+186F  RET
+~~~
+
+Port `3F6h` is the IDE alternate-status/device-control register on the primary ATA channel. Writing bit 2 (`04h`) asserts the software-reset signal; writing `00h` deasserts it. Thus the branch at `AB34h` performs an ATA software-reset pulse with delay loops. This is a hardware action, not a BIOS setup-array copy. The call is guarded by the result of `AABFh`; that helper checks the BIOS keyboard queue and handles the ESC/cancel path, so do not assume the reset is unconditional.
+
+After the reset pulse, `AB34h` calls `ABADh` with `AH=01h`, then again with `AH=00h`. The second call is made with `ES=DS` and `BX=E1B8h`. After it returns, the caller compares words at `ES:[BX+02h]`, `ES:[BX+06h]`, and `ES:[BX+0Ch]` against values in the caller's data segment; it also checks byte fields and scans a 16-byte table at `CS:E401h` using `SI=E401h`, `CX=002Eh`, stride 10h. A match sets `CL=2Fh`; otherwise the scan advances by 10h. This is consistent with selecting a special geometry/parameter-record index when a live parameter structure matches a ROM table entry, but the exact field semantics of the structure are not assigned yet.
+
+Important call-boundary detail: the near CALL at `AB37h` targets `AABFh`, and the calls at `AB45h` and `AB50h` both target `ABADh`. The routine at `ABADh` is a nontrivial helper with a 40h-count loop and local stack frame; its internals still need separate tracing. Do not interpret `AH=01h`/`AH=00h` as conventional BIOS function numbers: they are input values to this private helper, not INT 13h calls established by this excerpt.
+
+ROM bytes are unchanged. The findings above distinguish the confirmed ATA reset pulse from the still-unresolved parameter-record matching performed after it.
