@@ -939,3 +939,16 @@ The initialization block at `693Dh..696Ch` is now decoded directly:
 - It loads byte `[E413h]`, decrements it, and stores the result in `[E1B4h]`.
 
 This is consistent with a zero-based maximum geometry pair derived from firmware configuration bytes/word at E411/E413, but the exact geometry field labels should be confirmed against the code that populates E411/E413 before naming them as cylinder/head values. The progress pair E1B5/E1B7 is initialized from saved E1AF/E1B1, so it can represent resumable/current position rather than purely transient loop counters.
+
+
+### Second initialization site: 72B0h
+
+A second code path independently initializes the same geometry/progress state. At `72B3h..72C4h` it loads `WORD [E411h]`, decrements it, stores the result in `[E1B2h]`, clears `[E1AFh]`, copies `[E3C3h]` to `[E122h]`, calls `72D3h`, then sets `[E1ABh]=2`. This corroborates that E1B2 is a zero-based value derived from E411 and that E1AF is a saved-position field reset during this initialization path. It does not by itself prove the user-visible label/units of E411.
+
+### E411h/E413h are consumed as geometry limits
+
+The disk-format/track preparation code around `5BD5h..5BEFh` reads `[E41Fh]`, `[E413h]`, and `[E411h]` in a multiplication/division sequence, then bounds the result against `0800h`. Elsewhere, the entry-processing code around `4F40h..4F70h` reads E411 and E413 while converting and validating record fields. Together with the initialization at `693Dh..696Ch`, this supports interpreting E411/E413 as disk geometry dimensions/limits, with E1B2/E1B4 holding their zero-based maxima. Exact labels (cylinder count vs last cylinder, head count vs last head) remain open because both the decrement and subsequent use must be reconciled with the table-record encoding.
+
+### Clarification on the common INT 13h wrapper
+
+At `6C15h`, the wrapper checks `[E3BBh]`. If it equals `FFh`, it bypasses the helper call and executes `INT 13h` directly; otherwise it calls `6C32h` first and then executes `INT 13h`. It stores returned AH into `[E3B9h]` and propagates the interrupt carry result. Therefore the `AH=14h/08h/09h/11h/10h` selector sequence documented above is confirmed as actual INT 13h service dispatch, with `6C32h` serving as a pre-call support/setup path under the non-FF gate.
