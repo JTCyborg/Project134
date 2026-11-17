@@ -1235,3 +1235,6 @@ The temporary IVT/calendar-refresh analysis is documented in [AMI486_TEMPORARY_I
 ## 16-bit mnemonic normalization — 2026-11-17
 
 A raw-byte check of the 6616h calendar routine exposed a Capstone alias issue in CS_MODE_16: unprefixed opcode 98h must be CBW and unprefixed 99h must be CWD, but the current candidate listing emitted CWDE/CDQ. There are 31 such candidate-window occurrences. Both the candidate generator and full-linear workflow now normalize these exact unprefixed opcodes; 66h-prefixed forms are left unchanged. After regeneration, the candidate listing contains zero CWDE/CDQ aliases; the full-linear listing blob also changed and its manifest still reports 29,731 records covering 65,536 bytes.
+
+
+The 00EFh screen routine's direct callees are being expanded as separate candidate entries: numeric-field editor helpers 0538h/0566h/0577h/084Fh, keyboard helper 08CDh, grid renderer 086Fh, numeric field helpers 0970h/098Eh and panel helper 5802h. These are direct call targets from the already byte-aligned 03D4h/0A15h/05EBh/622Bh/3E3Fh streams; regenerated output will be used to map their contracts.
