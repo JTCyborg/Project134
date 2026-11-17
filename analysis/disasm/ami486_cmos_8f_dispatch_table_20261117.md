@@ -422,3 +422,18 @@ A fresh decode of the current `ami486.bin` (65536 bytes) confirms an important e
 The `4F00h–50A0h` bytes were also checked as a separate boundary. The apparent entry at `4FD0h` is a frame-based routine that formats/displays values from the `3BECh`-based table, calls UI helpers, compares a selected record, and updates that record; it does not itself contain an INT 13h instruction or direct IDE data-port access. At `50A0h` a distinct port-80h diagnostic/POST trace sequence begins (writes marker bytes such as 40h–59h), so this boundary must not be misclassified as the disk formatter merely because it follows the menu code in ROM address order.
 
 No formatter command has been established by this pass. The next trace target is the call graph reached from the confirmation/record-update routine at `4FD0h`, plus the indirect service wrappers it invokes; the physical write operation remains unlocated.
+
+
+### 4FD0h call-target trace: stack-sensitive port-61h helper
+
+The direct relative-call targets from the `4FD0h` record/UI routine include display/input helpers in the `5780h–59xx` region and a nonstandard entry at `F56Dh` (the call at `5006h`, displacement `A564h`). At `F56Dh` the bytes decode as:
+
+```asm
+F56D  POP AX
+F56E  OUT 61h,AL
+F570  RET
+```
+
+This is a stack-sensitive entry, not an ordinary callable subroutine: it consumes the near-call return IP as the value sent to port `61h`, then returns using the next word on the stack. Consequently the call at `5006h` must be analyzed together with the caller's stack frame; it is not a disk-controller command. The surrounding `F56Ah` entry is a different instruction stream, beginning with `CALL F93Ch`, so linear decoding across `F56Dh` would also be misleading.
+
+The helpers reached from `4FD0h` therefore remain UI/record-maintenance or platform-I/O support. This pass still does not identify a physical format-track/write command. Continue by tracing the caller's stack setup around `4FD0h` and the service dispatch reached after the Y/N confirmation path; do not infer that port `61h` is a disk data port.
