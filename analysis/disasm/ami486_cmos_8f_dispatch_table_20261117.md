@@ -730,3 +730,16 @@ A fresh pass over `4D80h–5050h` and `68E0h–6AD0h` establishes the following:
 - The bytes at `6A53h` form a short flag/state-return path (`POPF; [E3B9h]=1; CLC; JMP` backward), immediately before the `6A60h` comparison/store block. This adjacency cautions against assigning an independent procedure boundary at `6A60h` without tracing incoming branches or indirect dispatch.
 
 Consequently, the previous hypothesis that `6A60h` is the common UI numeric-input handler remains unproven. The reliable conclusions are limited to its writes and bounds checks, the initialization at `6930h`, and the separate display/record work at `4EE7h` and `69D0h`. Next investigation should target indirect/far dispatch and branch predecessors for `69D0h`/`6A60h`, then correlate those with the destructive-confirmation UI state machine; the UI-to-`6D94h` link is still not established.
+
+
+### Address-boundary correction: 69D0h is not a routine entry
+
+A fresh byte-offset audit corrects the earlier subsection that described `69D0h` as the start of a stack-frame routine. The bytes around the boundary are:
+
+- `69CDh–69CEh`: `5D C3` (`POP BP; RET`), completing the preceding routine.
+- `69CFh–69D0h`: `EB C3` (`JMP SHORT 6992h`). Thus `69D0h` is the signed displacement byte, not an instruction boundary or procedure entry.
+- `69D1h`: `55 8B EC 83 EC 10` (`PUSH BP; MOV BP,SP; SUB SP,0010h`), the actual beginning of the following stack-frame code sequence.
+
+The earlier statement that a routine begins at `69D0h` is withdrawn; references to that routine should use `69D1h` as the byte-level start candidate. A fresh scan of standard near relative `CALL/JMP`, short conditional branches, and near conditional branches found no direct branch target at `69D1h`, `6A60h`, or `6CE5h`. This does not exclude far transfers, register-indirect dispatch, computed jumps, or entry through an overlapping decode; those require separate analysis. In particular, the absence of direct relative references is not proof that any of these sequences are unreachable.
+
+The bytes at `6A60h` still decode as a valid instruction boundary in the current linear view, but the preceding bytes include a control-flow path that must be considered before treating it as a standalone function. No new caller-to-entry relationship is established by this pass.
