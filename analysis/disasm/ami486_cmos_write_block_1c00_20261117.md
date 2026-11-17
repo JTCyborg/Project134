@@ -95,3 +95,22 @@ The complete direct-reference offsets found include:
 `10EE, 114C, 12F4, 1371, 15A7, 1C0C, 5CAB, 8403, 8645, 865E, 8677, 867E, 9243, D7ED, D843, D85D, DA24, DA49, DA90, E2EF, E321, E33A`.
 
 The next investigation should identify initialization/copy routines that populate the CS-resident workspace and search for pointer-based writes into the region containing `8280h`.
+
+
+## 7. Caller and default-ROM behavior
+
+A near-call target scan identifies a direct caller at `52A1`:
+
+```
+529C: B0 57          MOV AL,57h
+529E: E6 80          OUT 80h,AL       ; POST checkpoint 57h
+52A0: E8 62 C9       CALL 1C06h       ; conditional CMOS save block
+52A3: B0 58          MOV AL,58h
+52A5: E6 80          OUT 80h,AL       ; POST checkpoint 58h
+```
+
+Thus the CMOS-save block is called during POST between checkpoints 57h and 58h. It is not an isolated Setup menu callback.
+
+The ROM image's initial byte at `CS:8280` is `2Fh` (bytes at `8280–8287`: `2F 00 E7 03 00 00 12 00`). Bit `40h` is clear in this ROM image. Since the audited code at `1C0C` tests that bit and skips the writes when it is clear, the six CMOS writes are conditional and are not taken with the unmodified ROM-resident initial value.
+
+The setter for bit `40h` remains unidentified. This reinforces that the byte may be changed by runtime initialization or a shadowed/copy-backed workspace; it must not be described as an unconditional CMOS save. The callback at `CS:[82DE]` currently resolves to `19AD` (`RET`), so that callback contributes no visible setter in the current image.
