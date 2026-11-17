@@ -329,6 +329,7 @@ DATA_RANGES = [
     (0x5C24, 0x5C26, "Crafted stack-return word 5C26h consumed by the 5520h helper", "words"),
     (0x5C56, 0x5C58, "Crafted stack-return word 5C58h consumed by the F5A9h POST diagnostic trampoline", "words"),
     (0x5C66, 0x5C68, "Crafted stack-return word 5C68h consumed by the 552Ah helper", "words"),
+    (0x7CE9, 0x8000, "791-byte all-zero ROM padding/reserved area; byte scan confirms no nonzero bytes", "hexascii"),
     (0xE481, 0xE6F1, "Thirty-nine additional 16-byte fixed-disk parameter records, continuing the E401h-E480h table", "hexascii"),
     (0xE6F1, 0xE6F2, "Single zero padding byte between fixed-disk parameter records and near-JMP entry", "hexascii"),
     (0xE6F5, 0xE729, "Opaque embedded data preamble before UART baud-divisor table", "hexascii"),
