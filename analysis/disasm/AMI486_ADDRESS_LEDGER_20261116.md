@@ -654,3 +654,12 @@ Detailed map: [AMI486_ADDRESS_LEDGER_REGION_3C5C_3E3E_20261117.md](AMI486_ADDRES
 Mapped the 12-option BIOS Setup main menu entered by JMP 2F21h→3C5Eh. It uses label pointers at 342Eh–3445h and 12 handler offsets at 3446h–345Dh. The options cover Standard/Advanced CMOS, chipset, power, peripheral settings, BIOS and power-on defaults, password, hard-disk detection/formatting, and write/no-write exit. The menu loop updates selection state at E187h/E188h, handles navigation/Enter/Esc, dispatches through the handler table, and displays the WARNING INFORMATION page with Setup safety instructions. The two leading bytes at 3C5Ch–3C5Dh are zero padding; 3E3Eh is the menu routine's RET.
 
 The generator now includes the full 12-entry handler table and the bounded menu loop. GitHub Actions run 44086115994 passed: 838 windows / 239 data ranges, 61,288 covered bytes (93.52%), 62 uncovered intervals. The next largest uncovered interval is 0236h–03D3h (414 bytes).
+
+
+## 31. Standard CMOS Setup field handlers — 0236h–03D3h (2026-11-17)
+
+Detailed map: [AMI486_ADDRESS_LEDGER_REGION_0236_03D3_20261117.md](AMI486_ADDRESS_LEDGER_REGION_0236_03D3_20261117.md).
+
+Mapped the video display type field (options at 769Dh), keyboard-test Installed/Not Installed field (77D7h), an Enabled/Disabled bit-6 option, and four fixed-disk type nibble selectors at 02DBh/02F1h/0319h/0351h. The shared disk-type chooser at 0367h supports fixed types 01h–46h and user-defined type 47h, with geometry fields for the custom type. The 0294h–02A3h eight-word block is retained as an unresolved dispatch/offset table, not linear code. The Standard CMOS Setup handler at 00ECh dispatches through the 16-entry table at 0AF5h; four entries point into this region.
+
+GitHub Actions run 44086705207 passed: 851 windows / 240 data ranges, 61,702 covered bytes (94.15%), 61 uncovered intervals. The next largest uncovered interval is 81EEh–8377h (394 bytes).
