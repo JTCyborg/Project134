@@ -143,3 +143,33 @@ It then loads a word from CS:[DI], advances DI by two, installs a synthetic stac
 ## Correction: PIC masks in EEE7h
 
 The 8259 initialization sequence ends by writing FFh to both data ports: FFh to A1h masks all slave IRQs, and the same value to 21h masks all master IRQs. Therefore both PICs are fully masked at the end of this routine. The sequence remaps the master base to 08h and slave base to 70h, sets cascade wiring values 04h (master ICW3) and 02h (slave ICW3), then selects 8086 mode via ICW4=01h for both.
+
+## F1E2h continuation: video initialization call
+
+The continuation selected by the CMOS[B3h] branch enters the byte stream at F1E2h. This is an intentional overlapping entry: decoding from that exact offset gives CMP BYTE PTR [0E38h],CL (bytes 38 0E 38 0E), followed by a near CALL whose target wraps to 578Dh:
+
+```asm
+F1E2: 38 0E 38 0E    CMP BYTE PTR [0E38h],CL
+F1E4: E8 A6 65       CALL 578Dh
+```
+
+At entry 578Dh:
+
+```asm
+578D: 89 16 9B E1    MOV [E19Bh],DX
+5791: 89 1E 9D E1    MOV [E19Dh],BX
+5795: E8 66 FF       CALL 5704h
+5798: B0 00          MOV AL,00h
+579A: E8 88 FF       CALL 5725h
+579D: 8A C8          MOV CL,AL
+579F: E8 AB FF       CALL 5753h
+57A2: 8A D0          MOV DL,AL
+57A4: B0 01          MOV AL,01h
+57A6: E8 7C FF       CALL 5725h
+```
+
+The called helpers include explicit writes to the CGA-compatible mode-control port 3D8h. At 5706h the code loads AL=21h and writes it to DX=03D8h; at 5715h it similarly writes AL=29h to 03D8h. The 578Dh routine repeatedly calls parameter/CRTC helpers and reads/writes the E19x working variables. This is strong evidence for a video-adapter initialization/configuration stage, not a generic CMOS parser.
+
+The F1E2h caller then saves registers and performs a larger startup sequence: copies a 64-byte block from region E000h to a stack-local buffer, calls helper routines around F309h and F10Ah, and proceeds into further platform initialization. Later in this same block it invokes INT 1Ah functions 02h and 04h (RTC time and date), then continues into disk/boot preparation. Thus the CMOS[B3h] branch feeds into a broader platform startup path that includes display setup and RTC services.
+
+**Caution:** the 3D8h writes and E19x variable use establish video initialization, but the exact chipset/adapter model and complete CRTC register table still need a dedicated decode. Do not claim a specific VGA/CGA card from these ports alone.
