@@ -1307,6 +1307,64 @@ CAEF  DF 02 25 02 09 2A FF 50 F6 0F 08 27 40          ..%..*.P...'@
 Reason: 13-byte diskette parameter block; CB09h is the following code-entry boundary
 CAFC  AF 02 25 02 24 1B FF 50 F6 0F 08 4F C0          ..%.$..P...O.
 
+===== DATA 873Ch-887Fh =====
+Reason: 81 four-byte CMOS/ALi configuration records consumed by the 8400h indexed read-modify-write loop; record field contract partly unresolved
+873C  11 FF BB AB 13 FF BC 30 2D FF 1F 70 34 FF 00 00 .......0-..p4...
+874C  35 FF 0F 01 36 FF 01 00 40 FF 20 F0 41 FF 0A FF 5...6...@. .A...
+875C  42 FF 10 00 43 FF 1F 00 44 FF 0F 00 45 FF 00 00 B...C...D...E...
+876C  46 FF 0F 00 47 FF 69 3A 48 FF 01 01 49 FF 08 60 F...G.i:H...I..`
+877C  4A FF 40 00 4E FF 00 0C 50 FF 21 40 51 FF 00 00 J.@.N...P.!@Q...
+878C  52 FF 64 00 53 FF 5B 5F 54 FF 88 00 55 FF 65 C5 R.d.S.[_T...U.e.
+879C  56 FF 00 00 57 FF 30 32 80 FF 16 16 81 0F 0F 05 V...W.02........
+87AC  82 83 01 7E 83 60 00 00 84 07 20 01 85 FF 20 20 ...~.`.... ...  
+87BC  86 0F 0F 05 87 83 01 7E 88 60 00 00 89 07 20 02 .......~.`.... .
+87CC  8A FF 25 25 8B 0F 05 05 8C 83 01 7E 8D 60 40 00 ..%%.......~.`@.
+87DC  8E 07 20 03 8F FF 33 33 90 0F 05 00 91 83 01 7E .. ...33.......~
+87EC  92 60 40 00 93 07 21 04 94 FF 40 40 95 0F 05 00 .`@...!...@@....
+87FC  96 83 01 7E 97 60 40 00 98 07 22 05 99 FF 50 50 ...~.`@..."...PP
+880C  9A 0F 05 00 9B 83 02 7E 9C 60 60 00 9D 07 23 06 .......~.``...#.
+881C  9E FF 66 66 9F 0F 05 00 A0 83 01 7E A1 60 40 00 ..ff.......~.`@.
+882C  A2 07 21 04 A3 FF 24 24 A4 0F 05 00 A5 83 01 81 ..!...$$........
+883C  A6 60 40 00 A7 07 20 03 A8 FF 25 25 A9 0F 05 00 .`@... ...%%....
+884C  AA 83 01 7E AB 60 00 00 AC 07 20 02 AD FF 33 33 ...~.`.... ...33
+885C  AE 0F 05 00 AF 83 01 7E B0 60 00 00 B1 07 21 04 .......~.`....!.
+886C  B2 FF 40 40 B3 0F 05 00 B4 83 01 7E B5 60 00 00 ..@@.......~.`..
+887C  B6 07 22 05                                     ..".
+
+===== DATA 8750h-87A3h =====
+Reason: Overlapping 21-record subset walked by the POST ALi register initializer at 2098h; four-byte records
+8750  36 FF 01 00 40 FF 20 F0 41 FF 0A FF 42 FF 10 00 6...@. .A...B...
+8760  43 FF 1F 00 44 FF 0F 00 45 FF 00 00 46 FF 0F 00 C...D...E...F...
+8770  47 FF 69 3A 48 FF 01 01 49 FF 08 60 4A FF 40 00 G.i:H...I..`J.@.
+8780  4E FF 00 0C 50 FF 21 40 51 FF 00 00 52 FF 64 00 N...P.!@Q...R.d.
+8790  53 FF 5B 5F 54 FF 88 00 55 FF 65 C5 56 FF 00 00 S.[_T...U.e.V...
+87A0  57 FF 30 32                                     W.02
+
+===== DATA 87A9h-88BAh =====
+Reason: Overlapping 14-row AUTO Config lookup view; 20-byte row stride with 16-bit fields at offsets +00h/+04h/+08h/+0Ch; overlaps other data and code views
+87A9  0F 0F 05 82 83 01 7E 83 60 00 00 84 07 20 01 85 ......~.`.... ..
+87B9  FF 20 20 86 0F 0F 05 87 83 01 7E 88 60 00 00 89 .  .......~.`...
+87C9  07 20 02 8A FF 25 25 8B 0F 05 05 8C 83 01 7E 8D . ...%%.......~.
+87D9  60 40 00 8E 07 20 03 8F FF 33 33 90 0F 05 00 91 `@... ...33.....
+87E9  83 01 7E 92 60 40 00 93 07 21 04 94 FF 40 40 95 ..~.`@...!...@@.
+87F9  0F 05 00 96 83 01 7E 97 60 40 00 98 07 22 05 99 ......~.`@..."..
+8809  FF 50 50 9A 0F 05 00 9B 83 02 7E 9C 60 60 00 9D .PP.......~.``..
+8819  07 23 06 9E FF 66 66 9F 0F 05 00 A0 83 01 7E A1 .#...ff.......~.
+8829  60 40 00 A2 07 21 04 A3 FF 24 24 A4 0F 05 00 A5 `@...!...$$.....
+8839  83 01 81 A6 60 40 00 A7 07 20 03 A8 FF 25 25 A9 ....`@... ...%%.
+8849  0F 05 00 AA 83 01 7E AB 60 00 00 AC 07 20 02 AD ......~.`.... ..
+8859  FF 33 33 AE 0F 05 00 AF 83 01 7E B0 60 00 00 B1 .33.......~.`...
+8869  07 21 04 B2 FF 40 40 B3 0F 05 00 B4 83 01 7E B5 .!...@@.......~.
+8879  60 00 00 B6 07 22 05 05 00 4C 00 00 00 51 00 E0 `...."...L...Q..
+8889  00 01 01 3C 70 77 04 2D 30 00 CB E8 AD 05 CB 60 ...<pw.-0......`
+8899  9C B8 03 C5 E8 3C 05 B0 18 E8 2A 05 8A D8 B8 23 .....<....*....#
+88A9  23 E8 22 05 A8 10 75 09 80 E3 FE 80 CB 04 EB 04 #."...u.........
+88B9  90 80                                           ..
+
+===== DATA 8880h-8887h =====
+Reason: Adjacent POST configuration constants; word at 8886h is the 0051h (81-record) loop count used at 844Ah
+Words: 0005, 004C, 0000, 0051
+
 ===== DATA 2068h-208Ch =====
 Reason: LGDT pseudo-descriptor at 2068h plus adjacent descriptor/parameter bytes used by the PM memory probe
 2068  17 00 70 20 0F 93 00 00 00 00 00 00 00 00 00 00 ..p ............
@@ -13131,6 +13189,400 @@ Reason: return-to-stack continuation after CR0 transition
 2403  8C C8                   mov ax, cs
 2405  8E D0                   mov ss, ax
 2407  E9 D2 B5                jmp 0xd9dc
+
+===== 8898h-88CAh =====
+Reason: direct JMP target from ED13h; chipset configuration routine; independently seeded entry
+8898  60                      pushaw
+8899  9C                      pushf
+889A  B8 03 C5                mov ax, 0xc503
+889D  E8 3C 05                call 0x8ddc
+88A0  B0 18                   mov al, 0x18
+88A2  E8 2A 05                call 0x8dcf
+88A5  8A D8                   mov bl, al
+88A7  B8 23 23                mov ax, 0x2323
+88AA  E8 22 05                call 0x8dcf
+88AD  A8 10                   test al, 0x10
+88AF  75 09                   jne 0x88ba
+88B1  80 E3 FE                and bl, 0xfe
+88B4  80 CB 04                or bl, 4
+88B7  EB 04                   jmp 0x88bd
+88B9  90                      nop
+88BA  80 CB 01                or bl, 1
+88BD  8A E3                   mov ah, bl
+88BF  B0 18                   mov al, 0x18
+88C1  E8 18 05                call 0x8ddc
+88C4  9D                      popf
+88C5  61                      popaw
+88C6  0B E4                   or sp, sp
+88C8  E9 4B 64                jmp 0xed16
+
+===== 88CBh-88CDh =====
+Reason: direct JMP target from AE6Ch; alternate entry inside the 8898h stream
+88CB  E9 A1 25                jmp 0xae6f
+
+===== 88CEh-894Dh =====
+Reason: direct JMP target from D60Ch; alternate entry in the 88CBh overlapping stream
+88CE  B9 00 01                mov cx, 0x100
+88D1  E2 FE                   loop 0x88d1
+88D3  8C C8                   mov ax, cs
+88D5  8E D0                   mov ss, ax
+88D7  0F 01 E0                smsw ax
+88DA  A8 01                   test al, 1
+88DC  75 40                   jne 0x891e
+88DE  0A E4                   or ah, ah
+88E0  75 22                   jne 0x8904
+88E2  80 FE 04                cmp dh, 4
+88E5  75 1D                   jne 0x8904
+88E7  90                      nop
+88E8  BC EE 88                mov sp, 0x88ee
+88EB  EB 34                   jmp 0x8921
+88ED  90                      nop
+88EE  F0              db 0xF0
+88EF  88 75 08                mov byte ptr [di + 8], dh
+88F2  BF F8 88                mov di, 0x88f8
+88F5  EB 3A                   jmp 0x8931
+88F7  90                      nop
+88F8  EB 0C                   jmp 0x8906
+88FA  80 E2 30                and dl, 0x30
+88FD  80 FA 30                cmp dl, 0x30
+8900  B4 02                   mov ah, 2
+8902  74 02                   je 0x8906
+8904  B4 00                   mov ah, 0
+8906  B0 B3                   mov al, 0xb3
+8908  BC 0E 89                mov sp, 0x890e
+890B  E9 86 65                jmp 0xee94
+890E  10 89 24 F1             adc byte ptr [bx + di - 0xedc], cl
+8912  0A E0                   or ah, al
+8914  B0 B3                   mov al, 0xb3
+8916  BC 1C 89                mov sp, 0x891c
+8919  E9 81 65                jmp 0xee9d
+891C  1E                      push ds
+891D  89 E9                   mov cx, bp
+891F  EE                      out dx, al
+8920  4C                      dec sp
+8921  33 C0                   xor ax, ax
+8923  9E                      sahf
+8924  B8 05 00                mov ax, 5
+8927  BB 02 00                mov bx, 2
+892A  F6 F3                   div bl
+892C  9F                      lahf
+892D  80 FC 02                cmp ah, 2
+8930  C3                      ret
+8931  32 C9                   xor cl, cl
+8933  B8 C2 C2                mov ax, 0xc2c2
+8936  BC 3C 89                mov sp, 0x893c
+8939  E9 93 04                jmp 0x8dcf
+893C  3E 89 8A D8 0C          mov word ptr ds:[bp + si + 0xcd8], cx
+8941  04 86                   add al, 0x86
+8943  C4 BC 4A 89             les di, ptr [si - 0x76b6]
+8947  E9 92 04                jmp 0x8ddc
+894A  4C                      dec sp
+894B  89              db 0x89
+894C  BC              db 0xBC
+894D  52                      push dx
+
+===== 8A04h-8A05h =====
+Reason: direct JMP target from D612h; short JMP DI trampoline candidate
+8A04  0F              db 0x0F
+8A05  01              db 0x01
+
+===== 8A20h-8A74h =====
+Reason: direct JMP target from D652h; POST controller/configuration continuation
+8A20  8B C6                   mov ax, si
+8A22  3C 05                   cmp al, 5
+8A24  74 08                   je 0x8a2e
+8A26  3C 09                   cmp al, 9
+8A28  74 04                   je 0x8a2e
+8A2A  3C 0A                   cmp al, 0xa
+8A2C  75 42                   jne 0x8a70
+8A2E  B0 B3                   mov al, 0xb3
+8A30  BC 36 8A                mov sp, 0x8a36
+8A33  E9 5E 64                jmp 0xee94
+8A36  38 8A A8 0C             cmp byte ptr [bp + si + 0xca8], cl
+8A3A  74 34                   je 0x8a70
+8A3C  8A D0                   mov dl, al
+8A3E  66 C1 C8 10             ror eax, 0x10
+8A42  8B D8                   mov bx, ax
+8A44  BF 4A 8A                mov di, 0x8a4a
+8A47  E9 83 02                jmp 0x8ccd
+8A4A  BF 62 8E                mov di, 0x8e62
+8A4D  B9 0A 00                mov cx, 0xa
+8A50  F6 C2 04                test dl, 4
+8A53  75 06                   jne 0x8a5b
+8A55  BF 7A 8E                mov di, 0x8e7a
+8A58  B9 02 00                mov cx, 2
+8A5B  2E 8B 05                mov ax, word ptr cs:[di]
+8A5E  47                      inc di
+8A5F  47                      inc di
+8A60  BC 66 8A                mov sp, 0x8a66
+8A63  E9 76 03                jmp 0x8ddc
+8A66  68 8A E2                push 0xe28a
+8A69  F1                      int1
+8A6A  8B C3                   mov ax, bx
+8A6C  66 C1 C8 10             ror eax, 0x10
+8A70  0C FF                   or al, 0xff
+8A72  E9 E0 4B                jmp 0xd655
+
+===== 8A75h-8A77h =====
+Reason: direct JMP target from D749h; short branch/trampoline candidate
+8A75  E9 D4 4C                jmp 0xd74c
+
+===== 8A78h-8A7Ah =====
+Reason: direct JMP target from D774h; short branch/trampoline candidate
+8A78  2E              db 0x2E
+8A79  A1              db 0xA1
+8A7A  DA              db 0xDA
+
+===== 8ACFh-8AD1h =====
+Reason: direct CALL target from 90F3h; near-JMP trampoline candidate
+8ACF  E9 98 6B                jmp 0xf66a
+
+===== 8AD2h-8AE7h =====
+Reason: direct CALL targets from 528Eh/9191h/91D9h/920Eh; 8042/controller wait helper candidate
+8AD2  E9 99 6B                jmp 0xf66e
+8AD5  FA                      cli
+8AD6  FA                      cli
+8AD7  33 C9                   xor cx, cx
+8AD9  E3 00                   jcxz 0x8adb
+8ADB  E4 64                   in al, 0x64
+8ADD  A8 02                   test al, 2
+8ADF  E0 F8                   loopne 0x8ad9
+8AE1  B0 FE                   mov al, 0xfe
+8AE3  E6 64                   out 0x64, al
+8AE5  F4                      hlt
+8AE6  EB FD                   jmp 0x8ae5
+
+===== 8AD5h-8AE7h =====
+Reason: direct JMP target from F071h; overlapping entry candidate inside 8AD2h stream
+8AD5  FA                      cli
+8AD6  FA                      cli
+8AD7  33 C9                   xor cx, cx
+8AD9  E3 00                   jcxz 0x8adb
+8ADB  E4 64                   in al, 0x64
+8ADD  A8 02                   test al, 2
+8ADF  E0 F8                   loopne 0x8ad9
+8AE1  B0 FE                   mov al, 0xfe
+8AE3  E6 64                   out 0x64, al
+8AE5  F4                      hlt
+8AE6  EB FD                   jmp 0x8ae5
+
+===== 8AD6h-8AE7h =====
+Reason: direct JMP targets from 527Ah/5480h; alternate entry in 8AD2h wait sequence
+8AD6  FA                      cli
+8AD7  33 C9                   xor cx, cx
+8AD9  E3 00                   jcxz 0x8adb
+8ADB  E4 64                   in al, 0x64
+8ADD  A8 02                   test al, 2
+8ADF  E0 F8                   loopne 0x8ad9
+8AE1  B0 FE                   mov al, 0xfe
+8AE3  E6 64                   out 0x64, al
+8AE5  F4                      hlt
+8AE6  EB FD                   jmp 0x8ae5
+
+===== 8AE8h-8B0Fh =====
+Reason: direct CALL target from INT 15h dispatcher 9220h; independently seeded helper
+8AE8  1E                      push ds
+8AE9  80 FC 4F                cmp ah, 0x4f
+8AEC  75 19                   jne 0x8b07
+8AEE  50                      push ax
+8AEF  B8 40 00                mov ax, 0x40
+8AF2  8E D8                   mov ds, ax
+8AF4  A0 17 00                mov al, byte ptr [0x17]
+8AF7  24 0C                   and al, 0xc
+8AF9  3C 0C                   cmp al, 0xc
+8AFB  75 09                   jne 0x8b06
+8AFD  58                      pop ax
+8AFE  50                      push ax
+8AFF  E8 2B 00                call 0x8b2d
+8B02  58                      pop ax
+8B03  EB 02                   jmp 0x8b07
+8B05  90                      nop
+8B06  58                      pop ax
+8B07  1F                      pop ds
+8B08  C3                      ret
+8B09  50                      push ax
+8B0A  B0 FF                   mov al, 0xff
+8B0C  FE C8                   dec al
+8B0E  58                      pop ax
+8B0F  C3                      ret
+
+===== 8B09h-8B0Fh =====
+Reason: direct CALL target from D029h; candidate entry, alignment to be verified
+8B09  50                      push ax
+8B0A  B0 FF                   mov al, 0xff
+8B0C  FE C8                   dec al
+8B0E  58                      pop ax
+8B0F  C3                      ret
+
+===== 8B10h-8B16h =====
+Reason: direct CALL target from E995h; candidate entry, alignment to be verified
+8B10  C3                      ret
+8B11  2E F6 06 81 82 40       test byte ptr cs:[0x8281], 0x40
+
+===== 8B11h-8B16h =====
+Reason: direct CALL target from F84Dh; overlapping candidate entry, alignment to be verified
+8B11  2E F6 06 81 82 40       test byte ptr cs:[0x8281], 0x40
+
+===== 8B2Dh-8B5Dh =====
+Reason: direct CALL target from B026h; overlapping candidate entry, alignment to be verified
+8B2D  FA                      cli
+8B2E  2E 3A 06 6E 82          cmp al, byte ptr cs:[0x826e]
+8B33  75 11                   jne 0x8b46
+8B35  F6 06 17 00 03          test byte ptr [0x17], 3
+8B3A  74 05                   je 0x8b41
+8B3C  E8 A9 00                call 0x8be8
+8B3F  EB 1B                   jmp 0x8b5c
+8B41  E8 1A 00                call 0x8b5e
+8B44  EB 16                   jmp 0x8b5c
+8B46  2E 3A 06 5E 82          cmp al, byte ptr cs:[0x825e]
+8B4B  75 0F                   jne 0x8b5c
+8B4D  F6 06 17 00 03          test byte ptr [0x17], 3
+8B52  74 05                   je 0x8b59
+8B54  E8 F6 00                call 0x8c4d
+8B57  EB 03                   jmp 0x8b5c
+8B59  E8 47 00                call 0x8ba3
+8B5C  FB                      sti
+8B5D  C3                      ret
+
+===== 8B5Eh-8BA2h =====
+Reason: direct CALL targets from 1E2Ch/9484h; controller/status helper candidate
+8B5E  52                      push dx
+8B5F  50                      push ax
+8B60  B5 00                   mov ch, 0
+8B62  2E 80 3E 60 82 00       cmp byte ptr cs:[0x8260], 0
+8B68  74 05                   je 0x8b6f
+8B6A  E8 CC 01                call 0x8d39
+8B6D  0A E9                   or ch, cl
+8B6F  2E A0 61 82             mov al, byte ptr cs:[0x8261]
+8B73  0A C0                   or al, al
+8B75  74 05                   je 0x8b7c
+8B77  E8 70 01                call 0x8cea
+8B7A  B5 FF                   mov ch, 0xff
+8B7C  2E 8B 16 62 82          mov dx, word ptr cs:[0x8262]
+8B81  0B D2                   or dx, dx
+8B83  74 12                   je 0x8b97
+8B85  EC                      in al, dx
+8B86  E3 00                   jcxz 0x8b88
+8B88  E3 00                   jcxz 0x8b8a
+8B8A  2E 22 06 65 82          and al, byte ptr cs:[0x8265]
+8B8F  2E 0A 06 64 82          or al, byte ptr cs:[0x8264]
+8B94  EE                      out dx, al
+8B95  B5 FF                   mov ch, 0xff
+8B97  0A ED                   or ch, ch
+8B99  74 05                   je 0x8ba0
+8B9B  80 0E 16 00 20          or byte ptr [0x16], 0x20
+8BA0  58                      pop ax
+8BA1  5A                      pop dx
+8BA2  C3                      ret
+
+===== 8BA3h-8BE1h =====
+Reason: direct CALL targets from 1E27h/9474h; controller/status helper candidate
+8BA3  52                      push dx
+8BA4  50                      push ax
+8BA5  B5 00                   mov ch, 0
+8BA7  2E 80 3E 50 82 00       cmp byte ptr cs:[0x8250], 0
+8BAD  74 05                   je 0x8bb4
+8BAF  E8 57 01                call 0x8d09
+8BB2  0A E9                   or ch, cl
+8BB4  2E A0 51 82             mov al, byte ptr cs:[0x8251]
+8BB8  0A C0                   or al, al
+8BBA  74 05                   je 0x8bc1
+8BBC  E8 2B 01                call 0x8cea
+8BBF  B5 FF                   mov ch, 0xff
+8BC1  2E 8B 16 52 82          mov dx, word ptr cs:[0x8252]
+8BC6  0B D2                   or dx, dx
+8BC8  74 12                   je 0x8bdc
+8BCA  EC                      in al, dx
+8BCB  E3 00                   jcxz 0x8bcd
+8BCD  E3 00                   jcxz 0x8bcf
+8BCF  2E 22 06 55 82          and al, byte ptr cs:[0x8255]
+8BD4  2E 0A 06 54 82          or al, byte ptr cs:[0x8254]
+8BD9  EE                      out dx, al
+8BDA  B5 FF                   mov ch, 0xff
+8BDC  0A ED                   or ch, ch
+8BDE  74 05                   je 0x8be5
+8BE0  80              db 0x80
+8BE1  26              db 0x26
+
+===== 8CB2h-8CCCh =====
+Reason: direct JMP targets from 1F26h/271Fh/2859h; protected-mode/cache-state helper candidate
+8CB2  0F 01 E0                smsw ax
+8CB5  A8 01                   test al, 1
+8CB7  75 12                   jne 0x8ccb
+8CB9  0A E4                   or ah, ah
+8CBB  75 0E                   jne 0x8ccb
+8CBD  0F 20 C0                mov eax, cr0
+8CC0  66 25 FF FF FF 9F       and eax, 0x9fffffff
+8CC6  0F 22 C0                mov cr0, eax
+8CC9  33 C0                   xor ax, ax
+8CCB  FF E7                   jmp di
+
+===== 8CCDh-8D08h =====
+Reason: direct JMP targets from 1EF7h/1F37h; alternate protected-mode/cache-state helper
+8CCD  0F 01 E0                smsw ax
+8CD0  A8 01                   test al, 1
+8CD2  75 14                   jne 0x8ce8
+8CD4  0A E4                   or ah, ah
+8CD6  75 10                   jne 0x8ce8
+8CD8  0F 20 C0                mov eax, cr0
+8CDB  66 0D 00 00 00 60       or eax, 0x60000000
+8CE1  0F 22 C0                mov cr0, eax
+8CE4  0F 09                   wbinvd
+8CE6  33 C0                   xor ax, ax
+8CE8  FF E7                   jmp di
+8CEA  8A E0                   mov ah, al
+8CEC  33 C9                   xor cx, cx
+8CEE  E3 00                   jcxz 0x8cf0
+8CF0  E4 64                   in al, 0x64
+8CF2  A8 02                   test al, 2
+8CF4  E0 F8                   loopne 0x8cee
+8CF6  75 10                   jne 0x8d08
+8CF8  8A C4                   mov al, ah
+8CFA  E6 64                   out 0x64, al
+8CFC  33 C9                   xor cx, cx
+8CFE  E3 00                   jcxz 0x8d00
+8D00  E4 64                   in al, 0x64
+8D02  A8 01                   test al, 1
+8D04  E1 F8                   loope 0x8cfe
+8D06  E4 60                   in al, 0x60
+8D08  C3                      ret
+
+===== 8D83h-8DCDh =====
+Reason: direct JMP targets from 27D7h/28D8h; chipset configuration callback candidate
+8D83  B8 03 C5                mov ax, 0xc503
+8D86  BF 8C 8D                mov di, 0x8d8c
+8D89  EB 70                   jmp 0x8dfb
+8D8B  90                      nop
+8D8C  B8 19 19                mov ax, 0x1919
+8D8F  BF 95 8D                mov di, 0x8d95
+8D92  EB 59                   jmp 0x8ded
+8D94  90                      nop
+8D95  0C 03                   or al, 3
+8D97  86 E0                   xchg al, ah
+8D99  BF 9F 8D                mov di, 0x8d9f
+8D9C  EB 5D                   jmp 0x8dfb
+8D9E  90                      nop
+8D9F  BF A5 8D                mov di, 0x8da5
+8DA2  E9 E1 98                jmp 0x2686
+8DA5  B8 19 19                mov ax, 0x1919
+8DA8  BF AE 8D                mov di, 0x8dae
+8DAB  EB 40                   jmp 0x8ded
+8DAD  90                      nop
+8DAE  24 FC                   and al, 0xfc
+8DB0  86 E0                   xchg al, ah
+8DB2  BF B8 8D                mov di, 0x8db8
+8DB5  EB 44                   jmp 0x8dfb
+8DB7  90                      nop
+8DB8  B8 18 18                mov ax, 0x1818
+8DBB  BF C1 8D                mov di, 0x8dc1
+8DBE  EB 2D                   jmp 0x8ded
+8DC0  90                      nop
+8DC1  24 FD                   and al, 0xfd
+8DC3  86 E0                   xchg al, ah
+8DC5  BF CB 8D                mov di, 0x8dcb
+8DC8  EB 31                   jmp 0x8dfb
+8DCA  90                      nop
+8DCB  B9 FF FF                mov cx, 0xffff
 
 ===== 8DCFh-8E4Eh =====
 Reason: indexed chipset-register read helper using ports 22h/23h
