@@ -73,6 +73,18 @@ Uses repeated division by ten. It recursively emits the quotient while preservin
 
 The 00EFh screen routine calls 0A15h at coordinates 0543h and 0643h using values from its BP-relative frame. The exact source-field names remain unresolved, but the display contract is numeric value plus KB suffix.
 
+
+### 04B0h — hard-disk geometry capacity calculation
+
+The helper consumes the working geometry fields prepared by 0538h:
+- cylinders: word `[BP+40h]`;
+- heads: byte `[BP+42h]`;
+- write-precomp/related word: `[BP+43h]`;
+- landing-zone word: `[BP+45h]`;
+- sectors per track: byte `[BP+47h]`.
+
+It multiplies sectors × heads × cylinders to obtain a 32-bit sector count, divides by `0800h` (2048 sectors per MiB for 512-byte sectors), and rounds to the nearest MiB using the `0400h` half-unit threshold. If the quotient would exceed 16 bits, it saturates the size field to FFFFh. It stores the calculated capacity at `[BP+48h]`, then displays the geometry fields and the capacity with the MB suffix from 0975h. The capacity arithmetic is confirmed; the source record's vendor-specific field names beyond the observed offsets remain partly unresolved.
+
 ## 3. Cursor visibility and panel clearing
 
 ### 0995h / 099Dh — cursor-shape normalization
@@ -100,6 +112,15 @@ The entry saves BP/AX/BX, copies `[E1A8h]` to `[E19Fh]`, and invokes text/box he
 ### 5802h — rectangular cell fill
 
 Uses ES:DI as a text-screen cell buffer. It fills CX rows with spaces, writes words with STOSW, and advances DI by 00A0h bytes per row (80 text columns × 2 bytes). It then jumps to the common box/text continuation at 5711h.
+
+
+### 56AEh — select one of 16 UI attribute palettes
+
+The handler reads the low nibble of `[E037h]` as a palette index. F2 (scan code 3Ch) increments it; F3 (scan code 3Dh) decrements it; the result wraps to four bits while preserving the high nibble of `[E037h]`. It indexes a 16-entry, four-byte table at `562Bh–566Ah`, then expands each table byte into two nibble-swapped attribute bytes and writes eight bytes at `E1A2h–E1A9h`. This supplies the attribute variants consumed by the text and fill helpers.
+
+### 5821h — apply attributes to a text rectangle
+
+Computes the starting text-buffer offset through 57E7h, then loops over caller-supplied rows and columns. For each cell it updates only the attribute byte (character byte is left untouched), preserving bits 7 and 3, ORing the selected attribute bits, and applying `[55EAh]` when bit 3 is set. The row stride is `00A0h` bytes (80 columns × 2 bytes). The F2/F3 keyboard path calls 56AEh to choose a palette and 5821h to apply the new attributes to the existing screen.
 
 ## 5. Numeric/option field editor
 
@@ -149,3 +170,8 @@ The 00EFh–0235h stream is a screen presenter built from:
 - temporary INT 10h/1Ah/1Ch hooks and timer-driven calendar refresh.
 
 This supports a System Configuration/Setup-style presentation, but the static entry into 00EFh and its caller stack precondition remain unresolved. The helper map does not prove which boot/Setup path invokes it.
+
+
+## 8. Palette table
+
+The 64 bytes at `562Bh–566Ah` are a 16-entry × 4-byte attribute palette table. The selector at 56AEh indexes it with `[E037h]&0Fh`; the selected four bytes are expanded to eight display attributes at E1A2h–E1A9h. This range is now added to the explicit data-range ledger.
