@@ -1550,6 +1550,66 @@ Reason: temporary INT 1Ch timer handler installed by 626Bh
 6397  E8 DA 03                call 0x6774
 639A  8A C6                   mov al, dh
 
+===== 6616h-6695h =====
+Reason: direct CALL target from temporary INT 1Ch watchdog handler at 631Ch
+6616  55                      push bp
+6617  83 EC 0A                sub sp, 0xa
+661A  8B EC                   mov bp, sp
+661C  B4 03                   mov ah, 3
+661E  B7 00                   mov bh, 0
+6620  CD 10                   int 0x10
+6622  52                      push dx
+6623  51                      push cx
+6624  E8 6E A3                call 0x995
+6627  E8 4A 01                call 0x6774
+662A  89 4E 00                mov word ptr [bp], cx
+662D  89 56 02                mov word ptr [bp + 2], dx
+6630  8B 46 00                mov ax, word ptr [bp]
+6633  E8 C7 02                call 0x68fd
+6636  89 46 04                mov word ptr [bp + 4], ax
+6639  2D 69 07                sub ax, 0x769
+663C  50                      push ax
+663D  C1 E8 02                shr ax, 2
+6640  B9 07 00                mov cx, 7
+6643  99                      cdq
+6644  F7 F1                   div cx
+6646  8B DA                   mov bx, dx
+6648  2E 8A 9F 64 61          mov bl, byte ptr cs:[bx + 0x6164]
+664D  58                      pop ax
+664E  24 03                   and al, 3
+6650  02 D8                   add bl, al
+6652  80 FB 06                cmp bl, 6
+6655  76 03                   jbe 0x665a
+6657  80 EB 07                sub bl, 7
+665A  8A 46 02                mov al, byte ptr [bp + 2]
+665D  98                      cwde
+665E  E8 9C 02                call 0x68fd
+6661  88 46 06                mov byte ptr [bp + 6], al
+6664  48                      dec ax
+6665  50                      push ax
+6666  8A 46 03                mov al, byte ptr [bp + 3]
+6669  98                      cwde
+666A  E8 90 02                call 0x68fd
+666D  88 46 07                mov byte ptr [bp + 7], al
+6670  48                      dec ax
+6671  59                      pop cx
+6672  3C 01                   cmp al, 1
+6674  76 07                   jbe 0x667d
+6676  F6 46 04 03             test byte ptr [bp + 4], 3
+667A  75 01                   jne 0x667d
+667C  41                      inc cx
+667D  86 D8                   xchg al, bl
+667F  32 FF                   xor bh, bh
+6681  2E 8A 9F 6B 61          mov bl, byte ptr cs:[bx + 0x616b]
+6686  02 C3                   add al, bl
+6688  3C 06                   cmp al, 6
+668A  76 02                   jbe 0x668e
+668C  2C 07                   sub al, 7
+668E  86 C1                   xchg cl, al
+6690  B2 07                   mov dl, 7
+6692  F6 F2                   div dl
+6694  8A C4                   mov al, ah
+
 ===== 099Dh-0A1Ch =====
 Reason: direct CALL target from 00EFh screen-presentation stream
 099D  53                      push bx
