@@ -322,3 +322,30 @@ The marker-0Ah destination at 4D4Dh is not a password or disk routine. It is par
 This explains why the word read at physical 00400h matters: the value is consumed as BP, then used as the frame base by the handler's eventual epilogue. It is therefore functioning as a saved-frame value for this dispatch, not as an ordinary COM1 port value in this path. The exact earlier writer or frame-construction step is still not found.
 
 A byte-pattern scan of ami486.bin found no direct absolute stores to offset 0000h using common encodings (A3 0000, 89 [0000], C7 [0000], or ES:A3 0000). This does not rule out an indirect write through a register or string instruction; the producer of the saved BP remains unresolved.
+
+### Marker 0Ah identification: hard-disk format/geometry UI
+
+The string table adjacent to the 4D4Dh handler resolves its purpose. ROM strings include:
+- `Enter Cylinder # :` at 3945h
+- `Enter Head # :` at 3958h
+- `Entry Present. Enter Again` at 3961h
+- `All Data on Specified` at 3982h
+- `Harddisk will be LOST` at 3998h
+- `Want to Continue (Y/N) ?` at 39AEh
+- `Status` at 39C8h
+- `Hit <ESC> if You Want to Abort` at 39D0h
+- `User Break` at 39EAh
+- `Operation Completed` at 39F8h
+- `FATAL ERROR : Bad ...` at 3A0Ch (string continues beyond this excerpt).
+
+The handler table at CS:393Dh contains four words:
+- index 0 -> 4DE7h
+- index 1 -> 4E1Fh
+- index 2 -> 4E2Eh
+- index 3 -> 4E5Fh
+
+The main handler uses E185h as the selected menu index and dispatches through this table when Enter (key 0Dh) is received. The two explicit geometry prompts and destructive-operation warning establish this as the hard-disk geometry / low-level-format user interface. Thus CMOS[8Fh]=0Ah is a path into a disk-format utility, not the password path previously suspected. The exact low-level disk operation and its INT 13h calls still need tracing; the warning text alone does not prove which sectors are written or whether formatting is destructive in the same way on every branch.
+
+### Saved frame value at physical 00400h, refined
+
+The 4D4Dh menu handler ends with `MOV SP,BP; POP BP; RET`. Therefore the value loaded into BP from SS:0100h (physical 00400h) is the caller's saved frame pointer for this UI dispatch. It is a temporary frame/stack linkage value, not the COM1 base used semantically by this routine. The producer is still unresolved; no direct absolute store to offset 0000h was found in the first static opcode-pattern scan.
