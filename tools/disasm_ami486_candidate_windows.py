@@ -1435,7 +1435,7 @@ LIMITS.update({
 })
 
 DATA_RANGES.extend([
-    (0xAC5B, 0xAD00, "keyboard scan-code translation table referenced by MOV BX,AC60h at B031h; leading bytes AC5Bh-AC5Fh are table prefix/header", "hexascii"),
+    (0xAC5F, 0xAD00, "keyboard scan-code translation table referenced by MOV BX,AC60h at B031h; AC5Fh is the single zero prefix byte before the confirmed AC60h table", "hexascii"),
 ])
 
 LIMITS.update({
@@ -1465,6 +1465,17 @@ LIMITS.update({
 
 SEEDS.extend([
     (0x83AE, "selector-to-descriptor resolver: AL=0 returns the default word at CS:B7ECh; otherwise normalizes the selector at the 55h bank boundary and walks 20h-byte variable-length descriptors through CS:[82C6h]; direct callers 2E84h, 2EC4h and 86F2h"),
+])
+
+
+LIMITS.update({
+    0xABAD: 0x30, 0xABDD: 0x57, 0xAC34: 0x2B,
+})
+
+SEEDS.extend([
+    (0xABAD, "ATA command wrapper called at AB45h and AB50h; selects the ABDDh IDENTIFY path or the AC34h recalibrate path according to AH"),
+    (0xABDD, "ATA IDENTIFY DEVICE path selected indirectly by the wrapper at ABADh; configures drive/head, issues command ECh, waits for status and reads 256 words from port 01F0h"),
+    (0xAC34, "ATA recalibrate path selected indirectly by the wrapper at ABADh; configures drive/head, issues command 10h, waits and checks completion through A6DCh; RET at AC5Eh"),
 ])
 
 def main():
