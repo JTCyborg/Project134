@@ -1458,6 +1458,16 @@ SEEDS.extend([
     (0x7323, "register-preserving wrapper around the unsigned decimal output helper at 730Ah; direct callers 6C75h, 6C96h, 7179h, 719Bh and 71DAh"),
 ])
 
+
+LIMITS.update({
+    0x83AE: 0x13, 0x83C1: 0x3F,
+})
+
+SEEDS.extend([
+    (0x83AE, "zero-selector fallback resolver: substitutes the word at CS:B7ECh when AL is zero, otherwise zero-extends AL; direct callers 2E84h, 2EC4h and 86F2h; zero path shares the common tail at 83F7h"),
+    (0x83C1, "indexed variable-length descriptor lookup through the table pointer at CS:82C6h; traverses 20h-byte records and optional word lists, then returns descriptor bytes +1Ch/+1Dh; no direct near-CALL xref found"),
+])
+
 def main():
     rom = ROM_PATH.read_bytes()
     if len(rom) != 65536:
