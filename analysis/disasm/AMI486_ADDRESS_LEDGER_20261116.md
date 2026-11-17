@@ -519,7 +519,7 @@ Historical candidate-mask snapshot after the Hard Disk Setup expansion but befor
 Overview: [AMI486_ADDRESS_LEDGER_REGION_19B0_23CE_20261117.md](AMI486_ADDRESS_LEDGER_REGION_19B0_23CE_20261117.md).  
 Focused byte map and alignment correction: [AMI486_ADDRESS_LEDGER_REGION_19F8_20FB_20261117.md](AMI486_ADDRESS_LEDGER_REGION_19F8_20FB_20261117.md).
 
-The former 19F8h–20FFh gap is fully covered. The region includes cache/CPU-speed display, CMOS B3h profile selection, option-ROM scanning and checksum validation, manual CMOS-to-ALi configuration, POST A1h/A4h handlers, the 8750h–87A3h 21-record ALi table walker and the A20-bracketed protected-mode memory-address probe.
+The former 19F8h–20FFh gap is fully covered. The region includes cache/CPU-speed display, CMOS B3h profile selection, option-ROM scanning and checksum validation, manual CMOS-to-ALi configuration, POST A1h/A4h handlers, the 8750h–87A3h 21-record ALi write view (overlapping the first 21 records of the 76-record suffix within the 81-record 873Ch array) and the A20-bracketed protected-mode memory-address probe.
 
 The exact stack-return words are at 1B04h (->1B06h), 1B2Ah (->1B2Ch), 2096h (->2098h), 20C2h (->20C4h), 20CCh (->20CEh), 20D8h (->20DAh) and 20FAh (->20FCh). D9D9h directly jumps to 1AFBh. The 20DAh transition loads ES=0008h; AX=4410h is an ALi register 10h/value 44h write, not a segment selector. The memory-probe entry is 20FCh; the first ES:66-prefixed dword store starts at 20FEh and crosses 2100h.
 
@@ -538,4 +538,18 @@ The two tables at CAA7h are:
 
 Six 13-byte parameter records occupy CABBh–CB08h. The C8CAh record is a data view that overlaps an executable continuation after CALL D0D9h at C8C7h. CB09h and CBF8h are coherent code candidates without direct near xrefs; entry provenance remains open. D0D9h ends at D103h, including POP AX/RET.
 
-Current mask: 610 code windows, 163 data ranges, 32,861 unique code bytes, 15,940 unique data bytes, 130 overlap bytes, 48,671-byte union (74.27%), 68 uncovered intervals, 216 pages touched and 140 fully covered pages. The next largest uncovered interval is 873Ch–8DCEh (1,683 bytes). This remains a candidate inspection mask, not semantic completion.
+Current mask after the 873Ch–8DCEh expansion: 678 code windows, 205 data ranges, 34,292 unique code bytes, 16,419 unique data bytes, 213 overlap bytes, 50,498-byte union (77.05%), 70 uncovered intervals, 223 pages touched and 147 fully covered pages. The next largest uncovered interval is 2436h–29F5h (1,472 bytes). This remains a candidate inspection mask, not semantic completion.
+
+
+## 19. CMOS/ALi configuration arrays, POST chipset helpers and controller dispatch — 873Ch–8DCEh (2026-11-17)
+
+Detailed byte map: [AMI486_ADDRESS_LEDGER_REGION_873C_8DCE_20261117.md](AMI486_ADDRESS_LEDGER_REGION_873C_8DCE_20261117.md).
+
+The former 1,683-byte candidate gap now has zero uncovered bytes in the code/data inspection mask. The region includes:
+- The 81-entry four-byte array at 873Ch–887Fh, its five-entry prefix, 76-entry suffix and count words at 8880h/8882h/8884h/8886h; 8888h is the E0h key threshold.
+- Four confirmed consumer views of the same bytes: 8400h CMOS default application, 8378h key lookup returning byte +3, 85FEh masked E000h/E080h configuration-buffer update, and the 208Dh 21-record ALi write table at 8750h–87A3h. The 21-record ALi view overlaps the first 21 records of the 76-entry suffix; it is not a separate physical table allocation.
+- A 14-row AUTO Config lookup view at 87A9h with 20-byte row stride and fields at +0/+4/+8/+0Ch, extending through 88BBh and overlapping executable bytes at 8898h–88BBh.
+- The 85B3h wrapper's fall-through into the 76-record suffix at 85C0h; in the stock ROM it processes 5 + 0 + 0 + 76 = 81 records and returns at 862Fh. Phase 6 was corrected in place.
+- POST CMOS B3h/ALi C2h-C3h operations, CMOS 8Fh reset path, B3h-selected ALi profile path, 82DAh hook sequence, INT 15h keyboard hook, controller/port configuration helpers, CR0 cache-state continuations, 8042 transaction helper and ALi indexed-register callbacks.
+
+Crafted stack-return words are separated from code continuations. Bytes 8889h–8897h, runtime table provenance and ALi register meanings remain unresolved. The candidate mask is an inspection aid, not a semantic-completion percentage.
