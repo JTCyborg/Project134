@@ -1897,6 +1897,22 @@ FFF5  30 34 2F 30 34 2F 39 33 00 FC 00                04/04/93...
 Reason: CPU/cache profile dispatch pointer table referenced through CS:82C6h; four little-endian offsets to 19ABh/19ADh/19AEh/19AFh
 19A2  00 AB 19 AD 19 AE 19 AF 19                      .........
 
+===== DATA 86A0h-86A1h =====
+Reason: crafted stack-return word 86A2h consumed after CMOS register read at 869Dh
+Words: 86A2
+
+===== DATA 86AAh-86ABh =====
+Reason: crafted stack-return word 86ACh consumed after CMOS register read at 86A7h
+Words: 86AC
+
+===== DATA 86C4h-86C5h =====
+Reason: crafted stack-return word 86C6h consumed after CMOS register read at 86C1h
+Words: 86C6
+
+===== DATA 86CEh-86CFh =====
+Reason: crafted stack-return word 86D0h consumed after CMOS register read at 86CBh
+Words: 86D0
+
 ===== CA15h-CAA6h =====
 Reason: fall-through continuation from the CA13h selector branch; builds INT 13h drive geometry and ES:DI parameter pointer
 CA15  B0 C7                   mov al, 0xc7
@@ -32061,4 +32077,98 @@ Reason: one-byte RET dispatch stub referenced by the profile pointer table at 19
 ===== 19AFh-19AFh =====
 Reason: one-byte RET dispatch stub referenced by the profile pointer table at 19A2h
 19AF  C3                      ret
+
+===== 8630h-8648h =====
+Reason: CMOS 8Eh/90h option check against CS:8280h bit 2
+8630  B0 8E                   mov al, 0x8e
+8632  E8 5F 68                call 0xee94
+8635  A8 C0                   test al, 0xc0
+8637  75 09                   jne 0x8642
+8639  B0 90                   mov al, 0x90
+863B  E8 56 68                call 0xee94
+863E  0A C0                   or al, al
+8640  74 06                   je 0x8648
+8642  2E F6 06 80 82 04       test byte ptr cs:[0x8280], 4
+8648  C3                      ret
+
+===== 8649h-8661h =====
+Reason: CMOS 8Eh/94h option check against CS:8280h bit 1
+8649  B0 8E                   mov al, 0x8e
+864B  E8 46 68                call 0xee94
+864E  A8 C0                   test al, 0xc0
+8650  75 09                   jne 0x865b
+8652  B0 94                   mov al, 0x94
+8654  E8 3D 68                call 0xee94
+8657  A8 08                   test al, 8
+8659  74 06                   je 0x8661
+865B  2E F6 06 80 82 02       test byte ptr cs:[0x8280], 2
+8661  C3                      ret
+
+===== 8662h-867Ah =====
+Reason: CMOS 8Eh/94h option check against CS:8280h bit 0
+8662  B0 8E                   mov al, 0x8e
+8664  E8 2D 68                call 0xee94
+8667  A8 C0                   test al, 0xc0
+8669  75 09                   jne 0x8674
+866B  B0 94                   mov al, 0x94
+866D  E8 24 68                call 0xee94
+8670  A8 04                   test al, 4
+8672  74 06                   je 0x867a
+8674  2E F6 06 80 82 01       test byte ptr cs:[0x8280], 1
+867A  C3                      ret
+
+===== 867Bh-868Ah =====
+Reason: CS:8280h bit-3 option check and CPU-profile helper call at 8300h
+867B  2E F6 06 80 82 08       test byte ptr cs:[0x8280], 8
+8681  74 07                   je 0x868a
+8683  2E A0 11 B5             mov al, byte ptr cs:[0xb511]
+8687  E8 76 FC                call 0x8300
+868A  C3                      ret
+
+===== 868Bh-8692h =====
+Reason: stack-threaded CMOS checksum verifier: sets DI=8693h and transfers to checksum helper 17F2h
+868B  8B D0                   mov dx, ax
+868D  BF 93 86                mov di, 0x8693
+8690  E9 5F 91                jmp 0x17f2
+
+===== 8693h-869Fh =====
+Reason: continuation after 17F2h; compares AEh/AFh checksum through crafted RET slots
+8693  0B DB                   or bx, bx
+8695  74 3D                   je 0x86d4
+8697  B8 AE AF                mov ax, 0xafae
+869A  BC A0 86                mov sp, 0x86a0
+869D  E9 F4 67                jmp 0xee94
+
+===== 86A2h-86A9h =====
+Reason: stack-threaded CMOS read continuation after return slot at 86A0h
+86A2  86 C4                   xchg ah, al
+86A4  BC AA 86                mov sp, 0x86aa
+86A7  E9 EA 67                jmp 0xee94
+
+===== 86ACh-86C3h =====
+Reason: compares AEh/AFh result, then selects second checksum continuation at 86B6h
+86AC  3B C3                   cmp ax, bx
+86AE  75 24                   jne 0x86d4
+86B0  BF B6 86                mov di, 0x86b6
+86B3  E9 59 91                jmp 0x180f
+86B6  0B DB                   or bx, bx
+86B8  74 1A                   je 0x86d4
+86BA  B8 BE BF                mov ax, 0xbfbe
+86BD  90                      nop
+86BE  BC C4 86                mov sp, 0x86c4
+86C1  E9 D0 67                jmp 0xee94
+
+===== 86C6h-86CDh =====
+Reason: stack-threaded CMOS read continuation after return slot at 86C4h
+86C6  86 C4                   xchg ah, al
+86C8  BC CE 86                mov sp, 0x86ce
+86CB  E9 C6 67                jmp 0xee94
+
+===== 86D0h-86DAh =====
+Reason: compares BEh/BFh result and jumps to D2EAh
+86D0  3B C3                   cmp ax, bx
+86D2  74 02                   je 0x86d6
+86D4  0B E4                   or sp, sp
+86D6  8B C2                   mov ax, dx
+86D8  E9 0F 52                jmp 0xd8ea
 
