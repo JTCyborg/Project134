@@ -220,7 +220,7 @@ The first-pass region descriptions above have been refined by raw-byte and calle
 | E845h–E864h | INT 76h / IRQ14 handler | AMI486_STORAGE_AND_DISPATCH_REGIONS_20261116.md |
 | F8E7h–F9FCh | BIOS INT 14h serial-service dispatcher and UART handlers | AMI486_INT14_SERIAL_BIOS_20261116.md |
 
-The current candidate-window artifact has 168 unique bounded code windows and 18 separately emitted data ranges (186 headers). Its union is 10,700 bytes across 56 pages: 9,450 code-candidate bytes, 1,333 data-candidate bytes and 83 bytes of code/data overlap. This is a sampling footprint only, not semantic coverage.
+The current candidate-window artifact has 187 unique bounded code windows and 41 separately emitted data ranges. Their byte-mask union is 15,639 bytes across 79 pages: 11,414 code-window bytes, 4,319 data-range bytes and 94 bytes of overlap. This is a sampling footprint only, not semantic coverage.
 
 
 ## 9. F9xx dispatcher entry-boundary correction
@@ -283,3 +283,52 @@ A full raw-ROM scan found no direct near CALL/JMP target to F8E7h, no literal wo
 ## 2100h raw-byte transcription correction — 2026-11-16
 
 The earlier 2100h ledger excerpt omitted bytes AA AA at 2106h–2107h. The correct sequence is C7 06 00 00 55 55 AA AA 26 66 C7 06 00 01 FF FF. These are two STOSB instructions before the ES:[0100h] sentinel write; see the memory/chipset report for the corrected aligned stream and caller-dependent AL/DI interpretation.
+
+
+## 10. Setup editor and POST summary regions — 2026-11-17
+
+### 10.1 Setup menu text and pointer structures
+
+The Setup menu text region is now classified from raw bytes and the generated data windows:
+
+| Range | Classification |
+|---|---|
+| 3044h–318Bh | 12 short Setup caption strings, including Standard/Advanced CMOS, Advanced CHIPSET, Power Management, Peripheral Management, defaults, password, disk utilities and both exit captions |
+| 318Ch–31A3h | 12-word pointer table to the short captions above |
+| 31A4h–342Dh | Long menu descriptions, including the affirmative and negative exit wording |
+| 342Eh–3443h | 11-word pointer table to the 11 main-menu long descriptions |
+| 3444h–3445h | Separate pointer 33FFh to the full “Do Not Write…” string |
+| 3446h–345Bh | 11-word main-menu handler table |
+| 345Ch–3472h | “v/BIOS SETUP UTILITIES” title string |
+| 3473h | B5h title/keyboard-legend control byte |
+| 3474h–34AAh | Keyboard navigation legend |
+| 34ABh–3500h | No-CMOS warning and Setup warning text |
+| 3501h–3623h | Setup entry/help instructions and “AMIBIOS SETUP PROGRAM” title |
+| 36ABh–37C2h | Option-list headings, default-values prompt and hard-disk help strings |
+
+The 11 long-description pointers at 342Eh–3443h target 31A4h, 31E6h, 3219h, 3256h, 3298h, 32D9h, 3325h, 336Fh, 339Bh, 33BCh and 3406h. The last target is seven bytes into the NUL-terminated string at 33FFh, selecting “Write the settings…”; the separate pointer at 3444h selects the full “Do Not Write…” text. The 11 handler pointers at 3446h–345Bh are 00ECh, 0BDEh, 0C05h, 0C2Ch, 0C53h, 5A7Ah, 5A7Ah, F1C8h, 5038h, 4628h and 2F67h. The consumer of the separate 12-entry short-caption pointer table at 318Ch remains to be traced.
+
+### 10.2 Setup editor code extension
+
+Detailed byte-aligned report: [AMI486_SETUP_EDITOR_RENDERING_EXTENSION_20261117.md](AMI486_SETUP_EDITOR_RENDERING_EXTENSION_20261117.md).
+
+- 0C7Dh is the common editor entry (direct CALL from 0C79h).
+- 0CFEh begins the five-byte state-initialization MOV; 0D08h is the visible-item loop; 0D84h is the event-code selector reached from 0D7Fh.
+- 0E19h and 0E47h are decrement/increment wrap helpers; 0E7Ch draws one record label and translated option value; 0EE2h–10DEh renders the option list and auxiliary text.
+- State refinement: E18Ch is the absolute selected visible-record index; E185h is its on-screen row. E18Eh is total visible records; E18Dh is visible rows; E18Fh is the active record pointer. The 0E19h/0E47h wrap/clamp arithmetic establishes the E18Ch/E185 distinction.
+- 0E19h is the aligned entry, not 0E1Ah. The instruction at 0FFFh crosses 1000h; 1000h is not a separate entry.
+
+### 10.3 POST hardware-summary display
+
+Detailed byte-backed report: [AMI486_POST_SUMMARY_DISPLAY_20261117.md](AMI486_POST_SUMMARY_DISPLAY_20261117.md).
+
+- 3F4Ah directly calls the summary renderer at 3F7Bh and prints the bottom border from 45D8h on return.
+- 3F7Bh–4141h renders processor, numeric processor, base/extended memory, floppy A/B, hard disks C/D, display type, AMIBIOS date, serial and parallel ports.
+- 4142h selects the CPU-name string; 41E4h checks numeric-processor presence; 421Eh is the Weitek string selector.
+- 40C6h maps floppy type nibbles to 360-KB/1.2-MB/720-KB/1.44-MB/2.88-MB labels. 40ACh formats hard-disk type values and optionally reads CMOS 99h/9Ah.
+- 407Ah enumerates BDA COM/LPT base-address words; 412Ah prints decimal values; 4119h prints the KB suffix; 40EFh fills the line and emits the vertical border/CRLF.
+- 4231h–431Fh and 45D8h–45FFh are box-drawing/control data, not code. 4320h–45D7h contains the field labels and CPU/device strings.
+
+### 10.4 Current candidate-window footprint
+
+The generator now reports 187 unique seeded code windows and emits 41 data ranges. The byte-mask union is 15,639/65,536 bytes (23.86%) across 79 pages: 11,414 bytes touched by code windows, 4,319 by data ranges and 94 overlapping bytes. This is still a seeded sampling footprint only; it is not a semantic code/data completion percentage. No claim is made that the remaining bytes are all unexplored.
