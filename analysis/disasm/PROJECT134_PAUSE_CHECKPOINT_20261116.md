@@ -243,7 +243,7 @@ Two previously under-described regions now have byte-backed reports:
 
 ## Address-ledger continuation — 2026-11-17
 
-The Capstone candidate generator has been expanded: 243 code windows, 57 data ranges. Recomputed candidate footprint is 23,064/65,536 bytes (35.19%) across 121 pages, comprising 13,980 code-window bytes, 9,197 data-range bytes and 113 overlap bytes. This is a sampling footprint only, not semantic coverage.
+The Capstone candidate generator has been expanded: 255 code windows, 58 data ranges. Recomputed candidate footprint is 23,479/65,536 bytes (35.83%) across 121 pages, comprising 14,331 code-window bytes, 9,261 data-range bytes and 113 overlap bytes. This is a sampling footprint only, not semantic coverage.
 
 New text/table classifications are documented in AMI486_ADDRESS_LEDGER_20261116.md section 11. The 2D11h timing benchmark is now an aligned candidate window; its runtime entry and stack precondition remain unresolved. The next step remains range-driven reconciliation of unclassified bytes and alternate entries, not a numbered phase.
 
@@ -260,7 +260,7 @@ The low-ROM 00EFh candidate seed is generated through 0235h, including the align
 
 The generated candidate window 00EFh–0235h is now byte-aligned through RET. The report AMI486_LOW_ROM_SETUP_VIDEO_ENTRY_20261117.md documents the display/cursor preservation path and the 0AF5h callback-record walker. No direct near CALL/JMP entry or literal 00EFh pointer was found; incoming stack convention remains unresolved.
 
-Current generated candidate footprint: 243 code windows, 57 data ranges, 13,980 code-window bytes, 9,197 data-range bytes, 113 overlap bytes, 23,064-byte union (35.19%) across 121 pages. This remains a sampling footprint, not semantic completion.
+Current generated candidate footprint: 255 code windows, 58 data ranges, 14,331 code-window bytes, 9,261 data-range bytes, 113 overlap bytes, 23,479-byte union (35.83%) across 121 pages. This remains a sampling footprint, not semantic completion.
 
 
 ## Temporary IVT/calendar refresh — 2026-11-17
@@ -276,3 +276,8 @@ Found 31 candidate-window lines where Capstone's 16-bit output mislabeled unpref
 ## 16-bit CBW/CWD correction verified — 2026-11-17
 
 Both generator paths were patched. The regenerated candidate listing has zero CWDE/CDQ labels; bare 98h/99h are emitted as CBW/CWD. The full-linear listing blob changed after the workflow update; the manifest remains at 29,731 records and 65,536/65,536 byte coverage.
+
+
+## Screen-renderer helper map — 2026-11-17
+
+Report: AMI486_SCREEN_RENDERER_HELPERS_20261117.md. The 562Bh–566Ah table is a 16-entry attribute palette; F2/F3 cycles it and 5821h applies the chosen attributes to the text screen. 04B0h computes HDD size from geometry and rounds to MiB; 0A15h renders numeric fields with KB/MB suffixes. The new palette table is included in the 58-range data map.
