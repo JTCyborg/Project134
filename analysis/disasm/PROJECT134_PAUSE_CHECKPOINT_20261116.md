@@ -325,7 +325,7 @@ Report: `AMI486_ADDRESS_LEDGER_REGION_E862_F52D_20261117.md`.
 
 The former E865h–F52Dh gap is now classified into polling helpers, parity diagnostics, RTC/PIC/timer handlers, INT 1Ah-compatible services, CMOS helpers, the 0F05h protected-mode-assisted path, Setup/CMOS editor code, encoded strings, video/ROM checks and fatal POST diagnostics. Embedded strings, stack/data tables, padding and opaque blocks are separated from bounded code windows. Several interrupt vector mappings and opaque data consumers remain unresolved.
 
-Current candidate mask: 508 code windows, 136 data ranges, 42,884-byte union (65.44%). This is not semantic completion. The next largest uncovered range is 697Dh–7144h (1,992 bytes); inspect incoming references and table boundaries before adding new seeds.
+Historical candidate-mask snapshot before the Hard Disk Setup expansion: 508 code windows, 136 data ranges, 42,884-byte union (65.44%). Superseded by the current 597-window mask.
 
 
 ## Address-ledger continuation — Hard Disk Setup region (2026-11-17)
@@ -334,7 +334,7 @@ Report: `AMI486_ADDRESS_LEDGER_REGION_696F_72D8_20261117.md`.
 
 The former D697Dh–D7144h gap is mapped as a Hard Disk Setup/INT 13h diagnostic subsystem. E1ACh is a three-value UI selector; the 6BD8h near-call table dispatches to 6B14h, 71E4h and 6CE3h; the direct dispatcher caller is 6936h. The subsystem includes disk read/write/verify paths, a 13-byte status table and a repeated 40-sector throughput benchmark.
 
-Current candidate mask: 541 code windows, 140 data ranges, 45,118-byte union (68.84%). The 19F8h–20FFh interval is now fully covered. The next largest uncovered interval is CA16h–D0FFh (1,770 bytes). This is not semantic completion.
+Historical snapshot after the Hard Disk Setup expansion but before the 19B0h–23CEh expansion: 541 code windows, 140 data ranges, 45,118-byte union (68.84%). Superseded by the current 597-window mask below.
 
 
 ## Address-ledger continuation — 19B0h–23CEh POST/ALi/A20 region (2026-11-17)
