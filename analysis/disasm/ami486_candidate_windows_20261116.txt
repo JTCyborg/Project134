@@ -13961,9 +13961,19 @@ Reason: direct CALL target from E995h; candidate entry, alignment to be verified
 8B10  C3                      ret
 8B11  2E F6 06 81 82 40       test byte ptr cs:[0x8281], 0x40
 
-===== 8B11h-8B16h =====
-Reason: direct CALL target from F84Dh; overlapping candidate entry, alignment to be verified
+===== 8B11h-8B2Ch =====
+Reason: direct CALL target from F84Dh; CMOS 2Dh/CS:8281h feature-query helper
 8B11  2E F6 06 81 82 40       test byte ptr cs:[0x8281], 0x40
+8B17  75 13                   jne 0x8b2c
+8B19  B0 2D                   mov al, 0x2d
+8B1B  E6 70                   out 0x70, al
+8B1D  E3 00                   jcxz 0x8b1f
+8B1F  E3 00                   jcxz 0x8b21
+8B21  E4 71                   in al, 0x71
+8B23  D1 E0                   shl ax, 1
+8B25  25 00 01                and ax, 0x100
+8B28  66 C1 E0 10             shl eax, 0x10
+8B2C  C3                      ret
 
 ===== 8B2Dh-8B5Dh =====
 Reason: direct CALL target from B026h; overlapping candidate entry, alignment to be verified
