@@ -77,3 +77,17 @@ The eighth word at 2AC1h is 5756h. This is not a string start. The aligned strea
 ```
 
 The table-selected entry 5756h begins inside the TEST instruction's immediate/displacement bytes and produces a different overlapping instruction stream. It is not safe to call this entry a string pointer or to infer its purpose from the neighboring clock labels. The exact caller behavior for selector value 7 remains open.
+
+
+## Audit qualification — 2D11h entry and stack contract (2026-11-17)
+
+The byte-aligned decode at 2D11h is now included as an independent candidate window, but this is **not proof of a normal function entry**. A raw scan of the 64 KiB ROM found no instruction-aligned near CALL/JMP target to 2D11h or 2D15h and no literal little-endian 2D11h/2D15h pointer. The stream ends with POP ES; POP DS; RET at 2DF2h–2DF4h, while the displayed stream itself contains no matching PUSH ES/PUSH DS prologue. Therefore the caller/entry mechanism and required stack frame are unresolved; a stack-threaded or alternate entry remains possible.
+
+Confirmed internal call graph:
+- 2D3Ch and 2D47h call 2DF5h.
+- 2DF5h calls 2E58h to configure PIT channel 2 and calls 2E49h to read the counter.
+- 2E18h and 2E3Eh call 2E49h.
+- 2DFBh and 2E23h call 2E58h.
+- The 2D47h sample loop executes 40 measurements; the earlier 2D3Ch call is a separate initial/warm-up invocation before the stored sample loop.
+
+The benchmark writes 1000 copies of DIV BX (word F3F7h) plus RETF into each test block at 1000:0000h and 1000:0800h. The second block begins at 0800h and overlaps the first block's address range. The result is a timing-derived selector (BX values 04h through 50h); its exact conversion into Setup timing field [E052h] is still not proven. Do not label the return as a direct MHz measurement.
