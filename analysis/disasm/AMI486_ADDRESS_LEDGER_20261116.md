@@ -739,3 +739,11 @@ Detailed map: [AMI486_ADDRESS_LEDGER_REGION_714E_71E4_20261117.md](AMI486_ADDRES
 Mapped the two-value metric display routine at 714Eh (direct caller 711Ch) and the BP-framed display routine at 71A0h. The first uses the inline “KB/sec ms” label at 7145h–714Dh, cursor positioning, INT 10h output and format helper 7323h to display values from E3C9h/E3CBh. The second reserves a 10h-byte local frame, uses E3C6h/E3C7h for cursor placement and formats E1AFh through 7324h/72F2h. The RET at 71E3h is the end of this routine; 71E4h remains a separate dispatch entry.
 
 Generator update: b9fe29583640d2967d2c5f1f41bdb126af1963cb. The latest generated manifest still predates this phase. The previous projected union was 63,658 bytes (97.13%); adding this 150-byte interval gives a projected 63,808/65,536 bytes (97.36%) and 52 uncovered intervals. The next largest remaining interval is expected to be 3EBFh–3F49h (139 bytes). These are range-union calculations, not a regenerated manifest or CI result.
+
+## 41. Setup value parser and metric formatter — 3E99h–3F49h (2026-11-17)
+
+Detailed map: [AMI486_ADDRESS_LEDGER_REGION_3E99_3F4A_20261117.md](AMI486_ADDRESS_LEDGER_REGION_3E99_3F4A_20261117.md).
+
+Corrected the 3E3Fh window, which previously crossed the RET at 3E98h and included only the start of the next routine. It now ends at 3E98h. Added the parser at 3E99h–3EF1h, including its colon/space delimiter loop at 3EBFh and the 3EEBh back-edge, and the BP-framed metric/value formatter at 3EF2h–3F49h. The formatter uses helpers 5928h, 578Dh, 58A0h/58A1h, F571h and 5902h.
+
+Generator update: 3c87a27e0d387c1cce8d39a6c64c4db2d699661e. The latest generated manifest still predates this phase. The previous projected union was 63,808 bytes (97.36%); adding this 139-byte interval gives a projected 63,947/65,536 bytes (97.58%) and 51 uncovered intervals. The next largest remaining interval is expected to be AC80h–ACFFh (128 bytes). These are range-union calculations, not a regenerated manifest or CI result.
