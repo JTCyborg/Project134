@@ -627,3 +627,17 @@ BE B8 E1       MOV SI,E1B8h
 This is a 3-byte record writer over the region `E1B8h..E3B7h` (end-exclusive `E3B8h`), with record stride 3. It writes a word from BX at offsets 0–1 and a byte from AL at offset +2. This is distinct from the helper's 2-byte read/copy loop: that helper copies the first byte of each 2-byte source pair to `E3CFh`, while taking the second byte into BL; it does not copy the entire record verbatim. The record producer's caller and the meaning of the three fields are not yet identified.
 
 The earlier note saying `6F75h` was not an ENTER prologue is withdrawn; the correct ENTER entries are `6F3Eh` and `6F75h`. The earlier note that `6F37h` was the helper is also withdrawn. The actual helper entry is `6F3Eh`.
+
+
+### Address correction for E1B8h record writer
+
+The record-writer byte sequence previously labelled `6FCCh–6FDCh` actually starts at **`6FD0h`**, not `6FCCh`. Exact offsets:
+
+- `6FD0h`: `BE B8 E1` — `MOV SI,E1B8h`
+- `6FD3h`: `89 1C` — `MOV [SI],BX`
+- `6FD5h`: `88 44 02` — `MOV [SI+2],AL`
+- `6FD8h`: `83 C6 03` — `ADD SI,3`
+- `6FDBh`: `81 FE B8 E3` — `CMP SI,E3B8h`
+- `6FDFh`: `72 F2` — loop back to `6FD3h`
+
+This confirms a 3-byte-stride record writer spanning `E1B8h` up to (but excluding) `E3B8h`. It is preceded by a dispatch/selection sequence at `6FB7h–6FCFh` that chooses BX and AL values. Do not assign meaning to those fields until the incoming register values and caller path are traced.
