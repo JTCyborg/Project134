@@ -849,10 +849,12 @@ Mapped four distinct helpers: the BP-relative register-context save routine at 7
 Generator update: pending commit. The projected range mask is 64,553/65,536 bytes (98.50%), with 45 uncovered intervals and 217 fully covered 256-byte pages. The next largest uncovered interval is 83AEh–83FFh (82 bytes). These are range-mask projections, not semantic-completion or reachability percentages. The Capstone listing still requires regeneration after running the updated generator.
 
 
-## 49. Selector fallback and indexed descriptor lookup — 83AEh–83FFh (2026-11-17)
+
+
+## 49. Selector-to-descriptor resolver — 83AEh–83FFh (2026-11-17)
 
 Detailed map: [AMI486_ADDRESS_LEDGER_REGION_83AE_8400_20261117.md](AMI486_ADDRESS_LEDGER_REGION_83AE_8400_20261117.md).
 
-Mapped the selector fallback helper at 83AEh and the indexed variable-length descriptor lookup at 83C1h. The first has direct near-CALL sites at 2E84h, 2EC4h and 86F2h; when AL is zero it shares the descriptor lookup's tail at 83F7h. The second traverses 20h-byte records through the pointer at CS:82C6h, conditionally skips a zero-terminated word list, and returns descriptor bytes +1Ch/+1Dh. No direct near-CALL xref to the 83C1h entry was found, so its external entry mechanism remains unresolved.
+Corrected the previous split-window interpretation: 83C0h is MOV BX,B7D0h, not a RET. The code from 83AEh through 83FFh is one selector-to-descriptor resolver. It has direct near-CALL sites at 2E84h, 2EC4h and 86F2h. AL=0 selects the default word at CS:B7ECh; otherwise the selector is normalized at the 55h bank boundary, then used to walk 20h-byte variable-length descriptors through CS:[82C6h]. The routine conditionally skips a zero-terminated word list and returns descriptor bytes +1Ch/+1Dh. The exact descriptor schema and pointer provenance remain unresolved.
 
-Generator update: pending commit. The projected range mask is 64,635/65,536 bytes (98.63%), with 44 uncovered intervals and 217 fully covered 256-byte pages. The next largest gaps are ABB4h–ABFFh and 2ED8h–2F23h (76 bytes each). These are range-mask projections, not semantic-completion or reachability percentages. The Capstone listing must be regenerated after running the updated generator.
+Generator update: pending commit. The projected range mask is 64,635/65,536 bytes (98.63%), with 44 uncovered intervals and 217 fully covered 256-byte pages. The next largest gaps are ABB4h–ABFFh and 2ED8h–2F23h (76 bytes each). These are range-mask projections, not semantic-completion or reachability percentages. The previous generated Capstone listing contains the superseded split at 83C1h and must be regenerated after the corrected single-window definition is committed.
