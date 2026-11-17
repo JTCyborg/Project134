@@ -869,3 +869,12 @@ Detailed map: [AMI486_ADDRESS_LEDGER_REGION_ABAD_AC5F_20261117.md](AMI486_ADDRES
 Mapped the wrapper at ABADh and its two indirect command targets. The wrapper is called at AB45h/AB50h and selects ABDDh when AH=0 or AC34h when AH is nonzero. ABDDh issues ATA command ECh and transfers 256 words from data port 01F0h; AC34h issues command 10h and checks completion, returning at AC5Eh. This corrects the keyboard-data boundary: AC5Bh–AC5Eh are code and the AC60h scan-code table's only leading prefix byte is AC5Fh.
 
 Generator update: pending commit. The projected range mask is 64,711/65,536 bytes (98.74%), with 43 uncovered intervals and 218 fully covered 256-byte pages. The next largest uncovered interval is 2ED8h–2F23h (76 bytes). These are range-mask projections, not semantic-completion or reachability percentages. The Capstone listing must be regenerated after running the updated generator.
+
+
+## 51. ROM-shadow loop tail and Setup relocation transition — 2ED8h–2F23h (2026-11-17)
+
+Detailed map: [AMI486_ADDRESS_LEDGER_REGION_2ED8_2F24_20261117.md](AMI486_ADDRESS_LEDGER_REGION_2ED8_2F24_20261117.md).
+
+Mapped the 2ED8h–2EF0h continuation of the ROM-segment selector loop and the independent Setup exit/relocation routine at 2EF2h–2F23h. The latter is called from F109h, saves the old SS:SP in the BIOS Data Area, switches to stack 0100:DFFEh, copies 7000h words from CS:0000h to 0100:0000h, clears 0FF1h bytes at 0100:E000h and jumps to 3C5Eh. The isolated 00h at 2EF1h is provisionally classified as unreferenced padding.
+
+Generator update: pending commit. The projected range mask is 64,787/65,536 bytes (98.86%), with 42 uncovered intervals and 220 fully covered 256-byte pages. The next largest gaps are AAEFh–AB33h and 8E09h–8E4Dh (69 bytes each). These are range-mask projections, not semantic-completion or reachability percentages. The full Capstone listing must be regenerated after the updated generator is committed.
