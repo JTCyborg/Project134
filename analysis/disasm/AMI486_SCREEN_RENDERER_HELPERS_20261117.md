@@ -175,3 +175,10 @@ This supports a System Configuration/Setup-style presentation, but the static en
 ## 8. Palette table
 
 The 64 bytes at `562Bh–566Ah` are a 16-entry × 4-byte attribute palette table. The selector at 56AEh indexes it with `[E037h]&0Fh`; the selected four bytes are expanded to eight display attributes at E1A2h–E1A9h. This range is now added to the explicit data-range ledger.
+
+
+### 566Bh — initialize Setup video mode and palette working copy
+
+The Setup main-menu caller at 3C67h directly calls 566Bh before invoking the ordinary screen-rendering path. The helper queries INT 10h AH=0Fh, preserves mode 07h, and switches every other reported mode to 03h. On the mode-07 path it reads the INT 10h vector segment from IVT word 0000:0042h and sets [55EAh]=08h for vector segments in [C800h,E000h) or at/above F000h. It always sets [55E8h]=B000h, copies 64 bytes from 55EBh–562Ah to the working palette table at 562Bh–566Ah, and jumps into the common table-application entry at 56CBh.
+
+The 64-byte source table is 16 four-byte records; the working copy is selected by the low nibble of [E037h]. The exact OEM rationale for the IVT segment intervals and the visual names of the palette records remain unresolved. Full byte map: [AMI486_SETUP_VIDEO_MODE_PALETTE_INIT_20261117.md](AMI486_SETUP_VIDEO_MODE_PALETTE_INIT_20261117.md).
