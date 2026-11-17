@@ -57,13 +57,13 @@ The routine tests the incoming AL value:
 - AL=00h branches to the CMOS 8Eh update continuation at 834Fh.
 - For nonzero AL, it clears AH, constructs the comparison value 0055h (B55Dh - B508h), and compares AX against it.
 - If AX is below 0055h, it transfers to 832Fh with BX preloaded to B7D0h. This is an alternate entry into the shared record-walking body; it deliberately skips the 8326h setup that loads BX from CS:[82C6h].
-- Otherwise it subtracts 0055h from AX and returns.
+- Otherwise it subtracts 0055h from AX and falls through directly into the 8326h profile-record walker. There is no RET at 8325h; the 8326h instruction is the next sequential instruction.
 
 The 831Bh short conditional branch targets 832Fh. That target is an instruction boundary inside the shared walker, not an independent function prologue.
 
 ## 5. Profile-record walker and CMOS 8Eh update — 8326h–8377h
 
-The primary entry at 8326h loads BX from the word at CS:82C6h (19A3h in this ROM), tests AL, and either skips directly to the CMOS update at 834Fh or iterates the profile records.
+The entry/fall-through at 8326h loads BX from the word at CS:82C6h (19A3h in this ROM), tests AL, and either skips directly to the CMOS update at 834Fh or iterates the profile records. It is reached both sequentially after the 8324h SUB AX,BX and independently through other entry paths.
 
 The loop uses a 20h-byte record stride. It reads record byte +1Eh into AH, adds record byte +1Fh to BL with carry into BH, advances BX by 20h, and tests bit 7 of the saved record byte. When that bit is set, it advances by words until the word at CS:[BX-2] is zero. It then decrements AL and repeats while AL is nonzero.
 
@@ -77,7 +77,7 @@ This establishes that the routine uses profile-record data to update CMOS regist
 |---:|---|
 | 8300h | Wrapper preserving BX |
 | 8306h | CPU-profile selector |
-| 8326h | Primary profile-record walker entry; loads BX from CS:82C6h |
+| 8326h | Profile-record walker entry and fall-through from 8324h; loads BX from CS:82C6h |
 | 832Fh | Alternate walker entry reached with BX=B7D0h from 831Bh |
 | 834Fh | CMOS register 8Eh selection/read continuation |
 | 8351h | CMOS read continuation reached when AL=0 at the 8326h entry |
@@ -93,7 +93,7 @@ The candidate generator was corrected to:
 - seed 8306h with a 20h-byte selector window;
 - seed 8326h with a 52h-byte walker window, ending immediately before 8378h.
 
-The new generator commit is a263b7baf68c45be27e3d1aefde63efd0fdc7251.
+The generator boundary correction is commit a263b7baf68c45be27e3d1aefde63efd0fdc7251. The regenerated manifest commit is 81616282fb759ee64603a84a7fc43f1c5170961c and reports 858 windows, 242 data ranges, 62,431 covered bytes (95.26%), and 60 uncovered intervals. The largest remaining uncovered interval is 84CAh–85B2h (233 bytes).
 
 No post-change GitHub Actions manifest has yet been observed for this commit. Therefore this report does not claim a new global coverage percentage or CI pass. The next step is to run the candidate generator/CI, inspect the updated uncovered-interval manifest, and take the next largest real gap.
 
