@@ -79,3 +79,28 @@ The surrounding `F780–F80F` code performs boot-selection work, attempts a driv
 This does not yet explain why the POST path writes 06h at that point, or which earlier failure/continuation state causes other marker values. Continue tracing the producer of `CS:[8281].40h` and the callers that reach `8A04h`.
 
 No ROM bytes changed.
+
+## Special marker handling discovered in D615h / 8A20h
+
+The early dispatch comparisons are significant:
+
+- `D637h` compares marker against 04h and 05h; either value branches to `D646h`, which sets BX=0870h, SP=D650h, and jumps to `EEE7h`.
+- `D63Fh` compares against 0Ah; values 06h–0Ah initially enter the `8A20h` classifier.
+- At `8A20h`, values 05h, 09h, and 0Ah share a special setup beginning at `8A2Eh`. Values other than 05h/09h/0Ah take the alternate route through `8A70h` and then `D655h`.
+- Value 06h takes the latter route, then proceeds through the table to `F786h` as described above.
+
+The special 05h/09h/0Ah branch at 8A2Eh is not yet fully decoded because it uses overlapping code/data and an indirect control transfer. Do not treat those values as equivalent to the normal table dispatch until their complete path is reconstructed.
+
+## Values 04h and 05h: PIC initialization at EEE7h
+
+The `EEE7h` routine reached by the 04h/05h special case has a strong 8259A PIC initialization signature:
+
+- Writes `00h` to port `F1h`.
+- Sends `11h` to slave PIC command port `A0h`.
+- Sends `BL` to `A1h`; with the caller's `BX=0870h`, this is `70h` (slave interrupt vector base).
+- Sends `BH` to master PIC data port `21h`; with `BX=0870h`, this is `08h` (master interrupt vector base).
+- Sends ICW values `02h` and `04h` to the PIC data ports, then `01h` to complete initialization, and finally masks the slave PIC with `FFh`.
+
+This is consistent with remapping the master 8259 vectors to 08h and the slave vectors to 70h, with the slave initially fully masked. This identifies the 04h/05h continuation as an interrupt-controller setup path, not the disk loader.
+
+The routine subsequently reads port 61h and conditionally writes a modified value back, then writes `8Dh` to CMOS index port 70h before returning. The exact meaning of that final CMOS index write and the preceding port-F1 write remains open.
