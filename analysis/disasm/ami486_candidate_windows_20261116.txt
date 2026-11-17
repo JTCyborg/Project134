@@ -14583,6 +14583,905 @@ FA4E  60                      pushaw
 FA4F  BE 70 FF                mov si, 0xff70
 FA52  B9              db 0xB9
 
+===== 8E89h-8EA6h =====
+Reason: interrupt-style IRET dispatcher using the overlapping five-word table at 8EA7h
+8E89  1E                      push ds
+8E8A  56                      push si
+8E8B  6A 40                   push 0x40
+8E8D  1F                      pop ds
+8E8E  8B F0                   mov si, ax
+8E90  C1 EE 08                shr si, 8
+8E93  83 E6 0F                and si, 0xf
+8E96  81 FE 05 00             cmp si, 5
+8E9A  73 08                   jae 0x8ea4
+8E9C  D1 E6                   shl si, 1
+8E9E  FA                      cli
+8E9F  2E FF 94 A7 8E          call word ptr cs:[si - 0x7159]
+8EA4  5E                      pop si
+8EA5  1F                      pop ds
+8EA6  CF                      iret
+
+===== 8EB1h-8EC1h =====
+Reason: first callback target in the 8EA7h dispatch table
+8EB1  3C 02                   cmp al, 2
+8EB3  77 0C                   ja 0x8ec1
+8EB5  BE A3 8B                mov si, 0x8ba3
+8EB8  74 03                   je 0x8ebd
+8EBA  BE 5E 8B                mov si, 0x8b5e
+8EBD  51                      push cx
+8EBE  FF D6                   call si
+8EC0  59                      pop cx
+8EC1  C3                      ret
+
+===== 8EC1h-8EC1h =====
+Reason: RET entry reached by the 8EB3h conditional branch and by the 8EA7h table
+8EC1  C3                      ret
+
+===== 8EC2h-8ECDh =====
+Reason: second callback target in the 8EA7h dispatch table
+8EC2  B0 00                   mov al, 0
+8EC4  F6 06 16 00 20          test byte ptr [0x16], 0x20
+8EC9  75 02                   jne 0x8ecd
+8ECB  B0 02                   mov al, 2
+8ECD  C3                      ret
+
+===== 8ECEh-8F0Ah =====
+Reason: fourth callback target in the 8EA7h dispatch table; reads CMOS 33h and machine-state bits
+8ECE  0A C0                   or al, al
+8ED0  74 16                   je 0x8ee8
+8ED2  BE E8 8B                mov si, 0x8be8
+8ED5  3C 02                   cmp al, 2
+8ED7  77 31                   ja 0x8f0a
+8ED9  74 03                   je 0x8ede
+8EDB  BE 4D 8C                mov si, 0x8c4d
+8EDE  51                      push cx
+8EDF  FF D6                   call si
+8EE1  0A ED                   or ch, ch
+8EE3  59                      pop cx
+8EE4  74 24                   je 0x8f0a
+8EE6  EB 20                   jmp 0x8f08
+8EE8  B0 33                   mov al, 0x33
+8EEA  E8 A7 5F                call 0xee94
+8EED  A8 01                   test al, 1
+8EEF  75 09                   jne 0x8efa
+8EF1  0F 01 E0                smsw ax
+8EF4  0A E4                   or ah, ah
+8EF6  B0 00                   mov al, 0
+8EF8  75 0B                   jne 0x8f05
+8EFA  B0 01                   mov al, 1
+8EFC  F6 06 16 00 10          test byte ptr [0x16], 0x10
+8F01  75 02                   jne 0x8f05
+8F03  B0 02                   mov al, 2
+8F05  E8 03 00                call 0x8f0b
+8F08  B4 E2                   mov ah, 0xe2
+8F0A  C3                      ret
+
+===== 8F0Bh-8F11h =====
+Reason: returns the CX=8000h and DX=8080h constants used by the 8ECEh path
+8F0B  B9 00 80                mov cx, 0x8000
+8F0E  BA 80 80                mov dx, 0x8080
+8F11  C3                      ret
+
+===== 8F12h-8F4Fh =====
+Reason: timing-calibration result classifier; stores bucket at BDA 40:E2h
+8F12  E8 3B 00                call 0x8f50
+8F15  33 FF                   xor di, di
+8F17  3D 10 00                cmp ax, 0x10
+8F1A  76 25                   jbe 0x8f41
+8F1C  47                      inc di
+8F1D  3D 14 00                cmp ax, 0x14
+8F20  76 1F                   jbe 0x8f41
+8F22  47                      inc di
+8F23  3D 19 00                cmp ax, 0x19
+8F26  76 19                   jbe 0x8f41
+8F28  47                      inc di
+8F29  3D 21 00                cmp ax, 0x21
+8F2C  76 13                   jbe 0x8f41
+8F2E  47                      inc di
+8F2F  3D 28 00                cmp ax, 0x28
+8F32  76 0D                   jbe 0x8f41
+8F34  47                      inc di
+8F35  3D 32 00                cmp ax, 0x32
+8F38  76 07                   jbe 0x8f41
+8F3A  47                      inc di
+8F3B  3D 42 00                cmp ax, 0x42
+8F3E  76 01                   jbe 0x8f41
+8F40  47                      inc di
+8F41  8B C7                   mov ax, di
+8F43  E6 80                   out 0x80, al
+8F45  1E                      push ds
+8F46  BB 40 00                mov bx, 0x40
+8F49  8E DB                   mov ds, bx
+8F4B  A2 E2 00                mov byte ptr [0xe2], al
+8F4E  1F                      pop ds
+8F4F  C3                      ret
+
+===== 8F50h-9032h =====
+Reason: PIT channel-2 execution-time measurement loop used by 8F12h
+8F50  1E                      push ds
+8F51  06                      push es
+8F52  FA                      cli
+8F53  B8 00 10                mov ax, 0x1000
+8F56  8E C0                   mov es, ax
+8F58  BF 00 00                mov di, 0
+8F5B  B8 F7 F3                mov ax, 0xf3f7
+8F5E  50                      push ax
+8F5F  FC                      cld
+8F60  B9 E8 03                mov cx, 0x3e8
+8F63  F3 AB                   rep stosw word ptr es:[di], ax
+8F65  B0 CB                   mov al, 0xcb
+8F67  AA                      stosb byte ptr es:[di], al
+8F68  58                      pop ax
+8F69  48                      dec ax
+8F6A  BF 00 08                mov di, 0x800
+8F6D  FC                      cld
+8F6E  B9 E8 03                mov cx, 0x3e8
+8F71  F3 AB                   rep stosw word ptr es:[di], ax
+8F73  B0 CB                   mov al, 0xcb
+8F75  AA                      stosb byte ptr es:[di], al
+8F76  8C C0                   mov ax, es
+8F78  8E D8                   mov ds, ax
+8F7A  E8 B6 00                call 0x9033
+8F7D  BF 00 F0                mov di, 0xf000
+8F80  B9 28 00                mov cx, 0x28
+8F83  51                      push cx
+8F84  57                      push di
+8F85  E8 AB 00                call 0x9033
+8F88  5F                      pop di
+8F89  AB                      stosw word ptr es:[di], ax
+8F8A  59                      pop cx
+8F8B  E2 F6                   loop 0x8f83
+8F8D  BE 00 F0                mov si, 0xf000
+8F90  B9 28 00                mov cx, 0x28
+8F93  51                      push cx
+8F94  2B C0                   sub ax, ax
+8F96  2B D2                   sub dx, dx
+8F98  03 04                   add ax, word ptr [si]
+8F9A  83 D2 00                adc dx, 0
+8F9D  83 C6 02                add si, 2
+8FA0  E2 F6                   loop 0x8f98
+8FA2  59                      pop cx
+8FA3  F7 F1                   div cx
+8FA5  8B C8                   mov cx, ax
+8FA7  A3 00 F8                mov word ptr [0xf800], ax
+8FAA  BA 0E 00                mov dx, 0xe
+8FAD  B8 6E 23                mov ax, 0x236e
+8FB0  F7 F1                   div cx
+8FB2  BB 04 00                mov bx, 4
+8FB5  3D C2 01                cmp ax, 0x1c2
+8FB8  76 6B                   jbe 0x9025
+8FBA  BB 05 00                mov bx, 5
+8FBD  3D 26 02                cmp ax, 0x226
+8FC0  76 63                   jbe 0x9025
+8FC2  BB 06 00                mov bx, 6
+8FC5  3D BC 02                cmp ax, 0x2bc
+8FC8  76 5B                   jbe 0x9025
+8FCA  BB 08 00                mov bx, 8
+8FCD  3D 84 03                cmp ax, 0x384
+8FD0  76 53                   jbe 0x9025
+8FD2  BB 0A 00                mov bx, 0xa
+8FD5  3D 4C 04                cmp ax, 0x44c
+8FD8  76 4B                   jbe 0x9025
+8FDA  BB 0C 00                mov bx, 0xc
+8FDD  3D 78 05                cmp ax, 0x578
+8FE0  76 43                   jbe 0x9025
+8FE2  BB 10 00                mov bx, 0x10
+8FE5  3D 40 06                cmp ax, 0x640
+8FE8  76 3B                   jbe 0x9025
+8FEA  BB 10 00                mov bx, 0x10
+8FED  3D 08 07                cmp ax, 0x708
+8FF0  76 33                   jbe 0x9025
+8FF2  BB 14 00                mov bx, 0x14
+8FF5  3D CA 08                cmp ax, 0x8ca
+8FF8  76 2B                   jbe 0x9025
+8FFA  BB 19 00                mov bx, 0x19
+8FFD  3D BE 0A                cmp ax, 0xabe
+9000  76 23                   jbe 0x9025
+9002  BB 21 00                mov bx, 0x21
+9005  3D 2E 0E                cmp ax, 0xe2e
+9008  76 1B                   jbe 0x9025
+900A  BB 28 00                mov bx, 0x28
+900D  3D 30 11                cmp ax, 0x1130
+9010  76 13                   jbe 0x9025
+9012  BB 32 00                mov bx, 0x32
+9015  3D E0 15                cmp ax, 0x15e0
+9018  76 0B                   jbe 0x9025
+901A  BB 42 00                mov bx, 0x42
+901D  3D BC 1B                cmp ax, 0x1bbc
+9020  76 03                   jbe 0x9025
+9022  BB 50 00                mov bx, 0x50
+9025  33 FF                   xor di, di
+9027  B9 00 80                mov cx, 0x8000
+902A  33 C0                   xor ax, ax
+902C  F3 AB                   rep stosw word ptr es:[di], ax
+902E  8B C3                   mov ax, bx
+9030  07                      pop es
+9031  1F                      pop ds
+9032  C3                      ret
+
+===== 9025h-9032h =====
+Reason: common 64 KiB ES:0000h clear/return block within 8F50h
+9025  33 FF                   xor di, di
+9027  B9 00 80                mov cx, 0x8000
+902A  33 C0                   xor ax, ax
+902C  F3 AB                   rep stosw word ptr es:[di], ax
+902E  8B C3                   mov ax, bx
+9030  07                      pop es
+9031  1F                      pop ds
+9032  C3                      ret
+
+===== 9033h-90B0h =====
+Reason: PIT channel-2 measurement primitive executing test code at 1000:0000 and 1000:0800
+9033  FA                      cli
+9034  E4 61                   in al, 0x61
+9036  A2 04 F8                mov byte ptr [0xf804], al
+9039  E8 5A 00                call 0x9096
+903C  BB FF FF                mov bx, 0xffff
+903F  A0 04 F8                mov al, byte ptr [0xf804]
+9042  0C 01                   or al, 1
+9044  E6 61                   out 0x61, al
+9046  EB 00                   jmp 0x9048
+9048  9A 00 00 00 10          lcall 0x1000, 0
+904D  A0 04 F8                mov al, byte ptr [0xf804]
+9050  24 FC                   and al, 0xfc
+9052  E6 61                   out 0x61, al
+9054  EB 00                   jmp 0x9056
+9056  E8 2E 00                call 0x9087
+9059  A3 00 F8                mov word ptr [0xf800], ax
+905C  E4 61                   in al, 0x61
+905E  A2 04 F8                mov byte ptr [0xf804], al
+9061  E8 32 00                call 0x9096
+9064  BB FF FF                mov bx, 0xffff
+9067  A0 04 F8                mov al, byte ptr [0xf804]
+906A  0C 01                   or al, 1
+906C  E6 61                   out 0x61, al
+906E  9A 00 08 00 10          lcall 0x1000, 0x800
+9073  A0 04 F8                mov al, byte ptr [0xf804]
+9076  24 FC                   and al, 0xfc
+9078  E6 61                   out 0x61, al
+907A  EB 00                   jmp 0x907c
+907C  E8 08 00                call 0x9087
+907F  29 06 00 F8             sub word ptr [0xf800], ax
+9083  A1 00 F8                mov ax, word ptr [0xf800]
+9086  C3                      ret
+9087  E4 42                   in al, 0x42
+9089  EB 00                   jmp 0x908b
+908B  8A E0                   mov ah, al
+908D  E4 42                   in al, 0x42
+908F  EB 00                   jmp 0x9091
+9091  86 E0                   xchg al, ah
+9093  F7 D8                   neg ax
+9095  C3                      ret
+9096  E4 61                   in al, 0x61
+9098  24 FC                   and al, 0xfc
+909A  E6 61                   out 0x61, al
+909C  EB 00                   jmp 0x909e
+909E  B0 B4                   mov al, 0xb4
+90A0  E6 43                   out 0x43, al
+90A2  EB 00                   jmp 0x90a4
+90A4  2A C0                   sub al, al
+90A6  E6 42                   out 0x42, al
+90A8  EB 00                   jmp 0x90aa
+90AA  EB 00                   jmp 0x90ac
+90AC  E6 42                   out 0x42, al
+90AE  EB 00                   jmp 0x90b0
+90B0  C3                      ret
+
+===== 9087h-9095h =====
+Reason: PIT channel-2 counter read helper
+9087  E4 42                   in al, 0x42
+9089  EB 00                   jmp 0x908b
+908B  8A E0                   mov ah, al
+908D  E4 42                   in al, 0x42
+908F  EB 00                   jmp 0x9091
+9091  86 E0                   xchg al, ah
+9093  F7 D8                   neg ax
+9095  C3                      ret
+
+===== 9096h-90B0h =====
+Reason: PIT channel-2 setup helper
+9096  E4 61                   in al, 0x61
+9098  24 FC                   and al, 0xfc
+909A  E6 61                   out 0x61, al
+909C  EB 00                   jmp 0x909e
+909E  B0 B4                   mov al, 0xb4
+90A0  E6 43                   out 0x43, al
+90A2  EB 00                   jmp 0x90a4
+90A4  2A C0                   sub al, al
+90A6  E6 42                   out 0x42, al
+90A8  EB 00                   jmp 0x90aa
+90AA  EB 00                   jmp 0x90ac
+90AC  E6 42                   out 0x42, al
+90AE  EB 00                   jmp 0x90b0
+90B0  C3                      ret
+
+===== 90B2h-90B2h =====
+Reason: RET stub reached by repeated callers in the BIOS interrupt path
+90B2  C3                      ret
+
+===== 90B3h-90B3h =====
+Reason: RET stub reached by repeated callers in the BIOS interrupt path
+90B3  C3                      ret
+
+===== 90B4h-90B6h =====
+Reason: short jump stub to the INT 15h AH=87h block-move entry
+90B4  E9 30 00                jmp 0x90e7
+
+===== 90B7h-90B9h =====
+Reason: short jump stub to external BIOS helper E98Ah
+90B7  E9 D0 58                jmp 0xe98a
+
+===== 90E1h-921Fh =====
+Reason: alternate table entry for INT 15h AH=87h block move
+90E1  58                      pop ax
+90E2  EB 08                   jmp 0x90ec
+90E4  E9 33 01                jmp 0x921a
+90E7  80 FC 87                cmp ah, 0x87
+90EA  75 F2                   jne 0x90de
+90EC  FA                      cli
+90ED  FC                      cld
+90EE  60                      pushaw
+90EF  06                      push es
+90F0  1E                      push ds
+90F1  8B D9                   mov bx, cx
+90F3  E8 D9 F9                call 0x8acf
+90F6  8B CB                   mov cx, bx
+90F8  75 EA                   jne 0x90e4
+90FA  B0 02                   mov al, 2
+90FC  E6 80                   out 0x80, al
+90FE  BB 40 00                mov bx, 0x40
+9101  8E DB                   mov ds, bx
+9103  89 26 67 00             mov word ptr [0x67], sp
+9107  8C 16 69 00             mov word ptr [0x69], ss
+910B  B0 8F                   mov al, 0x8f
+910D  E6 70                   out 0x70, al
+910F  8C C0                   mov ax, es
+9111  8E D8                   mov ds, ax
+9113  8A DC                   mov bl, ah
+9115  C1 E0 04                shl ax, 4
+9118  C0 EB 04                shr bl, 4
+911B  03 C6                   add ax, si
+911D  80 D3 00                adc bl, 0
+9120  C7 44 08 FF FF          mov word ptr [si + 8], 0xffff
+9125  89 44 0A                mov word ptr [si + 0xa], ax
+9128  89 5C 0C                mov word ptr [si + 0xc], bx
+912B  B0 09                   mov al, 9
+912D  E6 71                   out 0x71, al
+912F  0F 01 54 08             lgdt [si + 8]
+9133  2E 0F 01 1E 70 E2       lidt cs:[0xe270]
+9139  0F 01 E0                smsw ax
+913C  0C 01                   or al, 1
+913E  0F 01 F0                lmsw ax
+9141  EB 00                   jmp 0x9143
+9143  B8 10 00                mov ax, 0x10
+9146  8E D8                   mov ds, ax
+9148  B0 18                   mov al, 0x18
+914A  8E C0                   mov es, ax
+914C  33 F6                   xor si, si
+914E  33 FF                   xor di, di
+9150  2E F6 06 81 82 40       test byte ptr cs:[0x8281], 0x40
+9156  75 5C                   jne 0x91b4
+9158  D1 E9                   shr cx, 1
+915A  66 F3 A5                rep movsd dword ptr es:[di], dword ptr [si]
+915D  73 01                   jae 0x9160
+915F  A5                      movsw word ptr es:[di], word ptr [si]
+9160  E4 61                   in al, 0x61
+9162  24 C0                   and al, 0xc0
+9164  75 78                   jne 0x91de
+9166  E6 80                   out 0x80, al
+9168  2E 0F 01 16 68 E2       lgdt cs:[0xe268]
+916E  B8 40 00                mov ax, 0x40
+9171  8E D8                   mov ds, ax
+9173  8E C0                   mov es, ax
+9175  66 C1 C8 10             ror eax, 0x10
+9179  8B C8                   mov cx, ax
+917B  0F 20 C0                mov eax, cr0
+917E  24 FE                   and al, 0xfe
+9180  0F 22 C0                mov cr0, eax
+9183  EB 00                   jmp 0x9185
+9185  8B C1                   mov ax, cx
+9187  66 C1 C8 10             ror eax, 0x10
+918B  2E 0F 01 1E B8 E2       lidt cs:[0xe2b8]
+9191  E8 3E F9                call 0x8ad2
+9194  B0 0F                   mov al, 0xf
+9196  E6 70                   out 0x70, al
+9198  E3 00                   jcxz 0x919a
+919A  E3 00                   jcxz 0x919c
+919C  B0 00                   mov al, 0
+919E  E6 71                   out 0x71, al
+91A0  75 78                   jne 0x921a
+91A2  1F                      pop ds
+91A3  07                      pop es
+91A4  61                      popaw
+91A5  86 C4                   xchg ah, al
+91A7  E4 80                   in al, 0x80
+91A9  86 C4                   xchg ah, al
+91AB  0A E4                   or ah, ah
+91AD  74 01                   je 0x91b0
+91AF  F9                      stc
+91B0  FB                      sti
+91B1  CA 02 00                retf 2
+91B4  F3 A5                   rep movsw word ptr es:[di], word ptr [si]
+91B6  E4 61                   in al, 0x61
+91B8  24 C0                   and al, 0xc0
+91BA  75 22                   jne 0x91de
+91BC  E6 80                   out 0x80, al
+91BE  E3 00                   jcxz 0x91c0
+91C0  E3 00                   jcxz 0x91c2
+91C2  B0 8F                   mov al, 0x8f
+91C4  E6 70                   out 0x70, al
+91C6  E3 00                   jcxz 0x91c8
+91C8  E3 00                   jcxz 0x91ca
+91CA  B0 01                   mov al, 1
+91CC  E6 71                   out 0x71, al
+91CE  E9 97 5E                jmp 0xf068
+91D1  8E 16 69 00             mov ss, word ptr [0x69]
+91D5  8B 26 67 00             mov sp, word ptr [0x67]
+91D9  E8 F6 F8                call 0x8ad2
+91DC  EB 36                   jmp 0x9214
+91DE  83 EE 04                sub si, 4
+91E1  8B 04                   mov ax, word ptr [si]
+91E3  89 04                   mov word ptr [si], ax
+91E5  8B 44 02                mov ax, word ptr [si + 2]
+91E8  89 44 02                mov word ptr [si + 2], ax
+91EB  8B 04                   mov ax, word ptr [si]
+91ED  8B 44 02                mov ax, word ptr [si + 2]
+91F0  E8 43 5D                call 0xef36
+91F3  A8 80                   test al, 0x80
+91F5  B0 01                   mov al, 1
+91F7  74 02                   je 0x91fb
+91F9  B0 00                   mov al, 0
+91FB  2E F6 06 81 82 40       test byte ptr cs:[0x8281], 0x40
+9201  75 B9                   jne 0x91bc
+9203  E9 60 FF                jmp 0x9166
+9206  8E 16 69 00             mov ss, word ptr [0x69]
+920A  8B 26 67 00             mov sp, word ptr [0x67]
+920E  E8 C1 F8                call 0x8ad2
+9211  E8 5A 64                call 0xf66e
+9214  B0 0D                   mov al, 0xd
+9216  E6 70                   out 0x70, al
+9218  74 88                   je 0x91a2
+921A  B0 03                   mov al, 3
+921C  E6 80                   out 0x80, al
+921E  EB 82                   jmp 0x91a2
+
+===== 90E7h-921Fh =====
+Reason: INT 15h AH=87h protected-mode block-move handler
+90E7  80 FC 87                cmp ah, 0x87
+90EA  75 F2                   jne 0x90de
+90EC  FA                      cli
+90ED  FC                      cld
+90EE  60                      pushaw
+90EF  06                      push es
+90F0  1E                      push ds
+90F1  8B D9                   mov bx, cx
+90F3  E8 D9 F9                call 0x8acf
+90F6  8B CB                   mov cx, bx
+90F8  75 EA                   jne 0x90e4
+90FA  B0 02                   mov al, 2
+90FC  E6 80                   out 0x80, al
+90FE  BB 40 00                mov bx, 0x40
+9101  8E DB                   mov ds, bx
+9103  89 26 67 00             mov word ptr [0x67], sp
+9107  8C 16 69 00             mov word ptr [0x69], ss
+910B  B0 8F                   mov al, 0x8f
+910D  E6 70                   out 0x70, al
+910F  8C C0                   mov ax, es
+9111  8E D8                   mov ds, ax
+9113  8A DC                   mov bl, ah
+9115  C1 E0 04                shl ax, 4
+9118  C0 EB 04                shr bl, 4
+911B  03 C6                   add ax, si
+911D  80 D3 00                adc bl, 0
+9120  C7 44 08 FF FF          mov word ptr [si + 8], 0xffff
+9125  89 44 0A                mov word ptr [si + 0xa], ax
+9128  89 5C 0C                mov word ptr [si + 0xc], bx
+912B  B0 09                   mov al, 9
+912D  E6 71                   out 0x71, al
+912F  0F 01 54 08             lgdt [si + 8]
+9133  2E 0F 01 1E 70 E2       lidt cs:[0xe270]
+9139  0F 01 E0                smsw ax
+913C  0C 01                   or al, 1
+913E  0F 01 F0                lmsw ax
+9141  EB 00                   jmp 0x9143
+9143  B8 10 00                mov ax, 0x10
+9146  8E D8                   mov ds, ax
+9148  B0 18                   mov al, 0x18
+914A  8E C0                   mov es, ax
+914C  33 F6                   xor si, si
+914E  33 FF                   xor di, di
+9150  2E F6 06 81 82 40       test byte ptr cs:[0x8281], 0x40
+9156  75 5C                   jne 0x91b4
+9158  D1 E9                   shr cx, 1
+915A  66 F3 A5                rep movsd dword ptr es:[di], dword ptr [si]
+915D  73 01                   jae 0x9160
+915F  A5                      movsw word ptr es:[di], word ptr [si]
+9160  E4 61                   in al, 0x61
+9162  24 C0                   and al, 0xc0
+9164  75 78                   jne 0x91de
+9166  E6 80                   out 0x80, al
+9168  2E 0F 01 16 68 E2       lgdt cs:[0xe268]
+916E  B8 40 00                mov ax, 0x40
+9171  8E D8                   mov ds, ax
+9173  8E C0                   mov es, ax
+9175  66 C1 C8 10             ror eax, 0x10
+9179  8B C8                   mov cx, ax
+917B  0F 20 C0                mov eax, cr0
+917E  24 FE                   and al, 0xfe
+9180  0F 22 C0                mov cr0, eax
+9183  EB 00                   jmp 0x9185
+9185  8B C1                   mov ax, cx
+9187  66 C1 C8 10             ror eax, 0x10
+918B  2E 0F 01 1E B8 E2       lidt cs:[0xe2b8]
+9191  E8 3E F9                call 0x8ad2
+9194  B0 0F                   mov al, 0xf
+9196  E6 70                   out 0x70, al
+9198  E3 00                   jcxz 0x919a
+919A  E3 00                   jcxz 0x919c
+919C  B0 00                   mov al, 0
+919E  E6 71                   out 0x71, al
+91A0  75 78                   jne 0x921a
+91A2  1F                      pop ds
+91A3  07                      pop es
+91A4  61                      popaw
+91A5  86 C4                   xchg ah, al
+91A7  E4 80                   in al, 0x80
+91A9  86 C4                   xchg ah, al
+91AB  0A E4                   or ah, ah
+91AD  74 01                   je 0x91b0
+91AF  F9                      stc
+91B0  FB                      sti
+91B1  CA 02 00                retf 2
+91B4  F3 A5                   rep movsw word ptr es:[di], word ptr [si]
+91B6  E4 61                   in al, 0x61
+91B8  24 C0                   and al, 0xc0
+91BA  75 22                   jne 0x91de
+91BC  E6 80                   out 0x80, al
+91BE  E3 00                   jcxz 0x91c0
+91C0  E3 00                   jcxz 0x91c2
+91C2  B0 8F                   mov al, 0x8f
+91C4  E6 70                   out 0x70, al
+91C6  E3 00                   jcxz 0x91c8
+91C8  E3 00                   jcxz 0x91ca
+91CA  B0 01                   mov al, 1
+91CC  E6 71                   out 0x71, al
+91CE  E9 97 5E                jmp 0xf068
+91D1  8E 16 69 00             mov ss, word ptr [0x69]
+91D5  8B 26 67 00             mov sp, word ptr [0x67]
+91D9  E8 F6 F8                call 0x8ad2
+91DC  EB 36                   jmp 0x9214
+91DE  83 EE 04                sub si, 4
+91E1  8B 04                   mov ax, word ptr [si]
+91E3  89 04                   mov word ptr [si], ax
+91E5  8B 44 02                mov ax, word ptr [si + 2]
+91E8  89 44 02                mov word ptr [si + 2], ax
+91EB  8B 04                   mov ax, word ptr [si]
+91ED  8B 44 02                mov ax, word ptr [si + 2]
+91F0  E8 43 5D                call 0xef36
+91F3  A8 80                   test al, 0x80
+91F5  B0 01                   mov al, 1
+91F7  74 02                   je 0x91fb
+91F9  B0 00                   mov al, 0
+91FB  2E F6 06 81 82 40       test byte ptr cs:[0x8281], 0x40
+9201  75 B9                   jne 0x91bc
+9203  E9 60 FF                jmp 0x9166
+9206  8E 16 69 00             mov ss, word ptr [0x69]
+920A  8B 26 67 00             mov sp, word ptr [0x67]
+920E  E8 C1 F8                call 0x8ad2
+9211  E8 5A 64                call 0xf66e
+9214  B0 0D                   mov al, 0xd
+9216  E6 70                   out 0x70, al
+9218  74 88                   je 0x91a2
+921A  B0 03                   mov al, 3
+921C  E6 80                   out 0x80, al
+921E  EB 82                   jmp 0x91a2
+
+===== 9220h-923Fh =====
+Reason: INT 15h AH=80h..91h function dispatcher using the table at 90BAh
+9220  E8 C5 F8                call 0x8ae8
+9223  FB                      sti
+9224  50                      push ax
+9225  8A C4                   mov al, ah
+9227  2C 80                   sub al, 0x80
+9229  78 46                   js 0x9271
+922B  3C 12                   cmp al, 0x12
+922D  73 5C                   jae 0x928b
+922F  32 E4                   xor ah, ah
+9231  D1 E0                   shl ax, 1
+9233  05 BA 90                add ax, 0x90ba
+9236  55                      push bp
+9237  8B E8                   mov bp, ax
+9239  2E 8B 46 00             mov ax, word ptr cs:[bp]
+923D  5D                      pop bp
+923E  FF E0                   jmp ax
+
+===== 9240h-928Ah =====
+Reason: alternate INT 15h service path gated by CS:8280h and feature check 8300h
+9240  2E F6 06 80 82 10       test byte ptr cs:[0x8280], 0x10
+9246  74 29                   je 0x9271
+9248  50                      push ax
+9249  2E A0 0B B5             mov al, byte ptr cs:[0xb50b]
+924D  E8 B0 F0                call 0x8300
+9250  9C                      pushf
+9251  E8 E2 5C                call 0xef36
+9254  9D                      popf
+9255  58                      pop ax
+9256  74 19                   je 0x9271
+9258  3C 42                   cmp al, 0x42
+925A  75 04                   jne 0x9260
+925C  58                      pop ax
+925D  E9 62 02                jmp 0x94c2
+9260  3C 41                   cmp al, 0x41
+9262  75 0D                   jne 0x9271
+9264  58                      pop ax
+9265  6A 40                   push 0x40
+9267  07                      pop es
+9268  26 8E 06 0E 00          mov es, word ptr es:[0xe]
+926D  F8                      clc
+926E  CA 02 00                retf 2
+9271  58                      pop ax
+9272  B4 86                   mov ah, 0x86
+9274  F9                      stc
+9275  CA 02 00                retf 2
+9278  58                      pop ax
+9279  B4 00                   mov ah, 0
+927B  CF                      iret
+927C  58                      pop ax
+927D  B0 31                   mov al, 0x31
+927F  FA                      cli
+9280  E8 27 5C                call 0xeeaa
+9283  8A E0                   mov ah, al
+9285  B0 30                   mov al, 0x30
+9287  E8 20 5C                call 0xeeaa
+928A  CF                      iret
+
+===== 9271h-9275h =====
+Reason: INT 15h unsupported/error return stub: AH=86h, CF=1, RETF 2
+9271  58                      pop ax
+9272  B4 86                   mov ah, 0x86
+9274  F9                      stc
+9275  CA              db 0xCA
+
+===== 9278h-927Bh =====
+Reason: INT 15h zero-status IRET stub
+9278  58                      pop ax
+9279  B4 00                   mov ah, 0
+927B  CF                      iret
+
+===== 927Ch-928Ah =====
+Reason: INT 15h AH=88h extended-memory-size service; reads CMOS 31h/30h
+927C  58                      pop ax
+927D  B0 31                   mov al, 0x31
+927F  FA                      cli
+9280  E8 27 5C                call 0xeeaa
+9283  8A E0                   mov ah, al
+9285  B0 30                   mov al, 0x30
+9287  E8 20 5C                call 0xeeaa
+928A  CF                      iret
+
+===== 928Bh-929Ah =====
+Reason: INT 15h service subfunction return path
+928B  3C 40                   cmp al, 0x40
+928D  75 B1                   jne 0x9240
+928F  BB F5 E6                mov bx, 0xe6f5
+9292  0E                      push cs
+9293  07                      pop es
+9294  F8                      clc
+9295  58                      pop ax
+9296  B4 00                   mov ah, 0
+9298  CA 02 00                retf 2
+
+===== 9294h-929Ah =====
+Reason: shared successful RETF 2 epilogue for INT 15h services
+9294  F8                      clc
+9295  58                      pop ax
+9296  B4 00                   mov ah, 0
+9298  CA 02 00                retf 2
+
+===== 929Bh-92E2h =====
+Reason: INT 15h AH=86h wait service using BDA timer/event state
+929B  53                      push bx
+929C  06                      push es
+929D  6A 40                   push 0x40
+929F  07                      pop es
+92A0  BB A0 00                mov bx, 0xa0
+92A3  E8 D3 00                call 0x9379
+92A6  72 37                   jb 0x92df
+92A8  51                      push cx
+92A9  52                      push dx
+92AA  1E                      push ds
+92AB  53                      push bx
+92AC  06                      push es
+92AD  1F                      pop ds
+92AE  BB 04 00                mov bx, 4
+92B1  E8 F7 00                call 0x93ab
+92B4  51                      push cx
+92B5  52                      push dx
+92B6  B3 04                   mov bl, 4
+92B8  E8 F0 00                call 0x93ab
+92BB  51                      push cx
+92BC  52                      push dx
+92BD  B3 03                   mov bl, 3
+92BF  E8 E9 00                call 0x93ab
+92C2  58                      pop ax
+92C3  03 D0                   add dx, ax
+92C5  58                      pop ax
+92C6  13 C8                   adc cx, ax
+92C8  58                      pop ax
+92C9  03 D0                   add dx, ax
+92CB  58                      pop ax
+92CC  13 C8                   adc cx, ax
+92CE  5B                      pop bx
+92CF  87 CA                   xchg dx, cx
+92D1  E8 2E 56                call 0xe902
+92D4  73 03                   jae 0x92d9
+92D6  4A                      dec dx
+92D7  79 F8                   jns 0x92d1
+92D9  C6 07 00                mov byte ptr [bx], 0
+92DC  1F                      pop ds
+92DD  5A                      pop dx
+92DE  59                      pop cx
+92DF  07                      pop es
+92E0  5B                      pop bx
+92E1  EB B2                   jmp 0x9295
+
+===== 92E3h-9308h =====
+Reason: INT 15h AH=83h event-wait service
+92E3  58                      pop ax
+92E4  50                      push ax
+92E5  0A C0                   or al, al
+92E7  74 1B                   je 0x9304
+92E9  3C 01                   cmp al, 1
+92EB  F9                      stc
+92EC  75 A7                   jne 0x9295
+92EE  FA                      cli
+92EF  E8 8E 5B                call 0xee80
+92F2  24 BF                   and al, 0xbf
+92F4  E8 95 5B                call 0xee8c
+92F7  1E                      push ds
+92F8  6A 40                   push 0x40
+92FA  1F                      pop ds
+92FB  C6 06 A0 00 00          mov byte ptr [0xa0], 0
+9300  FB                      sti
+9301  1F                      pop ds
+9302  EB 91                   jmp 0x9295
+9304  E8 72 00                call 0x9379
+9307  EB 8C                   jmp 0x9295
+
+===== 9309h-9337h =====
+Reason: INT 15h AH=84h joystick service using port 201h
+9309  D0 EA                   shr dl, 1
+930B  74 03                   je 0x9310
+930D  E9 61 FF                jmp 0x9271
+9310  58                      pop ax
+9311  BA 01 02                mov dx, 0x201
+9314  72 05                   jb 0x931b
+9316  EC                      in al, dx
+9317  24 F0                   and al, 0xf0
+9319  EB 1C                   jmp 0x9337
+931B  B3 01                   mov bl, 1
+931D  E8 93 00                call 0x93b3
+9320  D0 E3                   shl bl, 1
+9322  51                      push cx
+9323  E8 8D 00                call 0x93b3
+9326  D0 E3                   shl bl, 1
+9328  51                      push cx
+9329  E8 87 00                call 0x93b3
+932C  D0 E3                   shl bl, 1
+932E  51                      push cx
+932F  E8 81 00                call 0x93b3
+9332  5A                      pop dx
+9333  5B                      pop bx
+9334  58                      pop ax
+9335  87 CA                   xchg dx, cx
+9337  CA              db 0xCA
+
+===== 933Ah-9378h =====
+Reason: INT 15h AH=89h protected-mode switch service
+933A  FA                      cli
+933B  51                      push cx
+933C  E8 2B 63                call 0xf66a
+933F  59                      pop cx
+9340  58                      pop ax
+9341  75 2F                   jne 0x9372
+9343  E8 A9 5B                call 0xeeef
+9346  06                      push es
+9347  1F                      pop ds
+9348  58                      pop ax
+9349  83 C4 02                add sp, 2
+934C  6A 30                   push 0x30
+934E  50                      push ax
+934F  0F 01 54 08             lgdt [si + 8]
+9353  0F 01 5C 10             lidt [si + 0x10]
+9357  0F 01 E0                smsw ax
+935A  0C 01                   or al, 1
+935C  0F 01 F0                lmsw ax
+935F  EB 00                   jmp 0x9361
+9361  B8 28 00                mov ax, 0x28
+9364  8E D0                   mov ss, ax
+9366  B0 18                   mov al, 0x18
+9368  8E D8                   mov ds, ax
+936A  B0 20                   mov al, 0x20
+936C  8E C0                   mov es, ax
+936E  33 C0                   xor ax, ax
+9370  EB 04                   jmp 0x9376
+9372  F9                      stc
+9373  B8 FF FF                mov ax, 0xffff
+9376  CA 02 00                retf 2
+
+===== 9379h-93AAh =====
+Reason: BDA event-wait registration helper used by INT 15h AH=83h/86h
+9379  1E                      push ds
+937A  6A 40                   push 0x40
+937C  1F                      pop ds
+937D  FA                      cli
+937E  F6 06 A0 00 01          test byte ptr [0xa0], 1
+9383  F9                      stc
+9384  75 22                   jne 0x93a8
+9386  E8 EC 5A                call 0xee75
+9389  C6 06 A0 00 01          mov byte ptr [0xa0], 1
+938E  89 1E 98 00             mov word ptr [0x98], bx
+9392  8C 06 9A 00             mov word ptr [0x9a], es
+9396  89 16 9C 00             mov word ptr [0x9c], dx
+939A  89 0E 9E 00             mov word ptr [0x9e], cx
+939E  E8 DF 5A                call 0xee80
+93A1  24 7F                   and al, 0x7f
+93A3  0C 40                   or al, 0x40
+93A5  E8 E4 5A                call 0xee8c
+93A8  FB                      sti
+93A9  1F                      pop ds
+93AA  C3                      ret
+
+===== 93ABh-93B2h =====
+Reason: 32-bit CX:DX right-shift helper used by the wait service
+93AB  D1 E9                   shr cx, 1
+93AD  D1 DA                   rcr dx, 1
+93AF  4B                      dec bx
+93B0  75 F9                   jne 0x93ab
+93B2  C3                      ret
+
+===== 93B3h-93E2h =====
+Reason: joystick-axis timing measurement helper
+93B3  FA                      cli
+93B4  E8 2C 00                call 0x93e3
+93B7  EE                      out dx, al
+93B8  50                      push ax
+93B9  B9 00 01                mov cx, 0x100
+93BC  8A E3                   mov ah, bl
+93BE  E8 CD 54                call 0xe88e
+93C1  58                      pop ax
+93C2  72 12                   jb 0x93d6
+93C4  8B C8                   mov cx, ax
+93C6  E8 1A 00                call 0x93e3
+93C9  3B C8                   cmp cx, ax
+93CB  73 01                   jae 0x93ce
+93CD  40                      inc ax
+93CE  2B C8                   sub cx, ax
+93D0  C1 E9 04                shr cx, 4
+93D3  80 E5 01                and ch, 1
+93D6  FB                      sti
+93D7  51                      push cx
+93D8  B9 00 01                mov cx, 0x100
+93DB  B4 0F                   mov ah, 0xf
+93DD  E8 AE 54                call 0xe88e
+93E0  F8                      clc
+93E1  59                      pop cx
+93E2  C3                      ret
+
+===== 93E3h-93F7h =====
+Reason: PIT channel-0 counter read helper used by joystick measurement
+93E3  B0 00                   mov al, 0
+93E5  E6 43                   out 0x43, al
+93E7  E3 00                   jcxz 0x93e9
+93E9  E3 00                   jcxz 0x93eb
+93EB  E4 40                   in al, 0x40
+93ED  86 C4                   xchg ah, al
+93EF  E3 00                   jcxz 0x93f1
+93F1  E3 00                   jcxz 0x93f3
+93F3  E4 40                   in al, 0x40
+93F5  86 C4                   xchg ah, al
+93F7  C3                      ret
+
 ===== 4628h-4751h =====
 Reason: Setup main-menu handler-table target; hard-disk utility screen entry
 4628  55                      push bp
