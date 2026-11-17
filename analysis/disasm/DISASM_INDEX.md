@@ -1336,8 +1336,8 @@ Detailed map: [AMI486_ADDRESS_LEDGER_REGION_CA15_D103_20261117.md](AMI486_ADDRES
 Detailed report: [AMI486_ADDRESS_LEDGER_REGION_873C_8DCE_20261117.md](AMI486_ADDRESS_LEDGER_REGION_873C_8DCE_20261117.md).
 
 - The 81-entry four-byte array at 873Ch–887Fh has consumer-specific views: CMOS defaults at 8400h, key-to-value lookup at 8378h, masked E000h/E080h buffer updates at 85FEh, and the 21-record ALi write view at 208Dh. The 8750h–87A3h ALi view is an overlap within the 76-record suffix, not a separate non-overlapping allocation.
-- The AUTO Config lookup at 87A9h uses a 20-byte row stride and fields at +0/+4/+8/+0Ch through row 13; its final field overlaps executable bytes at 88B9h–88BAh.
+- The AUTO Config lookup at 87A9h uses a 20-byte row stride and fields at +0/+4/+8/+0Ch through row 13. Row 11 fields at 8885h/8889h/888Dh/8891h overlap the count/threshold area; rows 12/13 overlap executable bytes from 8898h onward.
 - 85B3h calls the five-entry prefix, empty 85CBh slot and optional 85D6h worker, then falls through into the 76-entry 85C0h suffix. In the stock image this processes all 81 built-in records.
 - Mapped the POST CMOS B3h/ALi C2h-C3h path at 88CEh, the CMOS 8Fh/reset path at 8A04h, the B3h-selected ALi profile path at 8A20h, the 82DAh hook path at 8A78h, INT 15h keyboard hook, controller/port configuration helpers, CR0 cache-state continuations, 8042 transaction helper and ALi indexed-register callbacks.
-- Stack-return words are marked as data separately from their continuation streams; the remaining 8889h–8897h bytes and hardware-level register semantics remain unresolved.
+- Stack-return words are marked as data separately from their continuation streams; the remaining 8893h–8898h bytes and hardware-level register semantics remain unresolved.
 - The 873Ch–8DCEh interval now has zero uncovered bytes in the candidate mask. Latest mask: 678 code windows, 205 data ranges, 34,292 code bytes, 16,419 data bytes, 213 overlap bytes, 50,498-byte union (77.05%). Next largest gap: 2436h–29F5h (1,472 bytes).
