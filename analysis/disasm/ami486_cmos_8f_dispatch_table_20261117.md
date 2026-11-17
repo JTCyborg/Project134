@@ -1563,3 +1563,16 @@ A significant consumer is the standard fixed-disk parameter-table vector in the 
 Thus the selected vector (INT 41h when E421h is zero, INT 46h when nonzero) is made to point at `0100:E411`. The table constructed by 5AB5h is therefore exposed through the conventional BIOS fixed-disk parameter-table vector, not merely used as a private setup buffer. The same block also saves the previous INT 13h vector at 0000:0100 and 0000:0102 before the BIOS installs its own handling path.
 
 Caution: this code proves that the selected IVT slot is assigned `0100:E411`; it does not by itself prove that both INT 41h and INT 46h simultaneously retain distinct table pointers. The branch writes one of the two vector slots per execution, and the destination table address is the same literal E411h in this routine. The surrounding drive-initialization sequence must be traced before claiming how the two drives' table images are retained over time.
+
+## Correction: IVT/DPT installation is temporary in the 2FA3h test wrapper
+
+The 2FA3h routine is called from 4A6Bh. Its prologue saves four existing IVT vectors into the caller's data segment at E429h-E438h before changing the IVT:
+
+- IVT 0000:0100 (saved prior INT 13h vector) -> DS:E429-E42C
+- IVT 0000:004C (current INT 13h vector) -> DS:E42D-E430
+- IVT 0000:0104 (INT 41h) -> DS:E431-E434
+- IVT 0000:0118 (INT 46h) -> DS:E435-E438
+
+It then temporarily installs INT 13h as CS:A08Dh and points the selected INT 41h/INT 46h slot at 0100:E411. The routine invokes INT 13h with AH=14h during this wrapper. On the exit path at 3026h-303Eh it disables interrupts, copies all four saved vectors back from DS:E429h-E438h to their original IVT slots, and re-enables interrupts. Therefore the E411 DPT vector assignment observed at 2FFDh-3004h is temporary and scoped to this controller-test/initialization wrapper; it must not be described as the BIOS's permanent INT 41h/46h installation. The previous section's wording “exposed through the conventional BIOS fixed-disk parameter-table vector” is accurate only for the duration of this wrapper.
+
+This also explains why the code saves both INT 41h and INT 46h before modifying only the slot selected by E421h: the other drive's vector is preserved unchanged and restored with the rest of the IVT state.
