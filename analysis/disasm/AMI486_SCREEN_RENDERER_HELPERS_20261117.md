@@ -156,7 +156,7 @@ The following direct targets were added to the candidate generator because they 
 - 56AEh — called by 08CDh (keyboard update).
 - 5821h — called by 08CDh (display update).
 
-The generator source contains these seeds; their refreshed output windows must be checked before assigning semantics.
+These three windows have now been generated and reviewed. Their confirmed contracts are documented above: 04B0h calculates disk capacity, 56AEh selects the attribute palette, and 5821h applies attributes to the text rectangle.
 
 ## 7. Integrated interpretation
 
