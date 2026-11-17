@@ -1227,9 +1227,9 @@ Words: 0020, 0080, 0100, 0200, 0040, 0100, 0200, 0400, 0000
 Reason: Eight-byte CPU speed lookup table
 19C2  10 14 19 21 28 32 42 20                         ...!(2B 
 
-===== DATA 19C9h-19DAh =====
+===== DATA 19C9h-19DBh =====
 Reason: “ KB CACHE MEMORY” string with CR/LF/NUL; first space overlaps speed table
-ASCII: ' KB CACHE MEMORY\r\n'
+ASCII: ' KB CACHE MEMORY\r\n\x00'
 
 ===== DATA 19DCh-19EBh =====
 Reason: “MHz CPU Clock” string with CR/LF/NUL
