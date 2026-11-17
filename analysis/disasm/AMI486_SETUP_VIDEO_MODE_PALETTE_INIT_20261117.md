@@ -117,7 +117,7 @@ tools/disasm_ami486_candidate_windows.py now:
 - classifies 55EBh–562Ah as the source palette table;
 - renames 562Bh–566Ah as the working copy.
 
-The generated candidate listing and manifest must be regenerated with the repository's Capstone environment before their metrics are considered current. No new linear disassembly is required; the byte-complete master listing already covers this range.
+The GitHub Actions workflow regenerated the candidate listing and manifest after this generator update. The latest checked-in mask reports 907 candidate windows, 251 data ranges and a 65,131/65,536-byte (99.38%) union. These are candidate inspection metrics, not semantic completion. No new linear disassembly is required; the byte-complete master listing already covers this range.
 
 ## 7. Remaining uncertainty
 
