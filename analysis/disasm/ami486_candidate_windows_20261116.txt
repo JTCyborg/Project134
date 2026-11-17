@@ -207,10 +207,8 @@ Reason: unreferenced-page caller context for E1xx state helpers
 0D7C  2D 06 00                sub ax, 6
 0D7F  75              db 0x75
 
-===== 0D80h-0DFFh =====
-Reason: state-helper caller and branch context before E1xx routines
-0D80  03 E9                   add bp, cx
-0D82  0F FF                   ud0
+===== 0D84h-0DFFh =====
+Reason: aligned selector dispatcher and branch context before E1xx routines
 0D84  48                      dec ax
 0D85  74 5E                   je 0xde5
 0D87  48                      dec ax
@@ -378,8 +376,8 @@ Reason: stack-frame routine following E1xx state-update helper
 0EE0  5D                      pop bp
 0EE1  C3                      ret
 
-===== 0EE2h-0FFFh =====
-Reason: second stack-frame routine in E1xx state-update cluster
+===== 0EE2h-10D7h =====
+Reason: second stack-frame routine in E1xx state/menu rendering cluster
 0EE2  55                      push bp
 0EE3  8B EC                   mov bp, sp
 0EE5  83 EC 10                sub sp, 0x10
@@ -489,18 +487,171 @@ Reason: second stack-frame routine in E1xx state-update cluster
 0FF5  80 7C 01 20             cmp byte ptr [si + 1], 0x20
 0FF9  74 F9                   je 0xff4
 0FFB  C6 44 02 00             mov byte ptr [si + 2], 0
-0FFF  8B              db 0x8B
+0FFF  8B 46 F0                mov ax, word ptr [bp - 0x10]
+1002  80 C4 01                add ah, 1
+1005  8B 1E 8F E1             mov bx, word ptr [0xe18f]
+1009  E8 B2 48                call 0x58be
+100C  80 7E F8 00             cmp byte ptr [bp - 8], 0
+1010  74 26                   je 0x1038
+1012  8B 76 F4                mov si, word ptr [bp - 0xc]
+1015  8B DE                   mov bx, si
+1017  E8 10 49                call 0x592a
+101A  88 46 FF                mov byte ptr [bp - 1], al
+101D  0A C0                   or al, al
+101F  74 17                   je 0x1038
+1021  8B DE                   mov bx, si
+1023  A1 80 E1                mov ax, word ptr [0xe180]
+1026  E8 AA 48                call 0x58d3
+1029  8A 46 FF                mov al, byte ptr [bp - 1]
+102C  2A E4                   sub ah, ah
+102E  40                      inc ax
+102F  03 F0                   add si, ax
+1031  80 06 81 E1 01          add byte ptr [0xe181], 1
+1036  EB DD                   jmp 0x1015
+1038  80 7E F9 00             cmp byte ptr [bp - 7], 0
+103C  75 03                   jne 0x1041
+103E  E9 83 00                jmp 0x10c4
+1041  8D 1E AB 36             lea bx, [0x36ab]
+1045  A1 80 E1                mov ax, word ptr [0xe180]
+1048  E8 64 48                call 0x58af
+104B  80 06 81 E1 01          add byte ptr [0xe181], 1
+1050  8B 7E F2                mov di, word ptr [bp - 0xe]
+1053  8A 46 FB                mov al, byte ptr [bp - 5]
+1056  88 46 FD                mov byte ptr [bp - 3], al
+1059  3A 46 FA                cmp al, byte ptr [bp - 6]
+105C  76 08                   jbe 0x1066
+105E  8A 46 FA                mov al, byte ptr [bp - 6]
+1061  2C 02                   sub al, 2
+1063  88 46 FD                mov byte ptr [bp - 3], al
+1066  C6 46 FF 00             mov byte ptr [bp - 1], 0
+106A  8B F7                   mov si, di
+106C  EB 1B                   jmp 0x1089
+106E  AC                      lodsb al, byte ptr [si]
+106F  88 46 FE                mov byte ptr [bp - 2], al
+1072  0A C0                   or al, al
+1074  74 F8                   je 0x106e
+1076  E8 A9 50                call 0x6122
+1079  8B D8                   mov bx, ax
+107B  A1 80 E1                mov ax, word ptr [0xe180]
+107E  E8 52 48                call 0x58d3
+1081  80 06 81 E1 01          add byte ptr [0xe181], 1
+1086  FE 46 FF                inc byte ptr [bp - 1]
+1089  8A 46 FD                mov al, byte ptr [bp - 3]
+108C  38 46 FF                cmp byte ptr [bp - 1], al
+108F  72 DD                   jb 0x106e
+1091  8A 46 FB                mov al, byte ptr [bp - 5]
+1094  38 46 FA                cmp byte ptr [bp - 6], al
+1097  73 2B                   jae 0x10c4
+1099  8D 1E A6 36             lea bx, [0x36a6]
+109D  A1 80 E1                mov ax, word ptr [0xe180]
+10A0  E8 30 48                call 0x58d3
+10A3  8B 76 F9                mov si, word ptr [bp - 7]
+10A6  81 E6 FF 00             and si, 0xff
+10AA  03 F7                   add si, di
+10AC  4E                      dec si
+10AD  8A 04                   mov al, byte ptr [si]
+10AF  88 46 FE                mov byte ptr [bp - 2], al
+10B2  0A C0                   or al, al
+10B4  74 F6                   je 0x10ac
+10B6  E8 69 50                call 0x6122
+10B9  8B D8                   mov bx, ax
+10BB  A1 80 E1                mov ax, word ptr [0xe180]
+10BE  80 C4 01                add ah, 1
+10C1  E8 0F 48                call 0x58d3
+10C4  8A 66 FC                mov ah, byte ptr [bp - 4]
+10C7  80 EC 02                sub ah, 2
+10CA  2A C0                   sub al, al
+10CC  03 46 F0                add ax, word ptr [bp - 0x10]
+10CF  8D 1E DB 36             lea bx, [0x36db]
+10D3  E8 E8 47                call 0x58be
+10D6  E8              db 0xE8
+10D7  29              db 0x29
 
-===== 60B0h-612Fh =====
-Reason: caller context for E1xx state/menu helper at 0E7Ch
-60B0  FF D3                   call bx
-60B2  5D                      pop bp
-60B3  5F                      pop di
-60B4  5E                      pop si
-60B5  1F                      pop ds
-60B6  FC                      cld
-60B7  83 C4 02                add sp, 2
-60BA  C3                      ret
+===== 1000h-10D7h =====
+Reason: continuation of the 0EE2h stack-frame menu-list routine across 1000h
+1000  46                      inc si
+1001  F0              db 0xF0
+1002  80 C4 01                add ah, 1
+1005  8B 1E 8F E1             mov bx, word ptr [0xe18f]
+1009  E8 B2 48                call 0x58be
+100C  80 7E F8 00             cmp byte ptr [bp - 8], 0
+1010  74 26                   je 0x1038
+1012  8B 76 F4                mov si, word ptr [bp - 0xc]
+1015  8B DE                   mov bx, si
+1017  E8 10 49                call 0x592a
+101A  88 46 FF                mov byte ptr [bp - 1], al
+101D  0A C0                   or al, al
+101F  74 17                   je 0x1038
+1021  8B DE                   mov bx, si
+1023  A1 80 E1                mov ax, word ptr [0xe180]
+1026  E8 AA 48                call 0x58d3
+1029  8A 46 FF                mov al, byte ptr [bp - 1]
+102C  2A E4                   sub ah, ah
+102E  40                      inc ax
+102F  03 F0                   add si, ax
+1031  80 06 81 E1 01          add byte ptr [0xe181], 1
+1036  EB DD                   jmp 0x1015
+1038  80 7E F9 00             cmp byte ptr [bp - 7], 0
+103C  75 03                   jne 0x1041
+103E  E9 83 00                jmp 0x10c4
+1041  8D 1E AB 36             lea bx, [0x36ab]
+1045  A1 80 E1                mov ax, word ptr [0xe180]
+1048  E8 64 48                call 0x58af
+104B  80 06 81 E1 01          add byte ptr [0xe181], 1
+1050  8B 7E F2                mov di, word ptr [bp - 0xe]
+1053  8A 46 FB                mov al, byte ptr [bp - 5]
+1056  88 46 FD                mov byte ptr [bp - 3], al
+1059  3A 46 FA                cmp al, byte ptr [bp - 6]
+105C  76 08                   jbe 0x1066
+105E  8A 46 FA                mov al, byte ptr [bp - 6]
+1061  2C 02                   sub al, 2
+1063  88 46 FD                mov byte ptr [bp - 3], al
+1066  C6 46 FF 00             mov byte ptr [bp - 1], 0
+106A  8B F7                   mov si, di
+106C  EB 1B                   jmp 0x1089
+106E  AC                      lodsb al, byte ptr [si]
+106F  88 46 FE                mov byte ptr [bp - 2], al
+1072  0A C0                   or al, al
+1074  74 F8                   je 0x106e
+1076  E8 A9 50                call 0x6122
+1079  8B D8                   mov bx, ax
+107B  A1 80 E1                mov ax, word ptr [0xe180]
+107E  E8 52 48                call 0x58d3
+1081  80 06 81 E1 01          add byte ptr [0xe181], 1
+1086  FE 46 FF                inc byte ptr [bp - 1]
+1089  8A 46 FD                mov al, byte ptr [bp - 3]
+108C  38 46 FF                cmp byte ptr [bp - 1], al
+108F  72 DD                   jb 0x106e
+1091  8A 46 FB                mov al, byte ptr [bp - 5]
+1094  38 46 FA                cmp byte ptr [bp - 6], al
+1097  73 2B                   jae 0x10c4
+1099  8D 1E A6 36             lea bx, [0x36a6]
+109D  A1 80 E1                mov ax, word ptr [0xe180]
+10A0  E8 30 48                call 0x58d3
+10A3  8B 76 F9                mov si, word ptr [bp - 7]
+10A6  81 E6 FF 00             and si, 0xff
+10AA  03 F7                   add si, di
+10AC  4E                      dec si
+10AD  8A 04                   mov al, byte ptr [si]
+10AF  88 46 FE                mov byte ptr [bp - 2], al
+10B2  0A C0                   or al, al
+10B4  74 F6                   je 0x10ac
+10B6  E8 69 50                call 0x6122
+10B9  8B D8                   mov bx, ax
+10BB  A1 80 E1                mov ax, word ptr [0xe180]
+10BE  80 C4 01                add ah, 1
+10C1  E8 0F 48                call 0x58d3
+10C4  8A 66 FC                mov ah, byte ptr [bp - 4]
+10C7  80 EC 02                sub ah, 2
+10CA  2A C0                   sub al, al
+10CC  03 46 F0                add ax, word ptr [bp - 0x10]
+10CF  8D 1E DB 36             lea bx, [0x36db]
+10D3  E8 E8 47                call 0x58be
+10D6  E8              db 0xE8
+10D7  29              db 0x29
+
+===== 60BBh-613Ah =====
+Reason: direct CALL site and caller context for E1xx state/menu helper at 0E7Ch
 60BB  50                      push ax
 60BC  A0 A5 E1                mov al, byte ptr [0xe1a5]
 60BF  E8 BA AD                call 0xe7c
@@ -553,7 +704,12 @@ Reason: caller context for E1xx state/menu helper at 0E7Ch
 6126  8B 1E 97 E1             mov bx, word ptr [0xe197]
 612A  83 C3 02                add bx, 2
 612D  E3 05                   jcxz 0x6134
-612F  E8              db 0xE8
+612F  E8 F8 F7                call 0x592a
+6132  E2 FB                   loop 0x612f
+6134  8B C3                   mov ax, bx
+6136  C3                      ret
+6137  A0 85 E1                mov al, byte ptr [0xe185]
+613A  98                      cwde
 
 ===== 41C0h-423Fh =====
 Reason: POST display/status routine candidate preceding 4200h
