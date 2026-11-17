@@ -723,3 +723,11 @@ Detailed map: [AMI486_ADDRESS_LEDGER_REGION_C780_C8B0_20261117.md](AMI486_ADDRES
 Extended the C780h diskette BIOS dispatch window from its default 80h bytes to 130h bytes. The prior window ended after the JNZ opcode at C7FFh and omitted its displacement byte at C800h; C800h is not an entry. The corrected window covers through C8AFh and stops before the separate C8B0h DMA dispatcher. Mapped the retry/control edges, including C7F0h JMP C8DBh, C7FFh JNZ C814h, repeated back-edges to C7E9h/C838h, and the branch at C8ACh into C8B2h. The routine uses the INT 1Eh diskette parameter table and the D2xx helper path to prepare transfer parameters.
 
 Generator update: 88fc71605b7f660154b429cd8199a21ef4458a7d. The latest generated manifest still predates this phase. The previous projected union was 63,311 bytes (96.60%); adding this 176-byte interval gives a projected 63,487/65,536 bytes (96.87%) and 54 uncovered intervals. The next largest remaining interval is expected to be 8630h–86DAh (171 bytes). These are range-union calculations, not a regenerated manifest or CI result.
+
+## 39. CMOS option checks and stack-threaded checksum verifier — 8630h–86DAh (2026-11-17)
+
+Detailed map: [AMI486_ADDRESS_LEDGER_REGION_8630_86DB_20261117.md](AMI486_ADDRESS_LEDGER_REGION_8630_86DB_20261117.md).
+
+Mapped the three CMOS option-check helpers at 8630h/8649h/8662h, which read CMOS 8Eh and conditionally 90h/94h before testing CS:8280h option bits. The helper at 867Bh checks bit 3 and calls the CPU-profile helper at 8300h. The continuation at 868Bh enters the existing checksum accumulators at 17F2h and 180Fh, then compares the CMOS AEh/AFh and BEh/BFh checksum pairs. Four embedded stack-return words (86A0h, 86AAh, 86C4h, 86CEh) are now explicitly classified as data; code windows begin after each return slot.
+
+Generator update: 1ced033a4465751b83b7a5d1fc793e31d679aa63. The latest generated manifest still predates this phase. The previous projected union was 63,487 bytes (96.87%); adding this 171-byte interval gives a projected 63,658/65,536 bytes (97.13%) and 53 uncovered intervals. The next largest remaining interval is expected to be 714Eh–71E3h (150 bytes). These are range-union calculations, not a regenerated manifest or CI result.
