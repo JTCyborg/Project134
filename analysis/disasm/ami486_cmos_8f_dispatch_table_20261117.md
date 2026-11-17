@@ -219,3 +219,23 @@ After the 0FBEh call returns, F200h calls F10Dh. This is a password-validation g
 - The caller at F200h tests ZF. On failure it emits BEL through INT 10h (AX=0E07h) and jumps to the common stack cleanup path; on success it continues into the next startup checks.
 
 This establishes a BIOS password gate in the CMOS[8Fh] continuation before the later low-memory scan and RTC time/date reads. It does not yet establish the exact encoding of the CMOS password bytes or all policy meanings of the 8Eh/B7h/B8h fields.
+
+## Password-change subflow in F1E2h continuation
+
+The code after the F10Dh password gate contains a second, distinct password-entry sequence. Its strings identify the purpose directly:
+
+- F261h loads SI=7BD2h: "Enter NEW Password".
+- F2A5h loads SI=7BEBh: "Re-Enter NEW Password".
+- F2DAh loads SI=7C36h: "ERROR, Press Any Key....".
+- F2E3h loads SI=7C04h: "Password Now Enabled".
+
+The first entry loop sets DI=0038h and CX=6, then calls the keyboard character helper at F337h. The helper reads keystrokes through INT 16h, accepts printable ASCII, converts lowercase letters to uppercase, and distinguishes Enter/Esc control results. The caller stores the entered characters in its BP-based local stack frame. The second prompt repeats input and compares it with the first entry. A mismatch reaches the error string and emits BEL through INT 10h; the success path displays "Password Now Enabled".
+
+After the success message, the code copies 20h words (40h bytes) from the stack-local buffer at SS:BP to ES:E000h, then restores the stack frame and returns. This is a RAM-buffer transfer; it is not, by itself, proof that the password is immediately committed to CMOS. The later persistence path and the exact layout of the 64-byte buffer remain to be traced.
+
+The surrounding F1E2h routine also:
+- scans the first 64 KiB of physical memory by setting DS=0000h, SI=0000h, CX=8000h and summing 8000h words into DX;
+- reads RTC time via INT 1Ah/AH=02h and RTC date via INT 1Ah/AH=04h, with retry branches on carry;
+- combines the returned RTC fields with the low-memory accumulation before continuing into the password-entry section.
+
+These operations identify this as a startup recovery/configuration path that validates an existing password, gathers platform state, and can request a new password. Do not yet label the 64-KiB accumulation as a definitive RAM test: the code computes a sum but the comparison/use of that value is still being traced.
