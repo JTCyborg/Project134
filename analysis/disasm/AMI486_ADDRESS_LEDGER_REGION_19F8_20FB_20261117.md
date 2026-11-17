@@ -83,9 +83,9 @@ Additional control-flow evidence:
 
 D9D9h is an unconditional near JMP to 1AFBh (`E9 1F 41`, 16-bit IP target). At 1AFBh the BIOS loads AL=B3h, sets SP=1B04h and jumps to EE94h. The CMOS helper returns through the word at 1B04h, resuming at 1B06h.
 
-The continuation tests CMOS B3h bits 2–3 and selects one of two lists:
+The continuation tests CMOS B3h bits 2–3. If both bits are clear, it skips the list writer and branches directly to 1B2Eh. Otherwise it selects one of two lists:
 - bit 2 set: SI=8E4Eh, CX=8E62h;
-- bit 2 clear: SI=8E76h, CX=8E7Ah.
+- bit 2 clear but bit 3 set: SI=8E76h, CX=8E7Ah.
 
 It computes the word count, reads each word with CS:LODSW, places return address 1B2Ch on the stack via SP=1B2Ah, and jumps to 8DDCh. The return resumes at 1B2Ch and loops until the list is exhausted. The stream then programs PIT channel 2 and port 61h, writes 1,024 bytes through ES:DI and jumps to 208Dh.
 
