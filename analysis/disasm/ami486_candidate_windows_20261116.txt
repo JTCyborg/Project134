@@ -61,16 +61,16 @@ ASCII: 'Disk Drive (C/D)\x00Disk Drive Type\x00Interleave (1-16)\x00Mark Bad Tra
 Reason: Hard-disk format menu title and labels
 ASCII: '8-8=8O8e8Hard Disk Format\x00Auto Interleave\x00Media Analysis\x00}8\x05\x1f�8\x04\x1b�8\x03\x13�JhK�K�K�YBad Track #\x00No.   Cyln.  Head\x00Bad Track Edit Menu\x00Add an Entr'
 
-===== DATA 4234h-427Ch =====
-Reason: POST-summary fill/padding bytes
-4234  CD CD CD CD CD CD CD CD CD CD CD CD CD CD CD CD ................
-4244  CD CD CD CD CD CD CD CD CD CD CD CD CD CD CD CD ................
-4254  CD CD CD CD CD CD CD CD CD CD CD CD CD CD CD CD ................
-4264  CD CD CD CD CD CD CD CD CD CD CD CD CD CD CD CD ................
-4274  CD CD CD CD CD CD CD CD CD                      .........
+===== DATA 4231h-427Ch =====
+Reason: POST summary double-line top border graphics (C9h/CDh)
+4231  C9 CD CD CD CD CD CD CD CD CD CD CD CD CD CD CD ................
+4241  CD CD CD CD CD CD CD CD CD CD CD CD CD CD CD CD ................
+4251  CD CD CD CD CD CD CD CD CD CD CD CD CD CD CD CD ................
+4261  CD CD CD CD CD CD CD CD CD CD CD CD CD CD CD CD ................
+4271  CD CD CD CD CD CD CD CD CD CD CD CD             ............
 
 ===== DATA 427Dh-4282h =====
-Reason: AMIBIOS banner control/prefix bytes
+Reason: AMIBIOS banner right-corner and vertical-border prefix
 427D  BB 0D 0A BA 20 20                               ....  
 
 ===== DATA 4283h-42CBh =====
@@ -82,7 +82,7 @@ Reason: AMIBIOS banner terminator/control bytes
 42CC  BA 0D 0A CC                                     ....
 
 ===== DATA 42D0h-431Ah =====
-Reason: POST-summary fill/padding bytes
+Reason: POST summary double-line separator/border graphics
 42D0  CD CD CD CD CD CD CD CD CD CD CD CD CD CD CD CD ................
 42E0  CD CD CD CD CD CD CD CD CD CD CD CD CD CD CD CD ................
 42F0  CD CD CD CD CD D1 CD CD CD CD CD CD CD CD CD CD ................
@@ -90,7 +90,7 @@ Reason: POST-summary fill/padding bytes
 4310  CD CD CD CD CD CD CD CD CD CD CD                ...........
 
 ===== DATA 431Bh-431Fh =====
-Reason: POST summary label-record prefix bytes
+Reason: POST summary left/right border and CR/LF control bytes
 431B  B9 0D 0A 00 BA                                  .....
 
 ===== DATA 4320h-45D7h =====
@@ -855,7 +855,7 @@ Reason: direct CALL site and caller context for E1xx state/menu helper at 0E7Ch
 6137  A0 85 E1                mov al, byte ptr [0xe185]
 613A  98                      cwde
 
-===== 3F81h-3FFFh =====
+===== 3F81h-4041h =====
 Reason: aligned continuation of POST equipment-summary display; calls CPU and numeric-processor helpers
 3F81  BE 1F 43                mov si, 0x431f
 3F84  E8 D7 FF                call 0x3f5e
@@ -908,8 +908,35 @@ Reason: aligned continuation of POST equipment-summary display; calls CPU and nu
 3FF6  B4 9A                   mov ah, 0x9a
 3FF8  E8 B1 00                call 0x40ac
 3FFB  E8 F1 00                call 0x40ef
-3FFE  BE              db 0xBE
-3FFF  7F              db 0x7F
+3FFE  BE 7F 43                mov si, 0x437f
+4001  E8 5A FF                call 0x3f5e
+4004  BE BF 45                mov si, 0x45bf
+4007  1E                      push ds
+4008  33 C0                   xor ax, ax
+400A  8E D8                   mov ds, ax
+400C  A1 42 00                mov ax, word ptr [0x42]
+400F  1F                      pop ds
+4010  3D 00 C8                cmp ax, 0xc800
+4013  72 1F                   jb 0x4034
+4015  3D 00 E0                cmp ax, 0xe000
+4018  72 05                   jb 0x401f
+401A  3D 00 F0                cmp ax, 0xf000
+401D  72 15                   jb 0x4034
+401F  CD 11                   int 0x11
+4021  BE 8F 45                mov si, 0x458f
+4024  24 30                   and al, 0x30
+4026  3C 30                   cmp al, 0x30
+4028  74 0A                   je 0x4034
+402A  BE 9F 45                mov si, 0x459f
+402D  3C 20                   cmp al, 0x20
+402F  74 03                   je 0x4034
+4031  BE AF 45                mov si, 0x45af
+4034  E8 27 FF                call 0x3f5e
+4037  BE 0F 44                mov si, 0x440f
+403A  E8 21 FF                call 0x3f5e
+403D  B9 04 00                mov cx, 4
+4040  BE              db 0xBE
+4041  00              db 0x00
 
 ===== 4142h-41E3h =====
 Reason: direct CALL target from POST summary; CPU-identification and processor-label selection
