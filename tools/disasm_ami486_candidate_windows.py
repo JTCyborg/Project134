@@ -567,6 +567,7 @@ SEEDS = [
     (0xE05B, "reset-vector entry target: near JMP F000:D604h"),
     (0xE2C3, "alternate jump-stub entry; JMPs to 90B7h, which forwards to E98Ah; caller unresolved"),
     (0xE2C6, "separate POST chipset-port programming stream; alternate entry source remains unresolved"),
+    (0x8400, "direct near-JMP target from the stack-return continuation at D906h; CMOS 8Eh state path"),
 ]
 
 def main():
