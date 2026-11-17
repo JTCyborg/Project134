@@ -4,6 +4,13 @@ Window length: 0x80 bytes by default; selected handler windows stop at known dat
 WARNING: independently seeded linear decodes; not a CFG and not proof of entry points.
 Relative near-branch targets are normalized to 16-bit IP wraparound.
 
+===== DATA 562Bh-566Ah =====
+Reason: 16-entry x 4-byte Setup text-attribute palette table selected by [E037h]
+562B  57 60 17 20 20 47 30 57 70 30 57 60 17 70 70 17 W`.  G0Wp0W`.pp.
+563B  57 30 47 20 20 17 60 57 17 60 57 30 30 47 20 17 W0G  .`W.`W00G .
+564B  70 20 17 60 17 17 17 17 30 57 60 17 70 70 70 70 p .`....0W`.pppp
+565B  07 07 07 07 70 07 70 07 07 70 07 70 70 17 17 70 ....p.p..p.pp..p
+
 ===== DATA 0000h-00EEh =====
 Reason: AMI BIOS copyright/identity block and embedded date/pattern bytes preceding the 00EFh code candidate
 0000  30 31 32 33 41 41 41 41 4D 4D 4D 4D 49 49 49 49 0123AAAAMMMMIIII
