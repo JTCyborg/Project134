@@ -514,8 +514,11 @@ Latest candidate mask: 541 code windows, 140 data ranges, 29,460 unique code-win
 
 ## 17. POST/cache/ALi/option-ROM/A20 region — 2026-11-17
 
-Report: [AMI486_ADDRESS_LEDGER_REGION_19B0_23CE_20261117.md](AMI486_ADDRESS_LEDGER_REGION_19B0_23CE_20261117.md).
+Overview: [AMI486_ADDRESS_LEDGER_REGION_19B0_23CE_20261117.md](AMI486_ADDRESS_LEDGER_REGION_19B0_23CE_20261117.md).  
+Focused byte map and alignment correction: [AMI486_ADDRESS_LEDGER_REGION_19F8_20FB_20261117.md](AMI486_ADDRESS_LEDGER_REGION_19F8_20FB_20261117.md).
 
-The 19F8h–20FFh gap is now fully covered. The region includes the cache and CPU-speed lookup/display paths, CMOS B3h-selected ALi profile table application, option-ROM scanning and checksum validation, C0000h/E0000h shadow-window paths, manual CMOS-to-ALi1429 read/modify/write configuration, POST 8042/A20 feature detection, POST A1h/A4h handlers, the 8750h–87A4h 21-record ALi table walker, and the protected-mode memory-address test bracketed by A20 enable/disable. Crafted return words at 1B04h, 1B2Ah, 2096h, 20C2h, 20CCh and 20D8h are explicitly separated from executable code.
+The former 19F8h–20FFh gap is fully covered. The region includes cache/CPU-speed display, CMOS B3h profile selection, option-ROM scanning and checksum validation, manual CMOS-to-ALi configuration, POST A1h/A4h handlers, the 8750h–87A3h 21-record ALi table walker and the A20-bracketed protected-mode memory-address probe.
 
-Latest mask: 597 code windows, 153 data ranges, 31,279 unique code bytes, 15,827 unique data bytes, 121 overlap bytes, 46,985-byte union (71.69%), 66 uncovered intervals, 210 pages touched and 135 fully covered. The next largest uncovered range is CA16h–D0FFh (1,770 bytes). This is still a seeded inspection mask, not semantic completion.
+The exact stack-return words are at 1B04h (->1B06h), 1B2Ah (->1B2Ch), 2096h (->2098h), 20C2h (->20C4h), 20CCh (->20CEh), 20D8h (->20DAh) and 20FAh (->20FCh). D9D9h directly jumps to 1AFBh. The 20DAh transition loads ES=0008h; AX=4410h is an ALi register 10h/value 44h write, not a segment selector. The memory-probe entry is 20FCh; the first ES:66-prefixed dword store starts at 20FEh and crosses 2100h.
+
+Latest mask: 597 code windows, 154 data ranges, 31,189 unique code bytes, 15,829 unique data bytes, 117 overlap bytes, 46,901-byte union (71.57%), 69 uncovered intervals, 210 pages touched and 133 fully covered pages. The next largest uncovered range is CA16h–D0FFh (1,770 bytes). This is still a seeded inspection mask, not semantic completion.
