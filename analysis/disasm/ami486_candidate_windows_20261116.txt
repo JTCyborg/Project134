@@ -1387,6 +1387,169 @@ Reason: direct CALL target from 00EFh screen-presentation stream; restores tempo
 6336  81 3E 82 02 00 E0       cmp word ptr [0x282], 0xe000
 633C  72              db 0x72
 
+===== 62ECh-636Bh =====
+Reason: temporary INT 10h handler installed by 626Bh
+62EC  50                      push ax
+62ED  1E                      push ds
+62EE  33 C0                   xor ax, ax
+62F0  8E D8                   mov ds, ax
+62F2  FE 06 8E 02             inc byte ptr [0x28e]
+62F6  1F                      pop ds
+62F7  58                      pop ax
+62F8  CD A0                   int 0xa0
+62FA  EB 0E                   jmp 0x630a
+62FC  50                      push ax
+62FD  1E                      push ds
+62FE  33 C0                   xor ax, ax
+6300  8E D8                   mov ds, ax
+6302  FE 06 8E 02             inc byte ptr [0x28e]
+6306  1F                      pop ds
+6307  58                      pop ax
+6308  CD A1                   int 0xa1
+630A  9C                      pushf
+630B  FA                      cli
+630C  50                      push ax
+630D  1E                      push ds
+630E  33 C0                   xor ax, ax
+6310  8E D8                   mov ds, ax
+6312  FE 0E 8E 02             dec byte ptr [0x28e]
+6316  1F                      pop ds
+6317  58                      pop ax
+6318  9D                      popf
+6319  CA 02 00                retf 2
+631C  50                      push ax
+631D  1E                      push ds
+631E  33 C0                   xor ax, ax
+6320  8E D8                   mov ds, ax
+6322  A1 6C 04                mov ax, word ptr [0x46c]
+6325  2B 06 8C 02             sub ax, word ptr [0x28c]
+6329  3D 0B 00                cmp ax, 0xb
+632C  72 26                   jb 0x6354
+632E  81 3E 82 02 00 C8       cmp word ptr [0x282], 0xc800
+6334  72 15                   jb 0x634b
+6336  81 3E 82 02 00 E0       cmp word ptr [0x282], 0xe000
+633C  72 08                   jb 0x6346
+633E  81 3E 82 02 00 F0       cmp word ptr [0x282], 0xf000
+6344  72 05                   jb 0x634b
+6346  3D 11 00                cmp ax, 0x11
+6349  72 09                   jb 0x6354
+634B  01 06 8C 02             add word ptr [0x28c], ax
+634F  C6 06 8F 02 FF          mov byte ptr [0x28f], 0xff
+6354  80 3E 8E 02 00          cmp byte ptr [0x28e], 0
+6359  75 11                   jne 0x636c
+635B  80 3E 8F 02 FF          cmp byte ptr [0x28f], 0xff
+6360  75 0A                   jne 0x636c
+6362  60                      pushaw
+6363  E8 B0 02                call 0x6616
+6366  61                      popaw
+6367  C6 06 8F 02 00          mov byte ptr [0x28f], 0
+
+===== 62FCh-637Bh =====
+Reason: temporary INT 1Ah handler installed by 626Bh
+62FC  50                      push ax
+62FD  1E                      push ds
+62FE  33 C0                   xor ax, ax
+6300  8E D8                   mov ds, ax
+6302  FE 06 8E 02             inc byte ptr [0x28e]
+6306  1F                      pop ds
+6307  58                      pop ax
+6308  CD A1                   int 0xa1
+630A  9C                      pushf
+630B  FA                      cli
+630C  50                      push ax
+630D  1E                      push ds
+630E  33 C0                   xor ax, ax
+6310  8E D8                   mov ds, ax
+6312  FE 0E 8E 02             dec byte ptr [0x28e]
+6316  1F                      pop ds
+6317  58                      pop ax
+6318  9D                      popf
+6319  CA 02 00                retf 2
+631C  50                      push ax
+631D  1E                      push ds
+631E  33 C0                   xor ax, ax
+6320  8E D8                   mov ds, ax
+6322  A1 6C 04                mov ax, word ptr [0x46c]
+6325  2B 06 8C 02             sub ax, word ptr [0x28c]
+6329  3D 0B 00                cmp ax, 0xb
+632C  72 26                   jb 0x6354
+632E  81 3E 82 02 00 C8       cmp word ptr [0x282], 0xc800
+6334  72 15                   jb 0x634b
+6336  81 3E 82 02 00 E0       cmp word ptr [0x282], 0xe000
+633C  72 08                   jb 0x6346
+633E  81 3E 82 02 00 F0       cmp word ptr [0x282], 0xf000
+6344  72 05                   jb 0x634b
+6346  3D 11 00                cmp ax, 0x11
+6349  72 09                   jb 0x6354
+634B  01 06 8C 02             add word ptr [0x28c], ax
+634F  C6 06 8F 02 FF          mov byte ptr [0x28f], 0xff
+6354  80 3E 8E 02 00          cmp byte ptr [0x28e], 0
+6359  75 11                   jne 0x636c
+635B  80 3E 8F 02 FF          cmp byte ptr [0x28f], 0xff
+6360  75 0A                   jne 0x636c
+6362  60                      pushaw
+6363  E8 B0 02                call 0x6616
+6366  61                      popaw
+6367  C6 06 8F 02 00          mov byte ptr [0x28f], 0
+636C  1F                      pop ds
+636D  58                      pop ax
+636E  CD A2                   int 0xa2
+6370  CA 02 00                retf 2
+6373  BA 1B 05                mov dx, 0x51b
+6376  B9 05 00                mov cx, 5
+6379  E8 F2 01                call 0x656e
+
+===== 631Ch-639Bh =====
+Reason: temporary INT 1Ch timer handler installed by 626Bh
+631C  50                      push ax
+631D  1E                      push ds
+631E  33 C0                   xor ax, ax
+6320  8E D8                   mov ds, ax
+6322  A1 6C 04                mov ax, word ptr [0x46c]
+6325  2B 06 8C 02             sub ax, word ptr [0x28c]
+6329  3D 0B 00                cmp ax, 0xb
+632C  72 26                   jb 0x6354
+632E  81 3E 82 02 00 C8       cmp word ptr [0x282], 0xc800
+6334  72 15                   jb 0x634b
+6336  81 3E 82 02 00 E0       cmp word ptr [0x282], 0xe000
+633C  72 08                   jb 0x6346
+633E  81 3E 82 02 00 F0       cmp word ptr [0x282], 0xf000
+6344  72 05                   jb 0x634b
+6346  3D 11 00                cmp ax, 0x11
+6349  72 09                   jb 0x6354
+634B  01 06 8C 02             add word ptr [0x28c], ax
+634F  C6 06 8F 02 FF          mov byte ptr [0x28f], 0xff
+6354  80 3E 8E 02 00          cmp byte ptr [0x28e], 0
+6359  75 11                   jne 0x636c
+635B  80 3E 8F 02 FF          cmp byte ptr [0x28f], 0xff
+6360  75 0A                   jne 0x636c
+6362  60                      pushaw
+6363  E8 B0 02                call 0x6616
+6366  61                      popaw
+6367  C6 06 8F 02 00          mov byte ptr [0x28f], 0
+636C  1F                      pop ds
+636D  58                      pop ax
+636E  CD A2                   int 0xa2
+6370  CA 02 00                retf 2
+6373  BA 1B 05                mov dx, 0x51b
+6376  B9 05 00                mov cx, 5
+6379  E8 F2 01                call 0x656e
+637C  9C                      pushf
+637D  73 07                   jae 0x6386
+637F  74 05                   je 0x6386
+6381  80 FC 01                cmp ah, 1
+6384  75 0B                   jne 0x6391
+6386  BA 1B 05                mov dx, 0x51b
+6389  B9 05 00                mov cx, 5
+638C  E8 0C 02                call 0x659b
+638F  9D                      popf
+6390  C3                      ret
+6391  9D                      popf
+6392  80 FC 49                cmp ah, 0x49
+6395  74 19                   je 0x63b0
+6397  E8 DA 03                call 0x6774
+639A  8A C6                   mov al, dh
+
 ===== 099Dh-0A1Ch =====
 Reason: direct CALL target from 00EFh screen-presentation stream
 099D  53                      push bx
