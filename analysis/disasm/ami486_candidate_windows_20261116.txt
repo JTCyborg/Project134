@@ -1893,6 +1893,10 @@ FFE7  7F 3B 3B 4B 3B 33 4B 1F 2B                      .;;K;3K.+
 Reason: BIOS date 04/04/93 and trailing metadata bytes after reset vector
 FFF5  30 34 2F 30 34 2F 39 33 00 FC 00                04/04/93...
 
+===== DATA 19A2h-19AAh =====
+Reason: CPU/cache profile dispatch pointer table referenced through CS:82C6h; four little-endian offsets to 19ABh/19ADh/19AEh/19AFh
+19A2  00 AB 19 AD 19 AE 19 AF 19                      .........
+
 ===== CA15h-CAA6h =====
 Reason: fall-through continuation from the CA13h selector branch; builds INT 13h drive geometry and ES:DI parameter pointer
 CA15  B0 C7                   mov al, 0xc7
@@ -31853,4 +31857,132 @@ FA64  C3                      ret
 ===== FE6Eh-FE70h =====
 Reason: three-byte near-JMP trampoline immediately following the 1-KiB bitmap block
 FE6E  E9 C8 EE                jmp 0xed39
+
+===== 18E5h-18FCh =====
+Reason: I/O resource probe helper: tests a DX port with 55h and AAh through F691h and records the result in AH
+18E5  53                      push bx
+18E6  33 DB                   xor bx, bx
+18E8  D0 EC                   shr ah, 1
+18EA  B0 55                   mov al, 0x55
+18EC  E8 A2 DD                call 0xf691
+18EF  75 0A                   jne 0x18fb
+18F1  B0 AA                   mov al, 0xaa
+18F3  E8 9B DD                call 0xf691
+18F6  75 03                   jne 0x18fb
+18F8  80 CC 08                or ah, 8
+18FB  5B                      pop bx
+18FC  C3                      ret
+
+===== 18FDh-1913h =====
+Reason: four-port probe over the I/O base table at CS:8248h; calls 18E5h for each nonzero port
+18FD  33 C0                   xor ax, ax
+18FF  BE 48 82                mov si, 0x8248
+1902  B9 04 00                mov cx, 4
+1905  2E 8B 14                mov dx, word ptr cs:[si]
+1908  46                      inc si
+1909  46                      inc si
+190A  0B D2                   or dx, dx
+190C  74 05                   je 0x1913
+190E  E8 D4 FF                call 0x18e5
+1911  E2 F2                   loop 0x1905
+1913  C3                      ret
+
+===== 1914h-197Fh =====
+Reason: I/O conflict aggregator: probes CS:8248h and CS:8240h port tables and checks fixed ports 03F4h/01F4h
+1914  33 C0                   xor ax, ax
+1916  33 D2                   xor dx, dx
+1918  BE 48 82                mov si, 0x8248
+191B  B9 04 00                mov cx, 4
+191E  52                      push dx
+191F  2E 8B 14                mov dx, word ptr cs:[si]
+1922  46                      inc si
+1923  46                      inc si
+1924  0B D2                   or dx, dx
+1926  74 05                   je 0x192d
+1928  E8 BA FF                call 0x18e5
+192B  E2 F2                   loop 0x191f
+192D  5A                      pop dx
+192E  D2 EC                   shr ah, cl
+1930  32 C0                   xor al, al
+1932  86 C4                   xchg ah, al
+1934  8A D0                   mov dl, al
+1936  52                      push dx
+1937  33 C0                   xor ax, ax
+1939  BE 40 82                mov si, 0x8240
+193C  B9 04 00                mov cx, 4
+193F  2E 8B 14                mov dx, word ptr cs:[si]
+1942  46                      inc si
+1943  46                      inc si
+1944  0B D2                   or dx, dx
+1946  83 C2 02                add dx, 2
+1949  74 0D                   je 0x1958
+194B  EC                      in al, dx
+194C  A8 F8                   test al, 0xf8
+194E  75 03                   jne 0x1953
+1950  80 CC 80                or ah, 0x80
+1953  C0 EC 01                shr ah, 1
+1956  E2 E7                   loop 0x193f
+1958  5A                      pop dx
+1959  D2 EC                   shr ah, cl
+195B  32 C0                   xor al, al
+195D  86 C4                   xchg ah, al
+195F  0A D0                   or dl, al
+1961  52                      push dx
+1962  BA F4 03                mov dx, 0x3f4
+1965  EC                      in al, dx
+1966  5A                      pop dx
+1967  3C FF                   cmp al, 0xff
+1969  74 03                   je 0x196e
+196B  80 CE 01                or dh, 1
+196E  52                      push dx
+196F  33 C0                   xor ax, ax
+1971  BA F4 01                mov dx, 0x1f4
+1974  E8 6E FF                call 0x18e5
+1977  5A                      pop dx
+1978  0A E4                   or ah, ah
+197A  74 03                   je 0x197f
+197C  80 CE 02                or dh, 2
+197F  C3                      ret
+
+===== 1980h-198Eh =====
+Reason: port-0170h write/read delay helper
+1980  BA 70 01                mov dx, 0x170
+1983  EE                      out dx, al
+1984  EB 00                   jmp 0x1986
+1986  EB 00                   jmp 0x1988
+1988  42                      inc dx
+1989  EC                      in al, dx
+198A  EB 00                   jmp 0x198c
+198C  EB 00                   jmp 0x198e
+198E  C3                      ret
+
+===== 198Fh-19A1h =====
+Reason: port-0170h/0171h dual-write delay helper
+198F  BA 70 01                mov dx, 0x170
+1992  EE                      out dx, al
+1993  EB 00                   jmp 0x1995
+1995  EB 00                   jmp 0x1997
+1997  42                      inc dx
+1998  86 C4                   xchg ah, al
+199A  EE                      out dx, al
+199B  EB 00                   jmp 0x199d
+199D  EB 00                   jmp 0x199f
+199F  86 C4                   xchg ah, al
+19A1  C3                      ret
+
+===== 19ABh-19ACh =====
+Reason: indirect-dispatch trampoline: JMP DI; referenced by the profile pointer table at 19A2h
+19AB  FF E7                   jmp di
+
+===== 19ADh-19ADh =====
+Reason: one-byte RET dispatch stub referenced by the profile pointer table at 19A2h
+19AD  C3                      ret
+
+===== 19AEh-19AEh =====
+Reason: one-byte RET dispatch stub referenced by the profile pointer table at 19A2h
+19AE  C3                      ret
+
+===== 19AFh-19AFh =====
+Reason: one-byte RET dispatch stub referenced by the profile pointer table at 19A2h
+19AF  C3                      ret
 
