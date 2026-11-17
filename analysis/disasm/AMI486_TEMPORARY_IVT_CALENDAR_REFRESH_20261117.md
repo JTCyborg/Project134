@@ -173,9 +173,9 @@ The timer hook is temporary because the screen routine explicitly calls the rest
 - The semantics and installation provenance of existing INT A0h, INT A1h and INT A2h vectors remain unknown.
 - The exact segment-range rationale for the 0Bh/11h timer thresholds is not proven.
 - The caller stack precondition for 00EFh (the saved BP/SI/DI words consumed by its epilogue) remains unresolved.
-- The generator source now requests a 6616h window through 6757h; the currently fetched generated listing still shows the earlier 80h-byte window. Do not claim the extended generated window until the listing/manifest refresh is verified.
+- The regenerated candidate listing now includes the full 6616h–6757h window (0142h bytes).
 
 
 ## 16-bit mnemonic correction
 
-The byte at 6643h is unprefixed 99h and therefore CWD, not CDQ. Bytes 665Dh and 6669h are unprefixed 98h and therefore CBW, not CWDE. These are essential 16-bit sign-extension instructions in the calendar arithmetic. The Capstone candidate generator and full-linear workflow have been patched to normalize unprefixed 98h/99h. The regenerated artifacts still need verification.
+The byte at 6643h is unprefixed 99h and therefore CWD, not CDQ. Bytes 665Dh and 6669h are unprefixed 98h and therefore CBW, not CWDE. These are essential 16-bit sign-extension instructions in the calendar arithmetic. The Capstone candidate generator and full-linear workflow have been patched to normalize unprefixed 98h/99h. After regeneration, the candidate listing contains zero CWDE/CDQ labels; the full-linear listing blob changed and its manifest still reports 29,731 records covering 65,536 bytes.
