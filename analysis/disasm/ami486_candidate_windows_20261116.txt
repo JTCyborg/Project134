@@ -1964,6 +1964,587 @@ Reason: direct CALL target from 00EFh screen-presentation stream
 0A3F  E8              db 0xE8
 0A40  68              db 0x68
 
+===== 0538h-05B7h =====
+Reason: direct CALL target from numeric-field editor at 03D4h
+0538  E8 3C 00                call 0x577
+053B  BE C1 75                mov si, 0x75c1
+053E  E8 0E 03                call 0x84f
+0541  8B 76 06                mov si, word ptr [bp + 6]
+0544  8B 42 1B                mov ax, word ptr [bp + si + 0x1b]
+0547  89 46 40                mov word ptr [bp + 0x40], ax
+054A  8A 42 1D                mov al, byte ptr [bp + si + 0x1d]
+054D  88 46 42                mov byte ptr [bp + 0x42], al
+0550  8B 42 1E                mov ax, word ptr [bp + si + 0x1e]
+0553  89 46 43                mov word ptr [bp + 0x43], ax
+0556  8B 42 21                mov ax, word ptr [bp + si + 0x21]
+0559  89 46 45                mov word ptr [bp + 0x45], ax
+055C  8A 42 23                mov al, byte ptr [bp + si + 0x23]
+055F  88 46 47                mov byte ptr [bp + 0x47], al
+0562  E8 4B FF                call 0x4b0
+0565  C3                      ret
+0566  BE AC 74                mov si, 0x74ac
+0569  BA 27 07                mov dx, 0x727
+056C  E8 E0 02                call 0x84f
+056F  8A 1E A3 E1             mov bl, byte ptr [0xe1a3]
+0573  B7 00                   mov bh, 0
+0575  EB 12                   jmp 0x589
+0577  BE AC 74                mov si, 0x74ac
+057A  BA 27 07                mov dx, 0x727
+057D  E8 F9 02                call 0x879
+0580  8A 1E A2 E1             mov bl, byte ptr [0xe1a2]
+0584  E8 41 03                call 0x8c8
+0587  B7 00                   mov bh, 0
+0589  8B 56 04                mov dx, word ptr [bp + 4]
+058C  B4 02                   mov ah, 2
+058E  CD 10                   int 0x10
+0590  B9 38 00                mov cx, 0x38
+0593  E8 F8 03                call 0x98e
+0596  C3                      ret
+0597  24 0F                   and al, 0xf
+0599  BE D5 0A                mov si, 0xad5
+059C  E8 0E 05                call 0xaad
+059F  E8 C0 02                call 0x862
+05A2  C3                      ret
+05A3  24 0F                   and al, 0xf
+05A5  BE E1 0A                mov si, 0xae1
+05A8  E8 02 05                call 0xaad
+05AB  8B DE                   mov bx, si
+05AD  BE F1 76                mov si, 0x76f1
+05B0  E8 01 00                call 0x5b4
+05B3  C3                      ret
+05B4  E8 29 00                call 0x5e0
+05B7  83              db 0x83
+
+===== 0566h-05E5h =====
+Reason: direct CALL target from numeric-field editor at 03D4h
+0566  BE AC 74                mov si, 0x74ac
+0569  BA 27 07                mov dx, 0x727
+056C  E8 E0 02                call 0x84f
+056F  8A 1E A3 E1             mov bl, byte ptr [0xe1a3]
+0573  B7 00                   mov bh, 0
+0575  EB 12                   jmp 0x589
+0577  BE AC 74                mov si, 0x74ac
+057A  BA 27 07                mov dx, 0x727
+057D  E8 F9 02                call 0x879
+0580  8A 1E A2 E1             mov bl, byte ptr [0xe1a2]
+0584  E8 41 03                call 0x8c8
+0587  B7 00                   mov bh, 0
+0589  8B 56 04                mov dx, word ptr [bp + 4]
+058C  B4 02                   mov ah, 2
+058E  CD 10                   int 0x10
+0590  B9 38 00                mov cx, 0x38
+0593  E8 F8 03                call 0x98e
+0596  C3                      ret
+0597  24 0F                   and al, 0xf
+0599  BE D5 0A                mov si, 0xad5
+059C  E8 0E 05                call 0xaad
+059F  E8 C0 02                call 0x862
+05A2  C3                      ret
+05A3  24 0F                   and al, 0xf
+05A5  BE E1 0A                mov si, 0xae1
+05A8  E8 02 05                call 0xaad
+05AB  8B DE                   mov bx, si
+05AD  BE F1 76                mov si, 0x76f1
+05B0  E8 01 00                call 0x5b4
+05B3  C3                      ret
+05B4  E8 29 00                call 0x5e0
+05B7  83 C3 04                add bx, 4
+05BA  2E 8B 07                mov ax, word ptr cs:[bx]
+05BD  89 46 02                mov word ptr [bp + 2], ax
+05C0  2E 8B 47 02             mov ax, word ptr cs:[bx + 2]
+05C4  FF D0                   call ax
+05C6  9C                      pushf
+05C7  73 12                   jae 0x5db
+05C9  74 10                   je 0x5db
+05CB  80 FC 01                cmp ah, 1
+05CE  74 0B                   je 0x5db
+05D0  9D                      popf
+05D1  8B 5E 02                mov bx, word ptr [bp + 2]
+05D4  80 FC 51                cmp ah, 0x51
+05D7  74 DE                   je 0x5b7
+05D9  EB DF                   jmp 0x5ba
+05DB  E8 0D 00                call 0x5eb
+05DE  9D                      popf
+05DF  C3                      ret
+05E0  50                      push ax
+05E1  52                      push dx
+05E2  BA 03 12                mov dx, 0x1203
+05E5  E8              db 0xE8
+
+===== 0577h-05F6h =====
+Reason: direct CALL target from numeric-field editor at 03D4h
+0577  BE AC 74                mov si, 0x74ac
+057A  BA 27 07                mov dx, 0x727
+057D  E8 F9 02                call 0x879
+0580  8A 1E A2 E1             mov bl, byte ptr [0xe1a2]
+0584  E8 41 03                call 0x8c8
+0587  B7 00                   mov bh, 0
+0589  8B 56 04                mov dx, word ptr [bp + 4]
+058C  B4 02                   mov ah, 2
+058E  CD 10                   int 0x10
+0590  B9 38 00                mov cx, 0x38
+0593  E8 F8 03                call 0x98e
+0596  C3                      ret
+0597  24 0F                   and al, 0xf
+0599  BE D5 0A                mov si, 0xad5
+059C  E8 0E 05                call 0xaad
+059F  E8 C0 02                call 0x862
+05A2  C3                      ret
+05A3  24 0F                   and al, 0xf
+05A5  BE E1 0A                mov si, 0xae1
+05A8  E8 02 05                call 0xaad
+05AB  8B DE                   mov bx, si
+05AD  BE F1 76                mov si, 0x76f1
+05B0  E8 01 00                call 0x5b4
+05B3  C3                      ret
+05B4  E8 29 00                call 0x5e0
+05B7  83 C3 04                add bx, 4
+05BA  2E 8B 07                mov ax, word ptr cs:[bx]
+05BD  89 46 02                mov word ptr [bp + 2], ax
+05C0  2E 8B 47 02             mov ax, word ptr cs:[bx + 2]
+05C4  FF D0                   call ax
+05C6  9C                      pushf
+05C7  73 12                   jae 0x5db
+05C9  74 10                   je 0x5db
+05CB  80 FC 01                cmp ah, 1
+05CE  74 0B                   je 0x5db
+05D0  9D                      popf
+05D1  8B 5E 02                mov bx, word ptr [bp + 2]
+05D4  80 FC 51                cmp ah, 0x51
+05D7  74 DE                   je 0x5b7
+05D9  EB DF                   jmp 0x5ba
+05DB  E8 0D 00                call 0x5eb
+05DE  9D                      popf
+05DF  C3                      ret
+05E0  50                      push ax
+05E1  52                      push dx
+05E2  BA 03 12                mov dx, 0x1203
+05E5  E8 5D 02                call 0x845
+05E8  5A                      pop dx
+05E9  58                      pop ax
+05EA  C3                      ret
+05EB  50                      push ax
+05EC  53                      push bx
+05ED  51                      push cx
+05EE  52                      push dx
+05EF  BA 03 12                mov dx, 0x1203
+05F2  8A 1E A6 E1             mov bl, byte ptr [0xe1a6]
+05F6  B7              db 0xB7
+
+===== 084Fh-08CEh =====
+Reason: direct CALL target from numeric-field editor at 03D4h
+084F  53                      push bx
+0850  8A 1E A3 E1             mov bl, byte ptr [0xe1a3]
+0854  B7 00                   mov bh, 0
+0856  52                      push dx
+0857  EB 39                   jmp 0x892
+0859  53                      push bx
+085A  8A 1E A3 E1             mov bl, byte ptr [0xe1a3]
+085E  B7 00                   mov bh, 0
+0860  EB 28                   jmp 0x88a
+0862  53                      push bx
+0863  8A 1E A2 E1             mov bl, byte ptr [0xe1a2]
+0867  E8 5E 00                call 0x8c8
+086A  B7 00                   mov bh, 0
+086C  52                      push dx
+086D  EB 23                   jmp 0x892
+086F  53                      push bx
+0870  8A 1E A4 E1             mov bl, byte ptr [0xe1a4]
+0874  B7 00                   mov bh, 0
+0876  52                      push dx
+0877  EB 19                   jmp 0x892
+0879  53                      push bx
+087A  8A 1E A2 E1             mov bl, byte ptr [0xe1a2]
+087E  B7 00                   mov bh, 0
+0880  52                      push dx
+0881  EB 0F                   jmp 0x892
+0883  53                      push bx
+0884  8A 1E A2 E1             mov bl, byte ptr [0xe1a2]
+0888  B7 00                   mov bh, 0
+088A  52                      push dx
+088B  2E 8B 14                mov dx, word ptr cs:[si]
+088E  86 D6                   xchg dh, dl
+0890  46                      inc si
+0891  46                      inc si
+0892  51                      push cx
+0893  50                      push ax
+0894  B4 02                   mov ah, 2
+0896  CD 10                   int 0x10
+0898  2E 8A 04                mov al, byte ptr cs:[si]
+089B  46                      inc si
+089C  0A C0                   or al, al
+089E  74 23                   je 0x8c3
+08A0  3C 0D                   cmp al, 0xd
+08A2  75 04                   jne 0x8a8
+08A4  B2 03                   mov dl, 3
+08A6  EB EC                   jmp 0x894
+08A8  3C 0A                   cmp al, 0xa
+08AA  75 04                   jne 0x8b0
+08AC  FE C6                   inc dh
+08AE  EB E4                   jmp 0x894
+08B0  3C 08                   cmp al, 8
+08B2  75 04                   jne 0x8b8
+08B4  FE CA                   dec dl
+08B6  EB DC                   jmp 0x894
+08B8  B4 09                   mov ah, 9
+08BA  B9 01 00                mov cx, 1
+08BD  CD 10                   int 0x10
+08BF  FE C2                   inc dl
+08C1  EB D1                   jmp 0x894
+08C3  58                      pop ax
+08C4  59                      pop cx
+08C5  5A                      pop dx
+08C6  5B                      pop bx
+08C7  C3                      ret
+08C8  0A 1E EA 55             or bl, byte ptr [0x55ea]
+08CC  C3                      ret
+08CD  53                      push bx
+08CE  51                      push cx
+
+===== 08CDh-094Ch =====
+Reason: keyboard/input helper called by 03D4h editor
+08CD  53                      push bx
+08CE  51                      push cx
+08CF  BB 51 49                mov bx, 0x4951
+08D2  B9 01 01                mov cx, 0x101
+08D5  B4 00                   mov ah, 0
+08D7  CD 16                   int 0x16
+08D9  80 FC 3C                cmp ah, 0x3c
+08DC  74 32                   je 0x910
+08DE  80 FC 3D                cmp ah, 0x3d
+08E1  74 2D                   je 0x910
+08E3  80 FC 4D                cmp ah, 0x4d
+08E6  74 26                   je 0x90e
+08E8  80 FC 50                cmp ah, 0x50
+08EB  74 21                   je 0x90e
+08ED  80 FC 4B                cmp ah, 0x4b
+08F0  74 7A                   je 0x96c
+08F2  80 FC 48                cmp ah, 0x48
+08F5  74 75                   je 0x96c
+08F7  3A E7                   cmp ah, bh
+08F9  74 6F                   je 0x96a
+08FB  3A E3                   cmp ah, bl
+08FD  74 6B                   je 0x96a
+08FF  3A E5                   cmp ah, ch
+0901  74 67                   je 0x96a
+0903  3A E1                   cmp ah, cl
+0905  74 63                   je 0x96a
+0907  80 FC 1C                cmp ah, 0x1c
+090A  75 C9                   jne 0x8d5
+090C  B4 4D                   mov ah, 0x4d
+090E  EB 5D                   jmp 0x96d
+0910  88 26 82 E1             mov byte ptr [0xe182], ah
+0914  60                      pushaw
+0915  1E                      push ds
+0916  06                      push es
+0917  E8 94 4D                call 0x56ae
+091A  A0 37 E0                mov al, byte ptr [0xe037]
+091D  88 46 37                mov byte ptr [bp + 0x37], al
+0920  A0 A8 E1                mov al, byte ptr [0xe1a8]
+0923  A2 9F E1                mov byte ptr [0xe19f], al
+0926  B8 00 00                mov ax, 0
+0929  BA 4F 18                mov dx, 0x184f
+092C  E8 F2 4E                call 0x5821
+092F  A0 A2 E1                mov al, byte ptr [0xe1a2]
+0932  A2 9F E1                mov byte ptr [0xe19f], al
+0935  B8 01 04                mov ax, 0x401
+0938  BA 4E 17                mov dx, 0x174e
+093B  E8 E3 4E                call 0x5821
+093E  B0 0F                   mov al, 0xf
+0940  86 06 EA 55             xchg byte ptr [0x55ea], al
+0944  50                      push ax
+0945  A0 A4 E1                mov al, byte ptr [0xe1a4]
+0948  A2 9F E1                mov byte ptr [0xe19f], al
+094B  B8              db 0xB8
+094C  33              db 0x33
+
+===== 086Fh-08EEh =====
+Reason: direct CALL target from screen grid renderer at 622Bh
+086F  53                      push bx
+0870  8A 1E A4 E1             mov bl, byte ptr [0xe1a4]
+0874  B7 00                   mov bh, 0
+0876  52                      push dx
+0877  EB 19                   jmp 0x892
+0879  53                      push bx
+087A  8A 1E A2 E1             mov bl, byte ptr [0xe1a2]
+087E  B7 00                   mov bh, 0
+0880  52                      push dx
+0881  EB 0F                   jmp 0x892
+0883  53                      push bx
+0884  8A 1E A2 E1             mov bl, byte ptr [0xe1a2]
+0888  B7 00                   mov bh, 0
+088A  52                      push dx
+088B  2E 8B 14                mov dx, word ptr cs:[si]
+088E  86 D6                   xchg dh, dl
+0890  46                      inc si
+0891  46                      inc si
+0892  51                      push cx
+0893  50                      push ax
+0894  B4 02                   mov ah, 2
+0896  CD 10                   int 0x10
+0898  2E 8A 04                mov al, byte ptr cs:[si]
+089B  46                      inc si
+089C  0A C0                   or al, al
+089E  74 23                   je 0x8c3
+08A0  3C 0D                   cmp al, 0xd
+08A2  75 04                   jne 0x8a8
+08A4  B2 03                   mov dl, 3
+08A6  EB EC                   jmp 0x894
+08A8  3C 0A                   cmp al, 0xa
+08AA  75 04                   jne 0x8b0
+08AC  FE C6                   inc dh
+08AE  EB E4                   jmp 0x894
+08B0  3C 08                   cmp al, 8
+08B2  75 04                   jne 0x8b8
+08B4  FE CA                   dec dl
+08B6  EB DC                   jmp 0x894
+08B8  B4 09                   mov ah, 9
+08BA  B9 01 00                mov cx, 1
+08BD  CD 10                   int 0x10
+08BF  FE C2                   inc dl
+08C1  EB D1                   jmp 0x894
+08C3  58                      pop ax
+08C4  59                      pop cx
+08C5  5A                      pop dx
+08C6  5B                      pop bx
+08C7  C3                      ret
+08C8  0A 1E EA 55             or bl, byte ptr [0x55ea]
+08CC  C3                      ret
+08CD  53                      push bx
+08CE  51                      push cx
+08CF  BB 51 49                mov bx, 0x4951
+08D2  B9 01 01                mov cx, 0x101
+08D5  B4 00                   mov ah, 0
+08D7  CD 16                   int 0x16
+08D9  80 FC 3C                cmp ah, 0x3c
+08DC  74 32                   je 0x910
+08DE  80 FC 3D                cmp ah, 0x3d
+08E1  74 2D                   je 0x910
+08E3  80 FC 4D                cmp ah, 0x4d
+08E6  74 26                   je 0x90e
+08E8  80 FC 50                cmp ah, 0x50
+08EB  74 21                   je 0x90e
+08ED  80              db 0x80
+08EE  FC                      cld
+
+===== 0970h-09EFh =====
+Reason: direct CALL target from numeric field renderer at 0A15h
+0970  B8 4B 0E                mov ax, 0xe4b
+0973  EB 03                   jmp 0x978
+0975  B8 4D 0E                mov ax, 0xe4d
+0978  50                      push ax
+0979  E8 0E 00                call 0x98a
+097C  58                      pop ax
+097D  CD 10                   int 0x10
+097F  B8 42 0E                mov ax, 0xe42
+0982  CD 10                   int 0x10
+0984  C3                      ret
+0985  B8 08 0E                mov ax, 0xe08
+0988  EB 08                   jmp 0x992
+098A  B4 0E                   mov ah, 0xe
+098C  EB 02                   jmp 0x990
+098E  B4 09                   mov ah, 9
+0990  B0 20                   mov al, 0x20
+0992  CD 10                   int 0x10
+0994  C3                      ret
+0995  53                      push bx
+0996  51                      push cx
+0997  52                      push dx
+0998  BB 20 00                mov bx, 0x20
+099B  EB 06                   jmp 0x9a3
+099D  53                      push bx
+099E  51                      push cx
+099F  52                      push dx
+09A0  BB 00 00                mov bx, 0
+09A3  B4 03                   mov ah, 3
+09A5  CD 10                   int 0x10
+09A7  81 E1 1F 1F             and cx, 0x1f1f
+09AB  3A CD                   cmp cl, ch
+09AD  77 02                   ja 0x9b1
+09AF  86 CD                   xchg ch, cl
+09B1  0A DB                   or bl, bl
+09B3  74 02                   je 0x9b7
+09B5  86 CD                   xchg ch, cl
+09B7  0A EB                   or ch, bl
+09B9  B4 01                   mov ah, 1
+09BB  CD 10                   int 0x10
+09BD  5A                      pop dx
+09BE  59                      pop cx
+09BF  5B                      pop bx
+09C0  C3                      ret
+09C1  53                      push bx
+09C2  52                      push dx
+09C3  8B D0                   mov dx, ax
+09C5  B4 02                   mov ah, 2
+09C7  B7 00                   mov bh, 0
+09C9  CD 10                   int 0x10
+09CB  5A                      pop dx
+09CC  5B                      pop bx
+09CD  C3                      ret
+09CE  8B D0                   mov dx, ax
+09D0  8B C2                   mov ax, dx
+09D2  E8 EC FF                call 0x9c1
+09D5  B4 08                   mov ah, 8
+09D7  CD 10                   int 0x10
+09D9  8A DC                   mov bl, ah
+09DB  E8 EA FE                call 0x8c8
+09DE  B4 09                   mov ah, 9
+09E0  51                      push cx
+09E1  B9 01 00                mov cx, 1
+09E4  CD 10                   int 0x10
+09E6  59                      pop cx
+09E7  42                      inc dx
+09E8  E2 E6                   loop 0x9d0
+09EA  C3                      ret
+09EB  E8 D3 FF                call 0x9c1
+09EE  53                      push bx
+09EF  B7              db 0xB7
+
+===== 098Eh-0A0Dh =====
+Reason: direct CALL target from field clearing and numeric field renderers
+098E  B4 09                   mov ah, 9
+0990  B0 20                   mov al, 0x20
+0992  CD 10                   int 0x10
+0994  C3                      ret
+0995  53                      push bx
+0996  51                      push cx
+0997  52                      push dx
+0998  BB 20 00                mov bx, 0x20
+099B  EB 06                   jmp 0x9a3
+099D  53                      push bx
+099E  51                      push cx
+099F  52                      push dx
+09A0  BB 00 00                mov bx, 0
+09A3  B4 03                   mov ah, 3
+09A5  CD 10                   int 0x10
+09A7  81 E1 1F 1F             and cx, 0x1f1f
+09AB  3A CD                   cmp cl, ch
+09AD  77 02                   ja 0x9b1
+09AF  86 CD                   xchg ch, cl
+09B1  0A DB                   or bl, bl
+09B3  74 02                   je 0x9b7
+09B5  86 CD                   xchg ch, cl
+09B7  0A EB                   or ch, bl
+09B9  B4 01                   mov ah, 1
+09BB  CD 10                   int 0x10
+09BD  5A                      pop dx
+09BE  59                      pop cx
+09BF  5B                      pop bx
+09C0  C3                      ret
+09C1  53                      push bx
+09C2  52                      push dx
+09C3  8B D0                   mov dx, ax
+09C5  B4 02                   mov ah, 2
+09C7  B7 00                   mov bh, 0
+09C9  CD 10                   int 0x10
+09CB  5A                      pop dx
+09CC  5B                      pop bx
+09CD  C3                      ret
+09CE  8B D0                   mov dx, ax
+09D0  8B C2                   mov ax, dx
+09D2  E8 EC FF                call 0x9c1
+09D5  B4 08                   mov ah, 8
+09D7  CD 10                   int 0x10
+09D9  8A DC                   mov bl, ah
+09DB  E8 EA FE                call 0x8c8
+09DE  B4 09                   mov ah, 9
+09E0  51                      push cx
+09E1  B9 01 00                mov cx, 1
+09E4  CD 10                   int 0x10
+09E6  59                      pop cx
+09E7  42                      inc dx
+09E8  E2 E6                   loop 0x9d0
+09EA  C3                      ret
+09EB  E8 D3 FF                call 0x9c1
+09EE  53                      push bx
+09EF  B7 00                   mov bh, 0
+09F1  B8 20 0A                mov ax, 0xa20
+09F4  8B CA                   mov cx, dx
+09F6  CD 10                   int 0x10
+09F8  58                      pop ax
+09F9  EB 02                   jmp 0x9fd
+09FB  B4 00                   mov ah, 0
+09FD  B9 0A 00                mov cx, 0xa
+0A00  33 D2                   xor dx, dx
+0A02  F7 F1                   div cx
+0A04  0B C0                   or ax, ax
+0A06  74 05                   je 0xa0d
+0A08  52                      push dx
+0A09  E8 F4 FF                call 0xa00
+0A0C  5A                      pop dx
+0A0D  8B              db 0x8B
+
+===== 5802h-5881h =====
+Reason: direct CALL target from 3E3Fh screen panel renderer
+5802  57                      push di
+5803  E8 E1 FF                call 0x57e7
+5806  8A E0                   mov ah, al
+5808  B0 20                   mov al, 0x20
+580A  51                      push cx
+580B  57                      push di
+580C  8B CA                   mov cx, dx
+580E  F3 AB                   rep stosw word ptr es:[di], ax
+5810  5F                      pop di
+5811  81 C7 A0 00             add di, 0xa0
+5815  59                      pop cx
+5816  E2 F2                   loop 0x580a
+5818  5F                      pop di
+5819  E9 F5 FE                jmp 0x5711
+581C  32 F6                   xor dh, dh
+581E  03 D0                   add dx, ax
+5820  4A                      dec dx
+5821  57                      push di
+5822  E8 C2 FF                call 0x57e7
+5825  8A D8                   mov bl, al
+5827  51                      push cx
+5828  57                      push di
+5829  8B CA                   mov cx, dx
+582B  47                      inc di
+582C  26 8A 05                mov al, byte ptr es:[di]
+582F  24 88                   and al, 0x88
+5831  0A C3                   or al, bl
+5833  A8 08                   test al, 8
+5835  74 04                   je 0x583b
+5837  0A 06 EA 55             or al, byte ptr [0x55ea]
+583B  AA                      stosb byte ptr es:[di], al
+583C  E2 ED                   loop 0x582b
+583E  5F                      pop di
+583F  81 C7 A0 00             add di, 0xa0
+5843  59                      pop cx
+5844  E2 E1                   loop 0x5827
+5846  5F                      pop di
+5847  E9 C7 FE                jmp 0x5711
+584A  89 1E 9D E1             mov word ptr [0xe19d], bx
+584E  E8 B1 FE                call 0x5702
+5851  E8 9D FE                call 0x56f1
+5854  B1 0A                   mov cl, 0xa
+5856  E8 C3 FE                call 0x571c
+5859  AA                      stosb byte ptr es:[di], al
+585A  47                      inc di
+585B  33 C9                   xor cx, cx
+585D  8A CA                   mov cl, dl
+585F  49                      dec cx
+5860  49                      dec cx
+5861  C3                      ret
+5862  57                      push di
+5863  E8 E4 FF                call 0x584a
+5866  E3 07                   jcxz 0x586f
+5868  E8 E6 FE                call 0x5751
+586B  AA                      stosb byte ptr es:[di], al
+586C  47                      inc di
+586D  E2 FC                   loop 0x586b
+586F  B1 0D                   mov cl, 0xd
+5871  E8 A8 FE                call 0x571c
+5874  AA                      stosb byte ptr es:[di], al
+5875  47                      inc di
+5876  5F                      pop di
+5877  E9 97 FE                jmp 0x5711
+587A  57                      push di
+587B  E8 CC FF                call 0x584a
+587E  E3 0B                   jcxz 0x588b
+5880  E8              db 0xE8
+5881  DB              db 0xDB
+
 ===== 00EFh-0235h =====
 Reason: low-ROM executable-looking stream after the AMI copyright block; entry xrefs unresolved
 00EF  06                      push es
