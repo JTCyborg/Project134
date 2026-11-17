@@ -1541,6 +1541,29 @@ Reason: LGDT pseudo-descriptor at 2068h plus adjacent descriptor/parameter bytes
 2078  FF FF 00 00 00 93 8F 00 FF FF 00 00 00 93 00 00 ................
 2088  01 04 02 10 40                                  ....@
 
+===== DATA 2646h-2685h =====
+Reason: Eight-entry GDT used by the protected-mode memory probe; entry 1 at 264Eh overlays the six-byte GDTR pseudo-descriptor, selectors 0010h and 0038h select the 64-KiB and flat 4-GiB data descriptors
+2646  00 00 00 00 00 00 00 00 40 00 46 26 0F 00 00 00 ........@.F&....
+2656  FF FF 00 00 00 93 00 00 FF FF 00 80 83 93 00 03 ................
+2666  FF FF 00 00 A3 93 00 03 FF FF 00 00 82 93 00 03 ................
+2676  FF FF 00 00 84 93 00 03 FF FF 00 00 00 93 8F 00 ................
+
+===== DATA 27CAh-27CBh =====
+Reason: Crafted stack-return word 27CCh consumed by RET at 29EAh; the following bytes are the aligned JE continuation
+Words: 27CC
+
+===== DATA 27DAh-27DBh =====
+Reason: Crafted stack-return word 27DCh consumed by the 8D83h error helper; the following bytes are an aligned JMP continuation
+Words: 27DC
+
+===== DATA 27F2h-27F3h =====
+Reason: Crafted stack-return word 27F4h consumed by the EE94h CMOS-read helper
+Words: 27F4
+
+===== DATA 27FEh-27FFh =====
+Reason: Crafted stack-return word 2800h consumed by the EE9Dh CMOS-write helper
+Words: 2800
+
 ===== CA15h-CAA6h =====
 Reason: fall-through continuation from the CA13h selector branch; builds INT 13h drive geometry and ES:DI parameter pointer
 CA15  B0 C7                   mov al, 0xc7
@@ -13674,7 +13697,7 @@ Reason: AUTO Config chipset setup helper called from POST A4 handler 1F47h
 25F3  0F              db 0x0F
 25F4  84 0A                   test byte ptr [bp + si], cl
 
-===== 2629h-2688h =====
+===== 2629h-2645h =====
 Reason: protected-mode memory-test path selected from 8D72h continuation
 2629  8C DA                   mov dx, ds
 262B  33 DB                   xor bx, bx
@@ -13688,38 +13711,6 @@ Reason: protected-mode memory-test path selected from 8D72h continuation
 2640  75 ED                   jne 0x262f
 2642  8E DA                   mov ds, dx
 2644  FF E7                   jmp di
-2646  00 00                   add byte ptr [bx + si], al
-2648  00 00                   add byte ptr [bx + si], al
-264A  00 00                   add byte ptr [bx + si], al
-264C  00 00                   add byte ptr [bx + si], al
-264E  40                      inc ax
-264F  00 46 26                add byte ptr [bp + 0x26], al
-2652  0F 00 00                sldt word ptr [bx + si]
-2655  00 FF                   add bh, bh
-2657  FF 00                   inc word ptr [bx + si]
-2659  00 00                   add byte ptr [bx + si], al
-265B  93                      xchg bx, ax
-265C  00 00                   add byte ptr [bx + si], al
-265E  FF              db 0xFF
-265F  FF 00                   inc word ptr [bx + si]
-2661  80 83 93 00 03          add byte ptr [bp + di + 0x93], 3
-2666  FF              db 0xFF
-2667  FF 00                   inc word ptr [bx + si]
-2669  00 A3 93 00             add byte ptr [bp + di + 0x93], ah
-266D  03 FF                   add di, di
-266F  FF 00                   inc word ptr [bx + si]
-2671  00 82 93 00             add byte ptr [bp + si + 0x93], al
-2675  03 FF                   add di, di
-2677  FF 00                   inc word ptr [bx + si]
-2679  00 84 93 00             add byte ptr [si + 0x93], al
-267D  03 FF                   add di, di
-267F  FF 00                   inc word ptr [bx + si]
-2681  00 00                   add byte ptr [bx + si], al
-2683  93                      xchg bx, ax
-2684  8F 00                   pop word ptr [bx + si]
-2686  66              db 0x66
-2687  B9              db 0xB9
-2688  00              db 0x00
 
 ===== 2686h-26E5h =====
 Reason: protected-mode memory-test path selected from 8D6Ch continuation
@@ -13761,7 +13752,7 @@ Reason: protected-mode memory-test path selected from 8D6Ch continuation
 26E4  B9              db 0xB9
 26E5  00              db 0x00
 
-===== 26F9h-2758h =====
+===== 26F9h-2760h =====
 Reason: CMOS B518h-gated POST memory-test entry called from 1EC8h
 26F9  FA                      cli
 26FA  2E A0 18 B5             mov al, byte ptr cs:[0xb518]
@@ -13798,6 +13789,9 @@ Reason: CMOS B518h-gated POST memory-test entry called from 1EC8h
 2751  BF 57 27                mov di, 0x2757
 2754  E9 96 66                jmp 0x8ded
 2757  24 FC                   and al, 0xfc
+2759  86 E0                   xchg al, ah
+275B  BF 61 27                mov di, 0x2761
+275E  E9 9A 66                jmp 0x8dfb
 
 ===== 2761h-27A0h =====
 Reason: aligned continuation within the protected-mode memory test
@@ -13918,7 +13912,7 @@ Reason: POST memory setup helper called from 1EC8h
 28EE  E8              db 0xE8
 28EF  EB              db 0xEB
 
-===== 29BBh-2A3Ah =====
+===== 29BBh-29EAh =====
 Reason: second-stage memory test: 32-KiB read pass and 16-KiB fill/verify/clear
 29BB  33 F6                   xor si, si
 29BD  B9 00 20                mov cx, 0x2000
@@ -13939,52 +13933,13 @@ Reason: second-stage memory test: 32-KiB read pass and 16-KiB fill/verify/clear
 29E5  B9 00 20                mov cx, 0x2000
 29E8  F3 AB                   rep stosw word ptr es:[di], ax
 29EA  C3                      ret
-29EB  FF E7                   jmp di
-29ED  B8 B6 B6                mov ax, 0xb6b6
-29F0  E8 A1 C4                call 0xee94
-29F3  A8 01                   test al, 1
-29F5  C3                      ret
-29F6  06                      push es
-29F7  56                      push si
-29F8  57                      push di
-29F9  33 DB                   xor bx, bx
-29FB  8A 1E 36 E0             mov bl, byte ptr [0xe036]
-29FF  80 26 36 E0 FE          and byte ptr [0xe036], 0xfe
-2A04  80 26 66 E0 00          and byte ptr [0xe066], 0
-2A09  0A C0                   or al, al
-2A0B  0F 85 20 00             jne 0x2a2f
-2A0F  F6 C3 01                test bl, 1
-2A12  0F 84 13 00             je 0x2a29
-2A16  80 0E 66 E0 01          or byte ptr [0xe066], 1
-2A1B  EB 1A                   jmp 0x2a37
-2A1D  90                      nop
-2A1E  80 0E 36 E0 01          or byte ptr [0xe036], 1
-2A23  B8 71 B5                mov ax, 0xb571
-2A26  E9 86 00                jmp 0x2aaf
-2A29  B8 68 B5                mov ax, 0xb568
-2A2C  E9 80 00                jmp 0x2aaf
-2A2F  02 C3                   add al, bl
-2A31  24 01                   and al, 1
-2A33  08 06 36 E0             or byte ptr [0xe036], al
-2A37  1E                      push ds
-2A38  B8 40 00                mov ax, 0x40
 
-===== 29EDh-2A0Ch =====
+===== 29EDh-29F5h =====
 Reason: CMOS B6h.0 AUTO Config selector used by POST and CPU-speed display
 29ED  B8 B6 B6                mov ax, 0xb6b6
 29F0  E8 A1 C4                call 0xee94
 29F3  A8 01                   test al, 1
 29F5  C3                      ret
-29F6  06                      push es
-29F7  56                      push si
-29F8  57                      push di
-29F9  33 DB                   xor bx, bx
-29FB  8A 1E 36 E0             mov bl, byte ptr [0xe036]
-29FF  80 26 36 E0 FE          and byte ptr [0xe036], 0xfe
-2A04  80 26 66 E0 00          and byte ptr [0xe066], 0
-2A09  0A C0                   or al, al
-2A0B  0F              db 0x0F
-2A0C  85              db 0x85
 
 ===== 24AEh-253Dh =====
 Reason: conditional continuation of the 24A4h CMOS/ALi feature probe
@@ -14262,7 +14217,7 @@ Reason: post-memory-test helper continuation after the protected-mode memory sca
 2714  8C              db 0x8C
 2715  16                      push ss
 
-===== 27A0h-27FFh =====
+===== 27A0h-27C9h =====
 Reason: aligned continuation of the protected-mode memory-pattern loop
 27A0  67 66 8B 9E 00 20 00 00 mov ebx, dword ptr [esi + 0x2000]
 27A8  67 66 3B 06             cmp eax, dword ptr [esi]
@@ -14277,31 +14232,8 @@ Reason: aligned continuation of the protected-mode memory-pattern loop
 27C3  90                      nop
 27C4  BC CA 27                mov sp, 0x27ca
 27C7  E9 F1 01                jmp 0x29bb
-27CA  CC                      int3
-27CB  27                      daa
-27CC  0F 84 0E 00             je 0x27de
-27D0  81 CD 00 40             or bp, 0x4000
-27D4  BC DA 27                mov sp, 0x27da
-27D7  E9 A9 65                jmp 0x8d83
-27DA  DC 27                   fsub qword ptr [bx]
-27DC  EB 22                   jmp 0x2800
-27DE  8C D8                   mov ax, ds
-27E0  05 00 04                add ax, 0x400
-27E3  3D 00 90                cmp ax, 0x9000
-27E6  75 D7                   jne 0x27bf
-27E8  B8 B3 B3                mov ax, 0xb3b3
-27EB  90                      nop
-27EC  BC F2 27                mov sp, 0x27f2
-27EF  E9 A2 C6                jmp 0xee94
-27F2  F4                      hlt
-27F3  27                      daa
-27F4  0C 01                   or al, 1
-27F6  86 C4                   xchg ah, al
-27F8  BC FE 27                mov sp, 0x27fe
-27FB  E9 9F C6                jmp 0xee9d
-27FE  00 28                   add byte ptr [bx + si], ch
 
-===== 27B0h-27EFh =====
+===== 27B0h-27C9h =====
 Reason: fall-through continuation after the 27A8h memory comparison
 27B0  66 83 C6 04             add esi, 4
 27B4  E2 BC                   loop 0x2772
@@ -14313,24 +14245,8 @@ Reason: fall-through continuation after the 27A8h memory comparison
 27C3  90                      nop
 27C4  BC CA 27                mov sp, 0x27ca
 27C7  E9 F1 01                jmp 0x29bb
-27CA  CC                      int3
-27CB  27                      daa
-27CC  0F 84 0E 00             je 0x27de
-27D0  81 CD 00 40             or bp, 0x4000
-27D4  BC DA 27                mov sp, 0x27da
-27D7  E9 A9 65                jmp 0x8d83
-27DA  DC 27                   fsub qword ptr [bx]
-27DC  EB 22                   jmp 0x2800
-27DE  8C D8                   mov ax, ds
-27E0  05 00 04                add ax, 0x400
-27E3  3D 00 90                cmp ax, 0x9000
-27E6  75 D7                   jne 0x27bf
-27E8  B8 B3 B3                mov ax, 0xb3b3
-27EB  90                      nop
-27EC  BC F2 27                mov sp, 0x27f2
-27EF  E9              db 0xE9
 
-===== 27B6h-27E5h =====
+===== 27B6h-27C9h =====
 Reason: mismatch branch target in the protected-mode memory-pattern test
 27B6  0B C9                   or cx, cx
 27B8  0F 85 14 00             jne 0x27d0
@@ -14340,19 +14256,8 @@ Reason: mismatch branch target in the protected-mode memory-pattern test
 27C3  90                      nop
 27C4  BC CA 27                mov sp, 0x27ca
 27C7  E9 F1 01                jmp 0x29bb
-27CA  CC                      int3
-27CB  27                      daa
-27CC  0F 84 0E 00             je 0x27de
-27D0  81 CD 00 40             or bp, 0x4000
-27D4  BC DA 27                mov sp, 0x27da
-27D7  E9 A9 65                jmp 0x8d83
-27DA  DC 27                   fsub qword ptr [bx]
-27DC  EB 22                   jmp 0x2800
-27DE  8C D8                   mov ax, ds
-27E0  05 00 04                add ax, 0x400
-27E3  3D 00 90                cmp ax, 0x9000
 
-===== 28DCh-291Bh =====
+===== 28DCh-28FBh =====
 Reason: common chipset-configuration continuation in the 2850h POST helper
 28DC  BF E2 28                mov di, 0x28e2
 28DF  E9 DC FD                jmp 0x26be
@@ -14367,24 +14272,10 @@ Reason: common chipset-configuration continuation in the 2850h POST helper
 28F3  B8 00 9C                mov ax, 0x9c00
 28F6  8E D8                   mov ds, ax
 28F8  33 F6                   xor si, si
-28FA  B9 00 20                mov cx, 0x2000
-28FD  F3 AD                   rep lodsw ax, word ptr [si]
-28FF  8C D8                   mov ax, ds
-2901  80 EC 04                sub ah, 4
-2904  80 FC 1C                cmp ah, 0x1c
-2907  73 ED                   jae 0x28f6
-2909  8E D8                   mov ds, ax
-290B  BF 11 29                mov di, 0x2911
-290E  EB 5B                   jmp 0x296b
-2910  90                      nop
-2911  8B D3                   mov dx, bx
-2913  33 ED                   xor bp, bp
-2915  BF 1B 29                mov di, 0x291b
-2918  EB 51                   jmp 0x296b
-291A  90                      nop
-291B  2B              db 0x2B
+28FA  B9              db 0xB9
+28FB  00              db 0x00
 
-===== 28F2h-2931h =====
+===== 28F2h-2971h =====
 Reason: direct CALL target from the 2893h POST configuration path
 28F2  FA                      cli
 28F3  B8 00 9C                mov ax, 0x9c00
@@ -14413,8 +14304,255 @@ Reason: direct CALL target from the 2893h POST configuration path
 292A  45                      inc bp
 292B  8C D8                   mov ax, ds
 292D  80 C4 04                add ah, 4
-2930  80              db 0x80
-2931  FC                      cld
+2930  80 FC A0                cmp ah, 0xa0
+2933  8E D8                   mov ds, ax
+2935  75 DE                   jne 0x2915
+2937  8B DD                   mov bx, bp
+2939  8B EC                   mov bp, sp
+293B  8B C3                   mov ax, bx
+293D  E6 81                   out 0x81, al
+293F  83 FB 20                cmp bx, 0x20
+2942  0F 86 03 00             jbe 0x2949
+2946  BB 40 00                mov bx, 0x40
+2949  B9 08 00                mov cx, 8
+294C  D0 E3                   shl bl, 1
+294E  0F 82 02 00             jb 0x2954
+2952  E2 F8                   loop 0x294c
+2954  80 E1 07                and cl, 7
+2957  8A E1                   mov ah, cl
+2959  B1 04                   mov cl, 4
+295B  D2 E4                   shl ah, cl
+295D  1E                      push ds
+295E  BB 40 00                mov bx, 0x40
+2961  8E DB                   mov ds, bx
+2963  8A C4                   mov al, ah
+2965  88 26 E0 00             mov byte ptr [0xe0], ah
+2969  1F                      pop ds
+296A  C3                      ret
+296B  33 F6                   xor si, si
+296D  B9 00 20                mov cx, 0x2000
+2970  B0 00                   mov al, 0
+
+===== 26BEh-26EDh =====
+Reason: alternate memory scan entry reached by the 26BCh indirect continuation
+26BE  B8 00 40                mov ax, 0x4000
+26C1  8E D8                   mov ds, ax
+26C3  33 F6                   xor si, si
+26C5  B9 00 80                mov cx, 0x8000
+26C8  F3 AD                   rep lodsw ax, word ptr [si]
+26CA  8C D8                   mov ax, ds
+26CC  80 C4 08                add ah, 8
+26CF  80 FC A0                cmp ah, 0xa0
+26D2  75 ED                   jne 0x26c1
+26D4  FF E7                   jmp di
+26D6  1E                      push ds
+26D7  56                      push si
+26D8  33 C0                   xor ax, ax
+26DA  B8 00 07                mov ax, 0x700
+26DD  8E D8                   mov ds, ax
+26DF  BB 02 00                mov bx, 2
+26E2  33 F6                   xor si, si
+26E4  B9 00 80                mov cx, 0x8000
+26E7  F3 AD                   rep lodsw ax, word ptr [si]
+26E9  8C D8                   mov ax, ds
+26EB  05 00 10                add ax, 0x1000
+
+===== 27CCh-27DBh =====
+Reason: crafted-return continuation after the 29BBh memory test; tests returned ZF
+27CC  0F 84 0E 00             je 0x27de
+27D0  81 CD 00 40             or bp, 0x4000
+27D4  BC DA 27                mov sp, 0x27da
+27D7  E9 A9 65                jmp 0x8d83
+27DA  DC 27                   fsub qword ptr [bx]
+
+===== 27DCh-27F3h =====
+Reason: crafted-return continuation after the 8D83h memory-test error helper
+27DC  EB 22                   jmp 0x2800
+27DE  8C D8                   mov ax, ds
+27E0  05 00 04                add ax, 0x400
+27E3  3D 00 90                cmp ax, 0x9000
+27E6  75 D7                   jne 0x27bf
+27E8  B8 B3 B3                mov ax, 0xb3b3
+27EB  90                      nop
+27EC  BC F2 27                mov sp, 0x27f2
+27EF  E9 A2 C6                jmp 0xee94
+27F2  F4                      hlt
+27F3  27                      daa
+
+===== 27F4h-27FFh =====
+Reason: crafted-return continuation after CMOS B3h read through EE94h
+27F4  0C 01                   or al, 1
+27F6  86 C4                   xchg ah, al
+27F8  BC FE 27                mov sp, 0x27fe
+27FB  E9 9F C6                jmp 0xee9d
+27FE  00 28                   add byte ptr [bx + si], ch
+
+===== 2800h-287Fh =====
+Reason: crafted-return continuation after CMOS B3h write through EE9Dh
+2800  B8 19 19                mov ax, 0x1919
+2803  90                      nop
+2804  BC 0A 28                mov sp, 0x280a
+2807  E9 C5 65                jmp 0x8dcf
+280A  0C 28                   or al, 0x28
+280C  0C 03                   or al, 3
+280E  86 E0                   xchg al, ah
+2810  BC 16 28                mov sp, 0x2816
+2813  E9 C6 65                jmp 0x8ddc
+2816  18 28                   sbb byte ptr [bx + si], ch
+2818  BF 1E 28                mov di, 0x281e
+281B  E9 68 FE                jmp 0x2686
+281E  B8 19 19                mov ax, 0x1919
+2821  90                      nop
+2822  BC 28 28                mov sp, 0x2828
+2825  E9 A7 65                jmp 0x8dcf
+2828  2A 28                   sub ch, byte ptr [bx + si]
+282A  24 FC                   and al, 0xfc
+282C  86 E0                   xchg al, ah
+282E  BC 34 28                mov sp, 0x2834
+2831  E9 A8 65                jmp 0x8ddc
+2834  36 28 B8 40 00          sub byte ptr ss:[bx + si + 0x40], bh
+2839  8E D8                   mov ds, ax
+283B  E6 80                   out 0x80, al
+283D  8E 16 69 00             mov ss, word ptr [0x69]
+2841  8B 26 67 00             mov sp, word ptr [0x67]
+2845  8F 06 69 00             pop word ptr [0x69]
+2849  8F 06 67 00             pop word ptr [0x67]
+284D  07                      pop es
+284E  1F                      pop ds
+284F  C3                      ret
+2850  B8 03 C5                mov ax, 0xc503
+2853  E8 86 65                call 0x8ddc
+2856  BF 5C 28                mov di, 0x285c
+2859  E9 56 64                jmp 0x8cb2
+285C  B8 19 19                mov ax, 0x1919
+285F  BF 65 28                mov di, 0x2865
+2862  E9 88 65                jmp 0x8ded
+2865  0C 03                   or al, 3
+2867  86 E0                   xchg al, ah
+2869  BF 6F 28                mov di, 0x286f
+286C  E9 8C 65                jmp 0x8dfb
+286F  B8 18 43                mov ax, 0x4318
+2872  BF 78 28                mov di, 0x2878
+2875  E9 83 65                jmp 0x8dfb
+2878  BF 7E 28                mov di, 0x287e
+287B  E9 08 FE                jmp 0x2686
+287E  B8              db 0xB8
+287F  19              db 0x19
+
+===== 2911h-2940h =====
+Reason: indirect continuation selected by the 28F2h memory scan
+2911  8B D3                   mov dx, bx
+2913  33 ED                   xor bp, bp
+2915  BF 1B 29                mov di, 0x291b
+2918  EB 51                   jmp 0x296b
+291A  90                      nop
+291B  2B DA                   sub bx, dx
+291D  0F 89 02 00             jns 0x2923
+2921  F7 DB                   neg bx
+2923  80 FF 01                cmp bh, 1
+2926  0F 82 0D 00             jb 0x2937
+292A  45                      inc bp
+292B  8C D8                   mov ax, ds
+292D  80 C4 04                add ah, 4
+2930  80 FC A0                cmp ah, 0xa0
+2933  8E D8                   mov ds, ax
+2935  75 DE                   jne 0x2915
+2937  8B DD                   mov bx, bp
+2939  8B EC                   mov bp, sp
+293B  8B C3                   mov ax, bx
+293D  E6 81                   out 0x81, al
+293F  83              db 0x83
+2940  FB                      sti
+
+===== 291Bh-295Ah =====
+Reason: second indirect continuation selected by the 2911h scan path
+291B  2B DA                   sub bx, dx
+291D  0F 89 02 00             jns 0x2923
+2921  F7 DB                   neg bx
+2923  80 FF 01                cmp bh, 1
+2926  0F 82 0D 00             jb 0x2937
+292A  45                      inc bp
+292B  8C D8                   mov ax, ds
+292D  80 C4 04                add ah, 4
+2930  80 FC A0                cmp ah, 0xa0
+2933  8E D8                   mov ds, ax
+2935  75 DE                   jne 0x2915
+2937  8B DD                   mov bx, bp
+2939  8B EC                   mov bp, sp
+293B  8B C3                   mov ax, bx
+293D  E6 81                   out 0x81, al
+293F  83 FB 20                cmp bx, 0x20
+2942  0F 86 03 00             jbe 0x2949
+2946  BB 40 00                mov bx, 0x40
+2949  B9 08 00                mov cx, 8
+294C  D0 E3                   shl bl, 1
+294E  0F 82 02 00             jb 0x2954
+2952  E2 F8                   loop 0x294c
+2954  80 E1 07                and cl, 7
+2957  8A E1                   mov ah, cl
+2959  B1 04                   mov cl, 4
+
+===== 296Bh-29EAh =====
+Reason: common continuation reached by the 28F2h memory scan
+296B  33 F6                   xor si, si
+296D  B9 00 20                mov cx, 0x2000
+2970  B0 00                   mov al, 0
+2972  E6 43                   out 0x43, al
+2974  EB 00                   jmp 0x2976
+2976  EB 00                   jmp 0x2978
+2978  E4 40                   in al, 0x40
+297A  8A D8                   mov bl, al
+297C  EB 00                   jmp 0x297e
+297E  E4 40                   in al, 0x40
+2980  8A F8                   mov bh, al
+2982  F3 AD                   rep lodsw ax, word ptr [si]
+2984  B0 00                   mov al, 0
+2986  E6 43                   out 0x43, al
+2988  EB 00                   jmp 0x298a
+298A  EB 00                   jmp 0x298c
+298C  E4 40                   in al, 0x40
+298E  8A E0                   mov ah, al
+2990  EB 00                   jmp 0x2992
+2992  E4 40                   in al, 0x40
+2994  86 C4                   xchg ah, al
+2996  2B D8                   sub bx, ax
+2998  FF E7                   jmp di
+299A  1E                      push ds
+299B  56                      push si
+299C  B8 00 10                mov ax, 0x1000
+299F  8E D8                   mov ds, ax
+29A1  BB 08 00                mov bx, 8
+29A4  33 F6                   xor si, si
+29A6  B9 00 80                mov cx, 0x8000
+29A9  F3 AD                   rep lodsw ax, word ptr [si]
+29AB  8C D8                   mov ax, ds
+29AD  05 00 10                add ax, 0x1000
+29B0  8E D8                   mov ds, ax
+29B2  4B                      dec bx
+29B3  80 FB 00                cmp bl, 0
+29B6  75 EC                   jne 0x29a4
+29B8  5E                      pop si
+29B9  1F                      pop ds
+29BA  C3                      ret
+29BB  33 F6                   xor si, si
+29BD  B9 00 20                mov cx, 0x2000
+29C0  F3 66 AD                rep lodsd eax, dword ptr [si]
+29C3  B8 AA 55                mov ax, 0x55aa
+29C6  B9 00 20                mov cx, 0x2000
+29C9  33 FF                   xor di, di
+29CB  F3 AB                   rep stosw word ptr es:[di], ax
+29CD  B9 00 20                mov cx, 0x2000
+29D0  33 FF                   xor di, di
+29D2  F3 AF                   repe scasw ax, word ptr es:[di]
+29D4  0F 85 07 00             jne 0x29df
+29D8  F7 D0                   not ax
+29DA  3D AA 55                cmp ax, 0x55aa
+29DD  75 E7                   jne 0x29c6
+29DF  B8 00 00                mov ax, 0
+29E2  BF 00 00                mov di, 0
+29E5  B9 00 20                mov cx, 0x2000
+29E8  F3 AB                   rep stosw word ptr es:[di], ax
+29EA  C3                      ret
 
 ===== 88F0h-8907h =====
 Reason: stack-return continuation after the 8921h arithmetic/flag probe
