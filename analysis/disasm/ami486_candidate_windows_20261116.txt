@@ -22947,66 +22947,23 @@ Reason: ENTER-framed disk parameter lookup helper
 6F73  C9                      leave
 6F74  C3                      ret
 
-===== 6F75h-6F84h =====
+===== 6F75h-6F85h =====
 Reason: disk-controller command setup helper
 6F75  C8 10 00 00             enter 0x10, 0
 6F79  E8 5C 03                call 0x72d8
 6F7C  E8 BF FF                call 0x6f3e
 6F7F  8B 0C                   mov cx, word ptr [si]
 6F81  86 E9                   xchg cl, ch
-6F83  C0              db 0xC0
-6F84  E1              db 0xE1
+6F83  C0 E1 06                shl cl, 6
 
-===== 6F85h-6FA2h =====
-Reason: alternate disk-controller request continuation; caller unresolved
-6F85  06                      push es
-6F86  80 C9 01                or cl, 1
-6F89  8A 74 02                mov dh, byte ptr [si + 2]
-6F8C  8A 16 21 E4             mov dl, byte ptr [0xe421]
-6F90  BB B8 E1                mov bx, 0xe1b8
-6F93  B4 05                   mov ah, 5
-6F95  A0 1F E4                mov al, byte ptr [0xe41f]
-6F98  E8 7A FC                call 0x6c15
-6F9B  72 06                   jb 0x6fa3
-6F9D  F8                      clc
-6F9E  E8 50 03                call 0x72f1
-6FA1  C9                      leave
-6FA2  C3                      ret
-
-===== 6FA3h-6FA9h =====
+===== 6FA3h-6FACh =====
 Reason: INT 13h AH=05h request helper
 6FA3  B4 05                   mov ah, 5
 6FA5  A0 1F E4                mov al, byte ptr [0xe41f]
-6FA8  E8              db 0xE8
-6FA9  6A              db 0x6A
-
-===== 6FAAh-6FE2h =====
-Reason: ENTER-framed drive signature/geometry probe
-6FAA  FC                      cld
+6FA8  E8 6A FC                call 0x6c15
 6FAB  EB F1                   jmp 0x6f9e
-6FAD  C8 10 00 00             enter 0x10, 0
-6FB1  E8 24 03                call 0x72d8
-6FB4  83 F9 01                cmp cx, 1
-6FB7  BB 6D DB                mov bx, 0xdb6d
-6FBA  B0 B6                   mov al, 0xb6
-6FBC  74 0F                   je 0x6fcd
-6FBE  83 F9 02                cmp cx, 2
-6FC1  BB DB B6                mov bx, 0xb6db
-6FC4  B0 6D                   mov al, 0x6d
-6FC6  74 05                   je 0x6fcd
-6FC8  BB B6 6D                mov bx, 0x6db6
-6FCB  B0 DB                   mov al, 0xdb
-6FCD  BE B8 E1                mov si, 0xe1b8
-6FD0  89 1C                   mov word ptr [si], bx
-6FD2  88 44 02                mov byte ptr [si + 2], al
-6FD5  83 C6 03                add si, 3
-6FD8  81 FE B8 E3             cmp si, 0xe3b8
-6FDC  72 F2                   jb 0x6fd0
-6FDE  E8 10 03                call 0x72f1
-6FE1  C9                      leave
-6FE2  C3                      ret
 
-===== 6FE3h-7010h =====
+===== 6FE3h-7011h =====
 Reason: INT 13h diagnostics and drive status sequence
 6FE3  B4 14                   mov ah, 0x14
 6FE5  8A 16 21 E4             mov dl, byte ptr [0xe421]
@@ -23025,20 +22982,7 @@ Reason: INT 13h diagnostics and drive status sequence
 700A  B4 11                   mov ah, 0x11
 700C  E8 06 FC                call 0x6c15
 700F  72 00                   jb 0x7011
-
-===== 7011h-7029h =====
-Reason: INT 13h AH=11h status sequence
 7011  C3                      ret
-7012  B4 11                   mov ah, 0x11
-7014  8A 16 21 E4             mov dl, byte ptr [0xe421]
-7018  CD 13                   int 0x13
-701A  B4 11                   mov ah, 0x11
-701C  CD 13                   int 0x13
-701E  8A 16 21 E4             mov dl, byte ptr [0xe421]
-7022  B4 09                   mov ah, 9
-7024  CD 13                   int 0x13
-7026  E8 01 00                call 0x702a
-7029  C3                      ret
 
 ===== 702Ah-7032h =====
 Reason: INT 12h memory-size gate for disk-test path
@@ -23280,4 +23224,56 @@ Reason: disk-mode error return stubs selected by the 71E4h handler
 72D1  C3                      ret
 72D2  C6 06 B9 E3 1B          mov byte ptr [0xe3b9], 0x1b
 72D7  C3                      ret
+
+===== 6F86h-6FA2h =====
+Reason: alternate INT 13h AH=05h disk request continuation after the 6F75h geometry helper
+6F86  80 C9 01                or cl, 1
+6F89  8A 74 02                mov dh, byte ptr [si + 2]
+6F8C  8A 16 21 E4             mov dl, byte ptr [0xe421]
+6F90  BB B8 E1                mov bx, 0xe1b8
+6F93  B4 05                   mov ah, 5
+6F95  A0 1F E4                mov al, byte ptr [0xe41f]
+6F98  E8 7A FC                call 0x6c15
+6F9B  72 06                   jb 0x6fa3
+6F9D  F8                      clc
+6F9E  E8 50 03                call 0x72f1
+6FA1  C9                      leave
+6FA2  C3                      ret
+
+===== 6FADh-6FE2h =====
+Reason: ENTER-framed drive signature and geometry probe
+6FAD  C8 10 00 00             enter 0x10, 0
+6FB1  E8 24 03                call 0x72d8
+6FB4  83 F9 01                cmp cx, 1
+6FB7  BB 6D DB                mov bx, 0xdb6d
+6FBA  B0 B6                   mov al, 0xb6
+6FBC  74 0F                   je 0x6fcd
+6FBE  83 F9 02                cmp cx, 2
+6FC1  BB DB B6                mov bx, 0xb6db
+6FC4  B0 6D                   mov al, 0x6d
+6FC6  74 05                   je 0x6fcd
+6FC8  BB B6 6D                mov bx, 0x6db6
+6FCB  B0 DB                   mov al, 0xdb
+6FCD  BE B8 E1                mov si, 0xe1b8
+6FD0  89 1C                   mov word ptr [si], bx
+6FD2  88 44 02                mov byte ptr [si + 2], al
+6FD5  83 C6 03                add si, 3
+6FD8  81 FE B8 E3             cmp si, 0xe3b8
+6FDC  72 F2                   jb 0x6fd0
+6FDE  E8 10 03                call 0x72f1
+6FE1  C9                      leave
+6FE2  C3                      ret
+
+===== 7012h-7029h =====
+Reason: alternate INT 13h AH=11h status/diagnostic sequence
+7012  B4 11                   mov ah, 0x11
+7014  8A 16 21 E4             mov dl, byte ptr [0xe421]
+7018  CD 13                   int 0x13
+701A  B4 11                   mov ah, 0x11
+701C  CD 13                   int 0x13
+701E  8A 16 21 E4             mov dl, byte ptr [0xe421]
+7022  B4 09                   mov ah, 9
+7024  CD 13                   int 0x13
+7026  E8 01 00                call 0x702a
+7029  C3                      ret
 
