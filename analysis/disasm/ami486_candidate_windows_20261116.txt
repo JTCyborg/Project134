@@ -28047,7 +28047,7 @@ Reason: option-ROM scan invalid-candidate helper: advances BX by 0080h, restores
 1BF5  C3                      ret
 
 ===== 0BDEh-0C03h =====
-Reason: Advanced CMOS Setup main-menu handler from menu table at 3446h; flag-dependent I/O setup then calls shared page engine 0C7Ch
+Reason: Advanced CMOS Setup handler overlapping the final 45-entry descriptor/handler table record; gated by B7CAh and calls shared page engine 0C7Dh
 0BDE  83 3E CA B7 00          cmp word ptr [0xb7ca], 0
 0BE3  74 1F                   je 0xc04
 0BE5  C7 06 91 E1 D0 B7       mov word ptr [0xe191], 0xb7d0
@@ -28058,9 +28058,12 @@ Reason: Advanced CMOS Setup main-menu handler from menu table at 3446h; flag-dep
 0BFD  8D 1E 5B 30             lea bx, [0x305b]
 0C01  E8 79 00                call 0xc7d
 
-===== 0C04h-0C2Ah =====
-Reason: Advanced CMOS page initializer gated by B7CCh; prepares E191h/E193h/E195h/E197h and calls 0C7Ch
+===== 0C04h-0C04h =====
+Reason: One-byte RET skip path after the B7CAh-gated Advanced CMOS Setup handler
 0C04  C3                      ret
+
+===== 0C05h-0C2Bh =====
+Reason: Advanced CMOS Setup page initializer gated by B7CCh; prepares E191h/E193h/E195h/E197h and calls 0C7Dh
 0C05  83 3E CC B7 00          cmp word ptr [0xb7cc], 0
 0C0A  74 1F                   je 0xc2b
 0C0C  C7 06 91 E1 54 BD       mov word ptr [0xe191], 0xbd54
@@ -28070,10 +28073,14 @@ Reason: Advanced CMOS page initializer gated by B7CCh; prepares E191h/E193h/E195
 0C1E  C7 06 95 E1 B2 B7       mov word ptr [0xe195], 0xb7b2
 0C24  8D 1E 71 30             lea bx, [0x3071]
 0C28  E8 52 00                call 0xc7d
-
-===== 0C2Bh-0C51h =====
-Reason: Advanced CMOS page initializer gated by B7CEh; prepares E191h/E193h/E195h/E197h and calls 0C7Ch
 0C2B  C3                      ret
+
+===== 0C2Bh-0C2Bh =====
+Reason: One-byte RET after the B7CCh-gated page initializer
+0C2B  C3                      ret
+
+===== 0C2Ch-0C52h =====
+Reason: Advanced CMOS Setup page initializer gated by B7CEh; prepares E191h/E193h/E195h/E197h and calls 0C7Dh
 0C2C  83 3E CE B7 00          cmp word ptr [0xb7ce], 0
 0C31  74 1F                   je 0xc52
 0C33  C7 06 91 E1 F9 C5       mov word ptr [0xe191], 0xc5f9
@@ -28083,10 +28090,14 @@ Reason: Advanced CMOS page initializer gated by B7CEh; prepares E191h/E193h/E195
 0C45  C7 06 95 E1 B2 B7       mov word ptr [0xe195], 0xb7b2
 0C4B  8D 1E 8A 30             lea bx, [0x308a]
 0C4F  E8 2B 00                call 0xc7d
-
-===== 0C52h-0C7Bh =====
-Reason: CPU clock/cache profile page initializer; loads profile pointers at 82C6h-82CEh and calls 0C7Ch
 0C52  C3                      ret
+
+===== 0C52h-0C52h =====
+Reason: One-byte RET after the B7CEh-gated page initializer
+0C52  C3                      ret
+
+===== 0C53h-0C7Ch =====
+Reason: CPU clock/cache profile page initializer; loads profile pointers at 82C6h-82CEh and calls shared page engine 0C7Dh
 0C53  A1 C6 82                mov ax, word ptr [0x82c6]
 0C56  A3 91 E1                mov word ptr [0xe191], ax
 0C59  8B 0E C8 82             mov cx, word ptr [0x82c8]
@@ -28100,6 +28111,7 @@ Reason: CPU clock/cache profile page initializer; loads profile pointers at 82C6
 0C72  A3 95 E1                mov word ptr [0xe195], ax
 0C75  8B 1E CE 82             mov bx, word ptr [0x82ce]
 0C79  E8 01 00                call 0xc7d
+0C7C  C3                      ret
 
 ===== 8300h-8305h =====
 Reason: wrapper entry: preserves BX around CPU-profile/CMOS 8Eh configuration helper
