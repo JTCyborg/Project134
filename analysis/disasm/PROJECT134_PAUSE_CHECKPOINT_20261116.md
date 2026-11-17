@@ -243,17 +243,17 @@ Two previously under-described regions now have byte-backed reports:
 
 ## Address-ledger continuation — 2026-11-17
 
-The Capstone candidate generator has been expanded: 221 code windows, 56 data ranges. Recomputed candidate footprint is 20,658/65,536 bytes (31.52%) across 105 pages, comprising 11,813 code-window bytes, 8,958 data-range bytes and 113 overlap bytes. This is a sampling footprint only, not semantic coverage.
+The Capstone candidate generator has been expanded: 222 code windows, 57 data ranges. Recomputed candidate footprint is 21,224/65,536 bytes (32.39%) across 108 pages, comprising 12,140 code-window bytes, 9,197 data-range bytes and 113 overlap bytes. This is a sampling footprint only, not semantic coverage.
 
 New text/table classifications are documented in AMI486_ADDRESS_LEDGER_20261116.md section 11. The 2D11h timing benchmark is now an aligned candidate window; its runtime entry and stack precondition remain unresolved. The next step remains range-driven reconciliation of unclassified bytes and alternate entries, not a numbered phase.
 
 
 ## Low-ROM range investigation — 2026-11-17
 
-0000h–00EEh is now classified as AMI BIOS identity/copyright/pattern data. 00EFh begins an executable-looking stream with an INT 10h call and stack-frame setup, but no direct ROM CALL/JMP target or literal 00EFh pointer was found. Its runtime entry and DS:E000h source block remain unresolved. The candidate generator is updated to emit this data range and seed 00EFh–01EEh; generated artifact/manifest refresh is pending and counts have not been advanced on this basis.
+0000h–00EEh is now classified as AMI BIOS identity/copyright/pattern data. 00EFh begins an executable-looking stream with an INT 10h call and stack-frame setup, but no direct ROM CALL/JMP target or literal 00EFh pointer was found. Its runtime entry and DS:E000h source block remain unresolved. The candidate generator was first updated to seed 00EFh–01EEh; that interim window was subsequently extended through 0235h and regenerated. See the final report AMI486_LOW_ROM_SETUP_VIDEO_ENTRY_20261117.md.
 
 
-The low-ROM 00EFh candidate seed is extended through 0235h to include the observed RET. Candidate output regeneration/byte-mask refresh is pending verification.
+The low-ROM 00EFh candidate seed is generated through 0235h, including the aligned RET. The generated listing and manifest are verified; current byte-mask totals are recorded in this checkpoint's latest update.
 
 
 ## Low-ROM screen-presentation decode completed — 2026-11-17
