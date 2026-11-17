@@ -457,14 +457,14 @@ ASCII: 'Load Original Values (Y/N) ?\x00Load BIOS Setup Default Values from ROM 
 Reason: Inline POST memory-throughput unit label (not NUL terminated)
 ASCII: 'KB/sec ms'
 
-===== DATA 732Bh-737Eh =====
-Reason: POST summary navigation legend, box-drawing fill and CR/LF control bytes
-732B  58 C3 00 B5 20 45 53 43 3A 45 78 69 74 20 19 1A X... ESC:Exit ..
-733B  18 1B 3A 53 65 6C 65 63 74 20 46 32 2F 46 33 3A ..:Select F2/F3:
-734B  43 6F 6C 6F 72 20 50 55 2F 50 44 3A 4D 6F 64 69 Color PU/PD:Modi
-735B  66 79 20 C6 CD CD CD CD CD CD CD CD CD CD CD CD fy .............
-736B  CD CD CD CD CD CD CD CD CD CD CD CD CD CD CD CD ................
-737B  CD CD 00 0D                                     ....
+===== DATA 732Dh-737Eh =====
+Reason: POST summary navigation legend, box-drawing fill and CR/LF control bytes; starts after the 7323h decimal-print wrapper RET at 732Ch
+732D  00 B5 20 45 53 43 3A 45 78 69 74 20 19 1A 18 1B .. ESC:Exit ....
+733D  3A 53 65 6C 65 63 74 20 46 32 2F 46 33 3A 43 6F :Select F2/F3:Co
+734D  6C 6F 72 20 50 55 2F 50 44 3A 4D 6F 64 69 66 79 lor PU/PD:Modify
+735D  20 C6 CD CD CD CD CD CD CD CD CD CD CD CD CD CD  ...............
+736D  CD CD CD CD CD CD CD CD CD CD CD CD CD CD CD CD ................
+737D  00 0D                                           ..
 
 ===== DATA 7380h-78B5h =====
 Reason: POST summary, device labels, Setup help, calendar names and adjacent pointer tables
@@ -6733,6 +6733,54 @@ Reason: NUL-terminated string length helper used by option-list renderer
 5963  8B D0                   mov dx, ax
 5965  D1 E8                   shr ax, 1
 5967  2D 26 0C                sub ax, 0xc26
+
+===== 5959h-59BFh =====
+Reason: Setup load-values prompt/input handler; derives the prompt cursor, renders the prompt, echoes Y/N, normalizes lowercase input, and returns on ESC or Enter
+5959  A0 A3 E1                mov al, byte ptr [0xe1a3]
+595C  A2 9F E1                mov byte ptr [0xe19f], al
+595F  53                      push bx
+5960  E8 C7 FF                call 0x592a
+5963  8B D0                   mov dx, ax
+5965  D1 E8                   shr ax, 1
+5967  2D 26 0C                sub ax, 0xc26
+596A  F7 D8                   neg ax
+596C  50                      push ax
+596D  03 D0                   add dx, ax
+596F  42                      inc dx
+5970  89 16 80 E1             mov word ptr [0xe180], dx
+5974  2D 02 02                sub ax, 0x202
+5977  81 C2 02 02             add dx, 0x202
+597B  33 DB                   xor bx, bx
+597D  E8 0D FE                call 0x578d
+5980  58                      pop ax
+5981  5B                      pop bx
+5982  E8 4E FF                call 0x58d3
+5985  A1 80 E1                mov ax, word ptr [0xe180]
+5988  E8 36 B0                call 0x9c1
+598B  E8 0F B0                call 0x99d
+598E  B0 4E                   mov al, 0x4e
+5990  50                      push ax
+5991  8B 16 80 E1             mov dx, word ptr [0xe180]
+5995  E8 56 FF                call 0x58ee
+5998  E8 7F FF                call 0x591a
+599B  8B D0                   mov dx, ax
+599D  58                      pop ax
+599E  83 FA 59                cmp dx, 0x59
+59A1  74 05                   je 0x59a8
+59A3  83 FA 4E                cmp dx, 0x4e
+59A6  75 04                   jne 0x59ac
+59A8  8A C2                   mov al, dl
+59AA  EB E4                   jmp 0x5990
+59AC  83 FA 1B                cmp dx, 0x1b
+59AF  75 04                   jne 0x59b5
+59B1  8A C2                   mov al, dl
+59B3  EB 05                   jmp 0x59ba
+59B5  83 FA 0D                cmp dx, 0xd
+59B8  75 D6                   jne 0x5990
+59BA  50                      push ax
+59BB  E8 D7 AF                call 0x995
+59BE  58                      pop ax
+59BF  C3                      ret
 
 ===== 5FE9h-6028h =====
 Reason: Setup list reset/position helper; direct callers 0D03h and 0D34h
@@ -32383,4 +32431,55 @@ Reason: field-value helper wrapper called at 048Ah; loads selector byte E1A3h an
 04AA  A3 E1 B7                mov word ptr [0xb7e1], ax
 04AD  00 EB                   add bl, ch
 04AF  09              db 0x09
+
+===== 72D8h-72F0h =====
+Reason: save AX/BX/CX/DX/SI/DI/DS/ES into the BP-relative 10h-byte context frame; direct callers include 6975h, 69D7h, 6C3Fh, 6CECh, 6E34h, 6EA7h, 6F42h, 6F79h, 6FB1h and 71A5h
+72D8  89 46 FE                mov word ptr [bp - 2], ax
+72DB  89 5E FC                mov word ptr [bp - 4], bx
+72DE  89 4E FA                mov word ptr [bp - 6], cx
+72E1  89 56 F8                mov word ptr [bp - 8], dx
+72E4  89 76 F6                mov word ptr [bp - 0xa], si
+72E7  89 7E F4                mov word ptr [bp - 0xc], di
+72EA  8C 5E F2                mov word ptr [bp - 0xe], ds
+72ED  8C 46 F0                mov word ptr [bp - 0x10], es
+72F0  C3                      ret
+
+===== 72F1h-7309h =====
+Reason: restore AX/BX/CX/DX/SI/DI/DS/ES from the BP-relative context frame; direct callers include 69C8h, 6A4Eh, 6C99h, 6D8Ch, 6E6Dh, 6ECBh, 6F70h, 6F9Eh, 6FDEh and 71DDh
+72F1  8B 46 FE                mov ax, word ptr [bp - 2]
+72F4  8B 5E FC                mov bx, word ptr [bp - 4]
+72F7  8B 4E FA                mov cx, word ptr [bp - 6]
+72FA  8B 56 F8                mov dx, word ptr [bp - 8]
+72FD  8B 76 F6                mov si, word ptr [bp - 0xa]
+7300  8B 7E F4                mov di, word ptr [bp - 0xc]
+7303  8E 5E F2                mov ds, word ptr [bp - 0xe]
+7306  8E 46 F0                mov es, word ptr [bp - 0x10]
+7309  C3                      ret
+
+===== 730Ah-7322h =====
+Reason: recursive unsigned decimal conversion/output helper; divides by ten and emits digits through BIOS INT 10h teletype
+730A  BB 0A 00                mov bx, 0xa
+730D  33 D2                   xor dx, dx
+730F  F7 F3                   div bx
+7311  0B C0                   or ax, ax
+7313  74 05                   je 0x731a
+7315  52                      push dx
+7316  E8 F4 FF                call 0x730d
+7319  5A                      pop dx
+731A  8A C2                   mov al, dl
+731C  0C 30                   or al, 0x30
+731E  B4 0E                   mov ah, 0xe
+7320  CD 10                   int 0x10
+7322  C3                      ret
+
+===== 7323h-732Ch =====
+Reason: register-preserving wrapper around the unsigned decimal output helper at 730Ah; direct callers 6C75h, 6C96h, 7179h, 719Bh and 71DAh
+7323  50                      push ax
+7324  53                      push bx
+7325  52                      push dx
+7326  E8 E1 FF                call 0x730a
+7329  5A                      pop dx
+732A  5B                      pop bx
+732B  58                      pop ax
+732C  C3                      ret
 
