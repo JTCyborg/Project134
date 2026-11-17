@@ -705,3 +705,15 @@ The caller setup immediately before `CALL 6D94h` at `6D2Ch` is:
 Since `6D94h` uses `ENTER 0010h`, its `[BP+4]` and `[BP+6]` parameters are therefore the just-pushed `E1B5h` word and zero-extended `E1B7h` byte, respectively. It loads these into SI and DI. The next stack arguments are `E1B7h` and `E1B2h`; the final pushed argument is the `E41Fh` byte. The routine's local loop increments `E3BAh` and compares it with `E41Fh`, while using `E3BFh`, `E3C0h`, and `E3BBh` as operation state.
 
 This provides a concrete caller-side parameter map, but does not yet justify assigning human labels such as cylinder/head/sector to `E1B5h`, `E1B7h`, or `E1B2h`. Those labels require tracing their producers and the BIOS disk geometry/track parameter conventions. The UI's cylinder/head prompts exist elsewhere in the same hard-disk interface, but no direct data-flow edge from those input fields to these variables has yet been proven.
+
+
+### Parameter provenance refinement: E1B2/E1B4 and E1B5/E1B7
+
+The latest byte-level pass narrows the provenance but also corrects an overstatement in the previous note:
+
+- At `7258h`, `AX` is stored to `E1B2h`. The preceding arithmetic beginning near `7238h` uses constants `0780h`, `[E41Fh]`, and `[E413h]`, with unsigned DIV operations; it derives a geometry-dependent limit. Immediately before the store, `BL) is decremented and stored at `E1B4h`. This is a calculated geometry path, not a direct keystroke store.
+- At `72B7h`, a second path stores `[E411h]-1` into `E1B2h`, then clears `E1AFh). Thus `E1B2h` is a geometry/range limit with at least two producers, not the user's entered cylinder/head value.
+- At `6954h–6962h`, another setup path copies `[E411h]-1` to `E1B2h` and `[E413h]-1` to `E1B4h`; it also stores related values into `E1B1h`, `E1B5h`, and `E1B7h`. These appear to initialize bounds/state from the geometry variables.
+- The code at `6A60h) writes a 16-bit value to `E1B5h` and an 8-bit value to `E1B7h`, after comparisons against stack-supplied bounds. On the failure path it clears both. This is consistent with a bounded numeric-entry helper, but a direct CALL xref to `6A60h` was not found in the current static scan; its entry/caller context still needs confirmation. Therefore the earlier wording that it is definitively the shared UI input procedure should be treated as provisional.
+
+For the `6D94h` caller, `E1B5h` and `E1B7h` are indeed passed as arguments, but their exact semantic labels are not yet established. `E1B2h` is passed as another argument and is better characterized as a derived geometry/range bound. Next step is to follow the dispatch/entry path into `6A60h` and trace the values from the UI handlers `4DE7h/4E1Fh` through `4EE7h` and their helper calls.
