@@ -109,7 +109,7 @@ For each interval record:
 - unresolved bytes and alternate-entry candidates;
 - confidence and evidence source.
 
-Do not infer that an entire 256-byte page is code because one function starts there. Do not infer data from linear-decoder output alone. No whole-ROM semantic percentage is currently defensible. The seeded-window union is 10,700/65,536 bytes (16.33%) but this is a sampling footprint, not a ROM semantic-coverage percentage.
+Do not infer that an entire 256-byte page is code because one function starts there. Do not infer data from linear-decoder output alone. No whole-ROM semantic percentage is currently defensible. At the initial snapshot the seeded-window union was 10,700 bytes (16.33%). That historical figure is superseded by the current 20,658-byte (31.52%) candidate footprint in section 11; neither figure is semantic completion.
 
 
 ## 7. Seeded Capstone decode — first executable evidence
@@ -140,7 +140,7 @@ D100h–D5FFh is the separate floppy-controller/DMA subsystem: FDC ports 03F2h/0
 
 F92Ah–F935h is a six-word little-endian dispatch table with targets F936h, F986h, F9C4h, F977h, F999h and F9D3h. F977h overlaps the F936h stream as an alternate entry. The F8E7h wrapper ends in IRET at F929h; its actual vector entry remains unknown.
 
-The current seeded Capstone output contains 221 unique bounded code windows plus 56 separately emitted data ranges (186 window headers total). The windows cover 9,450 unique code-candidate bytes and 1,333 data-candidate bytes, with 83 bytes overlapping between code/data windows; the union is 10,700 distinct ROM bytes across 56 pages. This is only the union of selected seeded windows, not total semantic coverage. Near-branch targets are normalized to 16-bit IP wraparound.
+Historical snapshot: 168 code windows plus 18 data ranges (186 headers) produced a 10,700-byte union. The current generated artifact is 221 code windows plus 56 data ranges (277 headers); the recomputed union is 20,658 bytes across 105 pages. See section 11 for exact byte-mask counts. Neither figure is semantic coverage. Near-branch targets are normalized to 16-bit IP wraparound.
 
 
 ## INT 13h dispatch correction
@@ -220,7 +220,7 @@ The first-pass region descriptions above have been refined by raw-byte and calle
 | E845h–E864h | INT 76h / IRQ14 handler | AMI486_STORAGE_AND_DISPATCH_REGIONS_20261116.md |
 | F8E7h–F9FCh | BIOS INT 14h serial-service dispatcher and UART handlers | AMI486_INT14_SERIAL_BIOS_20261116.md |
 
-The current candidate-window artifact has 187 unique bounded code windows and 41 separately emitted data ranges. Their byte-mask union is 15,639 bytes across 79 pages: 11,414 code-window bytes, 4,319 data-range bytes and 94 bytes of overlap. This is a sampling footprint only, not semantic coverage.
+The previous candidate-window artifact had 187 code windows and 41 data ranges, with a 15,639-byte union across 79 pages. This historical snapshot is superseded by the 221/56 artifact and 20,658-byte union in section 11.
 
 
 ## 9. F9xx dispatcher entry-boundary correction
@@ -331,7 +331,7 @@ Detailed byte-backed report: [AMI486_POST_SUMMARY_DISPLAY_20261117.md](AMI486_PO
 
 ### 10.4 Current candidate-window footprint
 
-The generator now reports 187 unique seeded code windows and emits 35 deduplicated data ranges. The byte-mask union is 15,639/65,536 bytes (23.86%) across 79 pages: 11,414 bytes touched by code windows, 4,319 by data ranges and 94 overlapping bytes. This is still a seeded sampling footprint only; it is not a semantic code/data completion percentage. No claim is made that the remaining bytes are all unexplored.
+The previous generator snapshot reported 187 code windows and 35 deduplicated data ranges (15,639 bytes across 79 pages). This is historical and superseded by the current reproducible 221-window/56-range artifact in section 11.
 
 
 ## 11. Data-region expansion — 2026-11-17
@@ -348,7 +348,7 @@ The candidate-window generator now emits 56 explicitly identified data ranges, i
 | 37C3h–3805h | Setup page legends and border/control bytes | Separate page variants; embedded CP437 navigation symbols |
 | 3806h–381Bh | Menu border fill and disk-utility exit legend | Includes CDh border bytes and control prefix |
 | 3900h–3C5Bh | Hard-disk utility text and embedded pointer tables | Mixed text/table block; pointer-table contracts still require independent consumer tracing |
-| 59C0h–59C5h | Three-word prompt pointer table | Raw little-endian targets C6:59h, E3:59h, 19:5Ah resolve to 59C6h, 59E3h and 5A19h |
+| 59C0h–59C5h | Three-word prompt pointer table | Raw little-endian words 59C6h, 59E3h and 5A19h resolve to the three prompt strings |
 | 59C6h–5A4Bh | Setup load-original/default-values prompts | Three NUL-terminated confirmation strings |
 | 7145h–714Dh | Inline “KB/sec ms” throughput label | No terminating NUL before following code at 714Eh |
 | 732Bh–737Eh | POST summary navigation legend and frame bytes | Mixed control prefix, navigation glyphs, CDh fill, CR/LF |
