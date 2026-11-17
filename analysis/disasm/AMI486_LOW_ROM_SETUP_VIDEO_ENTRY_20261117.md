@@ -122,7 +122,7 @@ At `00EFh` the bytes switch to a coherent executable-looking stream that ends at
 0209 JAE 01F2h
 020B JZ 01F5h
 020D CALL 099Dh
-0210 CALL 6220h
+0210 CALL 62BDh
 0213 CLI
 0214 MOV DI,E000h
 0217 MOV SI,SP
@@ -169,7 +169,7 @@ The routine initializes `BX=0AF5h` and reads four-byte records:
 - After the callback, BX is reloaded from `[BP+00h]`.
 - CF=0 branches to `01F2h`, adds four to BX, then fetches the next record.
 - If CF=1 and ZF=1, execution branches directly to `01F5h` and fetches at the next cursor without adding four.
-- If CF=1 and ZF=0, execution takes the exit path through 099Dh and 6220h.
+- If CF=1 and ZF=0, execution takes the exit path through 099Dh and 62BDh.
 
 This is a linked callback walker with a flags-driven record-skip/continue/exit contract. It is **not byte-for-byte the same entry convention as dispatcher 05B4h**: this routine reads from `BX=0AF5h` directly and does not first add four. At 0AF5h the raw record is `next=0AEDh, callback=6373h`. The 05B4h dispatcher uses its selected base plus four; keep these two entry conventions separate.
 
@@ -192,3 +192,14 @@ The visible stream pushes ES and DS, but does not push BP, SI or DI before using
 2. Decode the contracts of 3E3Fh, 0995h, F52Eh, 622Bh, 09CEh, 05EBh, 578Dh, 08C8h, 0A15h, 0597h, 03D4h, 0AADh, 0862h, 626Bh, 099Dh, 6220h and 09C1h only as needed to identify the screen's runtime role.
 3. Trace the E1A2h/E1A6h state producers and the BP-relative source block.
 4. Preserve the distinction between this 00EFh walker and the 05B4h dispatcher when documenting the 0AF5h records.
+
+
+## Audit correction — final cleanup helper (2026-11-17)
+
+The CALL at `0210h` is `E8 AA 60`, whose 16-bit relative target is `62BDh`, not `6220h`. The aligned generated listing and raw-byte xref scan both confirm `0210h CALL 62BDh`. The earlier `6220h` target annotation in this report is withdrawn.
+
+`626Bh` installs temporary IVT hooks for INT 10h, INT 1Ah and INT 1Ch, saving the old offsets/segments at `0000:0280h–028Ah`. The cleanup call at `62BDh` restores those six IVT words from the saved block, restores DS/AX and executes STI before returning. Thus the 00EFh stream's pair is:
+- `01EAh CALL 626Bh`: install temporary vectors.
+- `0210h CALL 62BDh`: restore the previous vectors.
+
+The unrelated `6220h` byte stream begins with INT CF/CD/BC opcodes but has no direct near CALL/JMP xref from this routine; it is not the target of the 0210h call and remains separately unresolved.
