@@ -86,3 +86,10 @@ The tested region is selected through the preceding ALi register configuration; 
 - Confirms no static ROM writer for 82C6h/82C8h; optional extended records require a runtime/OEM patch or external initialization not found in the ROM listing.
 - Refines the memory test description: the loop writes three consecutive dwords (with overlap) and compares two; the later 29BBh routine performs a 16-KiB word fill/check/clear sequence after a 32-KiB read pass.
 - Exact physical memory mapping and runtime extension provenance remain open.
+
+
+## Audit correction — 29BBh pattern loop and 8D83h fallback (2026-11-17)
+
+The earlier sentence “On mismatch, retries the fill/scan sequence” is withdrawn. At 29BBh, the routine fills/verifies 55AAh; only if that pass succeeds does it complement AX and repeat with AA55h. A mismatch in either pass branches to the clear-and-return path at 29DFh and returns with ZF=0. After both patterns pass, the routine clears the 16-KiB ES:0000h window and returns with ZF=1. The 27CCh continuation uses this ZF result.
+
+The 8D83h target on the failure/fallback path is not a fatal error logger. It is an ALi/memory fallback reconfiguration helper: it updates ALi C5h/19h/18h, performs the 2686h protected-mode read, and returns through 8DCEh to the crafted 27DCh continuation, which enters cleanup at 2800h. See `AMI486_ADDRESS_LEDGER_REGION_23CE_29F6_20261117.md`.
