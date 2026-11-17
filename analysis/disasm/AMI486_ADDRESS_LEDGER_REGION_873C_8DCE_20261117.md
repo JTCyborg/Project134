@@ -101,7 +101,8 @@ The highest field used is at `87B5h + 13 × 14h = 88B9h`, a word ending at `88BA
 
 This view overlaps:
 - the 81-entry four-byte array at `87A9h–887Fh`;
-- executable code beginning at `8898h`, specifically the final row's fields at `88ADh`, `88B1h`, `88B5h`, and `88B9h`.
+- the count/threshold block: row 11 fields are at `8885h`, `8889h`, `888Dh`, and `8891h`; the first overlaps the `8886h=0051h` count word, while the other three lie immediately after the `8888h` threshold;
+- executable code beginning at `8898h`: row 12 fields are at `8899h`, `889Dh`, `88A1h`, `88A5h`, and row 13 fields are at `88ADh`, `88B1h`, `88B5h`, and `88B9h`.
 
 The code and table interpretations are both supported by consumers. Do not classify `8898h–88BBh` as code-only or data-only.
 
@@ -109,7 +110,8 @@ The code and table interpretations are both supported by consumers. Do not class
 
 - `8880h–8887h`: four confirmed count words (5, 76, 0, 81).
 - `8888h`: confirmed E0h lookup threshold.
-- `8889h–8897h`: no complete consumer/field layout established in this pass. Preserve as unresolved bytes; do not extend the count block to cover them merely because they are adjacent.
+- `8889h–8892h`: three confirmed 16-bit fields in row 11 of the 87A9h AUTO Config lookup view (at 8889h/888Dh/8891h).
+- `8893h–8898h`: not consumed by the four known word-field readers in this view; exact secondary use/padding status remains unresolved. The row-12 fields begin at 8899h and overlap the 8898h executable stream.
 
 The executable entry at `8898h` is independently reached from `ED13h`.
 
@@ -258,7 +260,7 @@ Unresolved:
 - exact semantics of the arithmetic/flag probe at `8921h`;
 - hardware/device labels for the port groups at `8250h–826Dh`;
 - semantic names for ALi register bits touched by `8D09h–8D83h`;
-- bytes `8889h–8897h` and their possible secondary consumers;
+- bytes `8893h–8898h` and their possible secondary consumers;
 - full reachability/entry proof for each independent seed.
 
 ## 8. Candidate-mask status after this expansion
