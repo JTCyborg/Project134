@@ -475,7 +475,7 @@ SEEDS = [
     (0x08C8, "direct CALL target from 00EFh screen-presentation stream"),
     (0x0A15, "direct CALL target from 00EFh screen-presentation stream"),
     (0x0597, "direct CALL target from 00EFh screen-presentation stream"),
-    (0x03D4, "direct CALL target from 00EFh screen-presentation stream"),
+    (0x03D4, "direct CALL target from 00EFh screen-presentation stream; field-record display routine now bounded through RET at 04A9h"),
     (0x0AAD, "direct CALL target from 00EFh screen-presentation stream"),
     (0x0862, "direct CALL target from 00EFh screen-presentation stream"),
     (0x626B, "direct CALL target from 00EFh screen-presentation stream"),
@@ -1435,6 +1435,14 @@ LIMITS.update({
 
 DATA_RANGES.extend([
     (0xAC5B, 0xAD00, "keyboard scan-code translation table referenced by MOV BX,AC60h at B031h; leading bytes AC5Bh-AC5Fh are table prefix/header", "hexascii"),
+])
+
+LIMITS.update({
+    0x03D4: 0xD6, 0x04AA: 0x06,
+})
+
+SEEDS.extend([
+    (0x04AA, "field-value helper wrapper called at 048Ah; loads selector byte E1A3h and enters common calculation at 04BBh"),
 ])
 
 def main():
