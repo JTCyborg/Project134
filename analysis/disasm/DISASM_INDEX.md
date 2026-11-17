@@ -1218,3 +1218,6 @@ Detailed report: [AMI486_LOW_ROM_SETUP_VIDEO_ENTRY_20261117.md](AMI486_LOW_ROM_S
 
 
 The 00EFh cleanup target is byte-verified as 62BDh, not 6220h. The 626Bh install helper writes temporary INT 10h/1Ah/1Ch handlers at F000:62ECh, F000:62FCh and F000:631Ch; the 62BDh helper restores the six prior IVT words. The generator now seeds these three installed handler entries separately for overlapping-stream analysis.
+
+
+Byte-aligned target correction: the cleanup CALL at 0210h resolves to 62BDh (bytes E8 AA 60), not 6220h. The IVT helper pair is 626Bh (install) / 62BDh (restore); 62ECh, 62FCh and 631Ch are the installed INT 10h/1Ah/1Ch handler entries. The INT 1Ch handler calls 6616h; these entries and helper are seeded for cross-reference analysis.
