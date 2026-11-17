@@ -117,3 +117,17 @@ The result-selector order remains exact: DL=00h before testing ES:00800000h; DL=
 At 23B6h the continuation loads AX=B823h into ES, reads CR0, clears bit 0 (PE) and writes CR0 back. The selector descriptor/base and the initial protected-mode ES value are not known from that local stream. The later 23E4h continuation sets SS=0030h/SP=0100h, calls 240Ah/2495h/29EDh, then sets DS=ES=0000h and SS=CS before jumping to D9DCh. The segment setup and actual installed RAM map remain partly caller-dependent.
 
 The previous section's stack-threaded decode remains authoritative: 222Dh reads indexed chipset register 16h, ORs 30h and writes it back, then writes 44h to register 11h; 2381h/2396h pack the probe selectors into chipset registers 10h/11h. This report does not claim a physical RAM capacity or whole-ROM semantic coverage percentage.
+
+
+## 6. Stack-return alignment correction at 2381h–23DCh (2026-11-17)
+
+The earlier prose that treated 23AAh and 23B6h as code continuations is withdrawn. They are stack-return words:
+- 238Eh sets SP=2394h and jumps to 8DDCh; 2394h–2395h contains 2396h.
+- 23A4h sets SP=23AAh and jumps to 8DDCh; 23AAh–23ABh contains 23ACh.
+- 23B0h sets SP=23B6h and jumps to 8DDCh; 23B6h–23B7h contains 23B8h.
+- 23C8h sets SP=23CEh and jumps to F66Eh; 23CEh–23CFh contains 23D0h.
+- 23D4h sets SP=23DAh and jumps to 552Dh; 23DAh–23DBh contains 23DCh.
+
+The aligned streams are 2396h (ALi register 10h), 23ACh (ALi register 11h), 23B8h (ES=0010h, clear CR0.PE, then A20 disable), 23D0h (2-KiB 552Dh pattern test because BX=0400h words), and 23DCh (tests returned ZF and enters the 23E4h POST continuation on success). The helper at 552Dh is variable-length: it uses BX as the number of words and verifies patterns 8080h, 5555h, 3333h and 0000h. It is not intrinsically a 64-KiB test.
+
+The 23CEh–29F5h continuation and the full shadow/memory-test chain are documented in `AMI486_ADDRESS_LEDGER_REGION_23CE_29F6_20261117.md`.
