@@ -1526,3 +1526,40 @@ A raw search for the little-endian byte pairs corresponding to E418h/E41Ah also 
 The setup editor also uses the active DPT values as input limits. At 4F43h it loads `DX=[E411]`, decrements DX, and calls the numeric-entry routine at 06C9h with the destination local at `[BP-6]`. At 4F5Ch it loads `DL=[E413]`, clears DH, decrements DX, and calls the same entry routine with `[BP-4]`. The helper at 06C9h compares the entered value against the caller-supplied DX limit (`CMP DX,[BP-4]` in its frame) and rejects values above it. This means the editor's maximum accepted cylinder index is cylinders-1 and its maximum head index is heads-1; the UI stores zero-based CHS indices, while the DPT itself stores the corresponding counts.
 
 This is a separate use from the display at 481Fh onward: the DPT values are both shown as geometry counts and used as upper bounds when editing a particular CHS address. The code therefore confirms the distinction between count fields (cylinders/heads) and the zero-based maximum indices derived from them.
+
+## Installation of the parameter-table pointer in the BIOS IVT (2FC3h-3008h)
+
+A significant consumer is the standard fixed-disk parameter-table vector in the real-mode IVT. The startup path at 2FC3h copies DS into ES, then accesses `DS:004C` (the INT 13h IVT slot), which establishes that DS/ES is the zero segment for this block. It later switches DS to 0040h for the BIOS Data Area while ES remains zero. The relevant sequence is:
+
+```asm
+2FC3  PUSH DS
+2FC4  POP ES              ; ES = 0000h (DS was the IVT segment)
+2FC6  MOV SI,004C         ; INT 13h vector slot in IVT
+2FC9  MOV DI,0100
+2FCC  MOV AX,A08D
+2FCF  XCHG AX,[SI]
+2FD1  STOSW               ; save prior INT 13h offset at 0000:0100
+2FD2  MOV AX,CS
+2FD4  XCHG AX,[SI+2]
+2FD7  STOSW               ; save prior INT 13h segment at 0000:0102
+...
+2FDD  CMP BYTE [E421],00
+2FE3  MOV AX,0040
+2FE6  MOV DS,AX
+2FE8  INC BYTE [0075]     ; BDA hard-disk count
+2FEC  MOV DI,0104         ; INT 41h vector slot
+2FEF  MOV DL,80
+2FF1  POPF
+2FF2  JZ  2FFD
+2FF4  MOV DI,0118         ; INT 46h vector slot
+2FF7  INC BYTE [0075]     ; second fixed disk
+2FFB  INC DL              ; DL=81h
+2FFD  MOV AX,E411
+3000  STOSW               ; IVT vector offset = E411h
+3001  MOV AX,0100
+3004  STOSW               ; IVT vector segment = 0100h
+```
+
+Thus the selected vector (INT 41h when E421h is zero, INT 46h when nonzero) is made to point at `0100:E411`. The table constructed by 5AB5h is therefore exposed through the conventional BIOS fixed-disk parameter-table vector, not merely used as a private setup buffer. The same block also saves the previous INT 13h vector at 0000:0100 and 0000:0102 before the BIOS installs its own handling path.
+
+Caution: this code proves that the selected IVT slot is assigned `0100:E411`; it does not by itself prove that both INT 41h and INT 46h simultaneously retain distinct table pointers. The branch writes one of the two vector slots per execution, and the destination table address is the same literal E411h in this routine. The surrounding drive-initialization sequence must be traced before claiming how the two drives' table images are retained over time.
