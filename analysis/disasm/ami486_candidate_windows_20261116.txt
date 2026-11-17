@@ -1664,6 +1664,19 @@ E7BC  90 38 02 1D 80 F5 21 D7 79 D2 4B F2 8D C7 B4 12 .8....!.y.K.....
 E7CC  99 F7 37 F1 7F F8 FB 42 9F F8 42 89 33 FD D8 DA ..7....B..B.3...
 E7DC  24 17 D7 BF 94 B8 7F 1F 97 CE 77 DC             $.........w.
 
+===== DATA F5AEh-F5B1h =====
+Reason: Four-byte opaque prefix before the port-61h helper; entry alignment unresolved
+F5AE  00 E3 00 E6                                     ....
+
+===== DATA F82Ch-F840h =====
+Reason: Zero-filled padding between INT 13h disk-read helper and INT 12h/11h handlers
+F82C  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 ................
+F83C  00 00 00 00 00                                  .....
+
+===== DATA F85Ch-F85Dh =====
+Reason: Two-byte zero padding between INT 15h stub and INT 17h printer handler
+F85C  00 00                                           ..
+
 ===== DATA FA00h-FA4Bh =====
 Reason: 76-byte POST integrity comparison block; bytewise complement of FF70h-FFBBh
 FA00  68 50 50 01 01 01 01 01 2A B2 0A 62 AA 0A A2 4A hPP.....*..b...J
@@ -27843,6 +27856,497 @@ Reason: option-ROM scan invalid-candidate helper: advances BX by 0080h, restores
 1BF0  81 C3 80 00             add bx, 0x80
 1BF4  1F                      pop ds
 1BF5  C3                      ret
+
+===== F5B2h-F5BBh =====
+Reason: port-61h control helper candidate; no direct relative CALL xref found
+F5B2  61                      popaw
+F5B3  24 F3                   and al, 0xf3
+F5B5  E3 00                   jcxz 0xf5b7
+F5B7  E3 00                   jcxz 0xf5b9
+F5B9  E6 61                   out 0x61, al
+F5BB  C3                      ret
+
+===== F5BCh-F5C8h =====
+Reason: direct CALL targets from 1136h, 5CEBh and F5E5h; 8042 command/readback compare helper
+F5BC  E8 76 00                call 0xf635
+F5BF  75 07                   jne 0xf5c8
+F5C1  E8 35 00                call 0xf5f9
+F5C4  74 10                   je 0xf5d6
+F5C6  3A C4                   cmp al, ah
+F5C8  C3                      ret
+
+===== F5C9h-F5D7h =====
+Reason: direct CALL targets from 1118h and 9821h; 8042 data/readback compare helper
+F5C9  E8 78 00                call 0xf644
+F5CC  75 07                   jne 0xf5d5
+F5CE  E8 28 00                call 0xf5f9
+F5D1  74 03                   je 0xf5d6
+F5D3  3A C4                   cmp al, ah
+F5D5  C3                      ret
+F5D6  0B E4                   or sp, sp
+
+===== F5D9h-F5E8h =====
+Reason: direct CALL targets from 1DF5h, 5D52h and F516h; issue 8042 command C0h and read output port
+F5D9  E4 64                   in al, 0x64
+F5DB  A8 01                   test al, 1
+F5DD  74 04                   je 0xf5e3
+F5DF  E3 00                   jcxz 0xf5e1
+F5E1  E4 60                   in al, 0x60
+F5E3  B0 C0                   mov al, 0xc0
+F5E5  E8 D4 FF                call 0xf5bc
+F5E8  C3                      ret
+
+===== F5E9h-F5F8h =====
+Reason: 8042 command D0h and output-port read helper
+F5E9  E4 64                   in al, 0x64
+F5EB  A8 01                   test al, 1
+F5ED  74 04                   je 0xf5f3
+F5EF  E3 00                   jcxz 0xf5f1
+F5F1  E4 60                   in al, 0x60
+F5F3  B0 D0                   mov al, 0xd0
+F5F5  E8 C4 FF                call 0xf5bc
+F5F8  C3                      ret
+
+===== F5F9h-F5FEh =====
+Reason: called by F5C1h/F5CEh; wait then read 8042 data port 60h
+F5F9  E8 03 00                call 0xf5ff
+F5FC  E4 60                   in al, 0x60
+F5FE  C3                      ret
+
+===== F5FFh-F60Eh =====
+Reason: bounded wait for 8042 output-buffer state
+F5FF  B9 0C 00                mov cx, 0xc
+F602  51                      push cx
+F603  33 C9                   xor cx, cx
+F605  E4 64                   in al, 0x64
+F607  A8 01                   test al, 1
+F609  E1 FA                   loope 0xf605
+F60B  59                      pop cx
+F60C  E1 F4                   loope 0xf602
+F60E  C3                      ret
+
+===== F60Fh-F621h =====
+Reason: bounded 8042 output-buffer polling and data read helper
+F60F  B4 0C                   mov ah, 0xc
+F611  33 C9                   xor cx, cx
+F613  E4 64                   in al, 0x64
+F615  A8 01                   test al, 1
+F617  E1 FA                   loope 0xf613
+F619  75 04                   jne 0xf61f
+F61B  FE CC                   dec ah
+F61D  75 F4                   jne 0xf613
+F61F  E4 60                   in al, 0x60
+F621  C3                      ret
+
+===== F622h-F62Ch =====
+Reason: 8042 command/status compare helper
+F622  E8 10 00                call 0xf635
+F625  75 05                   jne 0xf62c
+F627  8A C4                   mov al, ah
+F629  E8 18 00                call 0xf644
+F62C  C3                      ret
+
+===== F62Dh-F634h =====
+Reason: 8042 output-port command D1h helper
+F62D  8A E0                   mov ah, al
+F62F  B0 D1                   mov al, 0xd1
+F631  E8 EE FF                call 0xf622
+F634  C3                      ret
+
+===== F635h-F643h =====
+Reason: direct CALL targets throughout BIOS; write command to 8042 port 64h after input-buffer wait
+F635  50                      push ax
+F636  E8 20 00                call 0xf659
+F639  58                      pop ax
+F63A  75 07                   jne 0xf643
+F63C  E6 64                   out 0x64, al
+F63E  50                      push ax
+F63F  E8 17 00                call 0xf659
+F642  58                      pop ax
+F643  C3                      ret
+
+===== F644h-F650h =====
+Reason: direct CALL targets throughout BIOS; write data to 8042 port 60h after input-buffer wait
+F644  50                      push ax
+F645  E8 11 00                call 0xf659
+F648  58                      pop ax
+F649  75 05                   jne 0xf650
+F64B  E6 60                   out 0x60, al
+F64D  E8 09 00                call 0xf659
+F650  C3                      ret
+
+===== F651h-F658h =====
+Reason: direct CALL targets from 10F7h, 1155h, 5D01h, 980Fh and 9842h; 8042 command 60h helper
+F651  8A E0                   mov ah, al
+F653  B0 60                   mov al, 0x60
+F655  E8 CA FF                call 0xf622
+F658  C3                      ret
+
+===== F659h-F669h =====
+Reason: 8042 input-buffer-clear wait helper used by F635h/F644h
+F659  33 C9                   xor cx, cx
+F65B  E4 64                   in al, 0x64
+F65D  A8 02                   test al, 2
+F65F  E0 FA                   loopne 0xf65b
+F661  74 06                   je 0xf669
+F663  E4 64                   in al, 0x64
+F665  A8 02                   test al, 2
+F667  E0 FA                   loopne 0xf663
+F669  C3                      ret
+
+===== F66Ah-F66Dh =====
+Reason: 8042 output-port value DFh command entry
+F66A  B4 DF                   mov ah, 0xdf
+F66C  EB 02                   jmp 0xf670
+
+===== F66Eh-F66Fh =====
+Reason: 8042 output-port value DDh command entry
+F66E  B4 DD                   mov ah, 0xdd
+
+===== F670h-F690h =====
+Reason: 8042 output-port command D1h and data write sequence
+F670  33 C9                   xor cx, cx
+F672  E4 64                   in al, 0x64
+F674  A8 02                   test al, 2
+F676  E0 FA                   loopne 0xf672
+F678  B0 D1                   mov al, 0xd1
+F67A  E6 64                   out 0x64, al
+F67C  33 C9                   xor cx, cx
+F67E  E4 64                   in al, 0x64
+F680  A8 02                   test al, 2
+F682  E0 FA                   loopne 0xf67e
+F684  8A C4                   mov al, ah
+F686  E6 60                   out 0x60, al
+F688  33 C9                   xor cx, cx
+F68A  E4 64                   in al, 0x64
+F68C  A8 02                   test al, 2
+F68E  E0 FA                   loopne 0xf68a
+F690  C3                      ret
+
+===== F691h-F6B7h =====
+Reason: generic I/O port write/read/compare helper; called by F6B8h
+F691  50                      push ax
+F692  EE                      out dx, al
+F693  60                      pushaw
+F694  B0 FF                   mov al, 0xff
+F696  E6 80                   out 0x80, al
+F698  61                      popaw
+F699  86 C4                   xchg ah, al
+F69B  0B DB                   or bx, bx
+F69D  74 07                   je 0xf6a6
+F69F  EE                      out dx, al
+F6A0  60                      pushaw
+F6A1  B0 FF                   mov al, 0xff
+F6A3  E6 80                   out 0x80, al
+F6A5  61                      popaw
+F6A6  EC                      in al, dx
+F6A7  3A C4                   cmp al, ah
+F6A9  58                      pop ax
+F6AA  75 0B                   jne 0xf6b7
+F6AC  0B DB                   or bx, bx
+F6AE  74 07                   je 0xf6b7
+F6B0  E3 00                   jcxz 0xf6b2
+F6B2  E3 00                   jcxz 0xf6b4
+F6B4  EC                      in al, dx
+F6B5  3A C4                   cmp al, ah
+F6B7  C3                      ret
+
+===== F6B8h-F6D8h =====
+Reason: direct CALL targets from 16F4h, AAFFh, E2E5h, E317h and E330h; four-pattern I/O port test
+F6B8  B8 55 AA                mov ax, 0xaa55
+F6BB  E8 D3 FF                call 0xf691
+F6BE  75 18                   jne 0xf6d8
+F6C0  B8 AA 55                mov ax, 0x55aa
+F6C3  E8 CB FF                call 0xf691
+F6C6  75 10                   jne 0xf6d8
+F6C8  B8 0F CC                mov ax, 0xcc0f
+F6CB  E8 C3 FF                call 0xf691
+F6CE  75 08                   jne 0xf6d8
+F6D0  B8 00 00                mov ax, 0
+F6D3  E8 BB FF                call 0xf691
+F6D6  75 00                   jne 0xf6d8
+F6D8  C3                      ret
+
+===== F6D9h-F723h =====
+Reason: direct CALL targets from 13EDh, 1638h and 5E11h; option-ROM signature/length/checksum scanner and initializer
+F6D9  FA                      cli
+F6DA  FC                      cld
+F6DB  1E                      push ds
+F6DC  8E DB                   mov ds, bx
+F6DE  33 F6                   xor si, si
+F6E0  AD                      lodsw ax, word ptr [si]
+F6E1  35 55 AA                xor ax, 0xaa55
+F6E4  75 32                   jne 0xf718
+F6E6  B9 80 00                mov cx, 0x80
+F6E9  81 FB 00 E0             cmp bx, 0xe000
+F6ED  74 03                   je 0xf6f2
+F6EF  AC                      lodsb al, byte ptr [si]
+F6F0  8B C8                   mov cx, ax
+F6F2  C1 E1 05                shl cx, 5
+F6F5  03 D9                   add bx, cx
+F6F7  C1 E1 04                shl cx, 4
+F6FA  33 F6                   xor si, si
+F6FC  AC                      lodsb al, byte ptr [si]
+F6FD  02 E0                   add ah, al
+F6FF  E2 FB                   loop 0xf6fc
+F701  75 19                   jne 0xf71c
+F703  FB                      sti
+F704  06                      push es
+F705  53                      push bx
+F706  55                      push bp
+F707  0E                      push cs
+F708  68 0F F7                push 0xf70f
+F70B  1E                      push ds
+F70C  6A 03                   push 3
+F70E  CB                      retf
+F70F  FA                      cli
+F710  FC                      cld
+F711  5D                      pop bp
+F712  5B                      pop bx
+F713  07                      pop es
+F714  1F                      pop ds
+F715  3B E4                   cmp sp, sp
+F717  C3                      ret
+F718  81 C3 80 00             add bx, 0x80
+F71C  1F                      pop ds
+F71D  C3                      ret
+F71E  BD 07 00                mov bp, 7
+F721  E9 81 FD                jmp 0xf4a5
+
+===== F724h-F730h =====
+Reason: INT 19h boot-failure fallback: call EF36h, invoke INT 19h, then POST AAh and halt loop
+F724  E8 0F F8                call 0xef36
+F727  CD 19                   int 0x19
+F729  B0 AA                   mov al, 0xaa
+F72B  E6 80                   out 0x80, al
+F72D  FB                      sti
+F72E  F4                      hlt
+F72F  EB FC                   jmp 0xf72d
+
+===== F731h-F73Ah =====
+Reason: keyboard IRQ handler: read port 60h, send EOI to PIC, chain through BDA:0067h
+F731  E4 60                   in al, 0x60
+F733  B0 20                   mov al, 0x20
+F735  E6 20                   out 0x20, al
+F737  FF 2E 67 00             ljmp [0x67]
+
+===== F73Bh-F757h =====
+Reason: boot-return stack-frame guard; either resumes at F7B2h or displays the boot error path
+F73B  FA                      cli
+F73C  8B EC                   mov bp, sp
+F73E  8C C8                   mov ax, cs
+F740  3B 46 02                cmp ax, word ptr [bp + 2]
+F743  75 0D                   jne 0xf752
+F745  B8 AF F7                mov ax, 0xf7af
+F748  3B 46 00                cmp ax, word ptr [bp]
+F74B  75 05                   jne 0xf752
+F74D  83 C4 06                add sp, 6
+F750  EB 60                   jmp 0xf7b2
+F752  BE 15 7B                mov si, 0x7b15
+F755  E9 B1 FD                jmp 0xf509
+
+===== F758h-F80Fh =====
+Reason: INT 19h bootstrap: install INT 1Eh DPT pointer, clear 7C00h, reset disk and try boot sector
+F758  33 C0                   xor ax, ax
+F75A  8E C0                   mov es, ax
+F75C  B8 C7 EF                mov ax, 0xefc7
+F75F  BF 78 00                mov di, 0x78
+F762  FA                      cli
+F763  FC                      cld
+F764  AB                      stosw word ptr es:[di], ax
+F765  8C C8                   mov ax, cs
+F767  AB                      stosw word ptr es:[di], ax
+F768  BB 00 7C                mov bx, 0x7c00
+F76B  8B FB                   mov di, bx
+F76D  B9 00 01                mov cx, 0x100
+F770  F3 AB                   rep stosw word ptr es:[di], ax
+F772  FB                      sti
+F773  33 D2                   xor dx, dx
+F775  33 C0                   xor ax, ax
+F777  CD 13                   int 0x13
+F779  2E A0 16 B5             mov al, byte ptr cs:[0xb516]
+F77D  E8 80 8B                call 0x8300
+F780  74 48                   je 0xf7ca
+F782  E8 8B 00                call 0xf810
+F785  BE 22 7B                mov si, 0x7b22
+F788  E3 08                   jcxz 0xf792
+F78A  BE 3A 7B                mov si, 0x7b3a
+F78D  73 6A                   jae 0xf7f9
+F78F  BE 52 7B                mov si, 0x7b52
+F792  B0 0E                   mov al, 0xe
+F794  E8 13 F7                call 0xeeaa
+F797  A8 08                   test al, 8
+F799  75 12                   jne 0xf7ad
+F79B  B2 80                   mov dl, 0x80
+F79D  E8 70 00                call 0xf810
+F7A0  E3 0B                   jcxz 0xf7ad
+F7A2  72 09                   jb 0xf7ad
+F7A4  26 81 BF FE 01 55 AA    cmp word ptr es:[bx + 0x1fe], 0xaa55
+F7AB  74 5B                   je 0xf808
+F7AD  CD 18                   int 0x18
+F7AF  E9 77 FF                jmp 0xf729
+F7B2  E8 59 49                call 0x410e
+F7B5  E8 76 FD                call 0xf52e
+F7B8  E8 53 49                call 0x410e
+F7BB  BE 6A 7B                mov si, 0x7b6a
+F7BE  E8 6D FD                call 0xf52e
+F7C1  B4 00                   mov ah, 0
+F7C3  CD 16                   int 0x16
+F7C5  E8 46 49                call 0x410e
+F7C8  EB 8E                   jmp 0xf758
+F7CA  B0 0E                   mov al, 0xe
+F7CC  E8 DB F6                call 0xeeaa
+F7CF  A8 08                   test al, 8
+F7D1  75 12                   jne 0xf7e5
+F7D3  B2 80                   mov dl, 0x80
+F7D5  E8 38 00                call 0xf810
+F7D8  E3 0B                   jcxz 0xf7e5
+F7DA  72 09                   jb 0xf7e5
+F7DC  26 81 BF FE 01 55 AA    cmp word ptr es:[bx + 0x1fe], 0xaa55
+F7E3  74 23                   je 0xf808
+F7E5  B2 00                   mov dl, 0
+F7E7  E8 26 00                call 0xf810
+F7EA  BE 22 7B                mov si, 0x7b22
+F7ED  E3 BE                   jcxz 0xf7ad
+F7EF  BE 3A 7B                mov si, 0x7b3a
+F7F2  73 05                   jae 0xf7f9
+F7F4  BE 52 7B                mov si, 0x7b52
+F7F7  EB B4                   jmp 0xf7ad
+F7F9  8B FB                   mov di, bx
+F7FB  26 8B 05                mov ax, word ptr es:[di]
+F7FE  B9 80 00                mov cx, 0x80
+F801  FA                      cli
+F802  FC                      cld
+F803  F3 AE                   repe scasb al, byte ptr es:[di]
+F805  FB                      sti
+F806  E3 A5                   jcxz 0xf7ad
+F808  E8 2B F7                call 0xef36
+F80B  EA 00 7C 00 00          ljmp 0:0x7c00
+
+===== F810h-F82Bh =====
+Reason: INT 13h sector-read retry helper; four attempts with disk reset between failures
+F810  B9 04 00                mov cx, 4
+F813  51                      push cx
+F814  B9 01 00                mov cx, 1
+F817  B8 01 02                mov ax, 0x201
+F81A  CD 13                   int 0x13
+F81C  59                      pop cx
+F81D  73 0C                   jae 0xf82b
+F81F  50                      push ax
+F820  33 C0                   xor ax, ax
+F822  CD 13                   int 0x13
+F824  58                      pop ax
+F825  D0 E4                   shl ah, 1
+F827  72 02                   jb 0xf82b
+F829  E2 E8                   loop 0xf813
+F82B  C3                      ret
+
+===== F841h-F84Ch =====
+Reason: INT 12h handler: return conventional-memory size from BDA:0013h
+F841  FB                      sti
+F842  1E                      push ds
+F843  6A 40                   push 0x40
+F845  1F                      pop ds
+F846  A1 13 00                mov ax, word ptr [0x13]
+F849  1F                      pop ds
+F84A  CF                      iret
+F84B  00 00                   add byte ptr [bx + si], al
+
+===== F84Dh-F858h =====
+Reason: INT 11h handler: return equipment word from BDA:0010h
+F84D  E8 C1 92                call 0x8b11
+F850  1E                      push ds
+F851  6A 40                   push 0x40
+F853  1F                      pop ds
+F854  A1 10 00                mov ax, word ptr [0x10]
+F857  1F                      pop ds
+F858  CF                      iret
+
+===== F859h-F85Bh =====
+Reason: INT 15h vector trampoline to 90B4h
+F859  E9 58 98                jmp 0x90b4
+
+===== F85Eh-F8E2h =====
+Reason: INT 17h printer-service handler reached through EFD2h
+F85E  FB                      sti
+F85F  E8 50 98                call 0x90b2
+F862  53                      push bx
+F863  51                      push cx
+F864  52                      push dx
+F865  1E                      push ds
+F866  6A 40                   push 0x40
+F868  1F                      pop ds
+F869  8B DA                   mov bx, dx
+F86B  D1 E3                   shl bx, 1
+F86D  8B 97 08 00             mov dx, word ptr [bx + 8]
+F871  23 D2                   and dx, dx
+F873  74 66                   je 0xf8db
+F875  D0 EC                   shr ah, 1
+F877  8A E0                   mov ah, al
+F879  75 51                   jne 0xf8cc
+F87B  72 31                   jb 0xf8ae
+F87D  EE                      out dx, al
+F87E  E8 E1 EF                call 0xe862
+F881  42                      inc dx
+F882  EC                      in al, dx
+F883  A8 80                   test al, 0x80
+F885  75 07                   jne 0xf88e
+F887  50                      push ax
+F888  B8 FE 90                mov ax, 0x90fe
+F88B  CD 15                   int 0x15
+F88D  58                      pop ax
+F88E  D1 EB                   shr bx, 1
+F890  8A 9F 78 00             mov bl, byte ptr [bx + 0x78]
+F894  32 FF                   xor bh, bh
+F896  C1 E3 02                shl bx, 2
+F899  33 C9                   xor cx, cx
+F89B  E8 C4 EF                call 0xe862
+F89E  EC                      in al, dx
+F89F  A8 80                   test al, 0x80
+F8A1  75 18                   jne 0xf8bb
+F8A3  E2 F6                   loop 0xf89b
+F8A5  4B                      dec bx
+F8A6  75 F1                   jne 0xf899
+F8A8  24 F8                   and al, 0xf8
+F8AA  0C 01                   or al, 1
+F8AC  EB 29                   jmp 0xf8d7
+F8AE  B0 08                   mov al, 8
+F8B0  42                      inc dx
+F8B1  42                      inc dx
+F8B2  EE                      out dx, al
+F8B3  B9 00 04                mov cx, 0x400
+F8B6  E8 83 F0                call 0xe93c
+F8B9  EB 0B                   jmp 0xf8c6
+F8BB  E8 A4 EF                call 0xe862
+F8BE  B0 0D                   mov al, 0xd
+F8C0  42                      inc dx
+F8C1  FA                      cli
+F8C2  EE                      out dx, al
+F8C3  E8 9C EF                call 0xe862
+F8C6  B0 0C                   mov al, 0xc
+F8C8  EE                      out dx, al
+F8C9  FB                      sti
+F8CA  4A                      dec dx
+F8CB  4A                      dec dx
+F8CC  42                      inc dx
+F8CD  E8 92 EF                call 0xe862
+F8D0  EC                      in al, dx
+F8D1  E8 8E EF                call 0xe862
+F8D4  EC                      in al, dx
+F8D5  24 F8                   and al, 0xf8
+F8D7  34 48                   xor al, 0x48
+F8D9  86 C4                   xchg ah, al
+F8DB  1F                      pop ds
+F8DC  5A                      pop dx
+F8DD  59                      pop cx
+F8DE  5B                      pop bx
+F8DF  E8 D0 97                call 0x90b2
+F8E2  CF                      iret
+
+===== F8E3h-F8E6h =====
+Reason: INT 14h serial-service handler reached through E739h; dispatches six functions via F92Ah table
+F8E3  FB                      sti
+F8E4  E8 CB 97                call 0x90b2
 
 ===== E6F2h-E6F4h =====
 Reason: near-JMP trampoline to F758h, skipping the fixed-disk parameter table and embedded payload
