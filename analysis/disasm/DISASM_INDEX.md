@@ -1276,7 +1276,7 @@ Report: [AMI486_ADDRESS_LEDGER_REGION_D655_E3FF_20261117.md](AMI486_ADDRESS_LEDG
 - The D7xx–DAA1h stream performs POST 8042, CMOS, chipset and PIT checks. Stack-return words are emitted as separate data ranges.
 - DAA2h–DFFFh is 1,374 zero bytes. E000h/E005h are entry stubs; E05Bh is the reset entry target; E160h–E25Fh and E260h–E2BFh are separately classified descriptor-like/parameter blocks.
 - New direct entry: the stack-return continuation D906h executes `JMP 8400h`. This corrects phase 52's former unresolved dynamic-entry note; it does not contradict phase 51's table-target statement. The 8400h path clears/restores CMOS 8Eh–FFh and preserves BP.13.
-- Candidate generator: 508 code windows, 136 data ranges; 27,247 unique code-window bytes, 15,754 unique data-range bytes, 117 overlap bytes, 42,884-byte union (65.44%), 195 pages touched and 118 fully covered. These are seeded inspection masks, not semantic-completion percentages.
+- Candidate generator: 541 code windows, 140 data ranges; 29,460 unique code-window bytes, 15,775 unique data-range bytes, 117 overlap bytes, 45,118-byte union (68.84%), 203 pages touched and 125 fully covered. These are seeded inspection masks, not semantic-completion percentages.
 - Largest remaining uncovered intervals now begin E865h–F52Dh (3,273 bytes), 697Dh–7144h (1,992 bytes), 19F8h–20FFh (1,800 bytes), CA16h–D0FFh (1,770 bytes), and 873Ch–8DCEh (1,683 bytes).
 
 
@@ -1291,4 +1291,15 @@ Report: [AMI486_ADDRESS_LEDGER_REGION_E862_F52D_20261117.md](AMI486_ADDRESS_LEDG
 - F068h clears CR0.PE and returns through the E2B8h IDT pointer to reset entry E05Bh. F10Dh–F302h covers CMOS Setup validation/editor; F371h is the encoded “EVALUATION COPY, NOT FOR SALE” message; F3DBh/F419h validate video/ROM signatures; F4A5h/F50Dh are fatal diagnostic paths.
 - The E87Bh and F0A3h tables, EFC7h–F041h opaque block and several interrupt-vector installations remain unresolved.
 - Current candidate mask: 508 code windows, 136 data ranges; 27,247 unique code bytes, 15,754 unique data bytes, 117 overlap bytes, 42,884-byte union (65.44%), 195 pages touched, 118 fully covered. These are inspection masks, not semantic completion.
-- Largest remaining uncovered intervals: 697Dh–7144h (1,992 bytes), 19F8h–20FFh (1,800 bytes), CA16h–D0FFh (1,770 bytes), 873Ch–8DCEh (1,683 bytes), FA53h–FFFFh (1,453 bytes).
+- Largest remaining uncovered intervals: 19F8h–20FFh (1,800 bytes), CA16h–D0FFh (1,770 bytes), 873Ch–8DCEh (1,683 bytes), FA53h–FFFFh (1,453 bytes), 244Eh–29F5h (1,448 bytes).
+
+
+## Hard Disk Setup / INT 13h diagnostic region 696Fh–72D7h — 2026-11-17
+
+Report: [AMI486_ADDRESS_LEDGER_REGION_696F_72D8_20261117.md](AMI486_ADDRESS_LEDGER_REGION_696F_72D8_20261117.md).
+
+- The 6BD8h table contains three near-call targets: 6B14h, 71E4h and 6CE3h. The dispatcher at 6BDEh is called directly by 6936h.
+- E1ACh is the three-value selector controlled by the Hard Disk Setup UI at 4642h–46E8h; the screen at 4628h displays the geometry headings and “No Hard Disk Installed” / “Hard Disk Type can be changed from”.
+- The three targets implement controller/drive initialization, alternate geometry initialization, and the main disk-test state machine. 6C15h is the INT 13h wrapper; 6D94h/6E30h perform disk requests; 7033h is the read-throughput benchmark and prints the “KB/sec ms” label at 7145h.
+- 6CB4h–6CC0h is a 13-byte status-token table; 6CC1h is an INT3 alignment byte. 6BD8h–6BDDh is the three-word mode table; 6B61h is a NOP alignment byte.
+- Current candidate mask: 541 code windows, 140 data ranges, 45,118-byte union (68.84%), 71 uncovered intervals, 203 pages touched and 125 fully covered. Largest remaining gap: 19F8h–20FFh (1,800 bytes). This is not semantic completion.
