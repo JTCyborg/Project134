@@ -13,7 +13,10 @@ The former largest uncovered interval was E481h–E830h (944 bytes). The bytes r
 | E481h–E6F0h | 624 bytes | 39 additional 16-byte fixed-disk parameter records |
 | E6F1h | 1 byte | 00h padding |
 | E6F2h–E6F4h | 3 bytes | Near JMP to F758h |
-| E6F5h–E7E7h | 243 bytes | Opaque embedded payload/data |
+| E6F5h–E728h | 52 bytes | Opaque embedded data preamble |
+| E729h–E738h | 16 bytes | Eight-word UART baud-divisor table |
+| E739h–E73Bh | 3 bytes | INT 14h near-JMP trampoline to F8E3h |
+| E73Ch–E7E7h | 172 bytes | Opaque embedded payload/data |
 | E7E8h–E7FFh | 24 bytes | 8042 command/status helper |
 | E800h–E802h | 3 bytes | ADD AL,B0h / RETF stub candidate |
 | E803h–E818h | 22 bytes | 8042 command/echo helper candidate |
@@ -74,8 +77,8 @@ Bytes E9 AD CB form a near JMP to B3DEh. Caller provenance remains unresolved.
 The candidate generator now:
 - extends the fixed-disk parameter data range through E6F0h;
 - records the single E6F1h padding byte;
-- separates the E6F2h jump and E6F5h payload;
-- adds bounded code seeds for E7E8h, E800h, E803h, E819h and E82Eh.
+- separates the E6F2h jump and the embedded payload around the UART divisor table and E739h INT 14h trampoline;
+- adds bounded code seeds for E7E8h, E800h, E803h, E819h, E82Eh and EFD2h (INT 17h trampoline).
 
 GitHub Actions run 44083781676 completed successfully. The regenerated manifest reports 779 candidate windows, 232 data ranges, 38,287 unique code-window bytes, 18,888 unique data-range bytes, 290 overlap bytes, and a 56,885-byte union (86.80%). There are 68 uncovered intervals; the next largest is F5AEh–F8E6h (825 bytes).
 
