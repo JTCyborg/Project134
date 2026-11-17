@@ -75,7 +75,7 @@ LIMITS.update({0xFA4E: 0x17, 0xFE6E: 0x03})
 # POST/Setup continuations in the former 5A4Ch–5FE3h gap.
 # Main POST continuation and bounded helper entries in 1364h–188Dh.
 LIMITS.update({
-    0x1364: 0x2F2, 0x1656: 0x61, 0x16B7: 0x09, 0x16C0: 0x07,
+    0x1364: 0x26A, 0x15D6: 0x80, 0x1656: 0x61, 0x16B7: 0x09, 0x16C0: 0x07,
     0x16C7: 0x0A, 0x16D1: 0x09, 0x16DA: 0x1A, 0x16F4: 0x0C,
     0x1700: 0x14, 0x1714: 0x4F, 0x1763: 0x08, 0x176B: 0x7E,
     0x17E9: 0x09, 0x17F2: 0x1D, 0x180F: 0x27, 0x1836: 0x14,
@@ -1100,6 +1100,7 @@ SEEDS = [
 
 SEEDS.extend([
     (0x1364, "stack-threaded POST continuation: 135Dh pushes 1364h then FA4Eh and RETs into the checksum helper"),
+    (0x15D6, "POST continuation after embedded eight-byte CMOS/keyboard XLAT table at 15CEh"),
     (0x1656, "direct CALL targets from 120Dh and 158Ch; POST status/warning display and F1-key wait"),
     (0x16B7, "direct CALL targets from 12B9h, 1613h, 16AFh and 1714h; INT 10h mode reset helper"),
     (0x16C0, "direct CALL targets from 166Fh, 1680h and 1686h; POST text output helper"),
