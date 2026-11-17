@@ -1164,3 +1164,7 @@ After the reset pulse, `AB34h` calls `ABADh` with `AH=01h`, then again with `AH=
 Important call-boundary detail: the near CALL at `AB37h` targets `AABFh`, and the calls at `AB45h` and `AB50h` both target `ABADh`. The routine at `ABADh` is a nontrivial helper with a 40h-count loop and local stack frame; its internals still need separate tracing. Do not interpret `AH=01h`/`AH=00h` as conventional BIOS function numbers: they are input values to this private helper, not INT 13h calls established by this excerpt.
 
 ROM bytes are unchanged. The findings above distinguish the confirmed ATA reset pulse from the still-unresolved parameter-record matching performed after it.
+
+### Precision correction for the AABFh gate in AB34h
+
+The keyboard helper at `AABFh` must not be summarized as a simple ESC/cancel test. Its observed sequence is: save CX/AX/FLAGS, enable interrupts, poll BIOS keyboard status with `INT 16h/AH=01h`, and when a key is pending consume it with `INT 16h/AH=00h`. It compares the returned AL with ESC (`1Bh`) and uses the caller-provided SI value in the ESC branch before continuing its bounded loop. Since `AB34h` initializes `SI=FFFFh`, the observed caller does not establish an immediate abort on ESC. The only safe conclusion from this call site is that `AABFh` is a keyboard-poll/consume helper with a caller-sensitive ESC branch; whether the reset branch is suppressed by any key condition requires full tracing of its loop and carry return. This replaces the earlier over-specific wording that it simply handles an ESC/cancel path.
