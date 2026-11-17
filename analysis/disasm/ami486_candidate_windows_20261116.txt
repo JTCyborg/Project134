@@ -27910,7 +27910,7 @@ Reason: option-ROM scan invalid-candidate helper: advances BX by 0080h, restores
 1BF4  1F                      pop ds
 1BF5  C3                      ret
 
-===== 10DFh-131Eh =====
+===== 10DFh-131Fh =====
 Reason: POST hardware-initialization continuation: 8042 self-test, CMOS/memory configuration checks, setup-warning path and video/chipset initialization; entry provenance unresolved
 10DF  00 B0 F4 E6             add byte ptr [bx + si - 0x190c], dh
 10E3  80 E8 CC                sub al, 0xcc
@@ -28151,8 +28151,7 @@ Reason: POST hardware-initialization continuation: 8042 self-test, CMOS/memory c
 1316  E8 E8 84                call 0x9801
 1319  B0 8E                   mov al, 0x8e
 131B  E6 80                   out 0x80, al
-131D  E8              db 0xE8
-131E  3A              db 0x3A
+131D  E8 3A 05                call 0x185a
 
 ===== AF84h-AF86h =====
 Reason: INT 09h keyboard IRQ path: final near-JMP byte completes the AF84h->B2E5h dispatch branch
