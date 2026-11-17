@@ -1271,10 +1271,6 @@ Words: 20DA
 Reason: Crafted near-return word 20FCh consumed by the 8DDCh indexed-writer trampoline
 Words: 20FC
 
-===== DATA 02DFh-02EBh =====
-Reason: Overlapping 13-byte parameter-table view selected by the pointer word at CAB9h; overlaps the low-ROM nibble-editor stream
-02DF  E8 04 BA 16 0A E8 BC 02 9C 80 66 10 0F          ..........f..
-
 ===== DATA C8CAh-C8D6h =====
 Reason: Overlapping 13-byte diskette-parameter view selected by the pointer word at CAB1h; C8CAh is also an executable INT 13h continuation
 C8CA  0A C0 74 04 2A D9 8A C3 8A 26 41 00 0A          ..t.*....&A..
@@ -2049,7 +2045,7 @@ D0D6  59                      pop cx
 D0D7  5A                      pop dx
 D0D8  C3                      ret
 
-===== D0D9h-D0FFh =====
+===== D0D9h-D103h =====
 Reason: direct CALL targets from C838h, C8C7h, C90Eh and C98Ah; INT 1Eh parameter-table comparison helper
 D0D9  50                      push ax
 D0DA  1E                      push ds
@@ -2067,6 +2063,9 @@ D0F4  3A 77 04                cmp dh, byte ptr [bx + 4]
 D0F7  75 03                   jne 0xd0fc
 D0F9  8A 47 05                mov al, byte ptr [bx + 5]
 D0FC  88 26 40 00             mov byte ptr [0x40], ah
+D100  8A D8                   mov bl, al
+D102  58                      pop ax
+D103  C3                      ret
 
 ===== 19FBh-1A8Eh =====
 Reason: direct CALL target from POST summary renderer at 3F53h; cache/CPU speed display routine
