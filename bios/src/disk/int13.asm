@@ -18,6 +18,7 @@
 BITS 16
 
 int13_entry:
+    push bx                         ; preserve caller BX across table lookup
     cmp ah, 19h
     ja  int13_error_unsupported
 
@@ -36,18 +37,17 @@ int13_entry:
 int13_error_unsupported:
     push bp
     mov bp, sp
-    push bx
     push ds
 
     mov ax, 0040h
     mov ds, ax
     mov byte [0074h], 01h
     mov ax, 0100h
-    or word [ss:bp + 6], 0001h
+    or word [ss:bp + 8], 0001h
 
     pop ds
-    pop bx
     pop bp
+    pop bx
     iret
 
 ; Temporary safe fallback for handlers whose complete contracts have not
