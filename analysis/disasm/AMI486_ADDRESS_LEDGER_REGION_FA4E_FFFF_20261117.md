@@ -36,7 +36,7 @@ FA4D  C3             ret
 
 The comparison is byte-for-byte established by the instruction operands:
 - source sequence: `FF70h–FFBBh`;
-- comparison sequence: `F9FFh–FA4Ah`;
+- comparison sequence: `FA00h–FA4Bh`;
 - length: `004Ch` = 76 bytes;
 - comparison condition: `NOT source_byte XOR comparison_byte = 0`, i.e. the two ranges are bytewise complements.
 
@@ -50,21 +50,21 @@ The checksum routine's caller context is a POST hardware-initialization sequence
 - `FA6Eh–FA6Fh`: two 00h bytes.
 - These bytes are not part of the FA4Eh routine's reachable instruction stream. Retain them as padding/unclassified boundary data pending another consumer.
 
-## 3. FA70h–FE6Fh bitmap-like block
+## 3. FA6Eh–FE6Dh bitmap-like block
 
-The exact span is 1,024 bytes (`0400h`) and is naturally divisible into 128 eight-byte records. The bytes show repeated high-contrast row patterns and recognizable character-like shapes, consistent with an 8×8 glyph/bitmap table.
+The exact span is 1,024 bytes (`0400h`) and is naturally divisible into 128 eight-byte records. The bytes show repeated high-contrast row patterns and recognizable character-like shapes, consistent with an 8×8 glyph/bitmap table. The range begins at FA6Eh and ends at FE6Dh; FE6Eh–FE70h is the following three-byte JMP and is not part of the bitmap.
 
 Current classification: **bitmap/glyph data candidate, high confidence as non-random structured data; exact character encoding, glyph index origin, and runtime consumer not yet proven**.
 
 Do not decode this block as a single 16-bit instruction stream. The reset-linear disassembly's apparent instructions in this span are artifacts of decoding bitmap bytes as x86.
 
-## 4. FE70h–FEA0h and FEA1h–FEE1h
+## 4. FE71h–FEA0h and FEA1h–FEE1h
 
-- `FE70h–FEA0h`: 49-byte structured blob. It is not part of the FA70h–FE6Fh 1-KiB bitmap block. Its exact role is unresolved.
-- `FEA1h–FEA8h`: bytes `01 06 06 92 E9 3F EE 00`; preserve as a separate short data/control record candidate.
-- `FEA9h–FEE1h`: zero-filled area (with the exact start/end verified against the ROM bytes); classify as padding/reserved bytes unless an incoming reference proves otherwise.
+- `FE71h–FEA0h`: 48-byte structured blob following the three-byte JMP at FE6Eh–FE70h. It is not part of the FA70h–FE6Fh 1-KiB bitmap block. Its exact role is unresolved.
+- `FEA1h–FEA7h`: bytes `01 06 06 92 E9 3F EE`; preserve as a separate short data/control record candidate.
+- `FEA8h–FEE3h`: zero-filled area; classify as padding/reserved bytes unless an incoming reference proves otherwise.
 
-## 5. FEE2h–FF4Fh mixed upper-ROM table region
+## 5. FEE4h–FF4Fh mixed upper-ROM table region
 
 This interval contains many repeated `97 EA` byte pairs, short far-jump-shaped sequences, and interspersed zero bytes. The linear decoder emits far JMP instructions at several offsets, but no exclusive instruction alignment or caller provenance has been established for the whole block.
 
@@ -97,10 +97,10 @@ The adjacent bytes FF BCh–FFC6h are FFh fill. The block FFC7h–FFEFh duplicat
 | Range | Current classification | Confidence |
 |---|---|---|
 | FA4Eh–FA64h | POST-called 76-byte complement comparison routine | High |
-| FA65h–FA6Fh | Fill/boundary bytes | High |
-| FA70h–FE6Fh | 1-KiB bitmap/glyph table candidate, 128 × 8-byte records | Medium-high |
-| FE70h–FEA0h | Structured data blob | Medium |
-| FEA1h–FEE1h | Short record plus zero-filled area | Medium |
+| FA65h–FA6Dh | FFh fill; FA6Eh begins the bitmap block | High |
+| FA6Eh–FE6Dh | 1-KiB bitmap/glyph table candidate, 128 × 8-byte records | Medium-high |
+| FE71h–FEA0h | Structured data blob | Medium |
+| FEA1h–FEA7h / FEA8h–FEE3h | Short record plus zero-filled area | Medium |
 | FEE2h–FF4Fh | Mixed dispatch/relocation data candidate | Low-medium |
 | FF50h–FF6Fh | Embedded identification/contact text and fields | High |
 | FF70h–FFBBh | 76-byte comparison data | High |
