@@ -1200,6 +1200,10 @@ Reason: Thirty-byte encoded video-ROM signature compared by F419h
 F3BC  BE E5 B6 FE F5 94 D4 6C B4 E4 F4 8C FE 95 D4 C4 .......l........
 F3CC  F4 5C 6C D4 8C DC 64 FE B5 8C E4 8E 9E 97       .\l...d.......
 
+===== DATA 6CB4h-6CC0h =====
+Reason: Thirteen-byte bit-mask/size lookup table; consumed by the 6CC1h controller-state path
+6CB4  C3 01 02 04 05 07 0A 10 11 20 40 80 AA          ......... @..
+
 ===== 3E3Fh-3EBEh =====
 Reason: direct CALL target from 00EFh screen-presentation stream
 3E3F  55                      push bp
@@ -22217,4 +22221,917 @@ F528  EB BD                   jmp 0xf4e7
 F52A  FB                      sti
 F52B  F4                      hlt
 F52C  EB FC                   jmp 0xf52a
+
+===== 696Fh-69CDh =====
+Reason: separate near-entry routine beginning with BP stack frame; continues beyond prior 68FDh window
+696F  55                      push bp
+6970  8B EC                   mov bp, sp
+6972  83 EC 10                sub sp, 0x10
+6975  E8 60 09                call 0x72d8
+6978  C5 76 04                lds si, ptr [bp + 4]
+697B  8B FE                   mov di, si
+697D  8A 56 08                mov dl, byte ptr [bp + 8]
+6980  32 F6                   xor dh, dh
+6982  8A 0E 1F E4             mov cl, byte ptr [0xe41f]
+6986  32 ED                   xor ch, ch
+6988  57                      push di
+6989  FC                      cld
+698A  32 E4                   xor ah, ah
+698C  B0 80                   mov al, 0x80
+698E  AB                      stosw word ptr es:[di], ax
+698F  E2 FD                   loop 0x698e
+6991  5F                      pop di
+6992  B5 01                   mov ch, 1
+6994  C6 04 00                mov byte ptr [si], 0
+6997  88 6C 01                mov byte ptr [si + 1], ch
+699A  03 F2                   add si, dx
+699C  03 F2                   add si, dx
+699E  FE C5                   inc ch
+69A0  3A 2E 1F E4             cmp ch, byte ptr [0xe41f]
+69A4  77 22                   ja 0x69c8
+69A6  A0 1F E4                mov al, byte ptr [0xe41f]
+69A9  32 E4                   xor ah, ah
+69AB  D1 E0                   shl ax, 1
+69AD  2D 02 00                sub ax, 2
+69B0  05 B8 E1                add ax, 0xe1b8
+69B3  3B F0                   cmp si, ax
+69B5  76 DD                   jbe 0x6994
+69B7  8B F7                   mov si, di
+69B9  A0 1F E4                mov al, byte ptr [0xe41f]
+69BC  F6 04 80                test byte ptr [si], 0x80
+69BF  75 0E                   jne 0x69cf
+69C1  83 C6 02                add si, 2
+69C4  FE C8                   dec al
+69C6  75 F4                   jne 0x69bc
+69C8  E8 26 09                call 0x72f1
+69CB  8B E5                   mov sp, bp
+69CD  5D                      pop bp
+
+===== 69CEh-6A50h =====
+Reason: second BP-framed disk/controller state routine
+69CE  C3                      ret
+69CF  EB C3                   jmp 0x6994
+69D1  55                      push bp
+69D2  8B EC                   mov bp, sp
+69D4  83 EC 10                sub sp, 0x10
+69D7  E8 FE 08                call 0x72d8
+69DA  8B 76 04                mov si, word ptr [bp + 4]
+69DD  8B 4E 06                mov cx, word ptr [bp + 6]
+69E0  BB B8 E1                mov bx, 0xe1b8
+69E3  80 3E BD E3 01          cmp byte ptr [0xe3bd], 1
+69E8  74 11                   je 0x69fb
+69EA  A0 22 E4                mov al, byte ptr [0xe422]
+69ED  32 E4                   xor ah, ah
+69EF  50                      push ax
+69F0  1E                      push ds
+69F1  BB B8 E1                mov bx, 0xe1b8
+69F4  53                      push bx
+69F5  E8 77 FF                call 0x696f
+69F8  83 C4 06                add sp, 6
+69FB  BF 00 00                mov di, 0
+69FE  53                      push bx
+69FF  51                      push cx
+6A00  8A F1                   mov dh, cl
+6A02  8A 16 21 E4             mov dl, byte ptr [0xe421]
+6A06  8B CE                   mov cx, si
+6A08  86 E9                   xchg cl, ch
+6A0A  C0 E1 06                shl cl, 6
+6A0D  80 C9 01                or cl, 1
+6A10  8B C6                   mov ax, si
+6A12  80 E4 0C                and ah, 0xc
+6A15  C0 E4 04                shl ah, 4
+6A18  0A F4                   or dh, ah
+6A1A  B4 05                   mov ah, 5
+6A1C  A0 1F E4                mov al, byte ptr [0xe41f]
+6A1F  E8 F3 01                call 0x6c15
+6A22  59                      pop cx
+6A23  5B                      pop bx
+6A24  9C                      pushf
+6A25  E8 78 02                call 0x6ca0
+6A28  72 2B                   jb 0x6a55
+6A2A  9D                      popf
+6A2B  73 31                   jae 0x6a5e
+6A2D  47                      inc di
+6A2E  83 FF 02                cmp di, 2
+6A31  74 07                   je 0x6a3a
+6A33  E8 5D 00                call 0x6a93
+6A36  72 02                   jb 0x6a3a
+6A38  EB C4                   jmp 0x69fe
+6A3A  86 C4                   xchg ah, al
+6A3C  E8 83 02                call 0x6cc2
+6A3F  3C 41                   cmp al, 0x41
+6A41  74 0A                   je 0x6a4d
+6A43  3C 49                   cmp al, 0x49
+6A45  9C                      pushf
+6A46  86 C4                   xchg ah, al
+6A48  9D                      popf
+6A49  74 13                   je 0x6a5e
+6A4B  EB B1                   jmp 0x69fe
+6A4D  F9                      stc
+6A4E  E8 A0 08                call 0x72f1
+
+===== 6A51h-6AC3h =====
+Reason: continuation after 6A50h RET; status/state update loop
+6A51  8B E5                   mov sp, bp
+6A53  5D                      pop bp
+6A54  C3                      ret
+6A55  9D                      popf
+6A56  C6 06 B9 E3 1B          mov byte ptr [0xe3b9], 0x1b
+6A5B  F8                      clc
+6A5C  EB F0                   jmp 0x6a4e
+6A5E  32 ED                   xor ch, ch
+6A60  3B 4E 0A                cmp cx, word ptr [bp + 0xa]
+6A63  72 1B                   jb 0x6a80
+6A65  B9 00 00                mov cx, 0
+6A68  46                      inc si
+6A69  89 36 B5 E1             mov word ptr [0xe1b5], si
+6A6D  88 0E B7 E1             mov byte ptr [0xe1b7], cl
+6A71  3B 76 08                cmp si, word ptr [bp + 8]
+6A74  77 0D                   ja 0x6a83
+6A76  75 05                   jne 0x6a7d
+6A78  3B 4E 0A                cmp cx, word ptr [bp + 0xa]
+6A7B  77 06                   ja 0x6a83
+6A7D  E9 7B FF                jmp 0x69fb
+6A80  41                      inc cx
+6A81  EB EA                   jmp 0x6a6d
+6A83  B0 00                   mov al, 0
+6A85  F8                      clc
+6A86  C7 06 B5 E1 00 00       mov word ptr [0xe1b5], 0
+6A8C  C6 06 B7 E1 00          mov byte ptr [0xe1b7], 0
+6A91  EB BB                   jmp 0x6a4e
+6A93  80 FC AA                cmp ah, 0xaa
+6A96  74 11                   je 0x6aa9
+6A98  80 FC CC                cmp ah, 0xcc
+6A9B  74 0C                   je 0x6aa9
+6A9D  80 FC 01                cmp ah, 1
+6AA0  74 07                   je 0x6aa9
+6AA2  80 FC 80                cmp ah, 0x80
+6AA5  74 02                   je 0x6aa9
+6AA7  F8                      clc
+6AA8  C3                      ret
+6AA9  F9                      stc
+6AAA  C3                      ret
+6AAB  A0 22 E4                mov al, byte ptr [0xe422]
+6AAE  32 E4                   xor ah, ah
+6AB0  50                      push ax
+6AB1  1E                      push ds
+6AB2  B8 B8 E1                mov ax, 0xe1b8
+6AB5  50                      push ax
+6AB6  E8 B6 FE                call 0x696f
+6AB9  83 C4 06                add sp, 6
+6ABC  BE B8 E1                mov si, 0xe1b8
+6ABF  8A 0E 1F E4             mov cl, byte ptr [0xe41f]
+6AC3  32              db 0x32
+
+===== 6AC4h-6AE2h =====
+Reason: CMOS/controller state read and copy helper
+6AC4  ED                      in ax, dx
+6AC5  C6 04 80                mov byte ptr [si], 0x80
+6AC8  83 C6 02                add si, 2
+6ACB  E2 F8                   loop 0x6ac5
+6ACD  C3                      ret
+6ACE  83 3E 23 E4 00          cmp word ptr [0xe423], 0
+6AD3  75 02                   jne 0x6ad7
+6AD5  F8                      clc
+6AD6  C3                      ret
+6AD7  E8 D1 FF                call 0x6aab
+6ADA  8B 0E 23 E4             mov cx, word ptr [0xe423]
+6ADE  C6 06 BD E3 01          mov byte ptr [0xe3bd], 1
+
+===== 6AE3h-6B13h =====
+Reason: status validation and controller error helper
+6AE3  BE 39 E4                mov si, 0xe439
+6AE6  51                      push cx
+6AE7  56                      push si
+6AE8  33 C0                   xor ax, ax
+6AEA  50                      push ax
+6AEB  8A 44 02                mov al, byte ptr [si + 2]
+6AEE  50                      push ax
+6AEF  8B D8                   mov bx, ax
+6AF1  8B 04                   mov ax, word ptr [si]
+6AF3  50                      push ax
+6AF4  93                      xchg bx, ax
+6AF5  50                      push ax
+6AF6  8B C3                   mov ax, bx
+6AF8  50                      push ax
+6AF9  E8 D5 FE                call 0x69d1
+6AFC  8B 46 08                mov ax, word ptr [bp + 8]
+6AFF  83 C4 0A                add sp, 0xa
+6B02  5E                      pop si
+6B03  59                      pop cx
+6B04  80 3E B9 E3 00          cmp byte ptr [0xe3b9], 0
+6B09  75 07                   jne 0x6b12
+6B0B  83 C6 03                add si, 3
+6B0E  E2 D6                   loop 0x6ae6
+6B10  F8                      clc
+6B11  C3                      ret
+6B12  F9                      stc
+6B13  C3                      ret
+
+===== 6B14h-6B5Fh =====
+Reason: controller command/status initialization sequence
+6B14  C6 06 AB E1 01          mov byte ptr [0xe1ab], 1
+6B19  C6 06 BD E3 00          mov byte ptr [0xe3bd], 0
+6B1E  B4 14                   mov ah, 0x14
+6B20  8A 16 21 E4             mov dl, byte ptr [0xe421]
+6B24  E8 EE 00                call 0x6c15
+6B27  73 0F                   jae 0x6b38
+6B29  E8 96 01                call 0x6cc2
+6B2C  3C 52                   cmp al, 0x52
+6B2E  74 E9                   je 0x6b19
+6B30  3C 49                   cmp al, 0x49
+6B32  74 04                   je 0x6b38
+6B34  F9                      stc
+6B35  E9 99 00                jmp 0x6bd1
+6B38  B4 08                   mov ah, 8
+6B3A  8A 16 21 E4             mov dl, byte ptr [0xe421]
+6B3E  E8 D4 00                call 0x6c15
+6B41  B4 09                   mov ah, 9
+6B43  8A 16 21 E4             mov dl, byte ptr [0xe421]
+6B47  E8 CB 00                call 0x6c15
+6B4A  73 16                   jae 0x6b62
+6B4C  B4 09                   mov ah, 9
+6B4E  E8 C4 00                call 0x6c15
+6B51  73 0F                   jae 0x6b62
+6B53  E8 6C 01                call 0x6cc2
+6B56  3C 52                   cmp al, 0x52
+6B58  74 E7                   je 0x6b41
+6B5A  3C 49                   cmp al, 0x49
+6B5C  74 04                   je 0x6b62
+6B5E  F9                      stc
+6B5F  EB              db 0xEB
+
+===== 6B60h-6B6Fh =====
+Reason: AH=11h status-query helper pair
+6B60  70 90                   jo 0x6af2
+6B62  B4 11                   mov ah, 0x11
+6B64  E8 AE 00                call 0x6c15
+6B67  B4 11                   mov ah, 0x11
+6B69  E8 A9 00                call 0x6c15
+6B6C  73 11                   jae 0x6b7f
+6B6E  86 C4                   xchg ah, al
+
+===== 6B70h-6B7Fh =====
+Reason: AH=11h status-query alternate entry
+6B70  E8 4F 01                call 0x6cc2
+6B73  3C 52                   cmp al, 0x52
+6B75  74 EB                   je 0x6b62
+6B77  3C 49                   cmp al, 0x49
+6B79  74 04                   je 0x6b7f
+6B7B  F9                      stc
+6B7C  EB 53                   jmp 0x6bd1
+6B7E  90                      nop
+6B7F  B4              db 0xB4
+
+===== 6B80h-6B8Fh =====
+Reason: AH=10h status-query helper
+6B80  10 E8                   adc al, ch
+6B82  91                      xchg cx, ax
+6B83  00 73 16                add byte ptr [bp + di + 0x16], dh
+6B86  B4 10                   mov ah, 0x10
+6B88  E8 8A 00                call 0x6c15
+6B8B  73 0F                   jae 0x6b9c
+6B8D  E8 32 01                call 0x6cc2
+
+===== 6B90h-6BB3h =====
+Reason: controller state snapshot and buffer preparation
+6B90  3C 52                   cmp al, 0x52
+6B92  74 EB                   je 0x6b7f
+6B94  3C 49                   cmp al, 0x49
+6B96  74 04                   je 0x6b9c
+6B98  F9                      stc
+6B99  EB 36                   jmp 0x6bd1
+6B9B  90                      nop
+6B9C  33 C0                   xor ax, ax
+6B9E  50                      push ax
+6B9F  A0 B4 E1                mov al, byte ptr [0xe1b4]
+6BA2  32 E4                   xor ah, ah
+6BA4  50                      push ax
+6BA5  A1 B2 E1                mov ax, word ptr [0xe1b2]
+6BA8  50                      push ax
+6BA9  A0 B7 E1                mov al, byte ptr [0xe1b7]
+6BAC  32 E4                   xor ah, ah
+6BAE  50                      push ax
+6BAF  A1 B5 E1                mov ax, word ptr [0xe1b5]
+6BB2  50                      push ax
+6BB3  C6              db 0xC6
+
+===== 6C40h-6C9Fh =====
+Reason: BP-framed video diagnostic/output routine using INT 10h
+6C40  96                      xchg si, ax
+6C41  06                      push es
+6C42  A0 A6 E1                mov al, byte ptr [0xe1a6]
+6C45  A2 9F E1                mov byte ptr [0xe19f], al
+6C48  52                      push dx
+6C49  B4 02                   mov ah, 2
+6C4B  B6 0B                   mov dh, 0xb
+6C4D  B2 3A                   mov dl, 0x3a
+6C4F  52                      push dx
+6C50  32 FF                   xor bh, bh
+6C52  CD 10                   int 0x10
+6C54  5A                      pop dx
+6C55  8B C2                   mov ax, dx
+6C57  FE C8                   dec al
+6C59  B2 06                   mov dl, 6
+6C5B  51                      push cx
+6C5C  06                      push es
+6C5D  E8 9D EB                call 0x57fd
+6C60  07                      pop es
+6C61  59                      pop cx
+6C62  8A C5                   mov al, ch
+6C64  51                      push cx
+6C65  C0 E9 06                shr cl, 6
+6C68  8A E1                   mov ah, cl
+6C6A  59                      pop cx
+6C6B  5A                      pop dx
+6C6C  52                      push dx
+6C6D  80 E6 C0                and dh, 0xc0
+6C70  C0 EE 04                shr dh, 4
+6C73  0A E6                   or ah, dh
+6C75  E8 AB 06                call 0x7323
+6C78  B4 02                   mov ah, 2
+6C7A  B6 0B                   mov dh, 0xb
+6C7C  B2 49                   mov dl, 0x49
+6C7E  52                      push dx
+6C7F  32 FF                   xor bh, bh
+6C81  CD 10                   int 0x10
+6C83  5A                      pop dx
+6C84  8B C2                   mov ax, dx
+6C86  FE C8                   dec al
+6C88  B2 04                   mov dl, 4
+6C8A  06                      push es
+6C8B  E8 6F EB                call 0x57fd
+6C8E  07                      pop es
+6C8F  5A                      pop dx
+6C90  8A C6                   mov al, dh
+6C92  24 3F                   and al, 0x3f
+6C94  32 E4                   xor ah, ah
+6C96  E8 8A 06                call 0x7323
+6C99  E8 55 06                call 0x72f1
+6C9C  8B E5                   mov sp, bp
+6C9E  5D                      pop bp
+6C9F  C3                      ret
+
+===== 6CA0h-6CB3h =====
+Reason: keyboard input helper using INT 16h
+6CA0  50                      push ax
+6CA1  B4 01                   mov ah, 1
+6CA3  CD 16                   int 0x16
+6CA5  74 0B                   je 0x6cb2
+6CA7  B4 00                   mov ah, 0
+6CA9  CD 16                   int 0x16
+6CAB  3C 1B                   cmp al, 0x1b
+6CAD  75 03                   jne 0x6cb2
+6CAF  58                      pop ax
+6CB0  F9                      stc
+6CB1  C3                      ret
+6CB2  58                      pop ax
+6CB3  F8                      clc
+
+===== 6CC1h-6CDFh =====
+Reason: bit-mask lookup consumer and controller-state validation
+6CC1  CC                      int3
+6CC2  A0 B9 E3                mov al, byte ptr [0xe3b9]
+6CC5  51                      push cx
+6CC6  57                      push di
+6CC7  B9 0D 00                mov cx, 0xd
+6CCA  8D 3E B5 6C             lea di, [0x6cb5]
+6CCE  F2 AE                   repne scasb al, byte ptr es:[di]
+6CD0  8B C7                   mov ax, di
+6CD2  5F                      pop di
+6CD3  59                      pop cx
+6CD4  75 05                   jne 0x6cdb
+6CD6  2D B5 6C                sub ax, 0x6cb5
+6CD9  EB 02                   jmp 0x6cdd
+6CDB  B0 01                   mov al, 1
+6CDD  06                      push es
+6CDE  E8              db 0xE8
+6CDF  EE                      out dx, al
+
+===== 6CE0h-6D8Fh =====
+Reason: controller initialization/state machine continuation
+6CE0  E2 07                   loop 0x6ce9
+6CE2  C3                      ret
+6CE3  C6 06 AB E1 01          mov byte ptr [0xe1ab], 1
+6CE8  C8 10 00 00             enter 0x10, 0
+6CEC  E8 E9 05                call 0x72d8
+6CEF  83 3E B5 E1 00          cmp word ptr [0xe1b5], 0
+6CF4  75 0D                   jne 0x6d03
+6CF6  80 3E B7 E1 00          cmp byte ptr [0xe1b7], 0
+6CFB  75 06                   jne 0x6d03
+6CFD  C7 06 23 E4 00 00       mov word ptr [0xe423], 0
+6D03  E8 DD 02                call 0x6fe3
+6D06  72 54                   jb 0x6d5c
+6D08  A0 1F E4                mov al, byte ptr [0xe41f]
+6D0B  A2 C0 E3                mov byte ptr [0xe3c0], al
+6D0E  A0 B4 E1                mov al, byte ptr [0xe1b4]
+6D11  32 E4                   xor ah, ah
+6D13  50                      push ax
+6D14  A1 B2 E1                mov ax, word ptr [0xe1b2]
+6D17  50                      push ax
+6D18  A0 B7 E1                mov al, byte ptr [0xe1b7]
+6D1B  32 E4                   xor ah, ah
+6D1D  50                      push ax
+6D1E  A1 B5 E1                mov ax, word ptr [0xe1b5]
+6D21  50                      push ax
+6D22  C6 06 BA E3 01          mov byte ptr [0xe3ba], 1
+6D27  C6 06 BB E3 11          mov byte ptr [0xe3bb], 0x11
+6D2C  E8 65 00                call 0x6d94
+6D2F  72 28                   jb 0x6d59
+6D31  83 C4 08                add sp, 8
+6D34  80 3E B9 E3 1B          cmp byte ptr [0xe3b9], 0x1b
+6D39  74 56                   je 0x6d91
+6D3B  C6 06 C0 E3 01          mov byte ptr [0xe3c0], 1
+6D40  C6 06 BA E3 01          mov byte ptr [0xe3ba], 1
+6D45  E8 98 01                call 0x6ee0
+6D48  72 12                   jb 0x6d5c
+6D4A  80 3E B9 E3 1B          cmp byte ptr [0xe3b9], 0x1b
+6D4F  74 40                   je 0x6d91
+6D51  C6 06 B9 E3 00          mov byte ptr [0xe3b9], 0
+6D56  EB 39                   jmp 0x6d91
+6D58  90                      nop
+6D59  83 C4 08                add sp, 8
+6D5C  E8 63 FF                call 0x6cc2
+6D5F  3C 52                   cmp al, 0x52
+6D61  74 A0                   je 0x6d03
+6D63  3C 49                   cmp al, 0x49
+6D65  75 24                   jne 0x6d8b
+6D67  A0 B7 E1                mov al, byte ptr [0xe1b7]
+6D6A  3A 06 B4 E1             cmp al, byte ptr [0xe1b4]
+6D6E  75 14                   jne 0x6d84
+6D70  A1 B5 E1                mov ax, word ptr [0xe1b5]
+6D73  3B 06 B2 E1             cmp ax, word ptr [0xe1b2]
+6D77  75 02                   jne 0x6d7b
+6D79  EB 88                   jmp 0x6d03
+6D7B  FF 06 B5 E1             inc word ptr [0xe1b5]
+6D7F  32 C0                   xor al, al
+6D81  A2 B7 E1                mov byte ptr [0xe1b7], al
+6D84  FE 06 B7 E1             inc byte ptr [0xe1b7]
+6D88  E9 78 FF                jmp 0x6d03
+6D8B  F9                      stc
+6D8C  E8 62 05                call 0x72f1
+6D8F  C9                      leave
+
+===== 6D90h-6E2Fh =====
+Reason: BP-framed controller transfer/validation routine
+6D90  C3                      ret
+6D91  F8                      clc
+6D92  EB F8                   jmp 0x6d8c
+6D94  55                      push bp
+6D95  8B EC                   mov bp, sp
+6D97  8B 76 04                mov si, word ptr [bp + 4]
+6D9A  8B 7E 06                mov di, word ptr [bp + 6]
+6D9D  B9 03 00                mov cx, 3
+6DA0  C6 06 BF E3 00          mov byte ptr [0xe3bf], 0
+6DA5  51                      push cx
+6DA6  BB B8 E1                mov bx, 0xe1b8
+6DA9  E8 01 02                call 0x6fad
+6DAC  E8 6F 00                call 0x6e1e
+6DAF  72 61                   jb 0x6e12
+6DB1  E8 73 00                call 0x6e27
+6DB4  72 5C                   jb 0x6e12
+6DB6  59                      pop cx
+6DB7  E8 E6 FE                call 0x6ca0
+6DBA  72 5A                   jb 0x6e16
+6DBC  80 3E BF E3 01          cmp byte ptr [0xe3bf], 1
+6DC1  74 02                   je 0x6dc5
+6DC3  E2 E0                   loop 0x6da5
+6DC5  80 3E C0 E3 01          cmp byte ptr [0xe3c0], 1
+6DCA  75 14                   jne 0x6de0
+6DCC  FE 06 BA E3             inc byte ptr [0xe3ba]
+6DD0  50                      push ax
+6DD1  A0 1F E4                mov al, byte ptr [0xe41f]
+6DD4  38 06 BA E3             cmp byte ptr [0xe3ba], al
+6DD8  58                      pop ax
+6DD9  76 C2                   jbe 0x6d9d
+6DDB  C6 06 BA E3 01          mov byte ptr [0xe3ba], 1
+6DE0  8B C7                   mov ax, di
+6DE2  3A 06 B4 E1             cmp al, byte ptr [0xe1b4]
+6DE6  72 1D                   jb 0x6e05
+6DE8  32 E4                   xor ah, ah
+6DEA  A0 B1 E1                mov al, byte ptr [0xe1b1]
+6DED  A2 B7 E1                mov byte ptr [0xe1b7], al
+6DF0  8B F8                   mov di, ax
+6DF2  46                      inc si
+6DF3  89 36 B5 E1             mov word ptr [0xe1b5], si
+6DF7  3B 76 08                cmp si, word ptr [bp + 8]
+6DFA  77 13                   ja 0x6e0f
+6DFC  75 9F                   jne 0x6d9d
+6DFE  3B 7E 0A                cmp di, word ptr [bp + 0xa]
+6E01  77 0C                   ja 0x6e0f
+6E03  EB 98                   jmp 0x6d9d
+6E05  47                      inc di
+6E06  50                      push ax
+6E07  8B C7                   mov ax, di
+6E09  A2 B7 E1                mov byte ptr [0xe1b7], al
+6E0C  58                      pop ax
+6E0D  EB E8                   jmp 0x6df7
+6E0F  F8                      clc
+6E10  5D                      pop bp
+6E11  C3                      ret
+6E12  F9                      stc
+6E13  59                      pop cx
+6E14  5D                      pop bp
+6E15  C3                      ret
+6E16  C6 06 B9 E3 1B          mov byte ptr [0xe3b9], 0x1b
+6E1B  F8                      clc
+6E1C  5D                      pop bp
+6E1D  C3                      ret
+6E1E  C6 06 BE E3 03          mov byte ptr [0xe3be], 3
+6E23  E8 0A 00                call 0x6e30
+6E26  C3                      ret
+6E27  C6 06 BE E3 04          mov byte ptr [0xe3be], 4
+6E2C  E8 01 00                call 0x6e30
+6E2F  C3                      ret
+
+===== 6E30h-6EDFh =====
+Reason: ENTER-framed controller data-transfer helper
+6E30  C8 10 00 00             enter 0x10, 0
+6E34  E8 A1 04                call 0x72d8
+6E37  B9 02 00                mov cx, 2
+6E3A  51                      push cx
+6E3B  8B CE                   mov cx, si
+6E3D  86 E9                   xchg cl, ch
+6E3F  C0 E1 06                shl cl, 6
+6E42  0A 0E BA E3             or cl, byte ptr [0xe3ba]
+6E46  8B C7                   mov ax, di
+6E48  8A F0                   mov dh, al
+6E4A  8B C6                   mov ax, si
+6E4C  80 E4 0C                and ah, 0xc
+6E4F  C0 E4 04                shl ah, 4
+6E52  0A F4                   or dh, ah
+6E54  8A 26 BE E3             mov ah, byte ptr [0xe3be]
+6E58  A0 C0 E3                mov al, byte ptr [0xe3c0]
+6E5B  8A 16 21 E4             mov dl, byte ptr [0xe421]
+6E5F  E8 B3 FD                call 0x6c15
+6E62  73 1E                   jae 0x6e82
+6E64  E8 1E 00                call 0x6e85
+6E67  72 09                   jb 0x6e72
+6E69  59                      pop cx
+6E6A  E2 CE                   loop 0x6e3a
+6E6C  F9                      stc
+6E6D  E8 81 04                call 0x72f1
+6E70  C9                      leave
+6E71  C3                      ret
+6E72  59                      pop cx
+6E73  C6 06 BF E3 01          mov byte ptr [0xe3bf], 1
+6E78  80 3E BE E3 04          cmp byte ptr [0xe3be], 4
+6E7D  75 03                   jne 0x6e82
+6E7F  E8 21 00                call 0x6ea3
+6E82  F8                      clc
+6E83  EB E8                   jmp 0x6e6d
+6E85  50                      push ax
+6E86  A0 B9 E3                mov al, byte ptr [0xe3b9]
+6E89  3C 10                   cmp al, 0x10
+6E8B  74 13                   je 0x6ea0
+6E8D  3C 0A                   cmp al, 0xa
+6E8F  74 0F                   je 0x6ea0
+6E91  3C 04                   cmp al, 4
+6E93  74 0B                   je 0x6ea0
+6E95  3C 02                   cmp al, 2
+6E97  74 07                   je 0x6ea0
+6E99  3C 11                   cmp al, 0x11
+6E9B  74 03                   je 0x6ea0
+6E9D  58                      pop ax
+6E9E  F8                      clc
+6E9F  C3                      ret
+6EA0  58                      pop ax
+6EA1  F9                      stc
+6EA2  C3                      ret
+6EA3  C8 10 00 00             enter 0x10, 0
+6EA7  E8 2E 04                call 0x72d8
+6EAA  80 3E C0 E3 01          cmp byte ptr [0xe3c0], 1
+6EAF  74 1F                   je 0x6ed0
+6EB1  BB 39 E4                mov bx, 0xe439
+6EB4  8B 0E 23 E4             mov cx, word ptr [0xe423]
+6EB8  D1 E1                   shl cx, 1
+6EBA  03 0E 23 E4             add cx, word ptr [0xe423]
+6EBE  03 D9                   add bx, cx
+6EC0  89 37                   mov word ptr [bx], si
+6EC2  8B C7                   mov ax, di
+6EC4  88 47 02                mov byte ptr [bx + 2], al
+6EC7  FF 06 23 E4             inc word ptr [0xe423]
+6ECB  E8 23 04                call 0x72f1
+6ECE  C9                      leave
+6ECF  C3                      ret
+6ED0  BB D0 E3                mov bx, 0xe3d0
+6ED3  8A 0E BA E3             mov cl, byte ptr [0xe3ba]
+6ED7  FE C9                   dec cl
+6ED9  32 ED                   xor ch, ch
+6EDB  C6 07 80                mov byte ptr [bx], 0x80
+6EDE  EB EB                   jmp 0x6ecb
+
+===== 6EE0h-6F3Fh =====
+Reason: controller buffer fill/copy helper
+6EE0  8B 0E 23 E4             mov cx, word ptr [0xe423]
+6EE4  0B C9                   or cx, cx
+6EE6  75 02                   jne 0x6eea
+6EE8  F8                      clc
+6EE9  C3                      ret
+6EEA  BE 39 E4                mov si, 0xe439
+6EED  C6 06 C0 E3 01          mov byte ptr [0xe3c0], 1
+6EF2  51                      push cx
+6EF3  C6 06 BA E3 01          mov byte ptr [0xe3ba], 1
+6EF8  BF D0 E3                mov di, 0xe3d0
+6EFB  32 C0                   xor al, al
+6EFD  8A 0E 1F E4             mov cl, byte ptr [0xe41f]
+6F01  32 ED                   xor ch, ch
+6F03  FC                      cld
+6F04  F3 AA                   rep stosb byte ptr es:[di], al
+6F06  8B 1C                   mov bx, word ptr [si]
+6F08  8A 44 02                mov al, byte ptr [si + 2]
+6F0B  32 E4                   xor ah, ah
+6F0D  60                      pushaw
+6F0E  50                      push ax
+6F0F  53                      push bx
+6F10  50                      push ax
+6F11  53                      push bx
+6F12  E8 7F FE                call 0x6d94
+6F15  72 19                   jb 0x6f30
+6F17  36 80 3E B9 E3 1B       cmp byte ptr ss:[0xe3b9], 0x1b
+6F1D  74 18                   je 0x6f37
+6F1F  83 C4 08                add sp, 8
+6F22  61                      popaw
+6F23  E8 4F 00                call 0x6f75
+6F26  72 0C                   jb 0x6f34
+6F28  59                      pop cx
+6F29  83 C6 03                add si, 3
+6F2C  E2 C4                   loop 0x6ef2
+6F2E  F8                      clc
+6F2F  C3                      ret
+6F30  83 C4 08                add sp, 8
+6F33  61                      popaw
+6F34  59                      pop cx
+6F35  F9                      stc
+6F36  C3                      ret
+6F37  F8                      clc
+6F38  83 C4 08                add sp, 8
+6F3B  61                      popaw
+6F3C  59                      pop cx
+6F3D  C3                      ret
+6F3E  C8              db 0xC8
+6F3F  10              db 0x10
+
+===== 6F40h-6F6Fh =====
+Reason: ENTER-framed controller parameter helper
+6F40  00 00                   add byte ptr [bx + si], al
+6F42  E8 93 03                call 0x72d8
+6F45  A0 22 E4                mov al, byte ptr [0xe422]
+6F48  32 E4                   xor ah, ah
+6F4A  50                      push ax
+6F4B  1E                      push ds
+6F4C  BB B8 E1                mov bx, 0xe1b8
+6F4F  53                      push bx
+6F50  E8 1C FA                call 0x696f
+6F53  83 C4 06                add sp, 6
+6F56  8A 0E 1F E4             mov cl, byte ptr [0xe41f]
+6F5A  32 ED                   xor ch, ch
+6F5C  32 FF                   xor bh, bh
+6F5E  BE B8 E1                mov si, 0xe1b8
+6F61  BF CF E3                mov di, 0xe3cf
+6F64  8A 5C 01                mov bl, byte ptr [si + 1]
+6F67  8A 01                   mov al, byte ptr [bx + di]
+6F69  88 04                   mov byte ptr [si], al
+6F6B  83 C6 02                add si, 2
+6F6E  E2 F4                   loop 0x6f64
+
+===== 6F70h-6F7Fh =====
+Reason: controller result/status helper
+6F70  E8 7E 03                call 0x72f1
+6F73  C9                      leave
+6F74  C3                      ret
+6F75  C8 10 00 00             enter 0x10, 0
+6F79  E8 5C 03                call 0x72d8
+6F7C  E8 BF FF                call 0x6f3e
+6F7F  8B              db 0x8B
+
+===== 6F80h-6F9Fh =====
+Reason: controller request/status helper
+6F80  0C 86                   or al, 0x86
+6F82  E9 C0 E1                jmp 0x5145
+6F85  06                      push es
+6F86  80 C9 01                or cl, 1
+6F89  8A 74 02                mov dh, byte ptr [si + 2]
+6F8C  8A 16 21 E4             mov dl, byte ptr [0xe421]
+6F90  BB B8 E1                mov bx, 0xe1b8
+6F93  B4 05                   mov ah, 5
+6F95  A0 1F E4                mov al, byte ptr [0xe41f]
+6F98  E8 7A FC                call 0x6c15
+6F9B  72 06                   jb 0x6fa3
+6F9D  F8                      clc
+6F9E  E8              db 0xE8
+6F9F  50                      push ax
+
+===== 6FA0h-6FAFh =====
+Reason: controller error/result helper
+6FA0  03 C9                   add cx, cx
+6FA2  C3                      ret
+6FA3  B4 05                   mov ah, 5
+6FA5  A0 1F E4                mov al, byte ptr [0xe41f]
+6FA8  E8 6A FC                call 0x6c15
+6FAB  EB F1                   jmp 0x6f9e
+6FAD  C8              db 0xC8
+6FAE  10 00                   adc byte ptr [bx + si], al
+
+===== 6FB0h-6FDFh =====
+Reason: controller signature and result-table helper
+6FB0  00 E8                   add al, ch
+6FB2  24 03                   and al, 3
+6FB4  83 F9 01                cmp cx, 1
+6FB7  BB 6D DB                mov bx, 0xdb6d
+6FBA  B0 B6                   mov al, 0xb6
+6FBC  74 0F                   je 0x6fcd
+6FBE  83 F9 02                cmp cx, 2
+6FC1  BB DB B6                mov bx, 0xb6db
+6FC4  B0 6D                   mov al, 0x6d
+6FC6  74 05                   je 0x6fcd
+6FC8  BB B6 6D                mov bx, 0x6db6
+6FCB  B0 DB                   mov al, 0xdb
+6FCD  BE B8 E1                mov si, 0xe1b8
+6FD0  89 1C                   mov word ptr [si], bx
+6FD2  88 44 02                mov byte ptr [si + 2], al
+6FD5  83 C6 03                add si, 3
+6FD8  81 FE B8 E3             cmp si, 0xe3b8
+6FDC  72 F2                   jb 0x6fd0
+6FDE  E8              db 0xE8
+6FDF  10              db 0x10
+
+===== 6FE0h-6FFFh =====
+Reason: controller status/INT 13h dispatch helper
+6FE0  03 C9                   add cx, cx
+6FE2  C3                      ret
+6FE3  B4 14                   mov ah, 0x14
+6FE5  8A 16 21 E4             mov dl, byte ptr [0xe421]
+6FE9  E8 29 FC                call 0x6c15
+6FEC  B4 08                   mov ah, 8
+6FEE  E8 24 FC                call 0x6c15
+6FF1  B4 09                   mov ah, 9
+6FF3  8A 16 21 E4             mov dl, byte ptr [0xe421]
+6FF7  E8 1B FC                call 0x6c15
+6FFA  B4 09                   mov ah, 9
+6FFC  E8 16 FC                call 0x6c15
+6FFF  72              db 0x72
+
+===== 7000h-702Fh =====
+Reason: INT 13h dispatch and controller status path
+7000  10 B4 11 8A             adc byte ptr [si - 0x75ef], dh
+7004  16                      push ss
+7005  21 E4                   and sp, sp
+7007  E8 0B FC                call 0x6c15
+700A  B4 11                   mov ah, 0x11
+700C  E8 06 FC                call 0x6c15
+700F  72 00                   jb 0x7011
+7011  C3                      ret
+7012  B4 11                   mov ah, 0x11
+7014  8A 16 21 E4             mov dl, byte ptr [0xe421]
+7018  CD 13                   int 0x13
+701A  B4 11                   mov ah, 0x11
+701C  CD 13                   int 0x13
+701E  8A 16 21 E4             mov dl, byte ptr [0xe421]
+7022  B4 09                   mov ah, 9
+7024  CD 13                   int 0x13
+7026  E8 01 00                call 0x702a
+7029  C3                      ret
+702A  CD 12                   int 0x12
+702C  3D 80 00                cmp ax, 0x80
+702F  73              db 0x73
+
+===== 7030h-703Fh =====
+Reason: memory-size/controller-state helper
+7030  02 F8                   add bh, al
+7032  C3                      ret
+7033  8A 1E A5 E1             mov bl, byte ptr [0xe1a5]
+7037  88 1E 9F E1             mov byte ptr [0xe19f], bl
+703B  B6 00                   mov dh, 0
+703D  8A              db 0x8A
+703E  16                      push ss
+703F  21              db 0x21
+
+===== 7040h-70BFh =====
+Reason: BPB/transfer setup and INT 13h disk operation path
+7040  E4 16                   in al, 0x16
+7042  07                      pop es
+7043  B8 40 00                mov ax, 0x40
+7046  8E D8                   mov ds, ax
+7048  E4 21                   in al, 0x21
+704A  E3 00                   jcxz 0x704c
+704C  E3 00                   jcxz 0x704e
+704E  50                      push ax
+704F  0C 02                   or al, 2
+7051  E6 21                   out 0x21, al
+7053  E3 00                   jcxz 0x7055
+7055  E3 00                   jcxz 0x7057
+7057  8B 36 6C 00             mov si, word ptr [0x6c]
+705B  36 C7 06 AF E1 00 00    mov word ptr ss:[0xe1af], 0
+7062  E8 3A 01                call 0x719f
+7065  B9 30 00                mov cx, 0x30
+7068  51                      push cx
+7069  36 8A 0E 1F E4          mov cl, byte ptr ss:[0xe41f]
+706E  49                      dec cx
+706F  BB 00 80                mov bx, 0x8000
+7072  B8 28 02                mov ax, 0x228
+7075  CD 13                   int 0x13
+7077  36 88 26 B9 E3          mov byte ptr ss:[0xe3b9], ah
+707C  73 2A                   jae 0x70a8
+707E  80 FC 0A                cmp ah, 0xa
+7081  74 25                   je 0x70a8
+7083  58                      pop ax
+7084  B8 30 00                mov ax, 0x30
+7087  50                      push ax
+7088  FE C5                   inc ch
+708A  36 A1 B2 E1             mov ax, word ptr ss:[0xe1b2]
+708E  3A E8                   cmp ch, al
+7090  36 C6 06 B9 E3 FF       mov byte ptr ss:[0xe3b9], 0xff
+7096  77 5C                   ja 0x70f4
+7098  8B 36 6C 00             mov si, word ptr [0x6c]
+709C  36 C7 06 AF E1 00 00    mov word ptr ss:[0xe1af], 0
+70A3  E8 F9 00                call 0x719f
+70A6  EB CA                   jmp 0x7072
+70A8  36 83 06 AF E1 14       add word ptr ss:[0xe1af], 0x14
+70AE  E8 EE 00                call 0x719f
+70B1  59                      pop cx
+70B2  E2 B4                   loop 0x7068
+70B4  8B 3E 6C 00             mov di, word ptr [0x6c]
+70B8  2B FE                   sub di, si
+70BA  58                      pop ax
+70BB  E6 21                   out 0x21, al
+70BD  E3 00                   jcxz 0x70bf
+70BF  E3              db 0xE3
+
+===== 70C0h-70EFh =====
+Reason: disk transfer result and arithmetic validation path
+70C0  00 16 1F B8             add byte ptr [0xb81f], dl
+70C4  40                      inc ax
+70C5  44                      inc sp
+70C6  33 D2                   xor dx, dx
+70C8  0B FF                   or di, di
+70CA  74 30                   je 0x70fc
+70CC  89 3E C4 E3             mov word ptr [0xe3c4], di
+70D0  F7 F7                   div di
+70D2  A3 C9 E3                mov word ptr [0xe3c9], ax
+70D5  C7 06 CB E3 00 00       mov word ptr [0xe3cb], 0
+70DB  8B C2                   mov ax, dx
+70DD  0B C0                   or ax, ax
+70DF  74 0C                   je 0x70ed
+70E1  BB 0A 00                mov bx, 0xa
+70E4  33 D2                   xor dx, dx
+70E6  F7 E3                   mul bx
+70E8  F7 F7                   div di
+70EA  A3 CB E3                mov word ptr [0xe3cb], ax
+70ED  E8 0F 00                call 0x70ff
+
+===== 70F0h-70FFh =====
+Reason: controller status/error return path
+70F0  F8                      clc
+70F1  16                      push ss
+70F2  1F                      pop ds
+70F3  C3                      ret
+70F4  59                      pop cx
+70F5  58                      pop ax
+70F6  E6 21                   out 0x21, al
+70F8  E3 00                   jcxz 0x70fa
+70FA  E3 00                   jcxz 0x70fc
+70FC  F9                      stc
+70FD  EB F2                   jmp 0x70f1
+70FF  8C              db 0x8C
+
+===== 7100h-710Fh =====
+Reason: controller state save/restore helper
+7100  D0 8E D8 50             ror byte ptr [bp + 0x50d8], 1
+7104  A0 C7 E3                mov al, byte ptr [0xe3c7]
+7107  A2 CE E3                mov byte ptr [0xe3ce], al
+710A  FE 06 C7 E3             inc byte ptr [0xe3c7]
+710E  A0              db 0xA0
+710F  C6              db 0xC6
+
+===== 7110h-711Fh =====
+Reason: controller command and output helper
+7110  E3 04                   jcxz 0x7116
+7112  06                      push es
+7113  A2 CD E3                mov byte ptr [0xe3cd], al
+7116  58                      pop ax
+7117  C6 06 CF E3 03          mov byte ptr [0xe3cf], 3
+711C  E8 2F 00                call 0x714e
+711F  8A              db 0x8A
+
+===== 7120h-7143h =====
+Reason: screen status/throughput display path ending before 7145h inline label
+7120  36 CE                   into
+7122  E3 8A                   jcxz 0x70ae
+7124  16                      push ss
+7125  CD E3                   int 0xe3
+7127  80 C2 06                add dl, 6
+712A  B4 13                   mov ah, 0x13
+712C  55                      push bp
+712D  BD 45 71                mov bp, 0x7145
+7130  0E                      push cs
+7131  07                      pop es
+7132  B9 07 00                mov cx, 7
+7135  32 FF                   xor bh, bh
+7137  B0 00                   mov al, 0
+7139  8A 1E 9F E1             mov bl, byte ptr [0xe19f]
+713D  CD 10                   int 0x10
+713F  5D                      pop bp
+7140  8C D0                   mov ax, ss
+7142  8E C0                   mov es, ax
 
