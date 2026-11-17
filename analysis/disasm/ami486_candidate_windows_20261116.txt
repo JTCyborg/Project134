@@ -31608,8 +31608,8 @@ Reason: direct CALL target from the 5E2Eh ROM-segment check failure path
 5E37  E8 2B 01                call 0x5f65
 5E3A  E9 D5 00                jmp 0x5f12
 
-===== 5E3Dh-5E87h =====
-Reason: POST video-memory/adapter selection continuation
+===== 5E3Dh-5F64h =====
+Reason: POST video/adapter initialization continuation: selects B000h/B800h mapping, emits POST codes 30h-3Bh, tests BIOS video services, then branches to 509Eh
 5E3D  A0 12 00                mov al, byte ptr [0x12]
 5E40  24 40                   and al, 0x40
 5E42  BB 00 B8                mov bx, 0xb800
@@ -31641,6 +31641,99 @@ Reason: POST video-memory/adapter selection continuation
 5E81  E6 80                   out 0x80, al
 5E83  E8 21 01                call 0x5fa7
 5E86  75 17                   jne 0x5e9f
+5E88  B0 32                   mov al, 0x32
+5E8A  E6 80                   out 0x80, al
+5E8C  B4 08                   mov ah, 8
+5E8E  80 C2 02                add dl, 2
+5E91  E8 04 97                call 0xf598
+5E94  E3 09                   jcxz 0x5e9f
+5E96  B4 01                   mov ah, 1
+5E98  E8 FD 96                call 0xf598
+5E9B  E3 02                   jcxz 0x5e9f
+5E9D  EB 17                   jmp 0x5eb6
+5E9F  80 0E 10 00 30          or byte ptr [0x10], 0x30
+5EA4  A0 12 00                mov al, byte ptr [0x12]
+5EA7  A8 20                   test al, 0x20
+5EA9  74 0B                   je 0x5eb6
+5EAB  BB 08 00                mov bx, 8
+5EAE  E8 98 27                call 0x8649
+5EB1  74 03                   je 0x5eb6
+5EB3  E8 D8 00                call 0x5f8e
+5EB6  B0 33                   mov al, 0x33
+5EB8  E6 80                   out 0x80, al
+5EBA  A0 10 00                mov al, byte ptr [0x10]
+5EBD  24 30                   and al, 0x30
+5EBF  3C 30                   cmp al, 0x30
+5EC1  A0 12 00                mov al, byte ptr [0x12]
+5EC4  74 02                   je 0x5ec8
+5EC6  34 40                   xor al, 0x40
+5EC8  A8 40                   test al, 0x40
+5ECA  75 04                   jne 0x5ed0
+5ECC  81 CD 80 00             or bp, 0x80
+5ED0  B0 34                   mov al, 0x34
+5ED2  E6 80                   out 0x80, al
+5ED4  A0 10 00                mov al, byte ptr [0x10]
+5ED7  24 30                   and al, 0x30
+5ED9  3C 30                   cmp al, 0x30
+5EDB  B4 07                   mov ah, 7
+5EDD  74 21                   je 0x5f00
+5EDF  B0 8E                   mov al, 0x8e
+5EE1  E8 B0 8F                call 0xee94
+5EE4  A8 E0                   test al, 0xe0
+5EE6  B8 20 03                mov ax, 0x320
+5EE9  75 15                   jne 0x5f00
+5EEB  50                      push ax
+5EEC  E8 5A 27                call 0x8649
+5EEF  58                      pop ax
+5EF0  74 0E                   je 0x5f00
+5EF2  B0 94                   mov al, 0x94
+5EF4  E8 9D 8F                call 0xee94
+5EF7  24 30                   and al, 0x30
+5EF9  3C 20                   cmp al, 0x20
+5EFB  74 03                   je 0x5f00
+5EFD  B8 10 01                mov ax, 0x110
+5F00  80 26 10 00 CF          and byte ptr [0x10], 0xcf
+5F05  08 06 10 00             or byte ptr [0x10], al
+5F09  32 C0                   xor al, al
+5F0B  86 C4                   xchg ah, al
+5F0D  CD 10                   int 0x10
+5F0F  E8 5A 00                call 0x5f6c
+5F12  B0 35                   mov al, 0x35
+5F14  E6 80                   out 0x80, al
+5F16  E8 00 95                call 0xf419
+5F19  B0 36                   mov al, 0x36
+5F1B  E6 80                   out 0x80, al
+5F1D  B4 03                   mov ah, 3
+5F1F  32 FF                   xor bh, bh
+5F21  CD 10                   int 0x10
+5F23  FE C6                   inc dh
+5F25  B2 00                   mov dl, 0
+5F27  B4 02                   mov ah, 2
+5F29  CD 10                   int 0x10
+5F2B  B0 37                   mov al, 0x37
+5F2D  E6 80                   out 0x80, al
+5F2F  BE 00 81                mov si, 0x8100
+5F32  E8 F9 95                call 0xf52e
+5F35  B0 38                   mov al, 0x38
+5F37  E6 80                   out 0x80, al
+5F39  E8 F2 94                call 0xf42e
+5F3C  B0 F3                   mov al, 0xf3
+5F3E  E6 80                   out 0x80, al
+5F40  E8 70 31                call 0x90b3
+5F43  B4 03                   mov ah, 3
+5F45  CD 10                   int 0x10
+5F47  B0 39                   mov al, 0x39
+5F49  E6 80                   out 0x80, al
+5F4B  80 C6 02                add dh, 2
+5F4E  B2 00                   mov dl, 0
+5F50  89 16 69 00             mov word ptr [0x69], dx
+5F54  B0 3A                   mov al, 0x3a
+5F56  E6 80                   out 0x80, al
+5F58  E8 7B 00                call 0x5fd6
+5F5B  E8 87 F5                call 0x54e5
+5F5E  B0 3B                   mov al, 0x3b
+5F60  E6 80                   out 0x80, al
+5F62  E9 39 F1                jmp 0x509e
 
 ===== 5F65h-5FA6h =====
 Reason: direct CALL target from 5E37h; opaque diagnostic/check helper entry
