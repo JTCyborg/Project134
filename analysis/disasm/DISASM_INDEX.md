@@ -1184,3 +1184,12 @@ No direct near CALL/JMP xref to F8E7h, literal F8E7h word reference or far point
 
 
 The 2100h raw-byte correction is recorded in AMI486_ADDRESS_LEDGER_20261116.md: bytes AA AA at 2106h–2107h are STOSB instructions and were omitted in the earlier excerpt. The memory/chipset report now preserves the correct instruction boundary and the unresolved caller-provided AL/DI values.
+
+
+## Setup editor rendering and POST summary display — 2026-11-17
+
+- [AMI486_SETUP_EDITOR_RENDERING_EXTENSION_20261117.md](AMI486_SETUP_EDITOR_RENDERING_EXTENSION_20261117.md) extends phase 12 with byte-aligned 0D84h event dispatch, 0E19h/0E47h selection wrap helpers, 0E7Ch single-item rendering, and the 0EE2h–10DEh option-list/auxiliary-description renderer. It refines E18Ch as absolute selected-record index and E185 as on-screen row.
+- [AMI486_POST_SUMMARY_DISPLAY_20261117.md](AMI486_POST_SUMMARY_DISPLAY_20261117.md) maps the 3F4Ah/3F7Bh POST summary frame and fields, CPU/numeric-processor selection, floppy/HDD/display formatting, BDA COM/LPT enumeration and decimal/line-rendering helpers.
+- Setup data boundaries are distinct: 3044h–318Bh short captions; 318Ch–31A3h 12 caption pointers; 31A4h–342Dh long descriptions; 342Eh–3443h 11 long-description pointers; 3444h–3445h separate Do Not Write pointer; 3446h–345Bh 11 handler pointers.
+- Current candidate artifact: 187 unique seeded code windows plus 41 data ranges; byte-mask union 15,639 bytes across 79 pages (11,414 code-window bytes, 4,319 data-range bytes, 94 overlap). This is a sampling footprint, not semantic coverage.
+- Do not start phase 97. Continue from the address ledger's unresolved ranges and cross-reference gaps.
