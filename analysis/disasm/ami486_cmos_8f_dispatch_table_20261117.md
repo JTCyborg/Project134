@@ -689,3 +689,19 @@ The UI confirmation sequence is now located precisely in the large routine spann
 The Y branch then presents further data-entry/status UI and processes additional state at `E1A4h`, `E1A7h`, `E1ACh`, and local stack variables. It reaches the helper calls in the `4Axxh` range and eventually returns at `4AEFh`. The non-Y branch jumps to `4ACCh`, which also flows through the tail of this routine. This confirms the warning and explicit Y gate are executable code, not merely unused strings.
 
 Important limitation: a static near-CALL xref scan finds no direct CALL to the `4890h`-range routine or to `6D94h` from the UI block. The two direct calls to `6D94h` remain `6D2Ch` and `6F12h`. The Y-confirmation routine is therefore now identified, but the interprocedural bridge from its caller/return path to the disk-track worker has not yet been proven. The `6D2Ch` caller still appears to be entered through a non-near-CALL dispatch or an indirect control transfer; do not claim the UI Y branch directly invokes formatting until that dispatch is traced.
+
+
+### Stack arguments passed by the earlier 6D2Ch caller
+
+The caller setup immediately before `CALL 6D94h` at `6D2Ch` is:
+
+- `6D0Ah`: loads `AL=[E41Fh]` and stores it in `[E3C0h]`, then pushes AX (the count/state value).
+- `6D14h`: pushes `WORD [E1B2h]`.
+- `6D18h`: loads `AL=[E1B7h]`, zero-extends through `XOR AH,AH`, and pushes AX.
+- `6D1Eh`: pushes `WORD [E1B5h]`.
+- `6D22h–6D27h`: initializes `[E3BAh]=1` and `[E3BBh]=11h`.
+- `6D2Ch`: calls `6D94h`.
+
+Since `6D94h` uses `ENTER 0010h`, its `[BP+4]` and `[BP+6]` parameters are therefore the just-pushed `E1B5h` word and zero-extended `E1B7h` byte, respectively. It loads these into SI and DI. The next stack arguments are `E1B7h` and `E1B2h`; the final pushed argument is the `E41Fh` byte. The routine's local loop increments `E3BAh` and compares it with `E41Fh`, while using `E3BFh`, `E3C0h`, and `E3BBh` as operation state.
+
+This provides a concrete caller-side parameter map, but does not yet justify assigning human labels such as cylinder/head/sector to `E1B5h`, `E1B7h`, or `E1B2h`. Those labels require tracing their producers and the BIOS disk geometry/track parameter conventions. The UI's cylinder/head prompts exist elsewhere in the same hard-disk interface, but no direct data-flow edge from those input fields to these variables has yet been proven.
