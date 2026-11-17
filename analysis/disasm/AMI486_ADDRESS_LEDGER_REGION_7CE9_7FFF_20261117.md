@@ -19,4 +19,4 @@ There are no instruction bytes, strings, signatures or embedded tables in this i
 
 The candidate generator now records [7CE9h, 8000h) as a single 791-byte zero-filled data range. No code seed is added. This is an exact byte classification, not an inferred function.
 
-The next largest uncovered interval will be taken from the completed candidate manifest after CI regenerates the listing and union mask.
+GitHub Actions run 44084573238 completed successfully. The regenerated manifest reports 811 candidate windows, 238 data ranges, 39,090 unique code-window bytes, 19,703 unique data-range bytes, 293 overlap bytes, and a 58,500-byte union (89.26%). There are 67 uncovered intervals; the next largest is 639Ch–6615h (634 bytes).
