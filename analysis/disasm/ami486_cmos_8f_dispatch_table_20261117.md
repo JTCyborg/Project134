@@ -195,3 +195,27 @@ F30E: E8 AD 16       CALL 0FBEh
 Thus the earlier direct-call attribution was wrong, but the broader conclusion that this startup continuation reaches 578Dh is now confirmed through two intermediate routines. The correction above should be read as: F1E2h does not directly call 578Dh; it reaches it through F30Eh -> 0FBEh.
 
 At 0FBEh the routine first updates working variables in the E18Fh/E19Fh/E1A0h area, derives parameters from the caller frame, then calls 578Dh. After returning, it continues through calls to 5862h and 58C2h and updates a buffer addressed via [E18Fh]. The exact data structure and meaning of these fields remain to be mapped. This is likely part of the display/platform initialization block, but do not assign a specific video adapter model yet.
+
+## F1E2h startup continuation: indirect video setup and password gate
+
+The actual F1E2h entry continues through the overlapping CMP instruction, register saves, a 40h-byte local stack frame, and a 20h-word copy from DS:E000h to SS:SP. The call chain after this copy is now resolved:
+
+```asm
+F1FD: E8 0E 01       CALL F30Eh
+F30E: E8 AD 16       CALL 0FBEh
+0FD9: E8 B1 47       CALL 578Dh
+```
+
+Thus the startup continuation does reach the 578Dh video-configuration routine, but only indirectly through F30Eh and 0FBEh. The separate E8 A6 65 byte sequence at F1E4h is part of the displacement of the overlapping CMP when execution starts at F1E2h; it is not the executed CALL on this path.
+
+After the 0FBEh call returns, F200h calls F10Dh. This is a password-validation gate:
+
+- F10Dh reads CMOS indices 8Eh, B7h, and B8h through the CMOS read helper (EEAAh).
+- It tests CMOS[8E]&C0h, then checks the upper nibble of CMOS[B7] and the value of CMOS[B8]. Depending on these fields it may skip the CMOS password prompt or enter the current-password path.
+- The current-password prompt uses string 7BB9h: "Enter CURRENT Password:".
+- A separate ROM-password path reads CS:[8237h], tests its upper nibble, and if enabled uses the string at 7BA0h: "Enter ROM Password". The stored comparison bytes are in CS:8238h–CS:823Dh.
+- The input and character-validation helpers are called around F316h/F339h; their full keyboard semantics are being traced separately.
+- F1C6h executes CMP SP,SP and returns with ZF=1 (success/skip). F1C3h executes OR SP,SP and returns with ZF=0 (failure).
+- The caller at F200h tests ZF. On failure it emits BEL through INT 10h (AX=0E07h) and jumps to the common stack cleanup path; on success it continues into the next startup checks.
+
+This establishes a BIOS password gate in the CMOS[8Fh] continuation before the later low-memory scan and RTC time/date reads. It does not yet establish the exact encoding of the CMOS password bytes or all policy meanings of the 8Eh/B7h/B8h fields.
