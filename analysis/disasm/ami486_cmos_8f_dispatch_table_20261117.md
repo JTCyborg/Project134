@@ -911,3 +911,31 @@ Immediately before `6BB8h`, the caller pushes the four live geometry/progress fi
 It sets `[E3BBh]=10h`, calls `69D1h`, saves the returned flags across argument cleanup, and branches on CF. If CF is clear, it checks whether `[E3B9h]==1Bh`; if so it returns through the abort path. Otherwise it calls `6ACEh` (the batch record walker) and then `6BD0h` before returning. This establishes that the geometry-derived call is followed by the record-list processing path, rather than being an isolated one-off write.
 
 The call at `6BB8h` therefore supplies the worker with the current E1B5/E1B7 position plus E1B2/E1B4 bounds. The Ignore path's updates to E1B5/E1B7 are persistent state consumed by this same setup routine and by the batch walker. The exact units (CHS component vs loop index) remain unassigned pending decoding of the helper calls and the source of E1B2/E1B4.
+
+
+### Correction: instruction boundary at 6BCEh and status clear
+
+Correction to the previous interpretation of the bytes around `6BCEh`: the instruction is `CALL 6BD2h` encoded as `E8 01 00` at `6BCEh..6BD0h`. Therefore `6BD0h` and `6BD1h` are the two displacement bytes, not independent instruction entries; in particular `6BD1h` is not a `RET`. The actual callee at `6BD2h` is `C6 06 B9 E3 00; C3`, i.e. `MOV BYTE [E3B9h],0; RET`. The preceding call at `6BCBh` is `CALL 6ACEh`. Thus the successful path runs the batch walker and then clears the latched status byte.
+
+### INT 13h service sequence in the 6B18h caller
+
+The caller's repeated sequences load BIOS disk-service selectors into AH and invoke the common wrapper at `6C15h`; the wrapper issues `INT 13h` (unless its `[E3BBh]` gate suppresses the call), stores returned AH in `[E3B9h]`, and propagates the BIOS carry result. The selector sequence visible in this caller is:
+
+- `AH=14h` — controller internal diagnostic;
+- `AH=08h` — read drive parameters;
+- `AH=09h` — initialize drive parameters (issued twice in this flow);
+- `AH=11h` — recalibrate (issued twice);
+- `AH=10h` — check drive ready.
+
+After selected service failures the caller invokes `6CC2h`, which maps the latched status byte through the 13-entry status table and returns its 1-based index for error presentation. This makes the block a BIOS disk-controller/drive setup and diagnostic sequence, not just a generic menu loop. The exact conditions selecting each branch remain governed by the surrounding status/response checks at `6B20h..6B98h`.
+
+### Origin of E1B2h/E1B4h and initial progress pair
+
+The initialization block at `693Dh..696Ch` is now decoded directly:
+
+- If `[E1ABh] != 0`, the initialization of the saved progress fields is skipped.
+- Otherwise it copies `[E1AFh]` to `[E1B5h]` and `[E1B1h]` to `[E1B7h]`, then clears `[E3B9h]` and `[E3BDh]`.
+- It loads the word `[E411h]`, decrements it, and stores the result in `[E1B2h]`.
+- It loads byte `[E413h]`, decrements it, and stores the result in `[E1B4h]`.
+
+This is consistent with a zero-based maximum geometry pair derived from firmware configuration bytes/word at E411/E413, but the exact geometry field labels should be confirmed against the code that populates E411/E413 before naming them as cylinder/head values. The progress pair E1B5/E1B7 is initialized from saved E1AF/E1B1, so it can represent resumable/current position rather than purely transient loop counters.
