@@ -45,7 +45,13 @@ jobs:
                   off += 1
               else:
                   chunk = rom[off:off+ins.size]
-                  out.append(f"{off:08X}  {chunk.hex().upper():<16} {ins.mnemonic} {ins.op_str}".rstrip())
+                  mnemonic = ins.mnemonic
+                  # In 16-bit mode, unprefixed 98h/99h are CBW/CWD, not CWDE/CDQ.
+                  if ins.bytes == b"\\x98":
+                      mnemonic = "cbw"
+                  elif ins.bytes == b"\\x99":
+                      mnemonic = "cwd"
+                  out.append(f"{off:08X}  {chunk.hex().upper():<16} {mnemonic} {ins.op_str}".rstrip())
                   off += ins.size
           if off != 65536:
               raise SystemExit(f"Coverage failed at {off:05X}")
