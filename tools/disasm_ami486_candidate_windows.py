@@ -76,6 +76,17 @@ LIMITS.update({0xFA4E: 0x17, 0xFE6E: 0x03})
 # Main POST continuation and bounded helper entries in 1364h–188Dh.
 # Fixed-disk parameter continuation, embedded data, and keyboard-controller helpers.
 LIMITS.update({
+    0xF5B2: 0x0A, 0xF5BC: 0x0D, 0xF5C9: 0x0F, 0xF5D9: 0x10,
+    0xF5E9: 0x10, 0xF5F9: 0x06, 0xF5FF: 0x10, 0xF60F: 0x13,
+    0xF622: 0x0B, 0xF62D: 0x08, 0xF635: 0x0F, 0xF644: 0x0D,
+    0xF651: 0x08, 0xF659: 0x11, 0xF66A: 0x04, 0xF66E: 0x02,
+    0xF670: 0x21, 0xF691: 0x27, 0xF6B8: 0x21, 0xF6D9: 0x4B,
+    0xF724: 0x0D, 0xF731: 0x0A, 0xF73B: 0x1D, 0xF758: 0xB8,
+    0xF810: 0x1C, 0xF841: 0x0C, 0xF84D: 0x0C, 0xF859: 0x03,
+    0xF85E: 0x85, 0xF8E3: 0x04,
+})
+
+LIMITS.update({
     0xE6F2: 0x03, 0xE739: 0x03, 0xE7E8: 0x18, 0xE800: 0x03,
     0xE803: 0x16, 0xE819: 0x15, 0xE82E: 0x03, 0xEFD2: 0x03,
 })
@@ -323,6 +334,9 @@ DATA_RANGES = [
     (0xE6F5, 0xE729, "Opaque embedded data preamble before UART baud-divisor table", "hexascii"),
     (0xE729, 0xE739, "Eight-word UART baud-divisor table: 110, 150, 300, 600, 1200, 2400, 4800 and 9600 baud", "words"),
     (0xE73C, 0xE7E8, "Opaque embedded binary payload after INT 14h serial-service trampoline", "hexascii"),
+    (0xF5AE, 0xF5B2, "Four-byte opaque prefix before the port-61h helper; entry alignment unresolved", "hexascii"),
+    (0xF82C, 0xF841, "Zero-filled padding between INT 13h disk-read helper and INT 12h/11h handlers", "hexascii"),
+    (0xF85C, 0xF85E, "Two-byte zero padding between INT 15h stub and INT 17h printer handler", "hexascii"),
     (0xFA00, 0xFA4C, "76-byte POST integrity comparison block; bytewise complement of FF70h-FFBBh", "hexascii"),
     (0xFA6E, 0xFE6E, "1-KiB bitmap/glyph block; 128 eight-byte records, not executable code", "hexascii"),
     (0xFE71, 0xFEA1, "Structured upper-ROM data following the FE6Eh near-JMP trampoline", "hexascii"),
@@ -1108,6 +1122,40 @@ SEEDS = [
     (0x1BF0, "option-ROM scan invalid-candidate helper: advances BX by 0080h, restores DS and returns"),
     (0x1E9A, "OR SP,SP / RET status-success stub between POST callback entries"),
 ]
+
+SEEDS.extend([
+    (0xF5B2, "port-61h control helper candidate; no direct relative CALL xref found"),
+    (0xF5BC, "direct CALL targets from 1136h, 5CEBh and F5E5h; 8042 command/readback compare helper"),
+    (0xF5C9, "direct CALL targets from 1118h and 9821h; 8042 data/readback compare helper"),
+    (0xF5D9, "direct CALL targets from 1DF5h, 5D52h and F516h; issue 8042 command C0h and read output port"),
+    (0xF5E9, "8042 command D0h and output-port read helper"),
+    (0xF5F9, "called by F5C1h/F5CEh; wait then read 8042 data port 60h"),
+    (0xF5FF, "bounded wait for 8042 output-buffer state"),
+    (0xF60F, "bounded 8042 output-buffer polling and data read helper"),
+    (0xF622, "8042 command/status compare helper"),
+    (0xF62D, "8042 output-port command D1h helper"),
+    (0xF635, "direct CALL targets throughout BIOS; write command to 8042 port 64h after input-buffer wait"),
+    (0xF644, "direct CALL targets throughout BIOS; write data to 8042 port 60h after input-buffer wait"),
+    (0xF651, "direct CALL targets from 10F7h, 1155h, 5D01h, 980Fh and 9842h; 8042 command 60h helper"),
+    (0xF659, "8042 input-buffer-clear wait helper used by F635h/F644h"),
+    (0xF66A, "8042 output-port value DFh command entry"),
+    (0xF66E, "8042 output-port value DDh command entry"),
+    (0xF670, "8042 output-port command D1h and data write sequence"),
+    (0xF691, "generic I/O port write/read/compare helper; called by F6B8h"),
+    (0xF6B8, "direct CALL targets from 16F4h, AAFFh, E2E5h, E317h and E330h; four-pattern I/O port test"),
+    (0xF6D9, "direct CALL targets from 13EDh, 1638h and 5E11h; option-ROM signature/length/checksum scanner and initializer"),
+    (0xF724, "INT 19h boot-failure fallback: call EF36h, invoke INT 19h, then POST AAh and halt loop"),
+    (0xF731, "keyboard IRQ handler: read port 60h, send EOI to PIC, chain through BDA:0067h"),
+    (0xF73B, "boot-return stack-frame guard; either resumes at F7B2h or displays the boot error path"),
+    (0xF758, "INT 19h bootstrap: install INT 1Eh DPT pointer, clear 7C00h, reset disk and try boot sector"),
+    (0xF810, "INT 13h sector-read retry helper; four attempts with disk reset between failures"),
+    (0xF841, "INT 12h handler: return conventional-memory size from BDA:0013h"),
+    (0xF84D, "INT 11h handler: return equipment word from BDA:0010h"),
+    (0xF859, "INT 15h vector trampoline to 90B4h"),
+    (0xF85E, "INT 17h printer-service handler reached through EFD2h"),
+    (0xF8E3, "INT 14h serial-service handler reached through E739h; dispatches six functions via F92Ah table"),
+])
+
 
 SEEDS.extend([
     (0xE6F2, "near-JMP trampoline to F758h, skipping the fixed-disk parameter table and embedded payload"),
