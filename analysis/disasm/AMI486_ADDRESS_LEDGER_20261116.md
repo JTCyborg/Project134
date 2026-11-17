@@ -847,3 +847,12 @@ Detailed map: [AMI486_ADDRESS_LEDGER_REGION_72D8_732D_20261117.md](AMI486_ADDRES
 Mapped four distinct helpers: the BP-relative register-context save routine at 72D8h, its restore counterpart at 72F1h, the recursive unsigned decimal printer at 730Ah, and the AX/BX/DX-preserving output wrapper at 7323h. Direct near-CALL sites were found for both context helpers and for the wrapper. The wrapper's final POP AX and RET are at 732Bh–732Ch, so the existing navigation-legend data range was incorrectly starting two bytes early; its start is corrected from 732Bh to 732Dh.
 
 Generator update: pending commit. The projected range mask is 64,553/65,536 bytes (98.50%), with 45 uncovered intervals and 217 fully covered 256-byte pages. The next largest uncovered interval is 83AEh–83FFh (82 bytes). These are range-mask projections, not semantic-completion or reachability percentages. The Capstone listing still requires regeneration after running the updated generator.
+
+
+## 49. Selector fallback and indexed descriptor lookup — 83AEh–83FFh (2026-11-17)
+
+Detailed map: [AMI486_ADDRESS_LEDGER_REGION_83AE_8400_20261117.md](AMI486_ADDRESS_LEDGER_REGION_83AE_8400_20261117.md).
+
+Mapped the selector fallback helper at 83AEh and the indexed variable-length descriptor lookup at 83C1h. The first has direct near-CALL sites at 2E84h, 2EC4h and 86F2h; when AL is zero it shares the descriptor lookup's tail at 83F7h. The second traverses 20h-byte records through the pointer at CS:82C6h, conditionally skips a zero-terminated word list, and returns descriptor bytes +1Ch/+1Dh. No direct near-CALL xref to the 83C1h entry was found, so its external entry mechanism remains unresolved.
+
+Generator update: pending commit. The projected range mask is 64,635/65,536 bytes (98.63%), with 44 uncovered intervals and 217 fully covered 256-byte pages. The next largest gaps are ABB4h–ABFFh and 2ED8h–2F23h (76 bytes each). These are range-mask projections, not semantic-completion or reachability percentages. The Capstone listing must be regenerated after running the updated generator.
