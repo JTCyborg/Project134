@@ -157,8 +157,118 @@ Words: B6FB, B700, B708, B70F, B717, B71C, B724, B729, B731, B736, B73E, B745, B
 Reason: Setup option labels: clock, speed, cache, wait states and timing
 ASCII: 'Reserved\x00Disabled\x00Enabled\x00Absent\x00Present\x00Low\x00High\x00Off\x00On\x00No\x00Yes\x00Setup\x00Always\x000:300\x00DOS 1KB\x00A:, C:\x00C:, A:\x00250\x00500\x00750\x001000\x0030\x0024\x0020\x0015\x0012\x0010\x008\x006\x00Video\x00Main\x00Both\x00Slow\x00Normal\x00Fast\x00Fastest\x002t\x003t\x004t\x006t\x008t\x00WB\x00WT\x007.19MHz\x0014.32MHz\x0028.64MHz\x00CLK2\x00CLK2 /2\x00CLK2 /3\x00CLK2 /4\x00CLK2 /5\x00CLK2 /6\x00CLK2 /8\x00CLK2 /10\x00CLK2 /12\x00ATCLK\x00ATCLK/2\x00ATCLK2\x00ATCLK2/2\x00ATCLK2/4\x00ATCLK2/8\x00OSC\x00CLKIO\x0064KB\x00128KB\x000 WS\x001 WS\x002 WS\x003 WS\x000 ns\x001 ns\x002 ns\x003 ns\x000 us\x000.25 us\x000.5 us\x000.75 us\x001 us\x001.25 us\x001.5u\x001.75 us\x002 us\x002.25 us\x002.5 us\x002.75 us\x003 us\x003.25 us\x003.5 us\x003.75 us\x0015u \x0030u\x0060u\x00120u\x000 CLK2\x001 CLK2\x002 CLK2\x003 CLK2\x001st T2\x00T1 end\x00SYN.\x00Bypass\x00'
 
+===== 0D00h-0D7Fh =====
+Reason: unreferenced-page caller context for E1xx state helpers
+0D00  85 E1                   test cx, sp
+0D02  00 E8                   add al, ch
+0D04  E3 52                   jcxz 0xd58
+0D06  EB 0D                   jmp 0xd15
+0D08  A0 A4 E1                mov al, byte ptr [0xe1a4]
+0D0B  E8 6E 01                call 0xe7c
+0D0E  FE 06 85 E1             inc byte ptr [0xe185]
+0D12  E8 F3 52                call 0x6008
+0D15  A0 85 E1                mov al, byte ptr [0xe185]
+0D18  98                      cwde
+0D19  8A 0E 8D E1             mov cl, byte ptr [0xe18d]
+0D1D  2A ED                   sub ch, ch
+0D1F  3B C1                   cmp ax, cx
+0D21  7C E5                   jl 0xd08
+0D23  A0 89 E1                mov al, byte ptr [0xe189]
+0D26  A2 85 E1                mov byte ptr [0xe185], al
+0D29  A0 8A E1                mov al, byte ptr [0xe18a]
+0D2C  A2 8C E1                mov byte ptr [0xe18c], al
+0D2F  C6 06 8B E1 01          mov byte ptr [0xe18b], 1
+0D34  E8 B2 52                call 0x5fe9
+0D37  A0 A5 E1                mov al, byte ptr [0xe1a5]
+0D3A  E8 3F 01                call 0xe7c
+0D3D  E8 C2 4B                call 0x5902
+0D40  A3 82 E1                mov word ptr [0xe182], ax
+0D43  A0 A4 E1                mov al, byte ptr [0xe1a4]
+0D46  E8 33 01                call 0xe7c
+0D49  A1 82 E1                mov ax, word ptr [0xe182]
+0D4C  2D 1B 00                sub ax, 0x1b
+0D4F  75 03                   jne 0xd54
+0D51  E9 C1 00                jmp 0xe15
+0D54  2D 20 01                sub ax, 0x120
+0D57  75 03                   jne 0xd5c
+0D59  E9 A1 00                jmp 0xdfd
+0D5C  2D 01 00                sub ax, 1
+0D5F  73 03                   jae 0xd64
+0D61  E9 7C FF                jmp 0xce0
+0D64  2D 01 00                sub ax, 1
+0D67  77 03                   ja 0xd6c
+0D69  E9 97 00                jmp 0xe03
+0D6C  2D 02 00                sub ax, 2
+0D6F  73 03                   jae 0xd74
+0D71  E9 6C FF                jmp 0xce0
+0D74  2D 02 00                sub ax, 2
+0D77  77 03                   ja 0xd7c
+0D79  E9 8D 00                jmp 0xe09
+0D7C  2D 06 00                sub ax, 6
+0D7F  75              db 0x75
+
+===== 0D80h-0DFFh =====
+Reason: state-helper caller and branch context before E1xx routines
+0D80  03 E9                   add bp, cx
+0D82  0F FF                   ud0
+0D84  48                      dec ax
+0D85  74 5E                   je 0xde5
+0D87  48                      dec ax
+0D88  74 1F                   je 0xda9
+0D8A  48                      dec ax
+0D8B  48                      dec ax
+0D8C  74 26                   je 0xdb4
+0D8E  48                      dec ax
+0D8F  48                      dec ax
+0D90  74 22                   je 0xdb4
+0D92  48                      dec ax
+0D93  48                      dec ax
+0D94  74 4A                   je 0xde0
+0D96  48                      dec ax
+0D97  74 52                   je 0xdeb
+0D99  48                      dec ax
+0D9A  74 55                   je 0xdf1
+0D9C  2D 25 00                sub ax, 0x25
+0D9F  74 54                   je 0xdf5
+0DA1  2D 0E 00                sub ax, 0xe
+0DA4  74 53                   je 0xdf9
+0DA6  E9 37 FF                jmp 0xce0
+0DA9  B0 FF                   mov al, 0xff
+0DAB  E8 0D 53                call 0x60bb
+0DAE  A2 8B E1                mov byte ptr [0xe18b], al
+0DB1  E9 2C FF                jmp 0xce0
+0DB4  A0 85 E1                mov al, byte ptr [0xe185]
+0DB7  A2 89 E1                mov byte ptr [0xe189], al
+0DBA  B1 24                   mov cl, 0x24
+0DBC  A0 85 E1                mov al, byte ptr [0xe185]
+0DBF  04 12                   add al, 0x12
+0DC1  98                      cwde
+0DC2  F6 F9                   idiv cl
+0DC4  88 26 85 E1             mov byte ptr [0xe185], ah
+0DC8  8A C4                   mov al, ah
+0DCA  98                      cwde
+0DCB  8A 0E 8D E1             mov cl, byte ptr [0xe18d]
+0DCF  2A ED                   sub ch, ch
+0DD1  3B C1                   cmp ax, cx
+0DD3  7D E5                   jge 0xdba
+0DD5  2A 06 89 E1             sub al, byte ptr [0xe189]
+0DD9  00 06 8C E1             add byte ptr [0xe18c], al
+0DDD  E9 00 FF                jmp 0xce0
+0DE0  C6 06 8C E1 00          mov byte ptr [0xe18c], 0
+0DE5  E8 31 00                call 0xe19
+0DE8  E9 F5 FE                jmp 0xce0
+0DEB  E8 59 00                call 0xe47
+0DEE  E9 EF FE                jmp 0xce0
+0DF1  B0 01                   mov al, 1
+0DF3  EB B6                   jmp 0xdab
+0DF5  B0 0A                   mov al, 0xa
+0DF7  EB B2                   jmp 0xdab
+0DF9  B0 F6                   mov al, 0xf6
+0DFB  EB AE                   jmp 0xdab
+0DFD  E8 E2 00                call 0xee2
+
 ===== 0E00h-0E19h =====
-Reason: unaligned Setup/POST control-flow fragment; short branch stub
+Reason: short branch/call fragment; not assumed to be a function entry
 0E00  E9 9A FE                jmp 0xc9d
 0E03  E8 A8 48                call 0x56ae
 0E06  E9 94 FE                jmp 0xc9d
@@ -171,10 +281,10 @@ Reason: unaligned Setup/POST control-flow fragment; short branch stub
 0E18  C3                      ret
 0E19  80              db 0x80
 
-===== 0E1Ah-0E7Bh =====
-Reason: direct continuation candidate in E1xx state-update logic
-0E1A  3E 8C E1                mov cx, fs
-0E1D  00 75 12                add byte ptr [di + 0x12], dh
+===== 0E19h-0E7Bh =====
+Reason: byte-aligned state-update helper; entry begins with CMP byte ptr [E18C],0
+0E19  80 3E 8C E1 00          cmp byte ptr [0xe18c], 0
+0E1E  75 12                   jne 0xe32
 0E20  A0 8E E1                mov al, byte ptr [0xe18e]
 0E23  FE C8                   dec al
 0E25  A2 8C E1                mov byte ptr [0xe18c], al
@@ -188,6 +298,26 @@ Reason: direct continuation candidate in E1xx state-update logic
 0E3C  C6 06 85 E1 00          mov byte ptr [0xe185], 0
 0E41  C6 06 8B E1 00          mov byte ptr [0xe18b], 0
 0E46  C3                      ret
+0E47  FE 06 8C E1             inc byte ptr [0xe18c]
+0E4B  A0 8E E1                mov al, byte ptr [0xe18e]
+0E4E  38 06 8C E1             cmp byte ptr [0xe18c], al
+0E52  75 0C                   jne 0xe60
+0E54  C6 06 85 E1 00          mov byte ptr [0xe185], 0
+0E59  C6 06 8C E1 00          mov byte ptr [0xe18c], 0
+0E5E  EB 16                   jmp 0xe76
+0E60  FE 06 85 E1             inc byte ptr [0xe185]
+0E64  A0 85 E1                mov al, byte ptr [0xe185]
+0E67  98                      cwde
+0E68  8A 0E 8D E1             mov cl, byte ptr [0xe18d]
+0E6C  2A ED                   sub ch, ch
+0E6E  3B C1                   cmp ax, cx
+0E70  75 09                   jne 0xe7b
+0E72  FE 0E 85 E1             dec byte ptr [0xe185]
+0E76  C6 06 8B E1 00          mov byte ptr [0xe18b], 0
+0E7B  C3                      ret
+
+===== 0E47h-0E7Bh =====
+Reason: direct CALL target; increment/wrap state-update helper
 0E47  FE 06 8C E1             inc byte ptr [0xe18c]
 0E4B  A0 8E E1                mov al, byte ptr [0xe18e]
 0E4E  38 06 8C E1             cmp byte ptr [0xe18c], al
@@ -360,6 +490,70 @@ Reason: second stack-frame routine in E1xx state-update cluster
 0FF9  74 F9                   je 0xff4
 0FFB  C6 44 02 00             mov byte ptr [si + 2], 0
 0FFF  8B              db 0x8B
+
+===== 60B0h-612Fh =====
+Reason: caller context for E1xx state/menu helper at 0E7Ch
+60B0  FF D3                   call bx
+60B2  5D                      pop bp
+60B3  5F                      pop di
+60B4  5E                      pop si
+60B5  1F                      pop ds
+60B6  FC                      cld
+60B7  83 C4 02                add sp, 2
+60BA  C3                      ret
+60BB  50                      push ax
+60BC  A0 A5 E1                mov al, byte ptr [0xe1a5]
+60BF  E8 BA AD                call 0xe7c
+60C2  A1 80 E1                mov ax, word ptr [0xe180]
+60C5  E8 F9 A8                call 0x9c1
+60C8  58                      pop ax
+60C9  98                      cwde
+60CA  8B 1E 8F E1             mov bx, word ptr [0xe18f]
+60CE  80 7F 1F 00             cmp byte ptr [bx + 0x1f], 0
+60D2  74 0F                   je 0x60e3
+60D4  80 7F 1F 0A             cmp byte ptr [bx + 0x1f], 0xa
+60D8  77 09                   ja 0x60e3
+60DA  3C 00                   cmp al, 0
+60DC  B8 01 00                mov ax, 1
+60DF  7F 02                   jg 0x60e3
+60E1  48                      dec ax
+60E2  48                      dec ax
+60E3  E8 AC FF                call 0x6092
+60E6  50                      push ax
+60E7  E8 55 FF                call 0x603f
+60EA  5A                      pop dx
+60EB  8A 4F 1F                mov cl, byte ptr [bx + 0x1f]
+60EE  32 ED                   xor ch, ch
+60F0  52                      push dx
+60F1  03 C1                   add ax, cx
+60F3  03 C2                   add ax, dx
+60F5  33 D2                   xor dx, dx
+60F7  F7 F1                   div cx
+60F9  8B C2                   mov ax, dx
+60FB  5A                      pop dx
+60FC  53                      push bx
+60FD  03 D8                   add bx, ax
+60FF  80 7F 20 00             cmp byte ptr [bx + 0x20], 0
+6103  5B                      pop bx
+6104  75 09                   jne 0x610f
+6106  80 FA FF                cmp dl, 0xff
+6109  74 E0                   je 0x60eb
+610B  B2 01                   mov dl, 1
+610D  EB DC                   jmp 0x60eb
+610F  E8 54 FF                call 0x6066
+6112  B0 01                   mov al, 1
+6114  C3                      ret
+6115  33 C0                   xor ax, ax
+6117  E8 78 FF                call 0x6092
+611A  E8 22 FF                call 0x603f
+611D  03 D8                   add bx, ax
+611F  8A 47 20                mov al, byte ptr [bx + 0x20]
+6122  32 E4                   xor ah, ah
+6124  8B C8                   mov cx, ax
+6126  8B 1E 97 E1             mov bx, word ptr [0xe197]
+612A  83 C3 02                add bx, 2
+612D  E3 05                   jcxz 0x6134
+612F  E8              db 0xE8
 
 ===== 41C0h-423Fh =====
 Reason: POST display/status routine candidate preceding 4200h
