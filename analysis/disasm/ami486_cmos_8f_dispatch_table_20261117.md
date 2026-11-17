@@ -1182,3 +1182,22 @@ The two implementations selected by `ABADh` share ATA-channel helpers. The byte-
 This establishes the role of `ABADh` more narrowly: it dispatches between two private ATA task-file procedures, using the caller's far pointer and one-byte drive/head selector, while communicating status through BDA offsets `74h`, `8Ch`, and `8Dh`. The full semantic interpretation of the far-pointer fields at `E1B8h+02h/+06h/+0Ch` is still open; the matching scan against `CS:E401h` remains a separate, not-yet-proven geometry/parameter table association.
 
 ROM image unchanged. This update documents only behavior directly visible in the instruction stream; no disk geometry or ATA command meaning is inferred solely from the call names.
+
+### Critical correction and completed ATA IDENTIFY / geometry-match trace in AB34h
+
+A second instruction-by-instruction pass corrected the branch labels in the preceding ABADh note and established the data contract of the two calls:
+
+- `AH=01h` selects `AC34h`. This branch selects the drive/head byte (`A0h` if `DL=80h`, otherwise `B0h`), calls `A655h`, writes the selector to port `1F6h`, then issues ATA command `10h` to port `1F7h` through `A73Eh`. It waits through `A694h` (retrying the wait once on carry) and finishes by sampling status via `A6DCh`. This is the recalibrate-command path.
+- `AH=00h` selects `ABDDh`. It again selects `A0h`/`B0h`, converts the caller's `ES:BX` buffer pointer to a normalized segment:offset pair, calls `A655h`, writes the selector to `1F6h`, then issues ATA command `ECh` through `A73Eh`. After `A694h` reports completion, it reads `0100h` words from port `1F0h` with `REP INSW` into the caller's buffer. This is the ATA IDENTIFY DEVICE data transfer (512 bytes). On the error path it returns Carry set; the normal data-transfer path returns Carry clear after checking the status byte at `0040:0074h`.
+
+The `AB34h` caller therefore performs, for the selected device, a software-reset pulse (`185Ah`), an ATA recalibrate command (`10h`), then ATA IDENTIFY DEVICE (`ECh`) into the buffer at `ES:BX` (the caller passes `DS:E1B8h`). It then parses the IDENTIFY data using standard ATA word offsets:
+
+- `ES:[BX+02h]` = IDENTIFY word 1, cylinders;
+- `ES:[BX+06h]` = IDENTIFY word 3, heads;
+- `ES:[BX+0Ch]` = IDENTIFY word 6, sectors per track.
+
+The code rejects nonzero high bytes for the cylinder and sectors-per-track words (`OR AH,BH`), takes the low byte of the heads word (`DH=CL`), and scans `CS:E401h` as 46 records of 16 bytes. A candidate record must match cylinders at `+00h`, heads at `+02h`, sectors/track at `+0Eh`, and must have the word at `+05h` equal to `FFFFh`. Thus the table is a ROM list of CHS geometry candidates, not an arbitrary byte table. On a match, the code derives a 1-based table position from the remaining loop count, then maps position `0Fh` to returned index `00h`; if no candidate matches it returns `2Fh`. The exact significance of the `+05h == FFFFh` filter and the special `0Fh -> 00h` mapping remains to be traced in callers.
+
+`E401h` table sample confirms its record layout: e.g. first record is `306 cylinders / 4 heads / 17 sectors`, second `615 / 4 / 17`, third `615 / 6 / 17`, and subsequent entries include geometries such as `940 / 8 / 17`, `733 / 5 / 17`, and `900 / 15 / 17`. There are exactly `2Eh` (46) records scanned by this routine. The scan compares only the three CHS fields above plus the `FFFFh` sentinel condition; other record bytes are not yet assigned semantics.
+
+Correction to the previous ABADh summary: it had the `AH=01h` and `AH=00h` target routines reversed, and the two branch functions are now identified as ATA recalibrate (`AC34h`) and ATA IDENTIFY DEVICE (`ABDDh`). The ROM remains unchanged.
