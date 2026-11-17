@@ -1271,11 +1271,802 @@ Words: 20DA
 Reason: Crafted near-return word 20FCh consumed by the 8DDCh indexed-writer trampoline
 Words: 20FC
 
+===== DATA 02DFh-02EBh =====
+Reason: Overlapping 13-byte parameter-table view selected by the pointer word at CAB9h; overlaps the low-ROM nibble-editor stream
+02DF  E8 04 BA 16 0A E8 BC 02 9C 80 66 10 0F          ..........f..
+
+===== DATA C8CAh-C8D6h =====
+Reason: Overlapping 13-byte diskette-parameter view selected by the pointer word at CAB1h; C8CAh is also an executable INT 13h continuation
+C8CA  0A C0 74 04 2A D9 8A C3 8A 26 41 00 0A          ..t.*....&A..
+
+===== DATA CAA7h-CAB0h =====
+Reason: Five-word INT 13h geometry/selector lookup array used at CA4Bh
+Words: 2709, 4F0F, 4F09, 4F12, 4F24
+
+===== DATA CAB1h-CABAh =====
+Reason: Five-word ES:DI parameter-pointer array used at CA54h
+Words: CABB, CAC8, CAD5, CAE2, CAFC
+
+===== DATA CABBh-CAC7h =====
+Reason: 13-byte diskette parameter block selected by the fifth lookup case
+CABB  DF 02 25 02 09 2A FF 50 F6 0F 08 27 80          ..%..*.P...'.
+
+===== DATA CAC8h-CAD4h =====
+Reason: 13-byte diskette parameter block selected by the CB9Eh media-type dispatcher
+CAC8  DF 02 25 02 0F 1B FF 54 F6 0F 08 4F 00          ..%....T...O.
+
+===== DATA CAD5h-CAE1h =====
+Reason: 13-byte diskette parameter block selected by the CA/CB media-type dispatchers
+CAD5  DF 02 25 02 09 2A FF 50 F6 0F 08 4F 80          ..%..*.P...O.
+
+===== DATA CAE2h-CAEEh =====
+Reason: 13-byte diskette parameter block selected by the CB9Eh media-type dispatcher
+CAE2  AF 02 25 02 12 1B FF 6C F6 0F 08 4F 00          ..%....l...O.
+
+===== DATA CAEFh-CAFBh =====
+Reason: 13-byte fallback diskette parameter block selected by the CB9Eh media-type dispatcher
+CAEF  DF 02 25 02 09 2A FF 50 F6 0F 08 27 40          ..%..*.P...'@
+
+===== DATA CAFCh-CB08h =====
+Reason: 13-byte diskette parameter block; CB09h is the following code-entry boundary
+CAFC  AF 02 25 02 24 1B FF 50 F6 0F 08 4F C0          ..%.$..P...O.
+
 ===== DATA 2068h-208Ch =====
 Reason: LGDT pseudo-descriptor at 2068h plus adjacent descriptor/parameter bytes used by the PM memory probe
 2068  17 00 70 20 0F 93 00 00 00 00 00 00 00 00 00 00 ..p ............
 2078  FF FF 00 00 00 93 8F 00 FF FF 00 00 00 93 00 00 ................
 2088  01 04 02 10 40                                  ....@
+
+===== CA15h-CAA6h =====
+Reason: fall-through continuation from the CA13h selector branch; builds INT 13h drive geometry and ES:DI parameter pointer
+CA15  B0 C7                   mov al, 0xc7
+CA17  88 07                   mov byte ptr [bx], al
+CA19  EB 29                   jmp 0xca44
+CA1B  BB 90 00                mov bx, 0x90
+CA1E  02 DA                   add bl, dl
+CA20  8A 07                   mov al, byte ptr [bx]
+CA22  A8 10                   test al, 0x10
+CA24  74 69                   je 0xca8f
+CA26  8A E0                   mov ah, al
+CA28  24 C0                   and al, 0xc0
+CA2A  3C 80                   cmp al, 0x80
+CA2C  BE 02 00                mov si, 2
+CA2F  75 0B                   jne 0xca3c
+CA31  F6 C4 04                test ah, 4
+CA34  BE 01 00                mov si, 1
+CA37  74 0B                   je 0xca44
+CA39  BE 04 00                mov si, 4
+CA3C  F6 C4 07                test ah, 7
+CA3F  74 03                   je 0xca44
+CA41  BE 04 00                mov si, 4
+CA44  8B DF                   mov bx, di
+CA46  8B FE                   mov di, si
+CA48  4F                      dec di
+CA49  03 FF                   add di, di
+CA4B  2E 8B 85 A7 CA          mov ax, word ptr cs:[di - 0x3559]
+CA50  C6 46 0F 01             mov byte ptr [bp + 0xf], 1
+CA54  2E 8B BD B1 CA          mov di, word ptr cs:[di - 0x354f]
+CA59  0E                      push cs
+CA5A  07                      pop es
+CA5B  88 5E 0E                mov byte ptr [bp + 0xe], bl
+CA5E  88 66 11                mov byte ptr [bp + 0x11], ah
+CA61  88 46 10                mov byte ptr [bp + 0x10], al
+CA64  88 76 0C                mov byte ptr [bp + 0xc], dh
+CA67  C6 46 0D 00             mov byte ptr [bp + 0xd], 0
+CA6B  8C 46 02                mov word ptr [bp + 2], es
+CA6E  89 7E 06                mov word ptr [bp + 6], di
+CA71  33 C0                   xor ax, ax
+CA73  88 26 41 00             mov byte ptr [0x41], ah
+CA77  88 46 12                mov byte ptr [bp + 0x12], al
+CA7A  E9 CB FB                jmp 0xc648
+CA7D  33 FF                   xor di, di
+CA7F  32 F6                   xor dh, dh
+CA81  33 C0                   xor ax, ax
+CA83  8E C0                   mov es, ax
+CA85  C6 46 0F 00             mov byte ptr [bp + 0xf], 0
+CA89  8B DF                   mov bx, di
+CA8B  33 FF                   xor di, di
+CA8D  EB CC                   jmp 0xca5b
+CA8F  8B DF                   mov bx, di
+CA91  B0 0E                   mov al, 0xe
+CA93  E8 14 24                call 0xeeaa
+CA96  A8 C0                   test al, 0xc0
+CA98  75 E3                   jne 0xca7d
+CA9A  0B F6                   or si, si
+CA9C  74 DF                   je 0xca7d
+CA9E  83 FE 03                cmp si, 3
+CAA1  76 A1                   jbe 0xca44
+CAA3  33 F6                   xor si, si
+CAA5  EB D6                   jmp 0xca7d
+
+===== CB09h-CBF7h =====
+Reason: candidate table-adjacent INT 13h drive/media handler; no direct near xref found, verify as alternate entry
+CB09  80 FA 01                cmp dl, 1
+CB0C  76 06                   jbe 0xcb14
+CB0E  B4 01                   mov ah, 1
+CB10  F9                      stc
+CB11  E9 34 FB                jmp 0xc648
+CB14  E8 9E 08                call 0xd3b5
+CB17  74 04                   je 0xcb1d
+CB19  B4 0C                   mov ah, 0xc
+CB1B  EB F3                   jmp 0xcb10
+CB1D  32 E4                   xor ah, ah
+CB1F  8B F8                   mov di, ax
+CB21  8A 56 0E                mov dl, byte ptr [bp + 0xe]
+CB24  BB 90 00                mov bx, 0x90
+CB27  32 F6                   xor dh, dh
+CB29  03 DA                   add bx, dx
+CB2B  3C 01                   cmp al, 1
+CB2D  75 0F                   jne 0xcb3e
+CB2F  8B 4E 10                mov cx, word ptr [bp + 0x10]
+CB32  81 F9 09 27             cmp cx, 0x2709
+CB36  BE BB CA                mov si, 0xcabb
+CB39  75 DE                   jne 0xcb19
+CB3B  E9 B4 00                jmp 0xcbf2
+CB3E  3C 03                   cmp al, 3
+CB40  75 0B                   jne 0xcb4d
+CB42  8B 4E 10                mov cx, word ptr [bp + 0x10]
+CB45  81 F9 09 4F             cmp cx, 0x4f09
+CB49  75 CE                   jne 0xcb19
+CB4B  EB 43                   jmp 0xcb90
+CB4D  3C 04                   cmp al, 4
+CB4F  74 30                   je 0xcb81
+CB51  3C 02                   cmp al, 2
+CB53  74 1B                   je 0xcb70
+CB55  3C 05                   cmp al, 5
+CB57  75 C0                   jne 0xcb19
+CB59  8B 4E 10                mov cx, word ptr [bp + 0x10]
+CB5C  81 F9 24 4F             cmp cx, 0x4f24
+CB60  74 2E                   je 0xcb90
+CB62  81 F9 12 4F             cmp cx, 0x4f12
+CB66  74 28                   je 0xcb90
+CB68  81 F9 09 4F             cmp cx, 0x4f09
+CB6C  74 22                   je 0xcb90
+CB6E  EB A9                   jmp 0xcb19
+CB70  8B 4E 10                mov cx, word ptr [bp + 0x10]
+CB73  81 F9 0F 4F             cmp cx, 0x4f0f
+CB77  74 17                   je 0xcb90
+CB79  81 F9 09 27             cmp cx, 0x2709
+CB7D  75 9A                   jne 0xcb19
+CB7F  EB 0F                   jmp 0xcb90
+CB81  8B 4E 10                mov cx, word ptr [bp + 0x10]
+CB84  81 F9 12 4F             cmp cx, 0x4f12
+CB88  74 06                   je 0xcb90
+CB8A  81 F9 09 4F             cmp cx, 0x4f09
+CB8E  75 89                   jne 0xcb19
+CB90  8B 4E 10                mov cx, word ptr [bp + 0x10]
+CB93  81 F9 12 4F             cmp cx, 0x4f12
+CB97  B0 17                   mov al, 0x17
+CB99  BE E2 CA                mov si, 0xcae2
+CB9C  B6 00                   mov dh, 0
+CB9E  74 2E                   je 0xcbce
+CBA0  81 F9 09 4F             cmp cx, 0x4f09
+CBA4  B0 97                   mov al, 0x97
+CBA6  BE D5 CA                mov si, 0xcad5
+CBA9  B6 02                   mov dh, 2
+CBAB  74 21                   je 0xcbce
+CBAD  81 F9 0F 4F             cmp cx, 0x4f0f
+CBB1  B0 15                   mov al, 0x15
+CBB3  BE C8 CA                mov si, 0xcac8
+CBB6  B6 00                   mov dh, 0
+CBB8  74 14                   je 0xcbce
+CBBA  81 F9 24 4F             cmp cx, 0x4f24
+CBBE  B0 D7                   mov al, 0xd7
+CBC0  BE FC CA                mov si, 0xcafc
+CBC3  B6 03                   mov dh, 3
+CBC5  74 07                   je 0xcbce
+CBC7  B0 74                   mov al, 0x74
+CBC9  BE EF CA                mov si, 0xcaef
+CBCC  B6 01                   mov dh, 1
+CBCE  88 07                   mov byte ptr [bx], al
+CBD0  52                      push dx
+CBD1  E8 43 09                call 0xd517
+CBD4  5A                      pop dx
+CBD5  8A 07                   mov al, byte ptr [bx]
+CBD7  24 C0                   and al, 0xc0
+CBD9  80 26 8B 00 3F          and byte ptr [0x8b], 0x3f
+CBDE  08 06 8B 00             or byte ptr [0x8b], al
+CBE2  89 76 06                mov word ptr [bp + 6], si
+CBE5  8C 4E 02                mov word ptr [bp + 2], cs
+CBE8  C6 06 41 00 00          mov byte ptr [0x41], 0
+CBED  32 E4                   xor ah, ah
+CBEF  E9 56 FA                jmp 0xc648
+CBF2  B6 02                   mov dh, 2
+CBF4  B0 93                   mov al, 0x93
+CBF6  EB D6                   jmp 0xcbce
+
+===== CBF8h-CC86h =====
+Reason: candidate diskette-controller initialization entry; no direct near xref found in the linear listing
+CBF8  80 26 10 00 3E          and byte ptr [0x10], 0x3e
+CBFD  80 0E 10 00 01          or byte ptr [0x10], 1
+CC02  E8 DA 01                call 0xcddf
+CC05  BB 3E 00                mov bx, 0x3e
+CC08  33 C0                   xor ax, ax
+CC0A  B9 0B 00                mov cx, 0xb
+CC0D  88 07                   mov byte ptr [bx], al
+CC0F  43                      inc bx
+CC10  E2 FB                   loop 0xcc0d
+CC12  A2 8F 00                mov byte ptr [0x8f], al
+CC15  A3 90 00                mov word ptr [0x90], ax
+CC18  A3 92 00                mov word ptr [0x92], ax
+CC1B  A3 94 00                mov word ptr [0x94], ax
+CC1E  A2 96 00                mov byte ptr [0x96], al
+CC21  B9 02 00                mov cx, 2
+CC24  51                      push cx
+CC25  B2 00                   mov dl, 0
+CC27  B4 00                   mov ah, 0
+CC29  CD 13                   int 0x13
+CC2B  59                      pop cx
+CC2C  72 23                   jb 0xcc51
+CC2E  51                      push cx
+CC2F  E8 EE 08                call 0xd520
+CC32  59                      pop cx
+CC33  73 21                   jae 0xcc56
+CC35  E2 ED                   loop 0xcc24
+CC37  B2 00                   mov dl, 0
+CC39  B4 00                   mov ah, 0
+CC3B  CD 13                   int 0x13
+CC3D  B2 00                   mov dl, 0
+CC3F  E8 73 07                call 0xd3b5
+CC42  75 12                   jne 0xcc56
+CC44  3C 05                   cmp al, 5
+CC46  74 09                   je 0xcc51
+CC48  B2 01                   mov dl, 1
+CC4A  E8 68 07                call 0xd3b5
+CC4D  3C 05                   cmp al, 5
+CC4F  75 05                   jne 0xcc56
+CC51  83 CD 01                or bp, 1
+CC54  EB 28                   jmp 0xcc7e
+CC56  B6 02                   mov dh, 2
+CC58  E8 BC 08                call 0xd517
+CC5B  32 F6                   xor dh, dh
+CC5D  E8 27 00                call 0xcc87
+CC60  73 04                   jae 0xcc66
+CC62  81 CD 00 01             or bp, 0x100
+CC66  FE C6                   inc dh
+CC68  E8 1C 00                call 0xcc87
+CC6B  73 04                   jae 0xcc71
+CC6D  81 CD 00 02             or bp, 0x200
+CC71  8A 26 91 00             mov ah, byte ptr [0x91]
+CC75  0A E4                   or ah, ah
+CC77  74 05                   je 0xcc7e
+CC79  80 0E 10 00 40          or byte ptr [0x10], 0x40
+CC7E  E8 07 01                call 0xcd88
+CC81  C6 06 3E 00 00          mov byte ptr [0x3e], 0
+CC86  C3                      ret
+
+===== CC87h-CD21h =====
+Reason: direct CALL targets from CC5Dh/CC68h; CMOS drive-state helper
+CC87  B0 8E                   mov al, 0x8e
+CC89  E8 1E 22                call 0xeeaa
+CC8C  A8 C0                   test al, 0xc0
+CC8E  8A E0                   mov ah, al
+CC90  75 12                   jne 0xcca4
+CC92  B0 90                   mov al, 0x90
+CC94  E8 FD 21                call 0xee94
+CC97  0A F6                   or dh, dh
+CC99  75 05                   jne 0xcca0
+CC9B  C0 E8 04                shr al, 4
+CC9E  EB 02                   jmp 0xcca2
+CCA0  24 0F                   and al, 0xf
+CCA2  74 7D                   je 0xcd21
+CCA4  50                      push ax
+CCA5  2E A0 15 B5             mov al, byte ptr cs:[0xb515]
+CCA9  53                      push bx
+CCAA  E8 53 B6                call 0x8300
+CCAD  5B                      pop bx
+CCAE  58                      pop ax
+CCAF  75 0F                   jne 0xccc0
+CCB1  F6 C4 C0                test ah, 0xc0
+CCB4  75 0A                   jne 0xccc0
+CCB6  BF FF FF                mov di, 0xffff
+CCB9  FE C8                   dec al
+CCBB  74 3E                   je 0xccfb
+CCBD  47                      inc di
+CCBE  EB 3B                   jmp 0xccfb
+CCC0  B9 02 00                mov cx, 2
+CCC3  8A D6                   mov dl, dh
+CCC5  E8 90 03                call 0xd058
+CCC8  E8 7A 01                call 0xce45
+CCCB  73 04                   jae 0xccd1
+CCCD  E2 F4                   loop 0xccc3
+CCCF  EB 50                   jmp 0xcd21
+CCD1  B2 0F                   mov dl, 0xf
+CCD3  8B F2                   mov si, dx
+CCD5  BF 30 00                mov di, 0x30
+CCD8  E8 47 00                call 0xcd22
+CCDB  72 44                   jb 0xcd21
+CCDD  BF 0A 00                mov di, 0xa
+CCE0  B2 0F                   mov dl, 0xf
+CCE2  8B F2                   mov si, dx
+CCE4  E8 3B 00                call 0xcd22
+CCE7  72 38                   jb 0xcd21
+CCE9  B2 04                   mov dl, 4
+CCEB  8B F2                   mov si, dx
+CCED  E8 7A 00                call 0xcd6a
+CCF0  72 2F                   jb 0xcd21
+CCF2  0A ED                   or ch, ch
+CCF4  74 05                   je 0xccfb
+CCF6  4F                      dec di
+CCF7  79 E7                   jns 0xcce0
+CCF9  EB 26                   jmp 0xcd21
+CCFB  8A DE                   mov bl, dh
+CCFD  32 FF                   xor bh, bh
+CCFF  C6 87 90 00 93          mov byte ptr [bx + 0x90], 0x93
+CD04  B5 04                   mov ch, 4
+CD06  0B FF                   or di, di
+CD08  75 07                   jne 0xcd11
+CD0A  C6 87 90 00 02          mov byte ptr [bx + 0x90], 2
+CD0F  B5 01                   mov ch, 1
+CD11  B0 04                   mov al, 4
+CD13  F6 E6                   mul dh
+CD15  8A C8                   mov cl, al
+CD17  D2 E5                   shl ch, cl
+CD19  08 2E 8F 00             or byte ptr [0x8f], ch
+CD1D  0B FF                   or di, di
+CD1F  75 00                   jne 0xcd21
+CD21  C3                      ret
+
+===== CD22h-CD69h =====
+Reason: direct CALL targets from CCD8h/CCE4h; diskette wait/parameter helper
+CD22  80 26 3E 00 7F          and byte ptr [0x3e], 0x7f
+CD27  8B C6                   mov ax, si
+CD29  8A E0                   mov ah, al
+CD2B  E8 15 05                call 0xd243
+CD2E  72 39                   jb 0xcd69
+CD30  8B C6                   mov ax, si
+CD32  E8 0E 05                call 0xd243
+CD35  72 32                   jb 0xcd69
+CD37  8B C7                   mov ax, di
+CD39  8A E0                   mov ah, al
+CD3B  E8 05 05                call 0xd243
+CD3E  72 29                   jb 0xcd69
+CD40  B8 01 90                mov ax, 0x9001
+CD43  CD 15                   int 0x15
+CD45  72 22                   jb 0xcd69
+CD47  E8 5B 06                call 0xd3a5
+CD4A  72 1D                   jb 0xcd69
+CD4C  B4 08                   mov ah, 8
+CD4E  E8 F2 04                call 0xd243
+CD51  72 16                   jb 0xcd69
+CD53  E8 3E 05                call 0xd294
+CD56  72 11                   jb 0xcd69
+CD58  8A D8                   mov bl, al
+CD5A  E8 37 05                call 0xd294
+CD5D  72 0A                   jb 0xcd69
+CD5F  80 E3 60                and bl, 0x60
+CD62  80 FB 60                cmp bl, 0x60
+CD65  F8                      clc
+CD66  75 01                   jne 0xcd69
+CD68  F9                      stc
+CD69  C3                      ret
+
+===== CD6Ah-CD87h =====
+Reason: direct CALL target from CCEEh; INT 1Eh parameter comparison helper
+CD6A  8B C6                   mov ax, si
+CD6C  8A E0                   mov ah, al
+CD6E  E8 D2 04                call 0xd243
+CD71  72 14                   jb 0xcd87
+CD73  8B C6                   mov ax, si
+CD75  E8 CB 04                call 0xd243
+CD78  72 0D                   jb 0xcd87
+CD7A  E8 17 05                call 0xd294
+CD7D  72 08                   jb 0xcd87
+CD7F  B5 FF                   mov ch, 0xff
+CD81  A8 10                   test al, 0x10
+CD83  74 02                   je 0xcd87
+CD85  32 ED                   xor ch, ch
+CD87  C3                      ret
+
+===== CD88h-CDDEh =====
+Reason: direct CALL target from CC7Eh; CMOS 8Eh/90h drive-state update helper
+CD88  BE 90 00                mov si, 0x90
+CD8B  B0 8E                   mov al, 0x8e
+CD8D  E8 1A 21                call 0xeeaa
+CD90  A8 C0                   test al, 0xc0
+CD92  75 1C                   jne 0xcdb0
+CD94  B0 90                   mov al, 0x90
+CD96  E8 11 21                call 0xeeaa
+CD99  8A E0                   mov ah, al
+CD9B  B1 04                   mov cl, 4
+CD9D  D2 E8                   shr al, cl
+CD9F  24 0F                   and al, 0xf
+CDA1  B1 00                   mov cl, 0
+CDA3  E8 0B 00                call 0xcdb1
+CDA6  8A C4                   mov al, ah
+CDA8  24 0F                   and al, 0xf
+CDAA  46                      inc si
+CDAB  B1 04                   mov cl, 4
+CDAD  E8 01 00                call 0xcdb1
+CDB0  C3                      ret
+CDB1  80 3C 00                cmp byte ptr [si], 0
+CDB4  74 28                   je 0xcdde
+CDB6  80 3C 93                cmp byte ptr [si], 0x93
+CDB9  74 23                   je 0xcdde
+CDBB  3C 03                   cmp al, 3
+CDBD  75 07                   jne 0xcdc6
+CDBF  C6 04 97                mov byte ptr [si], 0x97
+CDC2  B0 04                   mov al, 4
+CDC4  EB 12                   jmp 0xcdd8
+CDC6  3C 05                   cmp al, 5
+CDC8  75 05                   jne 0xcdcf
+CDCA  C6 04 C7                mov byte ptr [si], 0xc7
+CDCD  EB 07                   jmp 0xcdd6
+CDCF  3C 04                   cmp al, 4
+CDD1  75 03                   jne 0xcdd6
+CDD3  C6 04 07                mov byte ptr [si], 7
+CDD6  B0 02                   mov al, 2
+CDD8  D2 E0                   shl al, cl
+CDDA  08 06 8F 00             or byte ptr [0x8f], al
+CDDE  C3                      ret
+
+===== CDDFh-CE44h =====
+Reason: direct CALL target from CC02h; FDC/ATA controller-presence probe
+CDDF  50                      push ax
+CDE0  51                      push cx
+CDE1  52                      push dx
+CDE2  BA F1 03                mov dx, 0x3f1
+CDE5  EC                      in al, dx
+CDE6  24 F8                   and al, 0xf8
+CDE8  3C 50                   cmp al, 0x50
+CDEA  74 4F                   je 0xce3b
+CDEC  BA F7 05                mov dx, 0x5f7
+CDEF  E3 00                   jcxz 0xcdf1
+CDF1  E3 00                   jcxz 0xcdf3
+CDF3  EC                      in al, dx
+CDF4  24 F0                   and al, 0xf0
+CDF6  3C A0                   cmp al, 0xa0
+CDF8  74 39                   je 0xce33
+CDFA  BA F7 01                mov dx, 0x1f7
+CDFD  B4 80                   mov ah, 0x80
+CDFF  B9 03 00                mov cx, 3
+CE02  51                      push cx
+CE03  33 C9                   xor cx, cx
+CE05  E8 86 1A                call 0xe88e
+CE08  59                      pop cx
+CE09  73 09                   jae 0xce14
+CE0B  E2 F5                   loop 0xce02
+CE0D  EC                      in al, dx
+CE0E  24 0C                   and al, 0xc
+CE10  74 29                   je 0xce3b
+CE12  EB 1F                   jmp 0xce33
+CE14  BA F4 01                mov dx, 0x1f4
+CE17  B0 AA                   mov al, 0xaa
+CE19  EE                      out dx, al
+CE1A  E3 00                   jcxz 0xce1c
+CE1C  E3 00                   jcxz 0xce1e
+CE1E  EC                      in al, dx
+CE1F  3C AA                   cmp al, 0xaa
+CE21  75 10                   jne 0xce33
+CE23  B0 55                   mov al, 0x55
+CE25  E3 00                   jcxz 0xce27
+CE27  E3 00                   jcxz 0xce29
+CE29  EE                      out dx, al
+CE2A  E3 00                   jcxz 0xce2c
+CE2C  E3 00                   jcxz 0xce2e
+CE2E  EC                      in al, dx
+CE2F  3C 55                   cmp al, 0x55
+CE31  74 08                   je 0xce3b
+CE33  C6 06 8B 00 80          mov byte ptr [0x8b], 0x80
+CE38  F9                      stc
+CE39  EB 06                   jmp 0xce41
+CE3B  C6 06 8B 00 81          mov byte ptr [0x8b], 0x81
+CE40  F8                      clc
+CE41  5A                      pop dx
+CE42  59                      pop cx
+CE43  58                      pop ax
+CE44  C3                      ret
+
+===== CE45h-CEA9h =====
+Reason: direct CALL target from CCC8h and CEAAh; drive/media test helper
+CE45  56                      push si
+CE46  51                      push cx
+CE47  52                      push dx
+CE48  8A F2                   mov dh, dl
+CE4A  B2 07                   mov dl, 7
+CE4C  8B F2                   mov si, dx
+CE4E  B5 02                   mov ch, 2
+CE50  80 26 3E 00 7F          and byte ptr [0x3e], 0x7f
+CE55  E8 BE 03                call 0xd216
+CE58  72 48                   jb 0xcea2
+CE5A  BE 08 00                mov si, 8
+CE5D  B5 01                   mov ch, 1
+CE5F  80 0E 3E 00 80          or byte ptr [0x3e], 0x80
+CE64  E8 AF 03                call 0xd216
+CE67  72 39                   jb 0xcea2
+CE69  BB 42 00                mov bx, 0x42
+CE6C  B9 02 00                mov cx, 2
+CE6F  E8 FE 03                call 0xd270
+CE72  72 2E                   jb 0xcea2
+CE74  BB 42 00                mov bx, 0x42
+CE77  B4 40                   mov ah, 0x40
+CE79  8A 17                   mov dl, byte ptr [bx]
+CE7B  80 E2 60                and dl, 0x60
+CE7E  80 FA 60                cmp dl, 0x60
+CE81  F9                      stc
+CE82  74 1E                   je 0xcea2
+CE84  5A                      pop dx
+CE85  52                      push dx
+CE86  32 F6                   xor dh, dh
+CE88  BB 94 00                mov bx, 0x94
+CE8B  03 DA                   add bx, dx
+CE8D  C6 07 00                mov byte ptr [bx], 0
+CE90  8A CA                   mov cl, dl
+CE92  B2 01                   mov dl, 1
+CE94  D2 E2                   shl dl, cl
+CE96  08 16 3E 00             or byte ptr [0x3e], dl
+CE9A  B9 43 00                mov cx, 0x43
+CE9D  E8 9C 1A                call 0xe93c
+CEA0  32 E4                   xor ah, ah
+CEA2  88 26 41 00             mov byte ptr [0x41], ah
+CEA6  5A                      pop dx
+CEA7  59                      pop cx
+CEA8  5E                      pop si
+CEA9  C3                      ret
+
+===== CEAAh-CFA6h =====
+Reason: direct CALL targets from C93Ch, D134h, D13Bh, D4ADh and D4B2h; per-drive media-detection path
+CEAA  53                      push bx
+CEAB  51                      push cx
+CEAC  8A 26 3E 00             mov ah, byte ptr [0x3e]
+CEB0  8A CA                   mov cl, dl
+CEB2  FE C1                   inc cl
+CEB4  D2 EC                   shr ah, cl
+CEB6  72 0D                   jb 0xcec5
+CEB8  E8 8A FF                call 0xce45
+CEBB  73 08                   jae 0xcec5
+CEBD  E8 85 FF                call 0xce45
+CEC0  73 03                   jae 0xcec5
+CEC2  E9 DC 00                jmp 0xcfa1
+CEC5  BB 94 00                mov bx, 0x94
+CEC8  32 F6                   xor dh, dh
+CECA  03 DA                   add bx, dx
+CECC  BE 90 00                mov si, 0x90
+CECF  03 F2                   add si, dx
+CED1  8A D5                   mov dl, ch
+CED3  F6 04 20                test byte ptr [si], 0x20
+CED6  74 02                   je 0xceda
+CED8  02 D2                   add dl, dl
+CEDA  38 17                   cmp byte ptr [bx], dl
+CEDC  8B 56 0E                mov dx, word ptr [bp + 0xe]
+CEDF  75 0C                   jne 0xceed
+CEE1  80 3E 41 00 40          cmp byte ptr [0x41], 0x40
+CEE6  74 05                   je 0xceed
+CEE8  32 E4                   xor ah, ah
+CEEA  E9 B4 00                jmp 0xcfa1
+CEED  C0 E6 02                shl dh, 2
+CEF0  0A F2                   or dh, dl
+CEF2  B2 0F                   mov dl, 0xf
+CEF4  8B F2                   mov si, dx
+CEF6  8A CD                   mov cl, ch
+CEF8  8B 56 0E                mov dx, word ptr [bp + 0xe]
+CEFB  BB 90 00                mov bx, 0x90
+CEFE  32 F6                   xor dh, dh
+CF00  03 DA                   add bx, dx
+CF02  F6 07 20                test byte ptr [bx], 0x20
+CF05  74 02                   je 0xcf09
+CF07  02 C9                   add cl, cl
+CF09  8B F9                   mov di, cx
+CF0B  B5 03                   mov ch, 3
+CF0D  80 26 3E 00 7F          and byte ptr [0x3e], 0x7f
+CF12  E8 01 03                call 0xd216
+CF15  73 03                   jae 0xcf1a
+CF17  E9 83 00                jmp 0xcf9d
+CF1A  BE 08 00                mov si, 8
+CF1D  B5 01                   mov ch, 1
+CF1F  80 0E 3E 00 80          or byte ptr [0x3e], 0x80
+CF24  E8 EF 02                call 0xd216
+CF27  72 74                   jb 0xcf9d
+CF29  BB 42 00                mov bx, 0x42
+CF2C  B9 02 00                mov cx, 2
+CF2F  E8 3E 03                call 0xd270
+CF32  72 69                   jb 0xcf9d
+CF34  BB 42 00                mov bx, 0x42
+CF37  B4 40                   mov ah, 0x40
+CF39  8A 17                   mov dl, byte ptr [bx]
+CF3B  80 E2 60                and dl, 0x60
+CF3E  80 FA 60                cmp dl, 0x60
+CF41  F9                      stc
+CF42  74 59                   je 0xcf9d
+CF44  8B 56 0E                mov dx, word ptr [bp + 0xe]
+CF47  59                      pop cx
+CF48  51                      push cx
+CF49  BE 94 00                mov si, 0x94
+CF4C  32 F6                   xor dh, dh
+CF4E  03 F2                   add si, dx
+CF50  88 2C                   mov byte ptr [si], ch
+CF52  BB 90 00                mov bx, 0x90
+CF55  03 DA                   add bx, dx
+CF57  8A 1F                   mov bl, byte ptr [bx]
+CF59  F6 C3 20                test bl, 0x20
+CF5C  74 02                   je 0xcf60
+CF5E  00 2C                   add byte ptr [si], ch
+CF60  1E                      push ds
+CF61  33 F6                   xor si, si
+CF63  8E DE                   mov ds, si
+CF65  C5 36 78 00             lds si, ptr [0x78]
+CF69  8A 44 09                mov al, byte ptr [si + 9]
+CF6C  1F                      pop ds
+CF6D  F6 06 3F 00 80          test byte ptr [0x3f], 0x80
+CF72  74 19                   je 0xcf8d
+CF74  0A C0                   or al, al
+CF76  75 15                   jne 0xcf8d
+CF78  80 FB 17                cmp bl, 0x17
+CF7B  B0 0F                   mov al, 0xf
+CF7D  74 0E                   je 0xcf8d
+CF7F  80 E3 07                and bl, 7
+CF82  B0 14                   mov al, 0x14
+CF84  74 07                   je 0xcf8d
+CF86  80 FB 03                cmp bl, 3
+CF89  74 02                   je 0xcf8d
+CF8B  B0 0F                   mov al, 0xf
+CF8D  0A C0                   or al, al
+CF8F  74 0A                   je 0xcf9b
+CF91  B9 43 00                mov cx, 0x43
+CF94  E8 A5 19                call 0xe93c
+CF97  FE C8                   dec al
+CF99  EB F2                   jmp 0xcf8d
+CF9B  32 E4                   xor ah, ah
+CF9D  88 26 41 00             mov byte ptr [0x41], ah
+CFA1  8B 56 0E                mov dx, word ptr [bp + 0xe]
+CFA4  59                      pop cx
+CFA5  5B                      pop bx
+CFA6  C3                      ret
+
+===== CFA7h-D057h =====
+Reason: direct JMP target from C8C4h; diskette parameter/drive-state setup path
+CFA7  E8 00 FF                call 0xceaa
+CFAA  73 10                   jae 0xcfbc
+CFAC  B0 00                   mov al, 0
+CFAE  50                      push ax
+CFAF  BB 42 00                mov bx, 0x42
+CFB2  B9 07 00                mov cx, 7
+CFB5  E8 B8 02                call 0xd270
+CFB8  58                      pop ax
+CFB9  E9 8C 00                jmp 0xd048
+CFBC  1E                      push ds
+CFBD  33 F6                   xor si, si
+CFBF  8E DE                   mov ds, si
+CFC1  C5 36 78 00             lds si, ptr [0x78]
+CFC5  8B 44 02                mov ax, word ptr [si + 2]
+CFC8  25 00 FF                and ax, 0xff00
+CFCB  8A C1                   mov al, cl
+CFCD  89 46 00                mov word ptr [bp], ax
+CFD0  8B 5C 04                mov bx, word ptr [si + 4]
+CFD3  8A 4C 06                mov cl, byte ptr [si + 6]
+CFD6  1F                      pop ds
+CFD7  BE 90 00                mov si, 0x90
+CFDA  32 F6                   xor dh, dh
+CFDC  03 F2                   add si, dx
+CFDE  8A 14                   mov dl, byte ptr [si]
+CFE0  80 E2 07                and dl, 7
+CFE3  B6 1B                   mov dh, 0x1b
+CFE5  80 FA 05                cmp dl, 5
+CFE8  74 13                   je 0xcffd
+CFEA  80 3C 17                cmp byte ptr [si], 0x17
+CFED  74 0E                   je 0xcffd
+CFEF  80 3C D7                cmp byte ptr [si], 0xd7
+CFF2  74 09                   je 0xcffd
+CFF4  B6 23                   mov dh, 0x23
+CFF6  80 FA 04                cmp dl, 4
+CFF9  74 02                   je 0xcffd
+CFFB  B6 2A                   mov dh, 0x2a
+CFFD  8A FE                   mov bh, dh
+CFFF  8B 56 0E                mov dx, word ptr [bp + 0xe]
+D002  51                      push cx
+D003  8A CD                   mov cl, ch
+D005  8A EE                   mov ch, dh
+D007  8B F9                   mov di, cx
+D009  C0 E6 02                shl dh, 2
+D00C  0A F2                   or dh, dl
+D00E  B2 E6                   mov dl, 0xe6
+D010  8B 46 12                mov ax, word ptr [bp + 0x12]
+D013  80 FC 03                cmp ah, 3
+D016  75 02                   jne 0xd01a
+D018  B2 C5                   mov dl, 0xc5
+D01A  8B F2                   mov si, dx
+D01C  59                      pop cx
+D01D  B5 09                   mov ch, 9
+D01F  80 26 3E 00 7F          and byte ptr [0x3e], 0x7f
+D024  80 FC 04                cmp ah, 4
+D027  75 05                   jne 0xd02e
+D029  E8 DD BA                call 0x8b09
+D02C  74 03                   je 0xd031
+D02E  E8 E5 01                call 0xd216
+D031  73 03                   jae 0xd036
+D033  E9 76 FF                jmp 0xcfac
+D036  BB 42 00                mov bx, 0x42
+D039  B9 07 00                mov cx, 7
+D03C  E8 31 02                call 0xd270
+D03F  73 04                   jae 0xd045
+D041  B0 00                   mov al, 0
+D043  EB 03                   jmp 0xd048
+D045  E8 75 02                call 0xd2bd
+D048  88 26 41 00             mov byte ptr [0x41], ah
+D04C  8B 56 0E                mov dx, word ptr [bp + 0xe]
+D04F  8B 5E 0C                mov bx, word ptr [bp + 0xc]
+D052  8B 4E 10                mov cx, word ptr [bp + 0x10]
+D055  E9 6F F8                jmp 0xc8c7
+
+===== D058h-D0D8h =====
+Reason: direct CALL targets from C74Bh, C7B9h, C82Fh, C906h and CCC5h; floppy motor/readiness helper
+D058  52                      push dx
+D059  51                      push cx
+D05A  FA                      cli
+D05B  C6 06 40 00 FF          mov byte ptr [0x40], 0xff
+D060  80 26 3F 00 CF          and byte ptr [0x3f], 0xcf
+D065  8A EA                   mov ch, dl
+D067  C0 E2 04                shl dl, 4
+D06A  08 16 3F 00             or byte ptr [0x3f], dl
+D06E  8A CD                   mov cl, ch
+D070  8A 16 3F 00             mov dl, byte ptr [0x3f]
+D074  FE C1                   inc cl
+D076  D2 EA                   shr dl, cl
+D078  72 4F                   jb 0xd0c9
+D07A  B2 01                   mov dl, 1
+D07C  FE C9                   dec cl
+D07E  D2 E2                   shl dl, cl
+D080  08 16 3F 00             or byte ptr [0x3f], dl
+D084  FB                      sti
+D085  A0 3F 00                mov al, byte ptr [0x3f]
+D088  C0 C8 04                ror al, 4
+D08B  0C 0C                   or al, 0xc
+D08D  BA F2 03                mov dx, 0x3f2
+D090  EE                      out dx, al
+D091  B8 FD 90                mov ax, 0x90fd
+D094  CD 15                   int 0x15
+D096  72 3E                   jb 0xd0d6
+D098  8A 26 3F 00             mov ah, byte ptr [0x3f]
+D09C  1E                      push ds
+D09D  56                      push si
+D09E  33 F6                   xor si, si
+D0A0  8E DE                   mov ds, si
+D0A2  C5 36 78 00             lds si, ptr [0x78]
+D0A6  8A 44 0A                mov al, byte ptr [si + 0xa]
+D0A9  5E                      pop si
+D0AA  1F                      pop ds
+D0AB  D0 E4                   shl ah, 1
+D0AD  73 08                   jae 0xd0b7
+D0AF  3C 08                   cmp al, 8
+D0B1  73 0A                   jae 0xd0bd
+D0B3  B0 08                   mov al, 8
+D0B5  EB 06                   jmp 0xd0bd
+D0B7  3C 05                   cmp al, 5
+D0B9  73 02                   jae 0xd0bd
+D0BB  B0 05                   mov al, 5
+D0BD  B9 8E 20                mov cx, 0x208e
+D0C0  E8 79 18                call 0xe93c
+D0C3  FE C8                   dec al
+D0C5  75 F6                   jne 0xd0bd
+D0C7  EB 0D                   jmp 0xd0d6
+D0C9  FB                      sti
+D0CA  A0 3F 00                mov al, byte ptr [0x3f]
+D0CD  C0 C8 04                ror al, 4
+D0D0  0C 0C                   or al, 0xc
+D0D2  BA F2 03                mov dx, 0x3f2
+D0D5  EE                      out dx, al
+D0D6  59                      pop cx
+D0D7  5A                      pop dx
+D0D8  C3                      ret
+
+===== D0D9h-D0FFh =====
+Reason: direct CALL targets from C838h, C8C7h, C90Eh and C98Ah; INT 1Eh parameter-table comparison helper
+D0D9  50                      push ax
+D0DA  1E                      push ds
+D0DB  33 DB                   xor bx, bx
+D0DD  8E DB                   mov ds, bx
+D0DF  C5 1E 78 00             lds bx, ptr [0x78]
+D0E3  8A 67 02                mov ah, byte ptr [bx + 2]
+D0E6  8A 47 04                mov al, byte ptr [bx + 4]
+D0E9  FE C0                   inc al
+D0EB  1F                      pop ds
+D0EC  BB 42 00                mov bx, 0x42
+D0EF  3A 6F 03                cmp ch, byte ptr [bx + 3]
+D0F2  75 08                   jne 0xd0fc
+D0F4  3A 77 04                cmp dh, byte ptr [bx + 4]
+D0F7  75 03                   jne 0xd0fc
+D0F9  8A 47 05                mov al, byte ptr [bx + 5]
+D0FC  88 26 40 00             mov byte ptr [0x40], ah
 
 ===== 19FBh-1A8Eh =====
 Reason: direct CALL target from POST summary renderer at 3F53h; cache/CPU speed display routine
