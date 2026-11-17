@@ -691,3 +691,11 @@ The 84BEh window was clipped in the middle of the near JMP at 84C8h. Extended it
 
 Generator boundary correction: 8870769cf5fe72ff720f5cca99c29ca012baea13. The next manifest must be regenerated before reporting a new global coverage percentage or selecting the next largest uncovered interval.
 
+
+## 35. Setup exit prompts and temporary INT 13h/IVT path — 2F66h–3043h (2026-11-17)
+
+Detailed map: [AMI486_ADDRESS_LEDGER_REGION_2F66_3044_20261117.md](AMI486_ADDRESS_LEDGER_REGION_2F66_3044_20261117.md).
+
+Classified 2F66h as the final NUL byte of the two Setup exit prompts. The handler at 2F67h is called from 3D73h and asks “Write to CMOS and Exit” followed by “Want to Quit Without Saving”; either affirmative response restores the saved Setup SS:SP from BDA 0469h/0467h. The helper at 2F8Fh clears selected BDA/low-memory fields. The routine at 2FA3h, called from 4A6Bh, saves four IVT vectors, temporarily substitutes INT 13h and INT 41h/46h vectors, invokes INT 13h AH=14h, then restores the original vectors. The string block begins at 3044h.
+
+Generator update: fe81b16853fccc3a4befc7736982bd04fca58d1a. This update, along with the 0B2Dh and 84BEh boundary corrections, has not yet been followed by a regenerated manifest. The last generated manifest (81616282fb759ee64603a84a7fc43f1c5170961c) showed 62,431/65,536 bytes (95.26%) and 60 uncovered intervals before these additions. The exact added ranges imply a projected union of 62,887 bytes (95.96%) and 57 remaining intervals; this is arithmetic from the prior manifest, not a verified generator/CI result. The next largest interval is expected to be 5E88h–5F64h (221 bytes), pending regeneration.
