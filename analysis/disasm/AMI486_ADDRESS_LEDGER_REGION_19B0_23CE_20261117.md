@@ -16,7 +16,7 @@ This map reconciles existing semantic reports (phases 16–35 and 38–39) with 
 
 - 19B0h–19C1h: nine 16-bit cache-size values; the final word at 19C0h is zero and is not selected by the observed mask.
 - 19C2h–19C9h: eight CPU-speed lookup bytes: `10 14 19 21 28 32 42 20`.
-- 19C9h–19DAh: “ KB CACHE MEMORY” followed by CR/LF/NUL. The leading space at 19C9h is also the final byte of the preceding speed table; preserve the overlapping data interpretation.
+- 19C9h–19DBh: “ KB CACHE MEMORY” followed by CR/LF/NUL. The leading space at 19C9h is also the final byte of the preceding speed table; preserve the overlapping data interpretation.
 - 19DCh–19EBh: “MHz CPU Clock” followed by CR/LF/NUL.
 - 19ECh–19FAh: “MHz DX2 CPU ” followed by CR/LF/NUL. The 19F8h–19FAh bytes are the CR/LF/NUL suffix.
 
@@ -118,7 +118,7 @@ This establishes the local A20/PE ordering and the 1B58h -> 208Dh -> 20C9h path.
 |---|---|
 | 19B0h–19C1h | Nine-word cache-size table |
 | 19C2h–19C9h | Eight-byte CPU-speed table |
-| 19C9h–19DAh | Cache label plus CR/LF/NUL; overlaps the final speed-table byte |
+| 19C9h–19DBh | Cache label plus CR/LF/NUL; overlaps the final speed-table byte |
 | 19DCh–19EBh | CPU clock label plus CR/LF/NUL |
 | 19ECh–19FAh | DX2 CPU label plus CR/LF/NUL |
 | 1B04h–1B05h | Stack return word 1B06h |
