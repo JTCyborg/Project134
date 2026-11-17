@@ -251,3 +251,6 @@ New text/table classifications are documented in AMI486_ADDRESS_LEDGER_20261116.
 ## Low-ROM range investigation — 2026-11-17
 
 0000h–00EEh is now classified as AMI BIOS identity/copyright/pattern data. 00EFh begins an executable-looking stream with an INT 10h call and stack-frame setup, but no direct ROM CALL/JMP target or literal 00EFh pointer was found. Its runtime entry and DS:E000h source block remain unresolved. The candidate generator is updated to emit this data range and seed 00EFh–01EEh; generated artifact/manifest refresh is pending and counts have not been advanced on this basis.
+
+
+The low-ROM 00EFh candidate seed is extended through 0235h to include the observed RET. Candidate output regeneration/byte-mask refresh is pending verification.
