@@ -895,3 +895,19 @@ The `I` response is selected at `6A43h`; the code preserves the original INT 13h
 This proves the structural behavior: Ignore advances the worker's current SI/CX position across a bounded range and updates the persistent progress pair `E1B5h:E1B7h`; it may restart the disk operation at the next position, or terminate the range and clear the progress pair. It is not a generic “ignore this one error and continue the same request” action.
 
 Do not yet rename SI/CX or E1B5/E1B7 as cylinder/head/sector/count. Their caller-provided bounds differ between the record-based caller at `6AF9h` and the geometry-derived caller at `6BB8h`; the semantic unit still needs confirmation from the record layout and the caller's state setup.
+
+
+### Geometry-derived caller context around 6BB8h
+
+The second direct call to `69D1h` is reached from a larger menu/drive-setup routine beginning at `6B18h`. Before entering the worker, that routine performs a sequence of BIOS/helper calls with function selectors `14h`, `08h`, `09h`, `09h`, `11h`, `11h`, and `10h`, with user-response checks between groups. These calls and their return paths are still being mapped; do not yet assign them specific BIOS service meanings solely from the selector bytes.
+
+Immediately before `6BB8h`, the caller pushes the four live geometry/progress fields in this exact order:
+
+- `[E1B4h]` as a zero-extended byte;
+- `[E1B2h]` as a word;
+- `[E1B7h]` as a zero-extended byte;
+- `[E1B5h]` as a word.
+
+It sets `[E3BBh]=10h`, calls `69D1h`, saves the returned flags across argument cleanup, and branches on CF. If CF is clear, it checks whether `[E3B9h]==1Bh`; if so it returns through the abort path. Otherwise it calls `6ACEh` (the batch record walker) and then `6BD0h` before returning. This establishes that the geometry-derived call is followed by the record-list processing path, rather than being an isolated one-off write.
+
+The call at `6BB8h` therefore supplies the worker with the current E1B5/E1B7 position plus E1B2/E1B4 bounds. The Ignore path's updates to E1B5/E1B7 are persistent state consumed by this same setup routine and by the batch walker. The exact units (CHS component vs loop index) remain unassigned pending decoding of the helper calls and the source of E1B2/E1B4.
