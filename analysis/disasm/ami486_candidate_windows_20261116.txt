@@ -1538,7 +1538,7 @@ Reason: Crafted stack-return word 27CCh consumed by RET at 29EAh; the following 
 Words: 27CC
 
 ===== DATA 27DAh-27DBh =====
-Reason: Crafted stack-return word 27DCh consumed by the 8D83h error helper; the following bytes are an aligned JMP continuation
+Reason: Crafted stack-return word 27DCh consumed by the 8D83h ALi/memory fallback reconfiguration helper; the following bytes are an aligned JMP continuation
 Words: 27DC
 
 ===== DATA 27F2h-27F3h =====
@@ -14299,7 +14299,7 @@ Reason: crafted-return continuation after the 29BBh memory test; tests returned 
 27D7  E9 A9 65                jmp 0x8d83
 
 ===== 27DCh-27F1h =====
-Reason: crafted-return continuation after the 8D83h memory-test error helper
+Reason: crafted-return continuation after the 8D83h ALi/memory fallback reconfiguration helper
 27DC  EB 22                   jmp 0x2800
 27DE  8C D8                   mov ax, ds
 27E0  05 00 04                add ax, 0x400
