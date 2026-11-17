@@ -239,3 +239,10 @@ Two previously under-described regions now have byte-backed reports:
 - Candidate generator: 187 seeded code windows, 35 deduplicated data ranges, 15,639-byte union across 79 pages (sampling footprint only; not semantic completion).
 
 **Phase 97 remains unstarted.** The next work is still to classify uncovered/ambiguous byte ranges, trace indirect entries and validate alternate streams. Work selection must be driven by the address ledger, not phase-number progression.
+
+
+## Address-ledger continuation — 2026-11-17
+
+The Capstone candidate generator has been expanded: 221 code windows, 56 data ranges. Recomputed candidate footprint is 20,658/65,536 bytes (31.52%) across 105 pages, comprising 11,813 code-window bytes, 8,958 data-range bytes and 113 overlap bytes. This is a sampling footprint only, not semantic coverage.
+
+New text/table classifications are documented in AMI486_ADDRESS_LEDGER_20261116.md section 11. The 2D11h timing benchmark is now an aligned candidate window; its runtime entry and stack precondition remain unresolved. The next step remains range-driven reconciliation of unclassified bytes and alternate entries, not a numbered phase.
