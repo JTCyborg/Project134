@@ -645,3 +645,12 @@ Detailed map: [AMI486_ADDRESS_LEDGER_REGION_066B_084E_20261117.md](AMI486_ADDRES
 Mapped the BP-relative field setters at 066Bh/068Ah/069Ch/06AEh, generic numeric editor 06C9h, render/cursor helpers 0731h/0744h/0749h, keyboard input loop 076Bh–080Eh, decimal parser/range checker 080Fh–0844h, and text-editor prologue 0845h→0892h. The numeric editor is called by Setup routines at 4BA3h/4F4Ch/4F67h, including fixed-disk parameter editing through CS:E422h/E436h. The text entry is called from 05E5h; its exact field meaning remains unresolved.
 
 GitHub Actions run 44085877262 passed: 837 windows / 238 data ranges, 60,805 covered bytes (92.78%), 63 uncovered intervals. The next largest uncovered interval is 3C5Ch–3E3Dh (483 bytes).
+
+
+## 30. BIOS Setup main menu — 3C5Ch–3E3Eh (2026-11-17)
+
+Detailed map: [AMI486_ADDRESS_LEDGER_REGION_3C5C_3E3E_20261117.md](AMI486_ADDRESS_LEDGER_REGION_3C5C_3E3E_20261117.md).
+
+Mapped the 12-option BIOS Setup main menu entered by JMP 2F21h→3C5Eh. It uses label pointers at 342Eh–3445h and 12 handler offsets at 3446h–345Dh. The options cover Standard/Advanced CMOS, chipset, power, peripheral settings, BIOS and power-on defaults, password, hard-disk detection/formatting, and write/no-write exit. The menu loop updates selection state at E187h/E188h, handles navigation/Enter/Esc, dispatches through the handler table, and displays the WARNING INFORMATION page with Setup safety instructions. The two leading bytes at 3C5Ch–3C5Dh are zero padding; 3E3Eh is the menu routine's RET.
+
+The generator now includes the full 12-entry handler table and the bounded menu loop. GitHub Actions run 44086115994 passed: 838 windows / 239 data ranges, 61,288 covered bytes (93.52%), 62 uncovered intervals. The next largest uncovered interval is 0236h–03D3h (414 bytes).
