@@ -77,7 +77,7 @@ The candidate generator now:
 - separates the E6F2h jump and E6F5h payload;
 - adds bounded code seeds for E7E8h, E800h, E803h, E819h and E82Eh.
 
-The CI workflow is the verification gate for the regenerated full linear listing and candidate manifest. The next uncovered-interval ranking will be taken from the completed run, not inferred from the previous manifest.
+GitHub Actions run 44083781676 completed successfully. The regenerated manifest reports 779 candidate windows, 232 data ranges, 38,287 unique code-window bytes, 18,888 unique data-range bytes, 290 overlap bytes, and a 56,885-byte union (86.80%). There are 68 uncovered intervals; the next largest is F5AEh–F8E6h (825 bytes).
 
 ## 6. Remaining questions
 
