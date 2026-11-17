@@ -77,7 +77,7 @@ LIMITS.update({0xFA4E: 0x17, 0xFE6E: 0x03})
 # Main POST continuation and bounded helper entries in 1364h–188Dh.
 # Fixed-disk parameter continuation, embedded data, and keyboard-controller helpers.
 LIMITS.update({
-    0x0BDE: 0x26, 0x0C04: 0x27, 0x0C2B: 0x27, 0x0C52: 0x2A,
+    0x0BDE: 0x26, 0x0C04: 0x01, 0x0C05: 0x27, 0x0C2B: 0x01, 0x0C2C: 0x27, 0x0C52: 0x01, 0x0C53: 0x2A,
 })
 
 LIMITS.update({
@@ -1170,10 +1170,13 @@ SEEDS = [
 ]
 
 SEEDS.extend([
-    (0x0BDE, "Advanced CMOS Setup main-menu handler from menu table at 3446h; flag-dependent I/O setup then calls shared page engine 0C7Ch"),
-    (0x0C04, "Advanced CMOS page initializer gated by B7CCh; prepares E191h/E193h/E195h/E197h and calls 0C7Ch"),
-    (0x0C2B, "Advanced CMOS page initializer gated by B7CEh; prepares E191h/E193h/E195h/E197h and calls 0C7Ch"),
-    (0x0C52, "CPU clock/cache profile page initializer; loads profile pointers at 82C6h-82CEh and calls 0C7Ch"),
+    (0x0BDE, "Advanced CMOS Setup handler overlapping the final 45-entry descriptor/handler table record; gated by B7CAh and calls shared page engine 0C7Dh"),
+    (0x0C04, "One-byte RET skip path after the B7CAh-gated Advanced CMOS Setup handler"),
+    (0x0C05, "Advanced CMOS Setup page initializer gated by B7CCh; prepares E191h/E193h/E195h/E197h and calls 0C7Dh"),
+    (0x0C2B, "One-byte RET after the B7CCh-gated page initializer"),
+    (0x0C2C, "Advanced CMOS Setup page initializer gated by B7CEh; prepares E191h/E193h/E195h/E197h and calls 0C7Dh"),
+    (0x0C52, "One-byte RET after the B7CEh-gated page initializer"),
+    (0x0C53, "CPU clock/cache profile page initializer; loads profile pointers at 82C6h-82CEh and calls shared page engine 0C7Dh"),
 ])
 
 
