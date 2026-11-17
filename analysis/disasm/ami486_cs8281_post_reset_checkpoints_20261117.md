@@ -17,33 +17,32 @@ The set-bit path enters the 8042 reset routine at its second `CLI` (`8AD6h`). Th
 
 ## Second checkpoint: CMOS marker write, then reset test
 
-The actual instruction boundaries are:
+The exact instruction boundaries are:
 
 ```asm
-5470: A3 67 00                MOV [0067h],AX
-5473: B8 8F 06                MOV AX,068Fh
-5476: E8 25 9A                CALL EE9Eh
-5479: 2E F6 06 81 82 40       TEST BYTE PTR CS:[8281],40h
-547F: 74 03                   JZ 5484h
-5481: E9 53 36                JMP 8AD7h
-5484: E9 E2 9B                JMP F069h
+5472: B8 8F 06                MOV AX,068Fh
+5475: E8 25 9A                CALL EE9Dh
+5478: 2E F6 06 81 82 40       TEST BYTE PTR CS:[8281],40h
+547E: 74 03                   JZ 5483h
+5480: E9 53 36                JMP 8AD6h
+5483: E9 E2 9B                JMP F068h
 ```
 
-The call at `5476h` targets `EE9Eh`, not `EE9Bh`. The helper is a CMOS write primitive:
+The call at `5475h` targets `EE9Dh`. The helper is a CMOS write primitive:
 
 ```asm
-EE9E: E6 70       OUT 70h,AL       ; CMOS index
-EEA0: 86 C4       XCHG AH,AL       ; CMOS data into AL
+EE9D: E6 70       OUT 70h,AL       ; CMOS index
+EE9F: 86 C4       XCHG AH,AL       ; CMOS data into AL
 EEA5: E6 71       OUT 71h,AL       ; write data
 EEA7: 86 C4       XCHG AH,AL
 EEA9: C3          RET
 ```
 
-With `AX=068Fh`, this writes `CMOS[8Fh]=06h`. The next instruction tests `CS:[8281]&40h`.
+The two delay pairs are at `EEA1–EEA4`. With `AX=068Fh`, this writes `CMOS[8Fh]=06h`. The next instruction tests `CS:[8281]&40h`.
 
-If the flag is set, the jump reaches `8AD7h`, exactly the `XOR CX,CX` instruction at the start of the 8042 polling body. If clear, execution jumps to `F069h`, entering the final flag test directly.
+If the flag is set, the jump reaches `8AD6h`, the second `CLI` in the 8042 reset routine. If clear, execution jumps to `F068h`, executing the `CLI` before the final flag test.
 
-This is a significant ordering clue: the BIOS writes the extended CMOS marker `8Fh=06h` immediately before the second reset-request test. It does **not** prove that the CMOS write sets the flag; the helper only writes CMOS index/data ports and does not modify `CS:[8281]`.
+This is a significant ordering clue: the BIOS writes the extended CMOS marker `8Fh=06h` immediately before the second reset-request test. It does **not** prove that the CMOS write sets the flag; the helper writes CMOS through ports `70h/71h` and does not write `CS:[8281]`.
 
 ## Final mode/reset checkpoint
 
@@ -78,7 +77,8 @@ The routine waits for the 8042 input-buffer-full bit (status bit 1) to clear, se
 ## What is established
 
 - `CS:[8281].40h` is a reset-request condition checked at multiple POST points and at the final CPU-mode transition point.
-- The early POST branches enter the same reset body at `8AD6h` and `8AD7h`; the final transition enters at `8AD5h`.
+- Both early POST set-bit branches enter the reset body at `8AD6h`; the final transition enters at `8AD5h`.
+- Both early clear-bit branches converge at `F068h`, before the final flag test.
 - The second check is preceded by a write of `CMOS[8Fh]=06h`.
 - The CMOS-save routine at `1C06h` is separate: it tests `CS:[8280]&40h`.
 
