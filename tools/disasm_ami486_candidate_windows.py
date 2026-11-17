@@ -76,6 +76,12 @@ LIMITS.update({0xFA4E: 0x17, 0xFE6E: 0x03})
 # Main POST continuation and bounded helper entries in 1364h–188Dh.
 # Fixed-disk parameter continuation, embedded data, and keyboard-controller helpers.
 LIMITS.update({
+    0x066B: 0x1F, 0x068A: 0x12, 0x069C: 0x12, 0x06AE: 0x1B,
+    0x06C9: 0x68, 0x0731: 0x13, 0x0744: 0x05, 0x0749: 0x22,
+    0x076B: 0xA4, 0x080F: 0x36, 0x0845: 0x0A,
+})
+
+LIMITS.update({
     0x10DF: 0x241,
 })
 
@@ -1137,6 +1143,21 @@ SEEDS = [
     (0x1BF0, "option-ROM scan invalid-candidate helper: advances BX by 0080h, restores DS and returns"),
     (0x1E9A, "OR SP,SP / RET status-success stub between POST callback entries"),
 ]
+
+SEEDS.extend([
+    (0x066B, "indirect-entry candidate: Setup structure byte-field editor at BP-relative offset 1Dh; uses numeric renderer 749h"),
+    (0x068A, "indirect-entry candidate: Setup structure word-field editor at BP-relative offset 1Eh"),
+    (0x069C, "indirect-entry candidate: Setup structure word-field editor at BP-relative offset 21h"),
+    (0x06AE, "indirect-entry candidate: Setup structure byte-field editor at BP-relative offset 23h"),
+    (0x06C9, "direct CALL targets from 4BA3h, 4F4Ch and 4F67h; generic BIOS Setup numeric field editor"),
+    (0x0731, "called by 6E2h and 72Bh; formats/refreshes the numeric field value"),
+    (0x0744, "called by 6ECh; cursor/input wrapper for numeric field editor"),
+    (0x0749, "direct CALL targets from 656h, 671h, 690h, 6A2h and 6B4h; draw and edit numeric field at selected screen coordinates"),
+    (0x076B, "numeric field keyboard loop: handles digits, Backspace, Enter/Esc, arrows and PageUp/PageDown"),
+    (0x080F, "called by 7DEh, 7EBh and 7F6h; parse decimal digit buffer with overflow/range checks"),
+    (0x0845, "direct CALL target from 5E5h; text-input helper prologue and JMP to shared editor at 0892h"),
+])
+
 
 SEEDS.extend([
     (0x10DF, "POST hardware-initialization continuation: 8042 self-test, CMOS/memory configuration checks, setup-warning path and video/chipset initialization; entry provenance unresolved"),
