@@ -16,7 +16,7 @@ Exact byte alignment:
 527A: E9 59 38                JMP 8AD6h
 ```
 
-The near jump's next IP is `527Dh`; adding `3859h` gives `8AD6h`. If the bit is clear, POST continues at `527Dh`. If set, execution enters the reset routine at its second `CLI`.
+The near jump's next IP is `527Dh`; adding `3859h` gives `8AD6h`. If the bit is clear, execution falls through to the near jump at `527Dh`, which transfers to `F068h` (the final mode/reset decision area). If set, execution enters the reset routine at `8AD6h`, its second `CLI`.
 
 ### Second POST checkpoint
 
@@ -28,7 +28,7 @@ The near jump's next IP is `527Dh`; adding `3859h` gives `8AD6h`. If the bit is 
 547E: E9 53 36                JMP 8AD4h
 ```
 
-The near jump's next IP is `5481h`; adding `3653h` gives `8AD4h`. This enters two bytes before the pair of CLI instructions, at an overlapping instruction stream.
+The near jump's next IP is `5481h`; adding `3653h` gives `8AD4h`. This enters two bytes before the pair of CLI instructions, at an overlapping instruction stream. If the bit is clear, execution takes the following near jump at `5481h`; its target is `F066h`, an overlapping entry into the final decision area.
 
 ### Final ROM transition checkpoint
 
@@ -58,7 +58,7 @@ The reset body waits for the 8042 input-buffer-full bit (status bit 1) to clear,
 ## What this proves
 
 - `CS:[8281].40h` is a reset-request condition at two POST checkpoints and at the final CPU-mode transition point.
-- The POST branches use unusual overlapping entry points into the same reset body; preserve exact target offsets when reconstructing the original control flow.
+- The set-bit branches use unusual overlapping entry points into the same reset body; the clear-bit paths transfer to the final mode/reset decision area at overlapping offsets `F068h` and `F066h`. Preserve exact target offsets when reconstructing the original control flow.
 - The flag is not the CMOS-save gate. CMOS-save at `1C06h` tests `CS:[8280]&40h`.
 
 ## Setter search status
