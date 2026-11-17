@@ -74,6 +74,12 @@ LIMITS.update({
 LIMITS.update({0xFA4E: 0x17, 0xFE6E: 0x03})
 # POST/Setup continuations in the former 5A4Ch–5FE3h gap.
 # Main POST continuation and bounded helper entries in 1364h–188Dh.
+# Fixed-disk parameter continuation, embedded data, and keyboard-controller helpers.
+LIMITS.update({
+    0xE6F2: 0x03, 0xE7E8: 0x18, 0xE800: 0x03,
+    0xE803: 0x16, 0xE819: 0x15, 0xE82E: 0x03,
+})
+
 LIMITS.update({
     0x1364: 0x26A, 0x15D6: 0x80, 0x1656: 0x61, 0x16B7: 0x09, 0x16C0: 0x07,
     0x16C7: 0x0A, 0x16D1: 0x09, 0x16DA: 0x1A, 0x16F4: 0x0C,
@@ -312,6 +318,9 @@ DATA_RANGES = [
     (0x5C24, 0x5C26, "Crafted stack-return word 5C26h consumed by the 5520h helper", "words"),
     (0x5C56, 0x5C58, "Crafted stack-return word 5C58h consumed by the F5A9h POST diagnostic trampoline", "words"),
     (0x5C66, 0x5C68, "Crafted stack-return word 5C68h consumed by the 552Ah helper", "words"),
+    (0xE481, 0xE6F1, "Thirty-nine additional 16-byte fixed-disk parameter records, continuing the E401h-E480h table", "hexascii"),
+    (0xE6F1, 0xE6F2, "Single zero padding byte between fixed-disk parameter records and near-JMP entry", "hexascii"),
+    (0xE6F5, 0xE7E8, "Opaque embedded binary payload; contains a 16-byte timing/threshold table at E729h", "hexascii"),
     (0xFA00, 0xFA4C, "76-byte POST integrity comparison block; bytewise complement of FF70h-FFBBh", "hexascii"),
     (0xFA6E, 0xFE6E, "1-KiB bitmap/glyph block; 128 eight-byte records, not executable code", "hexascii"),
     (0xFE71, 0xFEA1, "Structured upper-ROM data following the FE6Eh near-JMP trampoline", "hexascii"),
@@ -1097,6 +1106,16 @@ SEEDS = [
     (0x1BF0, "option-ROM scan invalid-candidate helper: advances BX by 0080h, restores DS and returns"),
     (0x1E9A, "OR SP,SP / RET status-success stub between POST callback entries"),
 ]
+
+SEEDS.extend([
+    (0xE6F2, "near-JMP trampoline to F758h, skipping the fixed-disk parameter table and embedded payload"),
+    (0xE7E8, "direct CALL targets from 1506h, 8521h and A826h; 8042 keyboard-controller status/command check"),
+    (0xE800, "three-byte ADD AL,B0h / RETF helper stub; caller provenance unresolved"),
+    (0xE803, "keyboard-controller command/echo helper; direct entry provenance unresolved"),
+    (0xE819, "called by E7E9h; sends command CAh and reads 8042 data port 60h"),
+    (0xE82E, "three-byte near-JMP trampoline to B3DEh; caller provenance unresolved"),
+])
+
 
 SEEDS.extend([
     (0x1364, "stack-threaded POST continuation: 135Dh pushes 1364h then FA4Eh and RETs into the checksum helper"),
