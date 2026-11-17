@@ -1355,7 +1355,7 @@ Detailed map: [AMI486_ADDRESS_LEDGER_REGION_D104_D603_20261117.md](AMI486_ADDRES
 - The readable `docs/627.10/ASM1/BIOS.ASM` has no diskette/FDC/INT 13h implementation in the inspected file; `IO.112/SYSTEM` has prebuilt `RDMA.OBJ` but no readable FDC source. These binaries were not treated as source evidence.
 - Candidate-window seeds for this area were already present in `tools/disasm_ami486_candidate_windows.py`; this ledger adds semantic classification and cross-reference evidence rather than duplicating the linear listing.
 
-The candidate-mask figures in earlier sections are historical snapshots. The checked-in manifest currently reports 904 candidate windows, 250 data ranges and a 64,925-byte (99.07%) code/data union, with the largest listed uncovered intervals at 566Bh–56ADh, 55ECh–562Ah, 235Bh–2380h, 2207h–222Ch and D7B3h–D7D7h. Treat these as generator inspection metrics only; they are not a measure of semantic completion, and the manifest still requests regeneration from the current generator before being treated as a final reproducibility result.
+The candidate-mask figures in earlier sections are historical snapshots. The latest checked-in manifest after the 566Bh, 2207h and 235Bh seed/data updates reports 907 candidate windows, 251 data ranges, 44,831 unique code-window bytes, 20,634 unique data-range bytes, 334 overlap bytes and a 65,131/65,536-byte (99.38%) code/data union. It reports 36 uncovered intervals; the largest are D7B3h–D7D7h (37 bytes), 5410h–5433h (36), 3F57h–3F7Ah (36), 094Dh–096Fh (35) and A9DEh–A9FFh (34). These are generator inspection metrics only, not semantic completion or a CFG coverage percentage.
 
 
 ## Setup video-mode / attribute-palette initialization — 2026-11-17
@@ -1369,7 +1369,7 @@ Detailed byte map: [AMI486_SETUP_VIDEO_MODE_PALETTE_INIT_20261117.md](AMI486_SET
 - 566Ah is the final byte of the palette table, not an opcode. 566Bh is the actual called code entry. The candidate generator now includes the bounded 566Bh seed and both source/working palette data ranges.
 - The screen-renderer helper report now links this initializer to the existing 56AEh palette selector and E1A2h–E1A9h attribute consumers.
 
-The candidate listing/manifest have not yet been regenerated after this generator change. Existing mask metrics are therefore stale for this update; do not use them to claim current byte-union coverage.
+The GitHub Actions workflow regenerated the candidate listing and manifest after this generator change. The latest values are recorded in the current manifest and summarized in the candidate-mask status section above.
 
 
 ## Protected-mode extended-memory alias-test tail — 2026-11-17
@@ -1391,4 +1391,4 @@ The 19B0h–23CEh ledger now records two previously uncovered fall-through spans
 - 21E1h–222Ch: DH-selected comparisons at 04800000h, 04000800h, 04001000h and 04002000h against 5555AAAAh. The 2207h–222Ch tail ends with DH=04h and falls into the ALi 16h read/modify/write path at 222Dh.
 - 235Bh–2380h: BH-selected comparisons at 04001000h and 04002000h, ending with BH=04h before the ALi 10h/11h/16h update chain at 2381h.
 
-Both are continuations of the existing protected-mode extended-memory probe, not independent routines. The candidate generator now has bounded 26h-byte seeds at 2207h and 235Bh. The candidate listing and manifest still need a successful regeneration after these latest seed additions.
+Both are continuations of the existing protected-mode extended-memory probe, not independent routines. The candidate generator now has bounded 26h-byte seeds at 2207h and 235Bh. The candidate listing and manifest were regenerated successfully after these seed additions; the current manifest includes both bounded windows.
