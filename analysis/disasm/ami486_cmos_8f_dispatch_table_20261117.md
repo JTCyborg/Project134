@@ -599,3 +599,31 @@ The relative targets within the `6F37h` helper were recalculated byte-for-byte a
 - CALL at `6F49h` targets `6968h`, whose bytes are `A2 21 E4 C3`: `MOV [E421h],AL; RET` (not a routine beginning at 696Bh).
 
 Thus the helper at `6F37h` saves the byte read from `E422h` into `E421h` through this overlapping entry, then performs the two-byte record-copy loop from `E1B8h` to `E3CFh`, with loop count loaded from `E41Fh`. This establishes an additional state byte `E421h` adjacent to the shared `E41Fh` variable, but does not yet identify the record format. The prior description of calls to `72D8h` and `696Bh` from this helper is withdrawn.
+
+
+### Definitive offset-boundary correction for 6F3Eh/6F75h and E1B8h record flow
+
+The last two notes contained an address-boundary error caused by reading grouped hex rows as if the row start were the instruction address. Recomputed offsets from the ROM byte array establish:
+
+- `6F3Eh` begins `ENTER 0010h,00h` (bytes `C8 10 00 00`). It is a helper entry.
+- `6F75h` also begins `ENTER 0010h,00h`. This is the worker entry reached by the direct CALL at `6F23h`.
+- `6F7Ch` is `CALL 6F3Eh`, not the worker entry.
+- `6F79h` calls `72D8h`.
+- The helper at `6F3Eh` calls `72D8h`, reads `AL=[E422h]`, saves it to `E421h` through the overlapping entry at `6968h`, then loads `CL=[E41Fh]`, `SI=E1B8h`, `DI=E3CFh`. It copies `[SI]` to `[DI]` and also reads `[SI+1]` into BL, advancing SI by 2 per iteration. Exact record semantics remain open.
+- Worker `6F75h` then calls helper `6F3Eh`, continues through CHS setup, sets `BX=E1B8h`, `AH=05h`, `AL=[E41Fh]`, and calls `6C15h`; this reaches the actual `INT 13h` at `6C1Fh`.
+
+The direct-reference scan also found an important producer/update path at `6FCCh–6FDCh` (the code starts at `6FCCh` only if entered there; instruction boundaries must be established by tracing its caller):
+
+```asm
+; byte stream at 6FCCh
+BE B8 E1       MOV SI,E1B8h
+89 1C          MOV [SI],BX
+88 44 02       MOV [SI+2],AL
+83 C6 03       ADD SI,3
+81 FE B8 E3    CMP SI,E3B8h
+72 F2          JB ...
+```
+
+This is a 3-byte record writer over the region `E1B8h..E3B7h` (end-exclusive `E3B8h`), with record stride 3. It writes a word from BX at offsets 0–1 and a byte from AL at offset +2. This is distinct from the helper's 2-byte read/copy loop: that helper copies the first byte of each 2-byte source pair to `E3CFh`, while taking the second byte into BL; it does not copy the entire record verbatim. The record producer's caller and the meaning of the three fields are not yet identified.
+
+The earlier note saying `6F75h` was not an ENTER prologue is withdrawn; the correct ENTER entries are `6F3Eh` and `6F75h`. The earlier note that `6F37h` was the helper is also withdrawn. The actual helper entry is `6F3Eh`.
