@@ -47,8 +47,8 @@ The checksum routine's caller context is a POST hardware-initialization sequence
 ## 2. FA65h–FA6Fh boundary bytes
 
 - `FA65h–FA6Dh`: nine consecutive FFh bytes.
-- `FA6Eh–FA6Fh`: two 00h bytes.
-- These bytes are not part of the FA4Eh routine's reachable instruction stream. Retain them as padding/unclassified boundary data pending another consumer.
+- `FA6Eh–FA6Fh`: the first two 00h bytes of the bitmap block beginning at FA6Eh.
+- The checksum routine ends at FA64h; the nine FFh bytes at FA65h–FA6Dh are the actual fill boundary.
 
 ## 3. FA6Eh–FE6Dh bitmap-like block
 
@@ -60,7 +60,7 @@ Do not decode this block as a single 16-bit instruction stream. The reset-linear
 
 ## 4. FE71h–FEA0h and FEA1h–FEE1h
 
-- `FE71h–FEA0h`: 48-byte structured blob following the three-byte JMP at FE6Eh–FE70h. It is not part of the FA70h–FE6Fh 1-KiB bitmap block. Its exact role is unresolved.
+- `FE71h–FEA0h`: 48-byte structured blob following the three-byte JMP at FE6Eh–FE70h. It is not part of the FA6Eh–FE6Dh 1-KiB bitmap block. Its exact role is unresolved.
 - `FEA1h–FEA7h`: bytes `01 06 06 92 E9 3F EE`; preserve as a separate short data/control record candidate.
 - `FEA8h–FEE3h`: zero-filled area; classify as padding/reserved bytes unless an incoming reference proves otherwise.
 
@@ -82,7 +82,7 @@ The preceding bytes FF50h–FF58h are non-text fields/terminators. Preserve the 
 
 ## 7. FF70h–FFBBh mirrored comparison data
 
-This 76-byte range is read by the FA4Eh routine. It is compared against the bitwise complement of F9FFh–FA4Ah. This confirms the range is data, not executable code in the observed call path.
+This 76-byte range is read by the FA4Eh routine. It is compared against the bitwise complement of FA00h–FA4Bh. This confirms the range is data, not executable code in the observed call path.
 
 The adjacent bytes FF BCh–FFC6h are FFh fill. The block FFC7h–FFEFh duplicates bytes FE75h–FE9Dh exactly (41 bytes), including the leading FFh. Keep the duplicate as a distinct physical copy; do not merge its address identity with the FE75h source.
 
@@ -101,7 +101,7 @@ The adjacent bytes FF BCh–FFC6h are FFh fill. The block FFC7h–FFEFh duplicat
 | FA6Eh–FE6Dh | 1-KiB bitmap/glyph table candidate, 128 × 8-byte records | Medium-high |
 | FE71h–FEA0h | Structured data blob | Medium |
 | FEA1h–FEA7h / FEA8h–FEE3h | Short record plus zero-filled area | Medium |
-| FEE2h–FF4Fh | Mixed dispatch/relocation data candidate | Low-medium |
+| FEE4h–FF4Fh | Mixed dispatch/relocation data candidate | Low-medium |
 | FF50h–FF6Fh | Embedded identification/contact text and fields | High |
 | FF70h–FFBBh | 76-byte comparison data | High |
 | FF BCh–FFC6h | FFh fill | High |
@@ -113,8 +113,8 @@ The adjacent bytes FF BCh–FFC6h are FFh fill. The block FFC7h–FFEFh duplicat
 Open tasks:
 1. Find the consumer of the bitmap block and prove its glyph index/encoding.
 2. Trace all incoming references into FEE2h–FF4Fh and classify each table entry individually.
-3. Determine whether FE70h–FEA0h is a pointer table, compressed/encoded data, or another checksum/relocation block.
-4. Add the FA4Eh seed and the confirmed bitmap/data ranges to the candidate generator, then regenerate the mask and recalculate uncovered intervals.
+3. Determine whether FE71h–FEA0h is a pointer table, compressed/encoded data, or another checksum/relocation block.
+4. FA4Eh and FE6Eh seeds plus the confirmed bitmap/data ranges have been added to the candidate generator. GitHub Actions completed successfully: 733 candidate windows and 223 data ranges. The generator manifest does not calculate the byte-union mask, so the next-gap ranking still needs a separate mask recomputation.
 5. Compare the POST complement-check routine with the matching source-level initialization flow in `docs/627.10`; source is architectural evidence only and must not be copied into the independent implementation.
 
-This report closes the byte-inspection pass for the former FA53h–FFFFh candidate gap, but it does not claim semantic completion of every byte in the upper ROM.
+The generator now emits the FA4Eh routine and upper-ROM data ranges. GitHub Actions run 44082032224 completed successfully and regenerated the full linear listing plus candidate listing (733 windows / 223 data ranges). This closes the byte-inspection pass for the former FA53h–FFFFh candidate gap, but does not claim semantic completion of every byte in the upper ROM or a recomputed whole-ROM candidate-mask percentage.
