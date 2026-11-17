@@ -1666,3 +1666,17 @@ A0E1  IRET
 ```
 
 The local operand is BP+1Eh (not a negative BP displacement). The handler saves/restores BX as well as the other listed registers. `OR WORD [BP+1Eh],AX` is the exact width of the final operation; do not infer the local's higher-level meaning until the caller's stack frame and the earlier stores to this slot are traced. The separate entry at A0E2h writes AH=01h to BDA byte 0040:0074, sets CF, and jumps into the common code at A0C2h; it is an error-return entry, not part of the normal IRET epilogue.
+
+## AH=14h result in the 2FA3h wrapper and fallback sequence
+
+The wrapper's INT 13h call at 3006h-3009h is not a successful controller-diagnostic operation in this BIOS hook. The path can be followed exactly:
+
+1. `3006 MOV AH,14h; 3008 INT 13h` enters A08Dh.
+2. A08Dh calls 90B4h -> 90E7h. Since AH=14h is not 87h, 90E7h branches via 90DEh to 9220h.
+3. At 9220h the code calls 8AE8h, then dispatches on the original function number. `MOV AL,AH; SUB AL,80h` makes AH=14h fall into the negative/unsupported-function path at 9272h.
+4. 9272h returns `AH=86h`, sets CF, and executes `RETF 2`. The 86h/CF result is therefore the hook's explicit unsupported-function response for AH=14h.
+5. Back in the wrapper, `JNC 3010h` is not taken. The fallback helper at AAA3h is called. AAA3h reads the BIOS tick counter at 0040:006Ch, issues INT 13h/AH=09h, and if that succeeds issues INT 13h/AH=11h; it then checks elapsed ticks and returns a status. If that fallback returns with CF set, the wrapper sets AL=03h; otherwise it keeps the fallback's returned AL/status.
+
+If the initial AH=14h call had returned with CF clear, the wrapper would instead set AL=02h. Thus the two paths are a feature probe followed by a legacy fallback, not evidence that the BIOS's AH=14h diagnostic command actually executed successfully. The exact semantic labels for the wrapper's AL=02h/03h result values remain unassigned until all consumers of that result are traced.
+
+The ordinary INT 13h path at 9220h has not yet been shown to read E411-E420 directly. The IVT DPT pointer may be consumed by the chained firmware/BIOS path, but this needs a separate trace of the 9220h dispatch and its selected jump table; do not claim the A08Dh hook itself dereferences the DPT.
