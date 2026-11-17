@@ -1370,3 +1370,15 @@ Detailed byte map: [AMI486_SETUP_VIDEO_MODE_PALETTE_INIT_20261117.md](AMI486_SET
 - The screen-renderer helper report now links this initializer to the existing 56AEh palette selector and E1A2h–E1A9h attribute consumers.
 
 The candidate listing/manifest have not yet been regenerated after this generator change. Existing mask metrics are therefore stale for this update; do not use them to claim current byte-union coverage.
+
+
+## Protected-mode extended-memory alias-test tail — 2026-11-17
+
+The 19B0h–23CEh ledger now includes the previously uncovered 235Bh–2380h continuation.
+
+- 22F7h–232Fh compares and writes 32-bit patterns at linear addresses 04000000h and 04000100h.
+- 2335h–237Bh checks 04800000h, 04000800h, 04001000h and 04002000h against 5555AAAAh, setting BH selector values before each comparison.
+- 235Bh–2380h is a fall-through code continuation, not a standalone function. It contains the final 32-bit compare/branch pair and BH=04h fallback.
+- The selected values feed the already mapped stack-threaded ALi writes at 2381h, 2396h and 23ACh. The later A20/CR0 exit and memory-test handoff remain in the 23CEh–29F5h ledger.
+- The candidate generator now includes a bounded 235Bh seed of 26h bytes, ending at 2380h.
+
