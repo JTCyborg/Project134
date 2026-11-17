@@ -1344,3 +1344,28 @@ The two relevant call sites were re-decoded from the ROM bytes.
 - This confirms that E01Bh–E023h and E024h–E02Ch are distinct per-drive records, and that drive identity is carried independently all the way into 5AB5h.
 
 The call-site analysis proves selector/index propagation. It does not yet assign semantic names to each byte in the packed records or identify the seven fill bytes' caller values in every invocation.
+
+### Exact seven-byte fill pattern in the 5AB5h custom-record expansion
+
+The instruction sequence at 5ADDh–5AE7h is:
+- A5 MOVSW
+- A4 MOVSB
+- AB STOSW
+- A5 MOVSW
+- AA STOSB
+- A4 MOVSB
+- AB STOSW
+- AA STOSB
+- A5 MOVSW
+- A4 MOVSB
+- AA STOSB
+
+The three MOVSW plus three MOVSB operations copy the nine source bytes. The five STOS operations write seven fill bytes from AX/AL. Since the custom branch is selected by CMP AL,2Fh and does not modify AX before the STOS operations, AL is still 2Fh throughout this sequence. The exact destination fill pattern is therefore:
+
+`2Fh, AH, 2Fh, 2Fh, AH, 2Fh, 2Fh`
+
+The AH byte is preserved from the caller and repeated in the two STOSW high-byte positions; AL contributes the other five bytes. This is not an arbitrary seven-byte caller buffer.
+
+At the 4797h call site inside 475Ch, DX is loaded from the zero-extended E189h index before AL is replaced by the selector. Therefore AH=00h at this call, and the seven fill bytes are exactly `2F 00 2F 2F 00 2F 2F`.
+
+At the 4B8Dh call site, AL is loaded from local [BP-1] and DL from E421h, but AH is inherited from the preceding call at 4B81h (target 09EBh). Its exact value must be traced through that helper before assigning the seven fill bytes for this path.
