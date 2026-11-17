@@ -1470,3 +1470,53 @@ The custom branch does not copy the compact nine-byte record contiguously into E
 This map follows the exact sequence of `MOVSW`, `MOVSB`, `STOSW`, `STOSB` in 5ADDh–5AE7h; it is not an inferred linear copy. It also explains why the fill pattern has seven bytes: they occupy the gaps in the expanded 16-byte record. The first three fields are independently read by code at 481Fh (word E411h), 482Ch (byte E413h), and 4841h (word E416h). The other fields remain part of the produced record even where this pass has not yet identified a direct reader.
 
 The destination is explicitly E411h in DS/ES, because 5AB5h saves DS, loads ES from DS, and sets DI=E411h. The ordinary AL!=2Fh branch instead selects one of the 16-byte ROM geometry records at CS:E3F1h+AL*10h and copies all 16 bytes directly. Thus both branches produce the same 16-byte destination shape: the normal branch copies a complete ROM table entry; the custom branch expands the compact runtime nine-byte ATA-derived record and fills the interstitial bytes.
+
+## Consumers of the expanded E411-E420 disk record
+
+### Setup-screen display path (4811h-4867h)
+
+The setup worker reads and displays the meaningful geometry fields from the expanded record. Each field is sent to the decimal-output helper at 09EBh with a screen cursor position in AX, a field value in BX, and a blank-field width in DX:
+
+| Call site | Value loaded | Width (DX) | Displayed field |
+|---:|---|---:|---|
+| 4811h | BL from local selector | 2 | Selected geometry selector |
+| 4821h | word [E411] | 5 | Cylinders |
+| 4833h | byte [E413] | 3 | Heads |
+| 4843h | word [E416] | 5 | Write-precompensation value |
+| 4854h | word [E41D] | 5 | Landing-zone cylinder |
+| 4865h | byte [E41F] | 3 | Sectors per track |
+
+The cursor positions are formed from the base at E180h plus offsets 18h, 26h, 2Ch, 32h, 38h, and 3Eh respectively. The helper first positions the cursor and emits the requested blank field, then prints the unsigned decimal value. This confirms that E411, E413, E416, E41D and E41F are live fields in the setup display path. The interstitial fill bytes are not displayed by this routine.
+
+### Capacity calculation (5BD5h-5BF7h)
+
+The routine beginning at 5BD5h computes a rounded capacity quantity directly from the record:
+
+```asm
+5BD5  MOV AL,[E41F]       ; sectors per track
+5BD8  MUL BYTE [E413]    ; * heads, result AX
+5BDC  MUL WORD [E411]    ; * cylinders, result DX:AX
+5BE0  MOV CX,0800
+5BE3  CMP DX,CX
+5BE5  JB  5BEB
+5BE7  MOV AX,FFFF
+5BEA  RET
+5BEB  DIV CX              ; divide total sectors by 2048
+5BED  SHR CX,1            ; 1024-sector half-unit
+5BEF  CMP DX,CX
+5BF1  JB  5BF7
+5BF3  INC AX
+5BF4  JNZ 5BF7
+5BF6  DEC AX              ; saturate at FFFF on increment overflow
+5BF7  RET
+```
+
+Thus it multiplies cylinders × heads × sectors/track, divides by 2048 sectors, and rounds to the nearest 2048-sector unit (half-unit threshold 1024). If the high word is already >=0800h, it returns FFFFh as an overflow/saturation result. This establishes a concrete consumer for the CHS tuple independently of the setup display.
+
+### Drive-limit initialization (6955h onward)
+
+At 6955h the BIOS loads the cylinder word from E411h, decrements it, and stores the zero-based maximum cylinder in E1B2h. It then loads the head count from E413h, decrements it, and stores the zero-based maximum head in E1B4h. These are the expected inclusive CHS maxima derived from one-based geometry counts. This path therefore consumes the cylinder and head fields to initialize drive bounds; it does not use the fill bytes in the gaps.
+
+### Reference-scan qualification
+
+A raw search for the little-endian byte pairs corresponding to E418h/E41Ah also finds occurrences inside unrelated instruction streams (for example short conditional-branch displacements followed by opcode bytes). Those are not valid evidence of memory operands. In the code examined so far, direct data accesses are established for E411h, E413h, E416h, E41Dh, and E41Fh. No genuine direct read of E418h, E419h, E41Ah, E41Bh, E41Ch, or E420h has yet been established. These locations should remain classified as reserved/padding or compatibility bytes pending a verified consumer, rather than assigning them invented semantics.
