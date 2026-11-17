@@ -228,8 +228,34 @@ Words: B6FB, B700, B708, B70F, B717, B71C, B724, B729, B731, B736, B73E, B745, B
 Reason: Setup option labels: clock, speed, cache, wait states and timing
 ASCII: 'Reserved\x00Disabled\x00Enabled\x00Absent\x00Present\x00Low\x00High\x00Off\x00On\x00No\x00Yes\x00Setup\x00Always\x000:300\x00DOS 1KB\x00A:, C:\x00C:, A:\x00250\x00500\x00750\x001000\x0030\x0024\x0020\x0015\x0012\x0010\x008\x006\x00Video\x00Main\x00Both\x00Slow\x00Normal\x00Fast\x00Fastest\x002t\x003t\x004t\x006t\x008t\x00WB\x00WT\x007.19MHz\x0014.32MHz\x0028.64MHz\x00CLK2\x00CLK2 /2\x00CLK2 /3\x00CLK2 /4\x00CLK2 /5\x00CLK2 /6\x00CLK2 /8\x00CLK2 /10\x00CLK2 /12\x00ATCLK\x00ATCLK/2\x00ATCLK2\x00ATCLK2/2\x00ATCLK2/4\x00ATCLK2/8\x00OSC\x00CLKIO\x0064KB\x00128KB\x000 WS\x001 WS\x002 WS\x003 WS\x000 ns\x001 ns\x002 ns\x003 ns\x000 us\x000.25 us\x000.5 us\x000.75 us\x001 us\x001.25 us\x001.5u\x001.75 us\x002 us\x002.25 us\x002.5 us\x002.75 us\x003 us\x003.25 us\x003.5 us\x003.75 us\x0015u \x0030u\x0060u\x00120u\x000 CLK2\x001 CLK2\x002 CLK2\x003 CLK2\x001st T2\x00T1 end\x00SYN.\x00Bypass\x00'
 
+===== DATA 55A8h-55E7h =====
+Reason: 8x8 CP437 box-drawing glyph lookup table used by E19Dh border-state decoder
+55A8  DA C3 C2 C5 D5 C6 D1 D8 D6 C7 D2 D7 C9 CC CB CE ................
+55B8  BF B4 C2 C5 B8 B5 D1 D8 B7 B6 D2 D7 BB B9 CB CE ................
+55C8  C0 C3 C1 C5 D4 C6 CF D8 D3 C7 D0 D7 C8 CC CA CE ................
+55D8  D9 B4 C1 C5 BE B5 CF D8 BD B6 D0 D7 BC B9 CA CE ................
+
+===== DATA 55E8h-55EBh =====
+Reason: Video text segment B800h and UI attribute constants
+55E8  00 B8 0F 07                                     ....
+
+===== DATA 6164h-6175h =====
+Reason: 18-byte Setup viewport/calendar layout lookup table; role unresolved
+6164  04 02 00 05 03 01 06 00 03 03 06 01 04 06 02 05 ................
+6174  00 03                                           ..
+
+===== DATA 6176h-6193h =====
+Reason: Setup calendar/header box-drawing pattern
+6176  05 C9 CD CD CD D1 CD CD CD D1 CD CD CD D1 CD CD ................
+6186  CD D1 CD CD CD D1 CD CD CD D1 CD CD CD B9       ..............
+
+===== DATA 6194h-61B1h =====
+Reason: Weekday names and vertical-border separators
+6194  00 BA 53 75 6E B3 4D 6F 6E B3 54 75 65 B3 57 65 ..Sun.Mon.Tue.We
+61A4  64 B3 54 68 75 B3 46 72 69 B3 53 61 74 BA       d.Thu.Fri.Sat.
+
 ===== 56F1h-5730h =====
-Reason: common text/cursor output primitive used by 578Dh, 57E7h, 58D3h and 58EEh
+Reason: text-mode cell-offset helper: DI=(row*80+column)*2
 56F1  53                      push bx
 56F2  8A DC                   mov bl, ah
 56F4  32 E4                   xor ah, ah
@@ -271,7 +297,7 @@ Reason: common text/cursor output primitive used by 578Dh, 57E7h, 58D3h and 58EE
 5730  A8              db 0xA8
 
 ===== 5702h-5741h =====
-Reason: screen/cursor state save helper used by Setup panel and text routines
+Reason: video-mode helper: OUT 3D8h,21h and load ES from [55E8h]
 5702  50                      push ax
 5703  52                      push dx
 5704  B0 21                   mov al, 0x21
@@ -310,7 +336,7 @@ Reason: screen/cursor state save helper used by Setup panel and text routines
 5741  D0              db 0xD0
 
 ===== 5711h-5730h =====
-Reason: common screen/cursor state restore epilogue
+Reason: video-mode helper: OUT 3D8h,29h
 5711  50                      push ax
 5712  52                      push dx
 5713  B0 29                   mov al, 0x29
@@ -333,7 +359,7 @@ Reason: common screen/cursor state restore epilogue
 5730  A8              db 0xA8
 
 ===== 571Ch-574Bh =====
-Reason: packed UI-state decoder used by text/attribute helpers
+Reason: decode E19Dh packed border field and select glyph helper
 571C  A1 9D E1                mov ax, word ptr [0xe19d]
 571F  D3 E8                   shr ax, cl
 5721  24 07                   and al, 7
@@ -359,7 +385,7 @@ Reason: packed UI-state decoder used by text/attribute helpers
 574A  D3 E8                   shr ax, cl
 
 ===== 5729h-5758h =====
-Reason: indexed UI coordinate/attribute selector
+Reason: lookup CP437 border glyph from the 55A8h table using E19D fields
 5729  51                      push cx
 572A  50                      push ax
 572B  B1 10                   mov cl, 0x10
@@ -385,7 +411,7 @@ Reason: indexed UI coordinate/attribute selector
 5753  F7 06 9D E1 01 00       test word ptr [0xe19d], 1
 
 ===== 5751h-5770h =====
-Reason: UI text/attribute component selector
+Reason: horizontal border glyph selector: C4h/CDh via E19D bit 0
 5751  B0 C4                   mov al, 0xc4
 5753  F7 06 9D E1 01 00       test word ptr [0xe19d], 1
 5759  74 02                   je 0x575d
@@ -402,7 +428,7 @@ Reason: UI text/attribute component selector
 5770  7F              db 0x7F
 
 ===== 575Eh-577Dh =====
-Reason: UI text/attribute component selector
+Reason: vertical border glyph selector: B3h/BAh via E19D bit 1
 575E  B0 B3                   mov al, 0xb3
 5760  F7 06 9D E1 02 00       test word ptr [0xe19d], 2
 5766  74 02                   je 0x576a
@@ -420,7 +446,7 @@ Reason: UI text/attribute component selector
 577D  9B                      wait
 
 ===== 576Bh-578Ah =====
-Reason: UI text/attribute component selector
+Reason: draw horizontal text-cell row using E199/E19F state
 576B  51                      push cx
 576C  A1 99 E1                mov ax, word ptr [0xe199]
 576F  E8 7F FF                call 0x56f1
@@ -437,7 +463,7 @@ Reason: UI text/attribute component selector
 578A  AB                      stosw word ptr es:[di], ax
 
 ===== 57E7h-5806h =====
-Reason: rectangle geometry helper used by 57FDh/581Ch
+Reason: compute rectangle dimensions and text-cell origin
 57E7  E8 18 FF                call 0x5702
 57EA  33 C9                   xor cx, cx
 57EC  8A CE                   mov cl, dh
@@ -457,7 +483,7 @@ Reason: rectangle geometry helper used by 57FDh/581Ch
 5806  8A              db 0x8A
 
 ===== 584Ah-5869h =====
-Reason: screen-cell/attribute setup helper used by 5862h/587Ah
+Reason: initialize line-drawing state from BX and E19Dh
 584A  89 1E 9D E1             mov word ptr [0xe19d], bx
 584E  E8 B1 FE                call 0x5702
 5851  E8 9D FE                call 0x56f1
@@ -477,7 +503,7 @@ Reason: screen-cell/attribute setup helper used by 5862h/587Ah
 5869  E6              db 0xE6
 
 ===== 587Ah-5899h =====
-Reason: direct Setup/menu renderer caller; alternate fill/attribute path
+Reason: draw vertical border line
 587A  57                      push di
 587B  E8 CC FF                call 0x584a
 587E  E3 0B                   jcxz 0x588b
@@ -495,7 +521,7 @@ Reason: direct Setup/menu renderer caller; alternate fill/attribute path
 5899  06                      push es
 
 ===== 5891h-58B0h =====
-Reason: save/merge/restore text attribute helper
+Reason: save current text attribute and merge mask [55EAh]
 5891  50                      push ax
 5892  A0 9F E1                mov al, byte ptr [0xe19f]
 5895  A2 A0 E1                mov byte ptr [0xe1a0], al
@@ -511,7 +537,7 @@ Reason: save/merge/restore text attribute helper
 58B0  DF              db 0xDF
 
 ===== 58A1h-58C0h =====
-Reason: temporary highlight-attribute wrapper around 58BEh
+Reason: temporary highlight-attribute wrapper around centered text output
 58A1  80 0E 9F E1 80          or byte ptr [0xe19f], 0x80
 58A6  E8 15 00                call 0x58be
 58A9  80 26 9F E1 7F          and byte ptr [0xe19f], 0x7f
@@ -524,7 +550,7 @@ Reason: temporary highlight-attribute wrapper around 58BEh
 58BE  E8 D0 FF                call 0x5891
 
 ===== 58C6h-58E5h =====
-Reason: string-centering/width helper used by 58BEh
+Reason: compute centered X coordinate from NUL string length
 58C6  53                      push bx
 58C7  50                      push ax
 58C8  E8 5F 00                call 0x592a
@@ -563,7 +589,7 @@ Reason: keyboard ASCII case-normalization helper
 5938  F7 D1                   not cx
 
 ===== 5FE4h-6003h =====
-Reason: Setup record-list origin initializer called by 614Dh
+Reason: reset absolute selected-record index E18Ch to zero
 5FE4  C6 06 8C E1 00          mov byte ptr [0xe18c], 0
 5FE9  8B 1E 91 E1             mov bx, word ptr [0xe191]
 5FED  89 1E 8F E1             mov word ptr [0xe18f], bx
@@ -577,7 +603,7 @@ Reason: Setup record-list origin initializer called by 614Dh
 6003  03              db 0x03
 
 ===== 6024h-6043h =====
-Reason: Setup record-advance helper; skips optional auxiliary tail
+Reason: advance variable-length Setup record and skip auxiliary NUL strings
 6024  F6 47 1E 80             test byte ptr [bx + 0x1e], 0x80
 6028  9C                      pushf
 6029  02 5F 1F                add bl, byte ptr [bx + 0x1f]
@@ -594,7 +620,7 @@ Reason: Setup record-advance helper; skips optional auxiliary tail
 6043  8A              db 0x8A
 
 ===== 603Fh-607Eh =====
-Reason: Setup active-record option/flag resolver
+Reason: decode current option value through the E000h configuration shadow and record mask
 603F  8B 1E 8F E1             mov bx, word ptr [0xe18f]
 6043  8A 47 1C                mov al, byte ptr [bx + 0x1c]
 6046  24 7F                   and al, 0x7f
@@ -627,7 +653,7 @@ Reason: Setup active-record option/flag resolver
 607C  8A 57 1D                mov dl, byte ptr [bx + 0x1d]
 
 ===== 6066h-60A5h =====
-Reason: Setup option-record state helper
+Reason: write transformed option value back to the E000h configuration shadow
 6066  56                      push si
 6067  8A D0                   mov dl, al
 6069  8B 1E 8F E1             mov bx, word ptr [0xe18f]
@@ -661,7 +687,7 @@ Reason: Setup option-record state helper
 60A5  36              db 0x36
 
 ===== 6092h-60D1h =====
-Reason: Setup option index/offset helper used by 6115h
+Reason: dispatch the record-specific option callback from the E195h pointer table
 6092  8B 1E 8F E1             mov bx, word ptr [0xe18f]
 6096  8A 5F 1E                mov bl, byte ptr [bx + 0x1e]
 6099  80 E3 7F                and bl, 0x7f
@@ -697,7 +723,7 @@ Reason: Setup option index/offset helper used by 6115h
 60CE  80 7F 1F 00             cmp byte ptr [bx + 0x1f], 0
 
 ===== 578Dh-580Ch =====
-Reason: direct CALL target from the Setup option-list renderer; panel/text helper
+Reason: Setup panel border renderer using the CP437 glyph table
 578D  57                      push di
 578E  A3 99 E1                mov word ptr [0xe199], ax
 5791  89 16 9B E1             mov word ptr [0xe19b], dx
@@ -756,7 +782,7 @@ Reason: direct CALL target from the Setup option-list renderer; panel/text helpe
 580C  8B              db 0x8B
 
 ===== 57FDh-587Ch =====
-Reason: direct CALL target from the Setup single-item renderer; coordinate/text helper
+Reason: fill rectangular text area with space cells
 57FD  32 F6                   xor dh, dh
 57FF  03 D0                   add dx, ax
 5801  4A                      dec dx
@@ -888,7 +914,7 @@ Reason: direct CALL target from Setup/menu renderers; phase-42 caller cross-refe
 58E1  AC                      lodsb al, byte ptr [si]
 
 ===== 58AFh-58CEh =====
-Reason: direct CALL target for unselected/alternate text output
+Reason: render NUL-terminated text with normal/alternate attribute
 58AF  E8 DF FF                call 0x5891
 58B2  E8 1E 00                call 0x58d3
 58B5  8A 16 A0 E1             mov dl, byte ptr [0xe1a0]
@@ -904,7 +930,7 @@ Reason: direct CALL target for unselected/alternate text output
 58CD  8B D0                   mov dx, ax
 
 ===== 58BEh-58EDh =====
-Reason: direct CALL target for record-associated/footer text output
+Reason: render centered NUL-terminated text and restore attribute
 58BE  E8 D0 FF                call 0x5891
 58C1  E8 02 00                call 0x58c6
 58C4  EB EF                   jmp 0x58b5
@@ -932,7 +958,7 @@ Reason: direct CALL target for record-associated/footer text output
 58EB  E9 23 FE                jmp 0x5711
 
 ===== 58D3h-58F2h =====
-Reason: direct CALL target for selected/highlighted text output
+Reason: render NUL-terminated string at text-screen coordinate
 58D3  56                      push si
 58D4  57                      push di
 58D5  E8 2A FE                call 0x5702
@@ -952,7 +978,7 @@ Reason: direct CALL target for selected/highlighted text output
 58F2  8A              db 0x8A
 
 ===== 58EEh-590Dh =====
-Reason: direct CALL target for Setup label separator/colon output
+Reason: render one character at text-screen coordinate
 58EE  57                      push di
 58EF  E8 10 FE                call 0x5702
 58F2  8A 26 9F E1             mov ah, byte ptr [0xe19f]
@@ -1101,7 +1127,7 @@ Reason: Setup list reset/position helper; direct callers 0D03h and 0D34h
 6028  9C                      pushf
 
 ===== 6008h-6047h =====
-Reason: Setup visible-record advance helper; direct caller 0D12h
+Reason: advance to next visible Setup record; wrap at E193h
 6008  8B 1E 8F E1             mov bx, word ptr [0xe18f]
 600C  E8 15 00                call 0x6024
 600F  3B 1E 93 E1             cmp bx, word ptr [0xe193]
@@ -1129,7 +1155,7 @@ Reason: Setup visible-record advance helper; direct caller 0D12h
 6046  24 7F                   and al, 0x7f
 
 ===== 6115h-6154h =====
-Reason: Setup option-code to display-string resolver; direct caller 0EBDh
+Reason: resolve current option code to its NUL-terminated display string
 6115  33 C0                   xor ax, ax
 6117  E8 78 FF                call 0x6092
 611A  E8 22 FF                call 0x603f
@@ -1159,7 +1185,7 @@ Reason: Setup option-code to display-string resolver; direct caller 0EBDh
 6152  E8 8F FE                call 0x5fe4
 
 ===== 6122h-6161h =====
-Reason: alternate entry into the 6115h string-list tail; direct callers 1076h and 10B6h
+Reason: alternate entry into 6115h string-list skip tail; AL is number of NUL strings to skip
 6122  32 E4                   xor ah, ah
 6124  8B C8                   mov cx, ax
 6126  8B 1E 97 E1             mov bx, word ptr [0xe197]
@@ -1188,7 +1214,7 @@ Reason: alternate entry into the 6115h string-list tail; direct callers 1076h an
 6161  75              db 0x75
 
 ===== 6137h-6176h =====
-Reason: Setup viewport-row to screen-coordinate helper; direct caller 0E95h
+Reason: map E185h viewport index to B800h text-screen offset
 6137  A0 85 E1                mov al, byte ptr [0xe185]
 613A  98                      cwde
 613B  B1 12                   mov cl, 0x12
@@ -1218,8 +1244,8 @@ Reason: Setup viewport-row to screen-coordinate helper; direct caller 0E95h
 6174  00 03                   add byte ptr [bp + di], al
 6176  05              db 0x05
 
-===== 614Dh-618Ch =====
-Reason: Setup visible-record count helper; direct caller 0C81h
+===== 614Dh-6163h =====
+Reason: count visible Setup records by following 6008h links
 614D  C6 06 8E E1 00          mov byte ptr [0xe18e], 0
 6152  E8 8F FE                call 0x5fe4
 6155  FE 06 8E E1             inc byte ptr [0xe18e]
@@ -1227,26 +1253,6 @@ Reason: Setup visible-record count helper; direct caller 0C81h
 615C  83 3E 8F E1 00          cmp word ptr [0xe18f], 0
 6161  75 F2                   jne 0x6155
 6163  C3                      ret
-6164  04 02                   add al, 2
-6166  00 05                   add byte ptr [di], al
-6168  03 01                   add ax, word ptr [bx + di]
-616A  06                      push es
-616B  00 03                   add byte ptr [bp + di], al
-616D  03 06 01 04             add ax, word ptr [0x401]
-6171  06                      push es
-6172  02 05                   add al, byte ptr [di]
-6174  00 03                   add byte ptr [bp + di], al
-6176  05 C9 CD                add ax, 0xcdc9
-6179  CD CD                   int 0xcd
-617B  D1 CD                   ror bp, 1
-617D  CD CD                   int 0xcd
-617F  D1 CD                   ror bp, 1
-6181  CD CD                   int 0xcd
-6183  D1 CD                   ror bp, 1
-6185  CD CD                   int 0xcd
-6187  D1 CD                   ror bp, 1
-6189  CD CD                   int 0xcd
-618B  D1 CD                   ror bp, 1
 
 ===== 0C7Dh-0CFFh =====
 Reason: direct CALL target at 0C79h; Setup item-list initializer prologue
@@ -1802,7 +1808,7 @@ Reason: second stack-frame routine in E1xx state/menu rendering cluster
 10DD  5D                      pop bp
 10DE  C3                      ret
 
-===== 60BBh-60FAh =====
+===== 60BBh-611Ah =====
 Reason: direct CALL site and caller context for E1xx state/menu helper at 0E7Ch
 60BB  50                      push ax
 60BC  A0 A5 E1                mov al, byte ptr [0xe1a5]
@@ -1833,6 +1839,22 @@ Reason: direct CALL site and caller context for E1xx state/menu helper at 0E7Ch
 60F5  33 D2                   xor dx, dx
 60F7  F7 F1                   div cx
 60F9  8B C2                   mov ax, dx
+60FB  5A                      pop dx
+60FC  53                      push bx
+60FD  03 D8                   add bx, ax
+60FF  80 7F 20 00             cmp byte ptr [bx + 0x20], 0
+6103  5B                      pop bx
+6104  75 09                   jne 0x610f
+6106  80 FA FF                cmp dl, 0xff
+6109  74 E0                   je 0x60eb
+610B  B2 01                   mov dl, 1
+610D  EB DC                   jmp 0x60eb
+610F  E8 54 FF                call 0x6066
+6112  B0 01                   mov al, 1
+6114  C3                      ret
+6115  33 C0                   xor ax, ax
+6117  E8 78 FF                call 0x6092
+611A  E8              db 0xE8
 
 ===== 3F4Ah-3F56h =====
 Reason: direct CALL wrapper for POST summary frame renderer; prints bottom border on return
