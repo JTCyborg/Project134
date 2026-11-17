@@ -641,3 +641,21 @@ The record-writer byte sequence previously labelled `6FCCh–6FDCh` actually sta
 - `6FDFh`: `72 F2` — loop back to `6FD3h`
 
 This confirms a 3-byte-stride record writer spanning `E1B8h` up to (but excluding) `E3B8h`. It is preceded by a dispatch/selection sequence at `6FB7h–6FCFh` that chooses BX and AL values. Do not assign meaning to those fields until the incoming register values and caller path are traced.
+
+
+### Track-buffer fill pattern and its caller-side setup (2026-11-17)
+
+The code at `6D94h` (not `6D93h`; `6D91–6D93` are `CLC; JMP 6D8Ch`) establishes a concrete call chain into the buffer-pattern generator:
+
+- `6D94h` begins `PUSH BP; MOV BP,SP`, loads SI from `[BP+4]`, DI from `[BP+6]`, and sets `CX=3`.
+- It clears `[E3BFh]`, pushes CX, sets `BX=E1B8h`, then calls `6FAEh`.
+- `6FAEh` is the pattern-fill routine. It preserves the caller registers through helper `72D8h`, tests CX, and chooses one of three 3-byte patterns:
+  - CX=1: `BX=DB6Dh; AL=B6h` -> bytes `6D DB B6`.
+  - CX=2: `BX=B6DBh; AL=6Dh` -> bytes `DB B6 6D`.
+  - other CX (including the caller's CX=3): `BX=6DB6h; AL=DBh` -> bytes `B6 6D DB`.
+- It writes the word BX at `[SI]` and AL at `[SI+2]`, advances SI by 3, and loops while SI < `E3B8h`. Starting at `E1B8h`, this produces 171 records (513 bytes): the final record occupies `E3B6h–E3B8h`, so the final byte is exactly at the comparison limit. Treat the endpoint as an observed boundary condition, not as proof of a 512-byte allocation.
+- Returning to `6D94h`, calls at `6DACh` and `6DB1h` target `6E1Eh` and `6E27h`, respectively; both are single-byte `RET` entries (overlapping entrypoints, no operation). It then calls `6C9Dh` (keyboard/abort poll) and processes retry/track-state flags around `E3BFh`, `E3C0h`, and `E3BAh`.
+
+This is now stronger evidence of a disk-format/fill operation: a three-byte repeating pattern is prepared in the same buffer later supplied to the confirmed `INT 13h AH=05h` write path. However, two things remain unresolved: how the `6D94h` routine is entered (no direct near-CALL xref or far CALL immediate target found; it may be reached through a dispatch/jump table), and whether its CHS state progression corresponds to the hard-disk UI's explicit Y/N confirmation path. Do not yet state that the menu confirmation is linked.
+
+Correction to the previous buffer-size wording: the loop does 171 three-byte stores and the final store touches `E3B8h`; it is inaccurate to describe the written range as ending at `E3B7h`.
