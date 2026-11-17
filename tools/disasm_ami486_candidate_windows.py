@@ -1385,6 +1385,32 @@ SEEDS.extend([
     (0x19AF, "one-byte RET dispatch stub referenced by the profile pointer table at 19A2h"),
 ])
 
+LIMITS.update({
+    0x8630: 0x19, 0x8649: 0x19, 0x8662: 0x19, 0x867B: 0x10,
+    0x868B: 0x08, 0x8693: 0x0D, 0x86A2: 0x08, 0x86AC: 0x18,
+    0x86C6: 0x08, 0x86D0: 0x0B,
+})
+
+DATA_RANGES.extend([
+    (0x86A0, 0x86A2, "crafted stack-return word 86A2h consumed after CMOS register read at 869Dh", "words"),
+    (0x86AA, 0x86AC, "crafted stack-return word 86ACh consumed after CMOS register read at 86A7h", "words"),
+    (0x86C4, 0x86C6, "crafted stack-return word 86C6h consumed after CMOS register read at 86C1h", "words"),
+    (0x86CE, 0x86D0, "crafted stack-return word 86D0h consumed after CMOS register read at 86CBh", "words"),
+])
+
+SEEDS.extend([
+    (0x8630, "CMOS 8Eh/90h option check against CS:8280h bit 2"),
+    (0x8649, "CMOS 8Eh/94h option check against CS:8280h bit 1"),
+    (0x8662, "CMOS 8Eh/94h option check against CS:8280h bit 0"),
+    (0x867B, "CS:8280h bit-3 option check and CPU-profile helper call at 8300h"),
+    (0x868B, "stack-threaded CMOS checksum verifier: sets DI=8693h and transfers to checksum helper 17F2h"),
+    (0x8693, "continuation after 17F2h; compares AEh/AFh checksum through crafted RET slots"),
+    (0x86A2, "stack-threaded CMOS read continuation after return slot at 86A0h"),
+    (0x86AC, "compares AEh/AFh result, then selects second checksum continuation at 86B6h"),
+    (0x86C6, "stack-threaded CMOS read continuation after return slot at 86C4h"),
+    (0x86D0, "compares BEh/BFh result and jumps to D2EAh"),
+])
+
 def main():
     rom = ROM_PATH.read_bytes()
     if len(rom) != 65536:
