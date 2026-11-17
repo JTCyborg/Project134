@@ -315,5 +315,14 @@ Report: `AMI486_ADDRESS_LEDGER_REGION_D655_E3FF_20261117.md`.
 - D6C4h/D6DEh are a stack/register/segment integrity test; the D7xx–DAA1h stream contains 8042, CMOS, chipset and PIT POST work with explicit stack-return words classified as data.
 - DAA2h–DFFFh is 1,374 zero bytes. E000h/E005h are jump stubs, E05Bh is the reset entry, E00Eh/E0CBh are ROM strings, E160h–E25Fh is descriptor-like data and E260h–E2BFh is the 96-byte protected-mode parameter block copied before INT 15h/AH=89h.
 - D906h is a confirmed direct JMP to 8400h after the EE9Dh helper returns through stack slot D904h. 8400h clears/restores CMOS 8Eh–FFh; AND BP,FFC7h preserves BP.13. The producer remains unresolved.
-- Candidate mask: 440 code windows, 120 data ranges, 39,603-byte union (60.43%). This is not semantic completion.
+- Candidate mask: 508 code windows, 136 data ranges, 42,884-byte union (65.44%), 70 uncovered intervals, 195 pages touched and 118 fully covered. This is not semantic completion.
 - Next largest uncovered range: E865h–F52Dh (3,273 bytes). Select it only after confirming incoming references and data/code boundaries.
+
+
+## Address-ledger continuation — E862h–F52Dh (2026-11-17)
+
+Report: `AMI486_ADDRESS_LEDGER_REGION_E862_F52D_20261117.md`.
+
+The former E865h–F52Dh gap is now classified into polling helpers, parity diagnostics, RTC/PIC/timer handlers, INT 1Ah-compatible services, CMOS helpers, the 0F05h protected-mode-assisted path, Setup/CMOS editor code, encoded strings, video/ROM checks and fatal POST diagnostics. Embedded strings, stack/data tables, padding and opaque blocks are separated from bounded code windows. Several interrupt vector mappings and opaque data consumers remain unresolved.
+
+Current candidate mask: 508 code windows, 136 data ranges, 42,884-byte union (65.44%). This is not semantic completion. The next largest uncovered range is 697Dh–7144h (1,992 bytes); inspect incoming references and table boundaries before adding new seeds.
