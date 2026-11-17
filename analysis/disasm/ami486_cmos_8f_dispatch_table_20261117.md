@@ -307,3 +307,18 @@ D691h sets SS=0030h and SP=0100h. The resulting linear stack address is 0030h*10
 - marker 0Ah reaches 9237h, whose POP BP consumes the same stack word before jumping to 4D4Dh.
 
 Therefore these paths depend on a pre-existing value at 00400h supplied by earlier initialization/caller context. The return target for marker 09h and the restored BP value for marker 0Ah cannot be claimed until the writer/initializer of physical 00400h is located. This is a key unresolved dependency in the POST state machine.
+
+## Marker 0Ah target 4D4Dh: menu/event handler and saved-frame dependency
+
+The marker-0Ah destination at 4D4Dh is not a password or disk routine. It is part of a menu/event-dispatch path:
+
+- Entry sequence at 9237h: `MOV BP,AX`; `MOV AX,CS:[BP]`; `POP BP`; `JMP AX`. With AX=0030h from D691h, the jump target is the word at CS:0030h = 4D4Dh.
+- The preceding `SHL SI,1` in D6A1h sets ZF=0 for marker index 0Ah. MOV/POP/JMP preserve flags, so the first instruction at 4D4Dh (`JNZ 4D64h`) is taken. This is the actual entry path, not the fall-through code at 4D4Fh.
+- At 4D64h the routine tests the menu/state word E423h. If nonzero, it updates E19Fh from E1A7h, calls helpers at 4DDCh/591Eh/5904h, and interprets the returned key/action.
+- The key value is compared with 0Dh (Enter). On Enter, E185h is used as an index into a word table at CS:393Dh; the selected handler pointer is stored at SS:[BP-2] and called indirectly through that slot.
+- Other key values are compared against escape/navigation/edit values (including 1Bh and 012Dh); the routine adjusts E185h and loops back through the menu state. The exact key-to-action labels need further tracing.
+- The common exit at 4DD9h is `POP SI; POP DI; MOV SP,BP; POP BP; RET`. This is a conventional frame teardown: BP is a saved caller frame pointer, and MOV SP,BP restores the caller's stack before popping its prior BP.
+
+This explains why the word read at physical 00400h matters: the value is consumed as BP, then used as the frame base by the handler's eventual epilogue. It is therefore functioning as a saved-frame value for this dispatch, not as an ordinary COM1 port value in this path. The exact earlier writer or frame-construction step is still not found.
+
+A byte-pattern scan of ami486.bin found no direct absolute stores to offset 0000h using common encodings (A3 0000, 89 [0000], C7 [0000], or ES:A3 0000). This does not rule out an indirect write through a register or string instruction; the producer of the saved BP remains unresolved.
