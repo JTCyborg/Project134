@@ -239,3 +239,46 @@ The surrounding F1E2h routine also:
 - combines the returned RTC fields with the low-memory accumulation before continuing into the password-entry section.
 
 These operations identify this as a startup recovery/configuration path that validates an existing password, gathers platform state, and can request a new password. Do not yet label the 64-KiB accumulation as a definitive RAM test: the code computes a sum but the comparison/use of that value is still being traced.
+
+## Critical correction: CMOS[B3h] path does NOT enter F1E2h
+
+The previous notes incorrectly interpreted the two bytes E2 F1 at 8A68h as a synthetic return address to F1E2h. They are actually the displacement bytes of the instruction `LOOP 8A5Bh`. The control flow is:
+
+```asm
+8A4A: BF 62 8E       MOV DI,8E62h
+8A4D: B9 0A 00       MOV CX,000Ah
+8A50: F6 C2 04       TEST DL,04h
+8A53: 75 06          JNZ 8A5Bh
+8A55: BF 7A 8E       MOV DI,8E7Ah
+8A58: B9 02 00       MOV CX,0002h
+8A5B: 2E 8B 05       MOV AX,CS:[DI]
+8A5E: 47             INC DI
+8A5F: 47             INC DI
+8A60: BC 66 8A       MOV SP,8A66h
+8A63: E9 76 03       JMP 8DDEh
+8A66: 68 8A          ; immediate word of PUSH 8A68h at the synthetic stack location
+8A68: E2 F1          LOOP 8A5Bh
+8A6A: 8B C3          MOV AX,BX
+8A6C: 66 C1 C8 10     ROR EAX,10h
+8A70: 0C FF          OR AL,0FFh
+8A72: E9 E0 4B       JMP D655h
+```
+
+The short delay/return stub is at 8DDEh (RET at 8DDEh; preceding bytes are port-I/O delay instructions). With SS still inherited from the D615h path (SS=CS), the synthetic stack word sends execution to 8A68h. The bytes E2 F1 are therefore an executed LOOP instruction, not a word F1E2h. The loop reads 10 words from CS:8E62h or 2 words from CS:8E7Ah, advancing DI by two each time; the loaded AX is overwritten after the loop. There are no port writes in this loop. Its precise purpose is not yet established; describe it as a bounded ROM-read/delay loop, not as applying a chipset table.
+
+After the loop, execution forces ZF=0 with OR AL,FFh and enters D655h. For marker 09h or 0Ah, if CS:[8281].40h is clear, D66Dh adjusts CR0 before D691h:
+- Reads SMSW AX and tests AH.
+- If AH is nonzero, sets CR0 bit 4 (ET).
+- Clears CR0 bits 31 and 30 (CD/NW) with AND EAX,9FFFFFFFh.
+- Writes CR0 and continues to D691h.
+If CS:[8281].40h is set, this CR0 adjustment is bypassed and execution goes directly to D691h.
+
+D691h then dispatches using the preserved marker index SI. Index 9 selects 8A06h; index 10 selects 9237h. Those are the actual marker-specific entries. 8A06h and 9237h must be analyzed as independent entry points; F1E2h is not the destination of this CMOS[B3h] branch.
+
+## Separate correction: F1E2h routine is not proven to belong to CMOS[B3h] dispatch
+
+The bytes at F1E2h begin an independently decodable routine. Its earlier password/RTC analysis remains a description of that byte range, but no verified edge from the CMOS[B3h] loop above enters F1E2h. Likewise, F1FDh CALLs F30Eh, and F30Eh is a RET stub. The separate entry at F30Fh contains `MOV AX,0C1Dh; CALL 0FBEh; RET`; this is not a continuation of the F1FDh call. Therefore withdraw the earlier claimed chain F1E2h -> F30Eh -> 0FBEh -> 578Dh. The video routine 578Dh remains independently identified by its own call sites.
+
+## Addressing correction for the password buffer copy at F2EAh
+
+The prologue at F1EAh executes PUSH ES, PUSH DS, PUSH SS, POP ES, so ES=SS for this routine. At F2EAh, `MOV DI,E000h; MOV SI,BP; MOV CX,20h; SS: REP MOVSW` copies 40h bytes from SS:BP to ES:E000h, which is SS:E000h. In the known D691h dispatch setup SS is 0030h, making the linear destination 0E300h, not a CMOS index and not segment 0000h:E000h. This is a RAM buffer copy; it does not itself prove persistent password storage.
