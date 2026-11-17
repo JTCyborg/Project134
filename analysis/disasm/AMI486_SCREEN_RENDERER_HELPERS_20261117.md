@@ -61,8 +61,8 @@ Uses repeated division by ten. It recursively emits the quotient while preservin
 
 ### 0970h / 0975h — unit suffix
 
-- 0970h emits `KB`.
-- 0975h emits `MB`.
+- 0970h emits a leading space followed by `KB`.
+- 0975h emits a leading space followed by `MB`.
 
 ### 0A15h — fixed-width numeric field
 
@@ -77,9 +77,9 @@ The 00EFh screen routine calls 0A15h at coordinates 0543h and 0643h using values
 
 ### 0995h / 099Dh — cursor-shape normalization
 
-Both read the current cursor shape with INT 10h AH=03h, mask the scan-line values, normalize their order and write the shape with INT 10h AH=01h.
-- 0995h uses BL=20h and forces the disable bit in CH, hiding the cursor while drawing.
-- 099Dh uses BL=00h and normalizes without forcing the disable bit.
+Both read the current cursor shape with INT 10h AH=03h, mask the scan-line values, apply compare/swap logic and write the shape with INT 10h AH=01h.
+- 0995h uses BL=20h and ORs bit 20h into CH, which is the BIOS text-cursor disable bit; this hides the cursor while drawing.
+- 099Dh uses BL=00h and normalizes the scan-line ordering without forcing the disable bit.
 
 The 00EFh routine calls 0995h at entry and 099Dh on its exit path.
 
