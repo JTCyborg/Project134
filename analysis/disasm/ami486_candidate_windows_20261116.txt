@@ -1542,22 +1542,6 @@ Reason: Crafted stack-return word 23DCh consumed by the 552Dh memory-pattern tes
 Words: 23DC
 
 ===== DATA 280Ah-280Bh =====
-Reason: Crafted stack-return word 280Ch consumed by the 8DCFh ALi indexed-read helper
-Words: 280C
-
-===== DATA 2816h-2817h =====
-Reason: Crafted stack-return word 2818h consumed by the 8DDCh ALi indexed-write helper
-Words: 2818
-
-===== DATA 2828h-2829h =====
-Reason: Crafted stack-return word 282Ah consumed by the 8DCFh ALi indexed-read helper
-Words: 282A
-
-===== DATA 2834h-2835h =====
-Reason: Crafted stack-return word 2836h consumed by the 8DDCh ALi indexed-write helper
-Words: 2836
-
-===== DATA 280Ah-280Bh =====
 Reason: Crafted near-return word 280Ch consumed by the 8DCFh indexed-read helper
 Words: 280C
 
