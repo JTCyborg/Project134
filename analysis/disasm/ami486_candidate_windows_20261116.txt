@@ -1913,6 +1913,20 @@ Words: 86C6
 Reason: crafted stack-return word 86D0h consumed after CMOS register read at 86CBh
 Words: 86D0
 
+===== DATA AC5Bh-ACFFh =====
+Reason: keyboard scan-code translation table referenced by MOV BX,AC60h at B031h; leading bytes AC5Bh-AC5Fh are table prefix/header
+AC5B  E8 7E FA C3 00 F0 78 79 7A 7B 7C 7D 7E 7F 80 81 .~....xyz{|}~...
+AC6B  82 83 F0 A5 10 11 12 13 14 15 16 17 18 19 F0 F0 ................
+AC7B  F0 FF 1E 1F 20 21 22 23 24 25 26 F0 F0 F0 FF F0 .... !"#$%&.....
+AC8B  2C 2D 2E 2F 30 31 32 F0 F0 F0 FF F0 FF 20 FF 68 ,-./012...... .h
+AC9B  69 6A 6B 6C 6D 6E 6F 70 71 FF FF 07 08 09 F0 04 ijklmnopq.......
+ACAB  05 06 F0 01 02 03 00 53 FF FF FF 8B 8C BB E2 B3 .......S........
+ACBB  E2 81 79 31 69 B1 C1 B9 59 FB F2 E1 E1 D1 61 61 ..y1i...Y.....aa
+ACCB  FB 92 D1 59 B9 81 D9 61 FB B2 89 E1 8B FF FE 67 ...Y...a.......g
+ACDB  04 03 FF 00 0F 1B FF 00 FF FF FF 1E FF FF FF FF ................
+ACEB  1F FF 7F 94 11 17 05 12 14 19 15 09 0F 10 1B 1D ................
+ACFB  0A FF 01 13 04                                  .....
+
 ===== CA15h-CAA6h =====
 Reason: fall-through continuation from the CA13h selector branch; builds INT 13h drive geometry and ES:DI parameter pointer
 CA15  B0 C7                   mov al, 0xc7
@@ -10744,7 +10758,7 @@ ABB1  52                      push dx
 ABB2  53                      push bx
 ABB3  56                      push si
 
-===== AC00h-AC7Fh =====
+===== AC00h-AC5Ah =====
 Reason: ATA identify/read transfer path candidate
 AC00  BA F6 01                mov dx, 0x1f6
 AC03  8A 46 07                mov al, byte ptr [bp + 7]
@@ -10785,25 +10799,6 @@ AC51  E8 40 FA                call 0xa694
 AC54  73 05                   jae 0xac5b
 AC56  E8 3B FA                call 0xa694
 AC59  72 03                   jb 0xac5e
-AC5B  E8 7E FA                call 0xa6dc
-AC5E  C3                      ret
-AC5F  00 F0                   add al, dh
-AC61  78 79                   js 0xacdc
-AC63  7A 7B                   jp 0xace0
-AC65  7C 7D                   jl 0xace4
-AC67  7E 7F                   jle 0xace8
-AC69  80 81 82 83 F0          add byte ptr [bx + di - 0x7c7e], 0xf0
-AC6E  A5                      movsw word ptr es:[di], word ptr [si]
-AC6F  10 11                   adc byte ptr [bx + di], dl
-AC71  12 13                   adc dl, byte ptr [bp + di]
-AC73  14 15                   adc al, 0x15
-AC75  16                      push ss
-AC76  17                      pop ss
-AC77  18 19                   sbb byte ptr [bx + di], bl
-AC79  F0              db 0xF0
-AC7A  F0              db 0xF0
-AC7B  F0              db 0xF0
-AC7C  FF 1E 1F 20             lcall [0x201f]
 
 ===== AE60h-AEDFh =====
 Reason: INT 15h keyboard-intercept wrapper candidate after translation tables
