@@ -1753,3 +1753,46 @@ The 90E7h code is a separate entry, not called by A08Dh. Its ordinary dispatcher
 | 8Ch | 9271h | |
 
 This is a separate AH=80h..8Ch service table; it must not be conflated with the AH=00h..19h dispatch table at A0F1h. The next pass should decode A0F1h and the 26 individual INT 13h services in the actual A08Dh hook, then separately identify which caller enters 90E7h.
+
+## Actual A08Dh INT 13h dispatch table (AH=00h..19h)
+
+The table is located at CS:A0F1h and contains 26 little-endian near offsets. The handler calculates `DI = AH*2`, checks `AH <= 19h`, then jumps through `CS:[DI+A0F1h]`. This is the real conventional INT 13h function dispatcher reached by the temporary hook. Table recovered directly from ROM:
+
+| AH | Target | Initial classification |
+|---:|---:|---|
+| 00h | A197h | reset |
+| 01h | A20Bh | status |
+| 02h | A216h | read sectors |
+| 03h | A226h | write sectors |
+| 04h | A23Eh | verify sectors |
+| 05h | A25Fh | format track |
+| 06h | A18Eh | unsupported/default |
+| 07h | A18Eh | unsupported/default |
+| 08h | A1A4h | get drive parameters |
+| 09h | A337h | initialize drive parameters (function slot) |
+| 0Ah | A372h | read long (function slot) |
+| 0Bh | A381h | write long (function slot) |
+| 0Ch | A474h | seek (function slot) |
+| 0Dh | A19Eh | alternate reset path |
+| 0Eh | A18Eh | unsupported/default |
+| 0Fh | A18Eh | unsupported/default |
+| 10h | A4D3h | ready/status test (function slot) |
+| 11h | A501h | recalibrate/test (function slot) |
+| 12h | A18Eh | unsupported/default |
+| 13h | A18Eh | unsupported/default |
+| 14h | A52Bh | controller diagnostic |
+| 15h | A1A9h | drive type |
+| 16h | A18Eh | unsupported/default |
+| 17h | A18Eh | unsupported/default |
+| 18h | A18Eh | unsupported/default |
+| 19h | A57Bh | park/seek-related service (needs semantic confirmation) |
+
+The labels for AH=02h/03h/04h/05h/08h/14h follow their recognizable IBM-compatible INT 13h function numbers; other labels marked “function slot” are provisional until their entire procedures and callers are traced. All entries at A18Eh share a common return stub (`MOV AX,0100h; MOV [0074h],AH; STC; RET`), so unsupported functions report status 01h and CF=1.
+
+### Disk read/write helper boundary
+
+- AH=02h entry A216h calls A76Ch. The latter begins by preserving DX and AX, combines CHS input with the DPT-derived geometry, and constructs the controller command parameters. Its helper chain continues beyond A807h.
+- AH=03h entry A226h calls A807h. This is a distinct write path; it must be decoded independently rather than assumed symmetric with A76Ch.
+- AH=14h entry A52Bh calls A796h and A82Dh, then tests controller result/status and stores the result in BDA byte 0040:008Dh; it returns status through AH and CF. This corrects the earlier unsupported-function interpretation: AH=14h is implemented by the actual A08Dh dispatch table. The earlier claim that this hook immediately returned AH=86h for AH=14h was based on the unrelated 90E7h dispatcher and is withdrawn.
+
+The temporary wrapper at 2FA3h calls AH=14h precisely to exercise this implemented controller-diagnostic path. This makes the wrapper's DPT pointer setup relevant to the A08Dh code. The next analysis must trace A76Ch/A807h and the geometry lookup helper they call, then identify which fields of the installed DPT are actually consumed.
