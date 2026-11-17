@@ -11,8 +11,15 @@ Reason: unresolved four-byte prefix 86 C4 FF E7 followed by the 55-byte indexed 
 8E29  19 20 66 16 17 19 20 24 16 17 19 20 25 16 17 19 . f... $... %...
 8E39  20 33 16 17 19 20 40 16 17 19 20                 3... @... 
 
+===== DATA 55EBh-562Ah =====
+Reason: Source copy of the 16-entry x 4-byte Setup text-attribute palette table; copied to 562Bh by the video/Setup initializer at 566Bh
+55EB  07 70 70 07 70 70 70 70 07 07 07 07 70 07 07 70 .pp.pppp....p..p
+55FB  70 70 07 07 07 70 70 70 07 07 07 70 70 07 07 07 pp...ppp...pp...
+560B  70 70 70 07 07 70 07 07 07 07 70 70 70 07 70 07 ppp..p....ppp.p.
+561B  07 70 07 70 07 07 70 07 70 07 70 70 70 70 07 70 .p.p..p.p.pppp.p
+
 ===== DATA 562Bh-566Ah =====
-Reason: 16-entry x 4-byte Setup text-attribute palette table selected by [E037h]
+Reason: Working copy of the 16-entry x 4-byte Setup text-attribute palette table selected by [E037h]
 562B  57 60 17 20 20 47 30 57 70 30 57 60 17 70 70 17 W`.  G0Wp0W`.pp.
 563B  57 30 47 20 20 17 60 57 17 60 57 30 30 47 20 17 W0G  .`W.`W00G .
 564B  70 20 17 60 17 17 17 17 30 57 60 17 70 70 70 70 p .`....0W`.pppp
@@ -16970,6 +16977,38 @@ Reason: BIOS INT10 character output helper
 6941  A2 B1 E1                mov byte ptr [0xe1b1], al
 6944  A3 B5 E1                mov word ptr [0xe1b5], ax
 6947  A2              db 0xA2
+
+===== 566Bh-56ADh =====
+Reason: Setup video-mode/INT10-vector check and 64-byte palette-table initializer; jumps into 56CBh
+566B  B4 0F                   mov ah, 0xf
+566D  CD 10                   int 0x10
+566F  3C 07                   cmp al, 7
+5671  74 07                   je 0x567a
+5673  B8 03 00                mov ax, 3
+5676  CD 10                   int 0x10
+5678  EB 4F                   jmp 0x56c9
+567A  1E                      push ds
+567B  33 C0                   xor ax, ax
+567D  8E D8                   mov ds, ax
+567F  A1 42 00                mov ax, word ptr [0x42]
+5682  1F                      pop ds
+5683  3D 00 C8                cmp ax, 0xc800
+5686  72 0F                   jb 0x5697
+5688  3D 00 E0                cmp ax, 0xe000
+568B  72 05                   jb 0x5692
+568D  3D 00 F0                cmp ax, 0xf000
+5690  72 05                   jb 0x5697
+5692  C6 06 EA 55 08          mov byte ptr [0x55ea], 8
+5697  C7 06 E8 55 00 B0       mov word ptr [0x55e8], 0xb000
+569D  56                      push si
+569E  57                      push di
+569F  1E                      push ds
+56A0  07                      pop es
+56A1  BE EB 55                mov si, 0x55eb
+56A4  B9 40 00                mov cx, 0x40
+56A7  BF 2B 56                mov di, 0x562b
+56AA  F3 A4                   rep movsb byte ptr es:[di], byte ptr [si]
+56AC  EB 1D                   jmp 0x56cb
 
 ===== D100h-D17Fh =====
 Reason: FDC I/O code candidate; references ports 03F4h/03F7h
