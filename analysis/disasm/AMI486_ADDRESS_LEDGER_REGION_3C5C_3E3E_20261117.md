@@ -78,4 +78,4 @@ The candidate generator now:
 - seeds 3C5Eh for 481 bytes through 3E3Eh;
 - extends the Setup handler pointer table from 11 to 12 entries (3446h–345Dh).
 
-The CI manifest is the verification gate for this menu loop and its table-boundary correction. The next largest uncovered interval will be taken from the completed run.
+GitHub Actions run 44086115994 completed successfully. The manifest reports 838 candidate windows, 239 data ranges, 41,876 unique code-window bytes, 19,705 unique data-range bytes, 293 overlap bytes, and a 61,288-byte union (93.52%). There are 62 uncovered intervals; the next largest is 0236h–03D3h (414 bytes).
