@@ -743,3 +743,28 @@ A fresh byte-offset audit corrects the earlier subsection that described `69D0h`
 The earlier statement that a routine begins at `69D0h` is withdrawn; references to that routine should use `69D1h` as the byte-level start candidate. A fresh scan of standard near relative `CALL/JMP`, short conditional branches, and near conditional branches found no direct branch target at `69D1h`, `6A60h`, or `6CE5h`. This does not exclude far transfers, register-indirect dispatch, computed jumps, or entry through an overlapping decode; those require separate analysis. In particular, the absence of direct relative references is not proof that any of these sequences are unreachable.
 
 The bytes at `6A60h` still decode as a valid instruction boundary in the current linear view, but the preceding bytes include a control-flow path that must be considered before treating it as a standalone function. No new caller-to-entry relationship is established by this pass.
+
+
+### Recovered direct callers for the corrected 69D1h entry
+
+The corrected routine boundary at `69D1h` now has two confirmed near-CALL references in the ROM. A fresh relative-branch scan found:
+
+- `6AF9h: CALL 69D1h`.
+- `6BB8h: CALL 69D1h`.
+
+The first call is in the record/buffer-processing path around `6AE0h–6B10h`. Before the call, the caller pushes several values assembled from the current record and loop state (including values loaded from the record at `[SI+2]`, `[SI]`, and related registers). It then restores the stack by adding `000Ah` after the call and continues its record loop. This is direct evidence that the `69D1h` routine is used as a lower-level worker in the E1B8 record-processing path.
+
+The second call at `6BB8h` follows explicit setup from disk geometry/state:
+
+- push zero-extended `[E1B4h]`;
+- push `WORD [E1B2h]`;
+- push zero-extended `[E1B7h]`;
+- push `WORD [E1B5h]`;
+- set `[E3BBh]=10h`;
+- call `69D1h`.
+
+The caller then tests carry/status and the state byte `[E3B9h]`, and may call the adjacent retry/error helpers. This establishes a concrete call path from geometry/state preparation into `69D1h`; it does not yet assign semantic labels to each argument or prove a connection to the destructive-confirmation Y branch.
+
+A second boundary correction is also recorded: `6CE5h` is not a code entry. The bytes at `6CE4h` begin `C6 06 AB E1 01` (a store to `[E1ABh]`), followed at `6CE9h` by `C8 10 00 00` (`ENTER 0010h,0`). Thus `6CE4h` is the start of this instruction sequence and `6CE9h` is the ENTER instruction within it; neither has a direct near-relative branch reference in the current scan. The preceding routine ends at `6CE3h: RET`. Do not refer to `6CE5h` as an entry point.
+
+This pass therefore resolves one missing call graph: `6AF9h` and `6BB8h` both call the actual `69D1h` worker. The separate `6CE4h` sequence and the UI-to-disk confirmation relationship remain open questions.
