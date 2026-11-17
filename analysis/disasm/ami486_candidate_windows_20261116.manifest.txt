@@ -12,15 +12,17 @@ Largest uncovered intervals (length, start, end):
   86, 596A-59BF
   83, 72D8-732A
   82, 83AE-83FF
-  76, ABB4-ABFF
   76, 2ED8-2F23
-  69, AAEF-AB33
+  76, ABB4-ABFF
   69, 8E09-8E4D
+  69, AAEF-AB33
   67, 566B-56AD
   63, 55EC-562A
-  38, 235B-2380
+  38, 2207-222C
 Window bytes: 0x80 default; selected handler windows clipped at known data boundaries
 Decoder: Capstone x86 16-bit
 Relative near-branch targets normalized to 16-bit IP.
 Known tables and strings are emitted separately as data.
 Interpretation: independently seeded linear windows only; no CFG or entry-point proof.
+Range-mask source: tools/disasm_ami486_candidate_windows.py at 39fc3e561268696251e4ea8e5f8fd16684e47aaa.
+Status: range-mask metrics reconciled from current generator definitions; the per-window Capstone listing has not yet been regenerated after the latest boundary corrections.
