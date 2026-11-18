@@ -1,5 +1,5 @@
 ; Project134 — independent AMI486 BIOS reconstruction.
-; Stage 0: address-accurate reset gateway and verified early POST dispatcher.
+; Stage 4: address-accurate reset gateway and byte-verified POST continuation windows.
 ; This image is intentionally marked INCOMPLETE: destinations outside this
 ; implemented window are not yet reconstructed, so it is not PCem-bootable.
 
