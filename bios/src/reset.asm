@@ -523,7 +523,132 @@ bios_ali_weight_sum:
 %if ($ - rom_start) != 0x2537
     %error "Shadow-copy and CMOS weighted ALi helpers must end at 2537h"
 %endif
-incbin  "ami486.bin", ($ - rom_start), (0x8280 - ($ - rom_start)) ; inherited reference bytes from 2537h to 8280h
+; F000:2537h–2628h — AUTO Config ALi register consumers and row selector.
+bios_autoconfig_write_reg20:
+    call    near 0x25C4
+    mov     si, 0x87B5
+    db      0x03, 0xF0                 ; add si, ax
+    mov     ax, 0x0202
+    call    near 0x8DCF
+    test    al, 0x08
+    je      near bios_autoconfig_reg20_standard
+    inc     si
+    cs lodsw
+    and     ah, 0x07
+    jmp     short bios_autoconfig_reg20_merge
+    nop
+bios_autoconfig_reg20_standard:
+    cs lodsw
+    db      0x22, 0xE0                 ; and ah, al
+bios_autoconfig_reg20_merge:
+    db      0x8A, 0xFC                 ; mov bh, ah
+    mov     ax, 0x2020
+    call    near 0x8DCF
+    and     al, 0xF8
+    db      0x0A, 0xC7                 ; or al, bh
+    db      0x86, 0xE0                 ; xchg al, ah
+    call    near 0x8DDC
+    ret
+
+bios_autoconfig_write_reg17:
+    call    near 0x25C4
+    mov     si, 0x87AD
+    db      0x03, 0xF0                 ; add si, ax
+    cs lodsw
+    db      0x22, 0xE0                 ; and ah, al
+    db      0x8A, 0xFC                 ; mov bh, ah
+    mov     ax, 0x1717
+    call    near 0x8DCF
+    and     al, 0x7C
+    db      0x0A, 0xC7                 ; or al, bh
+    db      0x86, 0xE0                 ; xchg al, ah
+    call    near 0x8DDC
+    ret
+
+bios_autoconfig_write_reg16:
+    call    near 0x25C4
+    mov     si, 0x87A9
+    db      0x03, 0xF0                 ; add si, ax
+    cs lodsw
+    db      0x22, 0xE0                 ; and ah, al
+    db      0x8A, 0xFC                 ; mov bh, ah
+    mov     ax, 0x1616
+    call    near 0x8DCF
+    and     al, 0xF0
+    db      0x0A, 0xC7                 ; or al, bh
+    db      0x86, 0xE0                 ; xchg al, ah
+    call    near 0x8DDC
+    ret
+
+bios_autoconfig_write_reg19:
+    call    near 0x25C4
+    mov     si, 0x87B1
+    db      0x03, 0xF0                 ; add si, ax
+    cs lodsw
+    db      0x22, 0xE0                 ; and ah, al
+    db      0x8A, 0xFC                 ; mov bh, ah
+    mov     ax, 0x1919
+    call    near 0x8DCF
+    and     al, 0x9F
+    db      0x0A, 0xC7                 ; or al, bh
+    db      0x86, 0xE0                 ; xchg al, ah
+    call    near 0x8DDC
+    ret
+
+; 25C4h — CMOS/BDA AUTO Config row selector; returns row offset in AX.
+bios_autoconfig_row_offset:
+    mov     ax, 0xB3B3
+    call    near 0xEE94
+    test    al, 0x04
+    jnz     near bios_autoconfig_row_bda_plus6
+    smsw    ax
+    db      0x0A, 0xE4                 ; or ah, ah
+    jnz     near bios_autoconfig_row_bda_plus6
+    push    ds
+    mov     bx, 0x0040
+    mov     ds, bx
+    mov     al, [0x00E2]
+    pop     ds
+    and     al, 0x07
+    cmp     al, 0x05
+    jne     near bios_autoconfig_row_multiply
+    mov     ax, 0xB3B3
+    call    near 0xEE94
+    test    al, 0x02
+    je      near bios_autoconfig_row_multiply
+    mov     ax, 0x0007
+    mov     cl, 0x14
+    imul    cl
+    jmp     short bios_autoconfig_row_return
+    nop
+bios_autoconfig_row_multiply:
+    push    ds
+    mov     bx, 0x0040
+    mov     ds, bx
+    mov     al, [0x00E2]
+    pop     ds
+    db      0x80, 0xE4, 0x00           ; and ah, 00h
+    mov     cl, 0x14
+    imul    cl
+    jmp     short bios_autoconfig_row_return
+    nop
+bios_autoconfig_row_bda_plus6:
+    push    ds
+    mov     bx, 0x0040
+    mov     ds, bx
+    mov     al, [0x00E2]
+    pop     ds
+    db      0x80, 0xE4, 0x00           ; and ah, 00h
+    add     al, 0x06
+    mov     cl, 0x14
+    imul    cl
+bios_autoconfig_row_return:
+    ret
+
+%if ($ - rom_start) != 0x2629
+    %error "AUTO Config row consumers and selector must end at 2629h"
+%endif
+incbin  "ami486.bin", ($ - rom_start), (0x8280 - ($ - rom_start)) ; inherited reference bytes from 2629h to 8280h
     db      0x2F, 0x00, 0xE7, 0x03, 0x00, 0x00, 0x12, 0x00
 
 ; F000:82D0 — original POST callback vector table.
