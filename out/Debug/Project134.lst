@@ -1250,7 +1250,7 @@
   1190                                  
   1191                                  bios_post_8042_response_ok:
   1192 0000D7F8 09FF                        or      di, di
-  1193 0000D7FA 742E                        jz      bios_post_keyboard_init_done
+  1193 0000D7FA 742C                        jz      bios_post_keyboard_init_done
   1194 0000D7FC B0A1                        mov     al, 0xA1
   1195 0000D7FE E664                        out     0x64, al
   1196 0000D800 BC06D8                      mov     sp, 0xD806
@@ -1261,517 +1261,491 @@
   1200                                  bios_post_8042_a1_return:
   1201 0000D806 08D8                        dw      0xD808
   1202                                  bios_post_8042_a1_continue:
-  1203 0000D808 08D8                        or      al, bl
-  1204 0000D80A 31C9                        xor     cx, cx
-  1205                                  bios_post_8042_a1_wait:
-  1206 0000D80C E464                        in      al, 0x64
-  1207 0000D80E A801                        test    al, 0x01
-  1208 0000D810 E1FA                        loope   bios_post_8042_a1_wait
-  1209 0000D812 740A                        jz      bios_post_8042_a1_done
-  1210 0000D814 E460                        in      al, 0x60
-  1211 0000D816 3438                        xor     al, 0x38
-  1212 0000D818 7504                        jnz     bios_post_8042_a1_done
-  1213 0000D81A 81CD0000                    or      bp, strict word 0x0000
-  1214                                  bios_post_8042_a1_done:
-  1215 0000D81E B0FF                        mov     al, 0xFF
-  1216 0000D820 E664                        out     0x64, al
-  1217 0000D822 BC26D8                      mov     sp, 0xD826
-  1218                                      JMP_ABS 0xF659
-    18 0000D825 E9(311E)            <1>  jmp near (((%1) - (($ - rom_start) + 3) + 0x8000) & 0xFFFF) - 0x8000
-  1219                                  
-  1220                                  times 0xD826 - ($ - rom_start) db 0xFF
-  1220          ******************       error: TIMES value -2 is negative
-  1221                                  bios_post_8042_ff_return:
-  1222 0000D828 28D8                        dw      0xD828
-  1223                                  bios_post_keyboard_init_done:
-  1224 0000D82A B009                        mov     al, 0x09
-  1225 0000D82C E680                        out     0x80, al
-  1226                                      JMP_ABS 0x1AF8
-    18 0000D82E E9(C742)            <1>  jmp near (((%1) - (($ - rom_start) + 3) + 0x8000) & 0xFFFF) - 0x8000
-  1227                                  
-  1228                                  ; ---------------------------------------------------------------------------
-  1229                                  ; F000:D82F — first 8042 command/data exchange after POST 09h.
-  1230                                  times 0xD82F - ($ - rom_start) db 0xFF
-  1230          ******************       error: TIMES value -2 is negative
-  1231                                  bios_post_8042_command_60:
-  1232 0000D831 B060                        mov     al, 0x60
-  1233 0000D833 E664                        out     0x64, al
-  1234 0000D835 90                          nop
-  1235 0000D836 BC3AD8                      mov     sp, 0xD83A
-  1236                                      JMP_ABS 0xF659
-    18 0000D839 E9(1D1E)            <1>  jmp near (((%1) - (($ - rom_start) + 3) + 0x8000) & 0xFFFF) - 0x8000
-  1237                                  
-  1238                                  times 0xD83A - ($ - rom_start) db 0xFF
-  1238          ******************       error: TIMES value -2 is negative
-  1239                                  bios_post_8042_command_60_return:
-  1240 0000D83C 3CD8                        dw      0xD83C
-  1241                                  bios_post_8042_command_60_continue:
-  1242 0000D83E B00A                        mov     al, 0x0A
-  1243 0000D840 E680                        out     0x80, al
-  1244 0000D842 2EF606808210                test    byte [cs:0x8280], 0x10
-  1245 0000D848 B055                        mov     al, 0x55
-  1246 0000D84A 7402                        jz      short bios_post_8042_command_data
-  1247 0000D84C B074                        mov     al, 0x74
-  1248                                  bios_post_8042_command_data:
-  1249 0000D84E E660                        out     0x60, al
-  1250 0000D850 BC54D8                      mov     sp, 0xD854
-  1251                                      JMP_ABS 0xF659
-    18 0000D853 E9(031E)            <1>  jmp near (((%1) - (($ - rom_start) + 3) + 0x8000) & 0xFFFF) - 0x8000
-  1252                                  
-  1253                                  times 0xD854 - ($ - rom_start) db 0xFF
-  1253          ******************       error: TIMES value -2 is negative
-  1254                                  bios_post_8042_command_data_return:
-  1255 0000D856 56D8                        dw      0xD856
-  1256                                  times 0xD856 - ($ - rom_start) db 0xFF
-  1256          ******************       error: TIMES value -2 is negative
-  1257                                  bios_post_8042_command_0b:
-  1258 0000D858 B00B                        mov     al, 0x0B
-  1259 0000D85A E680                        out     0x80, al
-  1260 0000D85C 2EF606808220                test    byte [cs:0x8280], 0x20
-  1261 0000D862 B0C8                        mov     al, 0xC8
-  1262 0000D864 7402                        jz      short bios_post_8042_command_c8
-  1263 0000D866 B0C9                        mov     al, 0xC9
-  1264                                  bios_post_8042_command_c8:
-  1265 0000D868 E664                        out     0x64, al
-  1266 0000D86A BC6ED8                      mov     sp, 0xD86E
-  1267                                      JMP_ABS 0xF659
-    18 0000D86D E9(E91D)            <1>  jmp near (((%1) - (($ - rom_start) + 3) + 0x8000) & 0xFFFF) - 0x8000
-  1268                                  
-  1269                                  times 0xD86E - ($ - rom_start) db 0xFF
-  1269          ******************       error: TIMES value -2 is negative
-  1270                                  bios_post_8042_command_0b_return:
-  1271 0000D870 70D8                        dw      0xD870
-  1272                                  bios_post_8042_command_0b_continue:
-  1273 0000D872 B00C                        mov     al, 0x0C
-  1274 0000D874 E680                        out     0x80, al
+  1203 0000D808 31C9                        xor     cx, cx
+  1204                                  bios_post_8042_a1_wait:
+  1205 0000D80A E464                        in      al, 0x64
+  1206 0000D80C A801                        test    al, 0x01
+  1207 0000D80E E1FA                        loope   bios_post_8042_a1_wait
+  1208 0000D810 740A                        jz      bios_post_8042_a1_done
+  1209 0000D812 E460                        in      al, 0x60
+  1210 0000D814 3438                        xor     al, 0x38
+  1211 0000D816 7504                        jnz     bios_post_8042_a1_done
+  1212 0000D818 81CD0000                    or      bp, strict word 0x0000
+  1213                                  bios_post_8042_a1_done:
+  1214 0000D81C B0FF                        mov     al, 0xFF
+  1215 0000D81E E664                        out     0x64, al
+  1216 0000D820 BC26D8                      mov     sp, 0xD826
+  1217                                      JMP_ABS 0xF659
+    18 0000D823 E9(331E)            <1>  jmp near (((%1) - (($ - rom_start) + 3) + 0x8000) & 0xFFFF) - 0x8000
+  1218                                  
+  1219                                  times 0xD826 - ($ - rom_start) db 0xFF
+  1220                                  bios_post_8042_ff_return:
+  1221 0000D826 28D8                        dw      0xD828
+  1222                                  bios_post_keyboard_init_done:
+  1223 0000D828 B009                        mov     al, 0x09
+  1224 0000D82A E680                        out     0x80, al
+  1225                                      JMP_ABS 0x1AF8
+    18 0000D82C E9(C942)            <1>  jmp near (((%1) - (($ - rom_start) + 3) + 0x8000) & 0xFFFF) - 0x8000
+  1226                                  
+  1227                                  ; ---------------------------------------------------------------------------
+  1228                                  ; F000:D82F — first 8042 command/data exchange after POST 09h.
+  1229                                  times 0xD82F - ($ - rom_start) db 0xFF
+  1230                                  bios_post_8042_command_60:
+  1231 0000D82F B060                        mov     al, 0x60
+  1232 0000D831 E664                        out     0x64, al
+  1233 0000D833 90                          nop
+  1234 0000D834 BC3AD8                      mov     sp, 0xD83A
+  1235                                      JMP_ABS 0xF659
+    18 0000D837 E9(1F1E)            <1>  jmp near (((%1) - (($ - rom_start) + 3) + 0x8000) & 0xFFFF) - 0x8000
+  1236                                  
+  1237                                  times 0xD83A - ($ - rom_start) db 0xFF
+  1238                                  bios_post_8042_command_60_return:
+  1239 0000D83A 3CD8                        dw      0xD83C
+  1240                                  bios_post_8042_command_60_continue:
+  1241 0000D83C B00A                        mov     al, 0x0A
+  1242 0000D83E E680                        out     0x80, al
+  1243 0000D840 2EF606808210                test    byte [cs:0x8280], 0x10
+  1244 0000D846 B055                        mov     al, 0x55
+  1245 0000D848 7402                        jz      short bios_post_8042_command_data
+  1246 0000D84A B074                        mov     al, 0x74
+  1247                                  bios_post_8042_command_data:
+  1248 0000D84C E660                        out     0x60, al
+  1249 0000D84E BC54D8                      mov     sp, 0xD854
+  1250                                      JMP_ABS 0xF659
+    18 0000D851 E9(051E)            <1>  jmp near (((%1) - (($ - rom_start) + 3) + 0x8000) & 0xFFFF) - 0x8000
+  1251                                  
+  1252                                  times 0xD854 - ($ - rom_start) db 0xFF
+  1253                                  bios_post_8042_command_data_return:
+  1254 0000D854 56D8                        dw      0xD856
+  1255                                  times 0xD856 - ($ - rom_start) db 0xFF
+  1256                                  bios_post_8042_command_0b:
+  1257 0000D856 B00B                        mov     al, 0x0B
+  1258 0000D858 E680                        out     0x80, al
+  1259 0000D85A 2EF606808220                test    byte [cs:0x8280], 0x20
+  1260 0000D860 B0C8                        mov     al, 0xC8
+  1261 0000D862 7402                        jz      short bios_post_8042_command_c8
+  1262 0000D864 B0C9                        mov     al, 0xC9
+  1263                                  bios_post_8042_command_c8:
+  1264 0000D866 E664                        out     0x64, al
+  1265 0000D868 BC6ED8                      mov     sp, 0xD86E
+  1266                                      JMP_ABS 0xF659
+    18 0000D86B E9(EB1D)            <1>  jmp near (((%1) - (($ - rom_start) + 3) + 0x8000) & 0xFFFF) - 0x8000
+  1267                                  
+  1268                                  times 0xD86E - ($ - rom_start) db 0xFF
+  1269                                  bios_post_8042_command_0b_return:
+  1270 0000D86E 70D8                        dw      0xD870
+  1271                                  bios_post_8042_command_0b_continue:
+  1272 0000D870 B00C                        mov     al, 0x0C
+  1273 0000D872 E680                        out     0x80, al
+  1274 0000D874 E300                        jcxz    $+2
   1275 0000D876 E300                        jcxz    $+2
-  1276 0000D878 E300                        jcxz    $+2
-  1277 0000D87A B0FF                        mov     al, 0xFF
-  1278 0000D87C E664                        out     0x64, al
-  1279 0000D87E BC82D8                      mov     sp, 0xD882
-  1280                                      JMP_ABS 0xF659
-    18 0000D881 E9(D51D)            <1>  jmp near (((%1) - (($ - rom_start) + 3) + 0x8000) & 0xFFFF) - 0x8000
-  1281                                  
-  1282                                  times 0xD882 - ($ - rom_start) db 0xFF
-  1282          ******************       error: TIMES value -2 is negative
-  1283                                  bios_post_cmos_8f_55_return:
-  1284 0000D884 84D8                        dw      0xD884
-  1285                                  bios_post_cmos_8f_55_continue:
-  1286 0000D886 B00D                        mov     al, 0x0D
-  1287 0000D888 E680                        out     0x80, al
-  1288 0000D88A B88F55                      mov     ax, 0x558F
-  1289 0000D88D 90                          nop
-  1290 0000D88E BC92D8                      mov     sp, 0xD892
-  1291                                      JMP_ABS 0xEE9D
-    18 0000D891 E9(0916)            <1>  jmp near (((%1) - (($ - rom_start) + 3) + 0x8000) & 0xFFFF) - 0x8000
-  1292                                  
-  1293                                  times 0xD892 - ($ - rom_start) db 0xFF
-  1293          ******************       error: TIMES value -2 is negative
-  1294                                  bios_post_cmos_8f_55_read_return:
-  1295 0000D894 94D8                        dw      0xD894
-  1296                                  bios_post_cmos_8f_55_read_continue:
-  1297 0000D896 BC9AD8                      mov     sp, 0xD89A
-  1298                                      JMP_ABS 0xEE94
-    18 0000D899 E9(F815)            <1>  jmp near (((%1) - (($ - rom_start) + 3) + 0x8000) & 0xFFFF) - 0x8000
-  1299                                  
-  1300                                  times 0xD89A - ($ - rom_start) db 0xFF
-  1300          ******************       error: TIMES value -2 is negative
-  1301                                  bios_post_cmos_8f_55_compare_return:
-  1302 0000D89C 9CD8                        dw      0xD89C
-  1303                                  bios_post_cmos_8f_55_compare_continue:
-  1304 0000D89E 30E0                        xor     al, ah
-  1305 0000D8A0 7518                        jnz     short bios_post_cmos_8f_mismatch
-  1306 0000D8A2 B88FAA                      mov     ax, 0xAA8F
-  1307 0000D8A5 90                          nop
-  1308 0000D8A6 BCAAD8                      mov     sp, 0xD8AA
-  1309                                      JMP_ABS 0xEE9D
-    18 0000D8A9 E9(F115)            <1>  jmp near (((%1) - (($ - rom_start) + 3) + 0x8000) & 0xFFFF) - 0x8000
-  1310                                  
-  1311                                  times 0xD8AA - ($ - rom_start) db 0xFF
-  1311          ******************       error: TIMES value -2 is negative
-  1312                                  bios_post_cmos_8f_aa_write_return:
-  1313 0000D8AC ACD8                        dw      0xD8AC
-  1314                                  bios_post_cmos_8f_aa_write_continue:
-  1315 0000D8AE BCB2D8                      mov     sp, 0xD8B2
-  1316                                      JMP_ABS 0xEE94
-    18 0000D8B1 E9(E015)            <1>  jmp near (((%1) - (($ - rom_start) + 3) + 0x8000) & 0xFFFF) - 0x8000
-  1317                                  
-  1318                                  times 0xD8B2 - ($ - rom_start) db 0xFF
-  1318          ******************       error: TIMES value -2 is negative
-  1319                                  bios_post_cmos_8f_aa_read_return:
-  1320 0000D8B4 B4D8                        dw      0xD8B4
-  1321                                  bios_post_cmos_8f_aa_read_continue:
-  1322 0000D8B6 30E0                        xor     al, ah
-  1323 0000D8B8 7406                        jz      short bios_post_cmos_8e_read
-  1324                                  bios_post_cmos_8f_mismatch:
-  1325 0000D8BA BD0A00                      mov     bp, 0x000A
-  1326                                      JMP_ABS 0xF4A5
-    18 0000D8BD E9(E51B)            <1>  jmp near (((%1) - (($ - rom_start) + 3) + 0x8000) & 0xFFFF) - 0x8000
-  1327                                  
-  1328                                  bios_post_cmos_8e_read:
-  1329 0000D8C0 B00E                        mov     al, 0x0E
-  1330 0000D8C2 E680                        out     0x80, al
-  1331 0000D8C4 B08D                        mov     al, 0x8D
-  1332 0000D8C6 BCCAD8                      mov     sp, 0xD8CA
-  1333                                      JMP_ABS 0xEE94
-    18 0000D8C9 E9(C815)            <1>  jmp near (((%1) - (($ - rom_start) + 3) + 0x8000) & 0xFFFF) - 0x8000
-  1334                                  
-  1335                                  times 0xD8CA - ($ - rom_start) db 0xFF
-  1335          ******************       error: TIMES value -2 is negative
-  1336                                  bios_post_cmos_8e_read_return:
-  1337 0000D8CC CCD8                        dw      0xD8CC
-  1338                                  bios_post_cmos_8e_read_continue:
-  1339 0000D8CE 08C0                        or      al, al
-  1340 0000D8D0 B88E8E                      mov     ax, 0x8E8E
-  1341 0000D8D3 90                          nop
-  1342 0000D8D4 BCD8D8                      mov     sp, 0xD8D8
-  1343                                      JMP_ABS 0xEE94
-    18 0000D8D7 E9(BA15)            <1>  jmp near (((%1) - (($ - rom_start) + 3) + 0x8000) & 0xFFFF) - 0x8000
-  1344                                  
-  1345                                  times 0xD8D8 - ($ - rom_start) db 0xFF
-  1345          ******************       error: TIMES value -2 is negative
-  1346                                  bios_post_cmos_8e_flags_return:
-  1347 0000D8DA DAD8                        dw      0xD8DA
-  1348                                  bios_post_cmos_8e_flags_continue:
-  1349 0000D8DC 7807                        js      short bios_post_cmos_8e_negative
-  1350 0000D8DE 83CD08                      or      bp, 0x0008
-  1351 0000D8E1 0CDC                        or      al, 0xDC
-  1352 0000D8E3 EB17                        jmp     short bios_post_cmos_8e_flags_done
-  1353                                  bios_post_cmos_8e_negative:
-  1354 0000D8E5 08C0                        or      al, al
-  1355 0000D8E7 780C                        js      short bios_post_cmos_8e_sign
-  1356                                      JMP_ABS 0x868B
-    18 0000D8E9 E9(9FAD)            <1>  jmp near (((%1) - (($ - rom_start) + 3) + 0x8000) & 0xFFFF) - 0x8000
-  1357                                  bios_post_cmos_8e_zero:
-  1358 0000D8EC 740C                        jz      short bios_post_cmos_8e_mask
-  1359 0000D8EE 0C5C                        or      al, 0x5C
-  1360 0000D8F0 83CD20                      or      bp, 0x0020
-  1361 0000D8F3 EB07                        jmp     short bios_post_cmos_8e_flags_done
-  1362                                  bios_post_cmos_8e_sign:
-  1363 0000D8F5 83CD10                      or      bp, 0x0010
-  1364 0000D8F8 EB02                        jmp     short bios_post_cmos_8e_flags_done
-  1365                                  bios_post_cmos_8e_mask:
-  1366 0000D8FA 248B                        and     al, 0x8B
-  1367                                  bios_post_cmos_8e_flags_done:
-  1368 0000D8FC 24FE                        and     al, 0xFE
-  1369 0000D8FE 86E0                        xchg    ah, al
-  1370 0000D900 BC04D9                      mov     sp, 0xD904
-  1371                                      JMP_ABS 0xEE9D
-    18 0000D903 E9(9715)            <1>  jmp near (((%1) - (($ - rom_start) + 3) + 0x8000) & 0xFFFF) - 0x8000
-  1372                                  
-  1373                                  times 0xD904 - ($ - rom_start) db 0xFF
-  1373          ******************       error: TIMES value -2 is negative
-  1374                                  bios_post_cmos_8e_write_return:
-  1375 0000D906 06D9                        dw      0xD906
-  1376                                  bios_post_cmos_8e_write_continue:
-  1377 0000D908 B00F                        mov     al, 0x0F
-  1378 0000D90A E680                        out     0x80, al
-  1379                                      JMP_ABS 0x8400
-    18 0000D90C E9(F1AA)            <1>  jmp near (((%1) - (($ - rom_start) + 3) + 0x8000) & 0xFFFF) - 0x8000
-  1380                                  
-  1381                                  ; Separate D90Dh POST entry: CMOS 8Bh read/modify/write sequence.
-  1382                                  times 0xD90D - ($ - rom_start) db 0xFF
-  1382          ******************       error: TIMES value -2 is negative
-  1383                                  bios_post_cmos_8b_update:
-  1384 0000D90F B010                        mov     al, 0x10
-  1385 0000D911 E680                        out     0x80, al
-  1386 0000D913 B88B8B                      mov     ax, 0x8B8B
-  1387 0000D916 BC1AD9                      mov     sp, 0xD91A
-  1388                                      JMP_ABS 0xEE94
-    18 0000D919 E9(7815)            <1>  jmp near (((%1) - (($ - rom_start) + 3) + 0x8000) & 0xFFFF) - 0x8000
-  1389                                  
-  1390                                  times 0xD91A - ($ - rom_start) db 0xFF
-  1390          ******************       error: TIMES value -2 is negative
-  1391                                  bios_post_cmos_8b_read_return:
-  1392 0000D91C 1CD9                        dw      0xD91C
-  1393                                  bios_post_cmos_8b_read_continue:
-  1394 0000D91E 2407                        and     al, 0x07
-  1395 0000D920 86E0                        xchg    ah, al
-  1396 0000D922 BC26D9                      mov     sp, 0xD926
-  1397                                      JMP_ABS 0xEE9D
-    18 0000D925 E9(7515)            <1>  jmp near (((%1) - (($ - rom_start) + 3) + 0x8000) & 0xFFFF) - 0x8000
-  1398                                  
-  1399                                  times 0xD926 - ($ - rom_start) db 0xFF
-  1399          ******************       error: TIMES value -2 is negative
-  1400                                  bios_post_cmos_8c_read_return:
-  1401 0000D928 28D9                        dw      0xD928
-  1402                                  bios_post_cmos_8c_read_continue:
-  1403 0000D92A B08C                        mov     al, 0x8C
-  1404 0000D92C BC30D9                      mov     sp, 0xD930
-  1405                                      JMP_ABS 0xEE94
-    18 0000D92F E9(6215)            <1>  jmp near (((%1) - (($ - rom_start) + 3) + 0x8000) & 0xFFFF) - 0x8000
-  1406                                  
-  1407                                  times 0xD930 - ($ - rom_start) db 0xFF
-  1407          ******************       error: TIMES value -2 is negative
-  1408                                  bios_post_cmos_8a_read_return:
-  1409 0000D932 32D9                        dw      0xD932
-  1410                                  bios_post_cmos_8a_read_continue:
-  1411 0000D934 B88A8A                      mov     ax, 0x8A8A
-  1412 0000D937 90                          nop
-  1413 0000D938 BC3CD9                      mov     sp, 0xD93C
-  1414                                      JMP_ABS 0xEE94
-    18 0000D93B E9(5615)            <1>  jmp near (((%1) - (($ - rom_start) + 3) + 0x8000) & 0xFFFF) - 0x8000
-  1415                                  
-  1416                                  times 0xD93C - ($ - rom_start) db 0xFF
-  1416          ******************       error: TIMES value -2 is negative
-  1417                                  bios_post_cmos_8a_compare_return:
-  1418 0000D93E 3ED9                        dw      0xD93E
-  1419                                  bios_post_cmos_8a_compare_continue:
-  1420 0000D940 240F                        and     al, 0x0F
-  1421 0000D942 750C                        jnz     short bios_post_cmos_8a_enable_keyboard
-  1422 0000D944 B026                        mov     al, 0x26
-  1423 0000D946 86E0                        xchg    ah, al
-  1424 0000D948 BC4CD9                      mov     sp, 0xD94C
-  1425                                      JMP_ABS 0xEE9D
-    18 0000D94B E9(4F15)            <1>  jmp near (((%1) - (($ - rom_start) + 3) + 0x8000) & 0xFFFF) - 0x8000
-  1426                                  
-  1427                                  times 0xD94C - ($ - rom_start) db 0xFF
-  1427          ******************       error: TIMES value -2 is negative
-  1428                                  bios_post_keyboard_enable_return:
-  1429 0000D94E 4ED9                        dw      0xD94E
-  1430                                  bios_post_keyboard_enable_continue:
-  1431                                  bios_post_cmos_8a_enable_keyboard:
-  1432 0000D950 B0AE                        mov     al, 0xAE
-  1433 0000D952 E664                        out     0x64, al
-  1434 0000D954 BC58D9                      mov     sp, 0xD958
-  1435                                      JMP_ABS 0xF659
-    18 0000D957 E9(FF1C)            <1>  jmp near (((%1) - (($ - rom_start) + 3) + 0x8000) & 0xFFFF) - 0x8000
-  1436                                  
-  1437                                  times 0xD958 - ($ - rom_start) db 0xFF
-  1437          ******************       error: TIMES value -2 is negative
-  1438                                  bios_post_keyboard_ack_return:
-  1439 0000D95A 5AD9                        dw      0xD95A
-  1440                                  bios_post_keyboard_ack_continue:
-  1441 0000D95C B90040                      mov     cx, 0x4000
-  1442                                  bios_post_keyboard_ack_wait:
-  1443 0000D95F E460                        in      al, 0x60
-  1444 0000D961 3C52                        cmp     al, 0x52
-  1445 0000D963 E0FA                        loopne  bios_post_keyboard_ack_wait
-  1446 0000D965 7517                        jnz     bios_post_keyboard_disable
-  1447 0000D967 B88E8E                      mov     ax, 0x8E8E
-  1448 0000D96A BC6ED9                      mov     sp, 0xD96E
-  1449                                      JMP_ABS 0xEE94
-    18 0000D96D E9(2415)            <1>  jmp near (((%1) - (($ - rom_start) + 3) + 0x8000) & 0xFFFF) - 0x8000
-  1450                                  
-  1451                                  times 0xD96E - ($ - rom_start) db 0xFF
-  1451          ******************       error: TIMES value -2 is negative
-  1452                                  bios_post_cmos_8e_update_return:
-  1453 0000D970 70D9                        dw      0xD970
-  1454                                  bios_post_cmos_8e_update_continue:
-  1455 0000D972 0C01                        or      al, 0x01
-  1456 0000D974 86E0                        xchg    ah, al
-  1457 0000D976 BC7AD9                      mov     sp, 0xD97A
-  1458                                      JMP_ABS 0xEE9D
-    18 0000D979 E9(2115)            <1>  jmp near (((%1) - (($ - rom_start) + 3) + 0x8000) & 0xFFFF) - 0x8000
-  1459                                  
-  1460                                  times 0xD97A - ($ - rom_start) db 0xFF
-  1460          ******************       error: TIMES value -2 is negative
-  1461                                  bios_post_keyboard_disable_return:
-  1462 0000D97C 7CD9                        dw      0xD97C
-  1463                                  bios_post_keyboard_disable:
-  1464 0000D97E B0AD                        mov     al, 0xAD
-  1465 0000D980 E664                        out     0x64, al
-  1466 0000D982 BC86D9                      mov     sp, 0xD986
-  1467                                      JMP_ABS 0xF659
-    18 0000D985 E9(D11C)            <1>  jmp near (((%1) - (($ - rom_start) + 3) + 0x8000) & 0xFFFF) - 0x8000
-  1468                                  
-  1469                                  times 0xD986 - ($ - rom_start) db 0xFF
-  1469          ******************       error: TIMES value -2 is negative
-  1470                                  bios_post_pic_setup_return:
-  1471 0000D988 88D9                        dw      0xD988
-  1472                                  bios_post_pic_setup_continue:
-  1473 0000D98A B011                        mov     al, 0x11
-  1474 0000D98C E680                        out     0x80, al
-  1475 0000D98E B004                        mov     al, 0x04
-  1476 0000D990 E608                        out     0x08, al
+  1276 0000D878 B0FF                        mov     al, 0xFF
+  1277 0000D87A E664                        out     0x64, al
+  1278 0000D87C BC82D8                      mov     sp, 0xD882
+  1279                                      JMP_ABS 0xF659
+    18 0000D87F E9(D71D)            <1>  jmp near (((%1) - (($ - rom_start) + 3) + 0x8000) & 0xFFFF) - 0x8000
+  1280                                  
+  1281                                  times 0xD882 - ($ - rom_start) db 0xFF
+  1282                                  bios_post_cmos_8f_55_return:
+  1283 0000D882 84D8                        dw      0xD884
+  1284                                  bios_post_cmos_8f_55_continue:
+  1285 0000D884 B00D                        mov     al, 0x0D
+  1286 0000D886 E680                        out     0x80, al
+  1287 0000D888 B88F55                      mov     ax, 0x558F
+  1288 0000D88B 90                          nop
+  1289 0000D88C BC92D8                      mov     sp, 0xD892
+  1290                                      JMP_ABS 0xEE9D
+    18 0000D88F E9(0B16)            <1>  jmp near (((%1) - (($ - rom_start) + 3) + 0x8000) & 0xFFFF) - 0x8000
+  1291                                  
+  1292                                  times 0xD892 - ($ - rom_start) db 0xFF
+  1293                                  bios_post_cmos_8f_55_read_return:
+  1294 0000D892 94D8                        dw      0xD894
+  1295                                  bios_post_cmos_8f_55_read_continue:
+  1296 0000D894 BC9AD8                      mov     sp, 0xD89A
+  1297                                      JMP_ABS 0xEE94
+    18 0000D897 E9(FA15)            <1>  jmp near (((%1) - (($ - rom_start) + 3) + 0x8000) & 0xFFFF) - 0x8000
+  1298                                  
+  1299                                  times 0xD89A - ($ - rom_start) db 0xFF
+  1300                                  bios_post_cmos_8f_55_compare_return:
+  1301 0000D89A 9CD8                        dw      0xD89C
+  1302                                  bios_post_cmos_8f_55_compare_continue:
+  1303 0000D89C 30E0                        xor     al, ah
+  1304 0000D89E 7518                        jnz     short bios_post_cmos_8f_mismatch
+  1305 0000D8A0 B88FAA                      mov     ax, 0xAA8F
+  1306 0000D8A3 90                          nop
+  1307 0000D8A4 BCAAD8                      mov     sp, 0xD8AA
+  1308                                      JMP_ABS 0xEE9D
+    18 0000D8A7 E9(F315)            <1>  jmp near (((%1) - (($ - rom_start) + 3) + 0x8000) & 0xFFFF) - 0x8000
+  1309                                  
+  1310                                  times 0xD8AA - ($ - rom_start) db 0xFF
+  1311                                  bios_post_cmos_8f_aa_write_return:
+  1312 0000D8AA ACD8                        dw      0xD8AC
+  1313                                  bios_post_cmos_8f_aa_write_continue:
+  1314 0000D8AC BCB2D8                      mov     sp, 0xD8B2
+  1315                                      JMP_ABS 0xEE94
+    18 0000D8AF E9(E215)            <1>  jmp near (((%1) - (($ - rom_start) + 3) + 0x8000) & 0xFFFF) - 0x8000
+  1316                                  
+  1317                                  times 0xD8B2 - ($ - rom_start) db 0xFF
+  1318                                  bios_post_cmos_8f_aa_read_return:
+  1319 0000D8B2 B4D8                        dw      0xD8B4
+  1320                                  bios_post_cmos_8f_aa_read_continue:
+  1321 0000D8B4 30E0                        xor     al, ah
+  1322 0000D8B6 7406                        jz      short bios_post_cmos_8e_read
+  1323                                  bios_post_cmos_8f_mismatch:
+  1324 0000D8B8 BD0A00                      mov     bp, 0x000A
+  1325                                      JMP_ABS 0xF4A5
+    18 0000D8BB E9(E71B)            <1>  jmp near (((%1) - (($ - rom_start) + 3) + 0x8000) & 0xFFFF) - 0x8000
+  1326                                  
+  1327                                  bios_post_cmos_8e_read:
+  1328 0000D8BE B00E                        mov     al, 0x0E
+  1329 0000D8C0 E680                        out     0x80, al
+  1330 0000D8C2 B08D                        mov     al, 0x8D
+  1331 0000D8C4 BCCAD8                      mov     sp, 0xD8CA
+  1332                                      JMP_ABS 0xEE94
+    18 0000D8C7 E9(CA15)            <1>  jmp near (((%1) - (($ - rom_start) + 3) + 0x8000) & 0xFFFF) - 0x8000
+  1333                                  
+  1334                                  times 0xD8CA - ($ - rom_start) db 0xFF
+  1335                                  bios_post_cmos_8e_read_return:
+  1336 0000D8CA CCD8                        dw      0xD8CC
+  1337                                  bios_post_cmos_8e_read_continue:
+  1338 0000D8CC 08C0                        or      al, al
+  1339 0000D8CE B88E8E                      mov     ax, 0x8E8E
+  1340 0000D8D1 90                          nop
+  1341 0000D8D2 BCD8D8                      mov     sp, 0xD8D8
+  1342                                      JMP_ABS 0xEE94
+    18 0000D8D5 E9(BC15)            <1>  jmp near (((%1) - (($ - rom_start) + 3) + 0x8000) & 0xFFFF) - 0x8000
+  1343                                  
+  1344                                  times 0xD8D8 - ($ - rom_start) db 0xFF
+  1345                                  bios_post_cmos_8e_flags_return:
+  1346 0000D8D8 DAD8                        dw      0xD8DA
+  1347                                  bios_post_cmos_8e_flags_continue:
+  1348 0000D8DA 7807                        js      short bios_post_cmos_8e_negative
+  1349 0000D8DC 83CD08                      or      bp, 0x0008
+  1350 0000D8DF 0CDC                        or      al, 0xDC
+  1351 0000D8E1 EB17                        jmp     short bios_post_cmos_8e_flags_done
+  1352                                  bios_post_cmos_8e_negative:
+  1353 0000D8E3 08C0                        or      al, al
+  1354 0000D8E5 780C                        js      short bios_post_cmos_8e_sign
+  1355                                      JMP_ABS 0x868B
+    18 0000D8E7 E9(A1AD)            <1>  jmp near (((%1) - (($ - rom_start) + 3) + 0x8000) & 0xFFFF) - 0x8000
+  1356                                  bios_post_cmos_8e_zero:
+  1357 0000D8EA 740C                        jz      short bios_post_cmos_8e_mask
+  1358 0000D8EC 0C5C                        or      al, 0x5C
+  1359 0000D8EE 83CD20                      or      bp, 0x0020
+  1360 0000D8F1 EB07                        jmp     short bios_post_cmos_8e_flags_done
+  1361                                  bios_post_cmos_8e_sign:
+  1362 0000D8F3 83CD10                      or      bp, 0x0010
+  1363 0000D8F6 EB02                        jmp     short bios_post_cmos_8e_flags_done
+  1364                                  bios_post_cmos_8e_mask:
+  1365 0000D8F8 248B                        and     al, 0x8B
+  1366                                  bios_post_cmos_8e_flags_done:
+  1367 0000D8FA 24FE                        and     al, 0xFE
+  1368 0000D8FC 86E0                        xchg    ah, al
+  1369 0000D8FE BC04D9                      mov     sp, 0xD904
+  1370                                      JMP_ABS 0xEE9D
+    18 0000D901 E9(9915)            <1>  jmp near (((%1) - (($ - rom_start) + 3) + 0x8000) & 0xFFFF) - 0x8000
+  1371                                  
+  1372                                  times 0xD904 - ($ - rom_start) db 0xFF
+  1373                                  bios_post_cmos_8e_write_return:
+  1374 0000D904 06D9                        dw      0xD906
+  1375                                  bios_post_cmos_8e_write_continue:
+  1376 0000D906 B00F                        mov     al, 0x0F
+  1377 0000D908 E680                        out     0x80, al
+  1378                                      JMP_ABS 0x8400
+    18 0000D90A E9(F3AA)            <1>  jmp near (((%1) - (($ - rom_start) + 3) + 0x8000) & 0xFFFF) - 0x8000
+  1379                                  
+  1380                                  ; Separate D90Dh POST entry: CMOS 8Bh read/modify/write sequence.
+  1381                                  times 0xD90D - ($ - rom_start) db 0xFF
+  1382                                  bios_post_cmos_8b_update:
+  1383 0000D90D B010                        mov     al, 0x10
+  1384 0000D90F E680                        out     0x80, al
+  1385 0000D911 B88B8B                      mov     ax, 0x8B8B
+  1386 0000D914 BC1AD9                      mov     sp, 0xD91A
+  1387                                      JMP_ABS 0xEE94
+    18 0000D917 E9(7A15)            <1>  jmp near (((%1) - (($ - rom_start) + 3) + 0x8000) & 0xFFFF) - 0x8000
+  1388                                  
+  1389                                  times 0xD91A - ($ - rom_start) db 0xFF
+  1390                                  bios_post_cmos_8b_read_return:
+  1391 0000D91A 1CD9                        dw      0xD91C
+  1392                                  bios_post_cmos_8b_read_continue:
+  1393 0000D91C 2407                        and     al, 0x07
+  1394 0000D91E 86E0                        xchg    ah, al
+  1395 0000D920 BC26D9                      mov     sp, 0xD926
+  1396                                      JMP_ABS 0xEE9D
+    18 0000D923 E9(7715)            <1>  jmp near (((%1) - (($ - rom_start) + 3) + 0x8000) & 0xFFFF) - 0x8000
+  1397                                  
+  1398                                  times 0xD926 - ($ - rom_start) db 0xFF
+  1399                                  bios_post_cmos_8c_read_return:
+  1400 0000D926 28D9                        dw      0xD928
+  1401                                  bios_post_cmos_8c_read_continue:
+  1402 0000D928 B08C                        mov     al, 0x8C
+  1403 0000D92A BC30D9                      mov     sp, 0xD930
+  1404                                      JMP_ABS 0xEE94
+    18 0000D92D E9(6415)            <1>  jmp near (((%1) - (($ - rom_start) + 3) + 0x8000) & 0xFFFF) - 0x8000
+  1405                                  
+  1406                                  times 0xD930 - ($ - rom_start) db 0xFF
+  1407                                  bios_post_cmos_8a_read_return:
+  1408 0000D930 32D9                        dw      0xD932
+  1409                                  bios_post_cmos_8a_read_continue:
+  1410 0000D932 B88A8A                      mov     ax, 0x8A8A
+  1411 0000D935 90                          nop
+  1412 0000D936 BC3CD9                      mov     sp, 0xD93C
+  1413                                      JMP_ABS 0xEE94
+    18 0000D939 E9(5815)            <1>  jmp near (((%1) - (($ - rom_start) + 3) + 0x8000) & 0xFFFF) - 0x8000
+  1414                                  
+  1415                                  times 0xD93C - ($ - rom_start) db 0xFF
+  1416                                  bios_post_cmos_8a_compare_return:
+  1417 0000D93C 3ED9                        dw      0xD93E
+  1418                                  bios_post_cmos_8a_compare_continue:
+  1419 0000D93E 240F                        and     al, 0x0F
+  1420 0000D940 750C                        jnz     short bios_post_cmos_8a_enable_keyboard
+  1421 0000D942 B026                        mov     al, 0x26
+  1422 0000D944 86E0                        xchg    ah, al
+  1423 0000D946 BC4CD9                      mov     sp, 0xD94C
+  1424                                      JMP_ABS 0xEE9D
+    18 0000D949 E9(5115)            <1>  jmp near (((%1) - (($ - rom_start) + 3) + 0x8000) & 0xFFFF) - 0x8000
+  1425                                  
+  1426                                  times 0xD94C - ($ - rom_start) db 0xFF
+  1427                                  bios_post_keyboard_enable_return:
+  1428 0000D94C 4ED9                        dw      0xD94E
+  1429                                  bios_post_keyboard_enable_continue:
+  1430                                  bios_post_cmos_8a_enable_keyboard:
+  1431 0000D94E B0AE                        mov     al, 0xAE
+  1432 0000D950 E664                        out     0x64, al
+  1433 0000D952 BC58D9                      mov     sp, 0xD958
+  1434                                      JMP_ABS 0xF659
+    18 0000D955 E9(011D)            <1>  jmp near (((%1) - (($ - rom_start) + 3) + 0x8000) & 0xFFFF) - 0x8000
+  1435                                  
+  1436                                  times 0xD958 - ($ - rom_start) db 0xFF
+  1437                                  bios_post_keyboard_ack_return:
+  1438 0000D958 5AD9                        dw      0xD95A
+  1439                                  bios_post_keyboard_ack_continue:
+  1440 0000D95A B90040                      mov     cx, 0x4000
+  1441                                  bios_post_keyboard_ack_wait:
+  1442 0000D95D E460                        in      al, 0x60
+  1443 0000D95F 3C52                        cmp     al, 0x52
+  1444 0000D961 E0FA                        loopne  bios_post_keyboard_ack_wait
+  1445 0000D963 7517                        jnz     bios_post_keyboard_disable
+  1446 0000D965 B88E8E                      mov     ax, 0x8E8E
+  1447 0000D968 BC6ED9                      mov     sp, 0xD96E
+  1448                                      JMP_ABS 0xEE94
+    18 0000D96B E9(2615)            <1>  jmp near (((%1) - (($ - rom_start) + 3) + 0x8000) & 0xFFFF) - 0x8000
+  1449                                  
+  1450                                  times 0xD96E - ($ - rom_start) db 0xFF
+  1451                                  bios_post_cmos_8e_update_return:
+  1452 0000D96E 70D9                        dw      0xD970
+  1453                                  bios_post_cmos_8e_update_continue:
+  1454 0000D970 0C01                        or      al, 0x01
+  1455 0000D972 86E0                        xchg    ah, al
+  1456 0000D974 BC7AD9                      mov     sp, 0xD97A
+  1457                                      JMP_ABS 0xEE9D
+    18 0000D977 E9(2315)            <1>  jmp near (((%1) - (($ - rom_start) + 3) + 0x8000) & 0xFFFF) - 0x8000
+  1458                                  
+  1459                                  times 0xD97A - ($ - rom_start) db 0xFF
+  1460                                  bios_post_keyboard_disable_return:
+  1461 0000D97A 7CD9                        dw      0xD97C
+  1462                                  bios_post_keyboard_disable:
+  1463 0000D97C B0AD                        mov     al, 0xAD
+  1464 0000D97E E664                        out     0x64, al
+  1465 0000D980 BC86D9                      mov     sp, 0xD986
+  1466                                      JMP_ABS 0xF659
+    18 0000D983 E9(D31C)            <1>  jmp near (((%1) - (($ - rom_start) + 3) + 0x8000) & 0xFFFF) - 0x8000
+  1467                                  
+  1468                                  times 0xD986 - ($ - rom_start) db 0xFF
+  1469                                  bios_post_pic_setup_return:
+  1470 0000D986 88D9                        dw      0xD988
+  1471                                  bios_post_pic_setup_continue:
+  1472 0000D988 B011                        mov     al, 0x11
+  1473 0000D98A E680                        out     0x80, al
+  1474 0000D98C B004                        mov     al, 0x04
+  1475 0000D98E E608                        out     0x08, al
+  1476 0000D990 E300                        jcxz    $+2
   1477 0000D992 E300                        jcxz    $+2
-  1478 0000D994 E300                        jcxz    $+2
-  1479 0000D996 E6D0                        out     0xD0, al
-  1480 0000D998 BB7008                      mov     bx, 0x0870
-  1481 0000D99B 90                          nop
-  1482 0000D99C BCA0D9                      mov     sp, 0xD9A0
-  1483                                      JMP_ABS 0xEEEF
-    18 0000D99F E9(4D15)            <1>  jmp near (((%1) - (($ - rom_start) + 3) + 0x8000) & 0xFFFF) - 0x8000
-  1484                                  
-  1485                                  times 0xD9A0 - ($ - rom_start) db 0xFF
-  1485          ******************       error: TIMES value -2 is negative
-  1486                                  bios_post_chipset_io_return:
-  1487 0000D9A2 A2D9                        dw      0xD9A2
-  1488                                  bios_post_chipset_io_continue:
-  1489 0000D9A4 B012                        mov     al, 0x12
-  1490 0000D9A6 E680                        out     0x80, al
-  1491 0000D9A8 31C0                        xor     ax, ax
-  1492 0000D9AA BAD803                      mov     dx, 0x03D8
-  1493 0000D9AD EE                          out     dx, al
+  1478 0000D994 E6D0                        out     0xD0, al
+  1479 0000D996 BB7008                      mov     bx, 0x0870
+  1480 0000D999 90                          nop
+  1481 0000D99A BCA0D9                      mov     sp, 0xD9A0
+  1482                                      JMP_ABS 0xEEEF
+    18 0000D99D E9(4F15)            <1>  jmp near (((%1) - (($ - rom_start) + 3) + 0x8000) & 0xFFFF) - 0x8000
+  1483                                  
+  1484                                  times 0xD9A0 - ($ - rom_start) db 0xFF
+  1485                                  bios_post_chipset_io_return:
+  1486 0000D9A0 A2D9                        dw      0xD9A2
+  1487                                  bios_post_chipset_io_continue:
+  1488 0000D9A2 B012                        mov     al, 0x12
+  1489 0000D9A4 E680                        out     0x80, al
+  1490 0000D9A6 31C0                        xor     ax, ax
+  1491 0000D9A8 BAD803                      mov     dx, 0x03D8
+  1492 0000D9AB EE                          out     dx, al
+  1493 0000D9AC E300                        jcxz    $+2
   1494 0000D9AE E300                        jcxz    $+2
-  1495 0000D9B0 E300                        jcxz    $+2
-  1496 0000D9B2 40                          inc     ax
-  1497 0000D9B3 B2B8                        mov     dl, 0xB8
-  1498 0000D9B5 EE                          out     dx, al
+  1495 0000D9B0 40                          inc     ax
+  1496 0000D9B1 B2B8                        mov     dl, 0xB8
+  1497 0000D9B3 EE                          out     dx, al
+  1498 0000D9B4 E300                        jcxz    $+2
   1499 0000D9B6 E300                        jcxz    $+2
-  1500 0000D9B8 E300                        jcxz    $+2
-  1501 0000D9BA B2BA                        mov     dl, 0xBA
-  1502 0000D9BC EC                          in      al, dx
+  1500 0000D9B8 B2BA                        mov     dl, 0xBA
+  1501 0000D9BA EC                          in      al, dx
+  1502 0000D9BB E300                        jcxz    $+2
   1503 0000D9BD E300                        jcxz    $+2
-  1504 0000D9BF E300                        jcxz    $+2
-  1505 0000D9C1 B2DA                        mov     dl, 0xDA
-  1506 0000D9C3 EC                          in      al, dx
+  1504 0000D9BF B2DA                        mov     dl, 0xDA
+  1505 0000D9C1 EC                          in      al, dx
+  1506 0000D9C2 E300                        jcxz    $+2
   1507 0000D9C4 E300                        jcxz    $+2
-  1508 0000D9C6 E300                        jcxz    $+2
-  1509 0000D9C8 B2C0                        mov     dl, 0xC0
-  1510 0000D9CA B000                        mov     al, 0
-  1511 0000D9CC EE                          out     dx, al
+  1508 0000D9C6 B2C0                        mov     dl, 0xC0
+  1509 0000D9C8 B000                        mov     al, 0
+  1510 0000D9CA EE                          out     dx, al
+  1511 0000D9CB E300                        jcxz    $+2
   1512 0000D9CD E300                        jcxz    $+2
-  1513 0000D9CF E300                        jcxz    $+2
-  1514 0000D9D1 31C0                        xor     ax, ax
-  1515 0000D9D3 8EC0                        mov     es, ax
-  1516 0000D9D5 8ED8                        mov     ds, ax
-  1517 0000D9D7 B013                        mov     al, 0x13
-  1518 0000D9D9 E680                        out     0x80, al
-  1519                                      JMP_ABS 0x1AFB
-    18 0000D9DB E9(1D41)            <1>  jmp near (((%1) - (($ - rom_start) + 3) + 0x8000) & 0xFFFF) - 0x8000
-  1520                                  
-  1521                                  ; F000:E05B — reset gateway.
-  1522 0000D9DE FF<rep 67Dh>            times 0xE05B - ($ - rom_start) db 0xFF
-  1523                                  reset_gateway:
-  1524 0000E05B E9A6F5                      jmp     near bios_post_entry
-  1525                                  reset_gateway_end:
-  1526                                  %if (reset_gateway_end - reset_gateway) != 3
-  1527                                      %error "Unexpected reset gateway size"
-  1528                                  %endif
-  1529                                  
-  1530                                  ; ---------------------------------------------------------------------------
-  1531                                  ; F000:EE94 — CMOS indexed read helper.
-  1532 0000E05E FF<rep E36h>            times 0xEE94 - ($ - rom_start) db 0xFF
-  1533                                  bios_cmos_read_index:
-  1534 0000EE94 E670                        out     0x70, al
-  1535 0000EE96 E300                        jcxz    $+2
-  1536 0000EE98 E300                        jcxz    $+2
-  1537 0000EE9A E471                        in      al, 0x71
-  1538 0000EE9C C3                          ret
-  1539                                  
-  1540                                  ; F000:EE9D — CMOS indexed write helper.
-  1541                                  bios_cmos_write_index:
-  1542 0000EE9D E670                        out     0x70, al
-  1543 0000EE9F 86C4                        xchg    al, ah
-  1544 0000EEA1 E300                        jcxz    $+2
-  1545 0000EEA3 E300                        jcxz    $+2
-  1546 0000EEA5 E671                        out     0x71, al
-  1547 0000EEA7 86C4                        xchg    al, ah
-  1548 0000EEA9 C3                          ret
-  1549                                  
-  1550                                  ; F000:EEE7 — 8259 PIC initialization.
-  1551 0000EEAA FF<rep 3Dh>             times 0xEEE7 - ($ - rom_start) db 0xFF
-  1552                                  bios_pic_initialize:
-  1553 0000EEE7 B000                        mov     al, 0
-  1554 0000EEE9 E6F1                        out     0xF1, al
-  1555 0000EEEB E300                        jcxz    $+2
-  1556 0000EEED E300                        jcxz    $+2
-  1557 0000EEEF B011                        mov     al, 0x11
-  1558 0000EEF1 E6A0                        out     0xA0, al
-  1559 0000EEF3 E300                        jcxz    $+2
-  1560 0000EEF5 E300                        jcxz    $+2
-  1561 0000EEF7 E620                        out     0x20, al
-  1562 0000EEF9 E300                        jcxz    $+2
-  1563 0000EEFB E300                        jcxz    $+2
-  1564 0000EEFD 88D8                        mov     al, bl
-  1565 0000EEFF E6A1                        out     0xA1, al
-  1566 0000EF01 E300                        jcxz    $+2
-  1567 0000EF03 E300                        jcxz    $+2
-  1568 0000EF05 88F8                        mov     al, bh
-  1569 0000EF07 E621                        out     0x21, al
-  1570 0000EF09 E300                        jcxz    $+2
-  1571 0000EF0B E300                        jcxz    $+2
-  1572 0000EF0D B002                        mov     al, 0x02
-  1573 0000EF0F E6A1                        out     0xA1, al
-  1574 0000EF11 E300                        jcxz    $+2
-  1575 0000EF13 E300                        jcxz    $+2
-  1576 0000EF15 B004                        mov     al, 0x04
-  1577 0000EF17 E621                        out     0x21, al
-  1578 0000EF19 E300                        jcxz    $+2
-  1579 0000EF1B E300                        jcxz    $+2
-  1580 0000EF1D B001                        mov     al, 0x01
-  1581 0000EF1F E6A1                        out     0xA1, al
-  1582 0000EF21 E300                        jcxz    $+2
-  1583 0000EF23 E300                        jcxz    $+2
-  1584 0000EF25 E621                        out     0x21, al
-  1585 0000EF27 E300                        jcxz    $+2
-  1586 0000EF29 E300                        jcxz    $+2
-  1587 0000EF2B B0FF                        mov     al, 0xFF
-  1588 0000EF2D E6A1                        out     0xA1, al
-  1589 0000EF2F E300                        jcxz    $+2
-  1590 0000EF31 E300                        jcxz    $+2
-  1591 0000EF33 E621                        out     0x21, al
-  1592 0000EF35 C3                          ret
-  1593                                  
-  1594                                  ; ---------------------------------------------------------------------------
-  1595                                  ; F000:F60F — bounded 8042 output-buffer read helper.
-  1596 0000EF36 FF<rep 6D9h>            times 0xF60F - ($ - rom_start) db 0xFF
-  1597                                  bios_8042_read_output:
-  1598 0000F60F B40C                        mov     ah, 0x0C
-  1599 0000F611 31C9                        xor     cx, cx
-  1600                                  bios_8042_read_output_wait:
-  1601 0000F613 E464                        in      al, 0x64
-  1602 0000F615 A801                        test    al, 0x01
-  1603 0000F617 E1FA                        loope   bios_8042_read_output_wait
-  1604 0000F619 7504                        jnz     bios_8042_read_output_data
-  1605 0000F61B FECC                        dec     ah
-  1606 0000F61D 75F4                        jnz     bios_8042_read_output_wait
-  1607                                  bios_8042_read_output_data:
-  1608 0000F61F E460                        in      al, 0x60
-  1609 0000F621 C3                          ret
-  1610                                  
-  1611                                  ; F000:F659 — 8042 input-buffer-empty wait helper.
-  1612 0000F622 FF<rep 37h>             times 0xF659 - ($ - rom_start) db 0xFF
-  1613                                  bios_8042_wait_input_empty:
-  1614 0000F659 31C9                        xor     cx, cx
-  1615                                  bios_8042_wait_input_empty_first:
-  1616 0000F65B E464                        in      al, 0x64
-  1617 0000F65D A802                        test    al, 0x02
-  1618 0000F65F E0FA                        loopne  bios_8042_wait_input_empty_first
-  1619 0000F661 7406                        jz      bios_8042_wait_input_empty_done
-  1620                                  bios_8042_wait_input_empty_second:
-  1621 0000F663 E464                        in      al, 0x64
-  1622 0000F665 A802                        test    al, 0x02
-  1623 0000F667 E0FA                        loopne  bios_8042_wait_input_empty_second
-  1624                                  bios_8042_wait_input_empty_done:
-  1625 0000F669 C3                          ret
-  1626                                  
-  1627                                  ; F000:F66Ah/F66Eh — 8042 A20 output-port enable/disable helpers.
-  1628                                  times 0xF66A - ($ - rom_start) db 0xFF
-  1629                                  bios_8042_a20_enable:
-  1630 0000F66A B4DF                        mov     ah, 0xDF
-  1631 0000F66C EB02                        jmp     short bios_8042_a20_write
-  1632                                  bios_8042_a20_disable:
-  1633 0000F66E B4DD                        mov     ah, 0xDD
-  1634                                  bios_8042_a20_write:
-  1635 0000F670 31C9                        xor     cx, cx
-  1636                                  bios_8042_a20_wait_command:
-  1637 0000F672 E464                        in      al, 0x64
-  1638 0000F674 A802                        test    al, 0x02
-  1639 0000F676 E0FA                        loopne  bios_8042_a20_wait_command
-  1640 0000F678 B0D1                        mov     al, 0xD1
-  1641 0000F67A E664                        out     0x64, al
-  1642 0000F67C 31C9                        xor     cx, cx
-  1643                                  bios_8042_a20_wait_data:
-  1644 0000F67E E464                        in      al, 0x64
-  1645 0000F680 A802                        test    al, 0x02
-  1646 0000F682 E0FA                        loopne  bios_8042_a20_wait_data
-  1647 0000F684 88E0                        mov     al, ah
-  1648 0000F686 E660                        out     0x60, al
-  1649 0000F688 31C9                        xor     cx, cx
-  1650                                  bios_8042_a20_wait_finish:
-  1651 0000F68A E464                        in      al, 0x64
-  1652 0000F68C A802                        test    al, 0x02
-  1653 0000F68E E0FA                        loopne  bios_8042_a20_wait_finish
-  1654 0000F690 C3                          ret
-  1655                                  
-  1656                                  ; FFFF:0000 reset vector -> F000:E05B.
-  1657 0000F691 FF<rep 95Fh>            times 0xFFF0 - ($ - rom_start) db 0xFF
-  1658                                  bios_reset_vector:
-  1659 0000FFF0 EA[5BE0]00F0                jmp     0xF000:reset_gateway
-  1660                                  
-  1661 0000FFF5 FF<rep Bh>              times ROM_SIZE - ($ - rom_start) db 0xFF
-  1662                                  %if ($ - rom_start) != ROM_SIZE
-  1663                                      %error "Incorrect BIOS ROM size"
-  1664                                  %endif
+  1513 0000D9CF 31C0                        xor     ax, ax
+  1514 0000D9D1 8EC0                        mov     es, ax
+  1515 0000D9D3 8ED8                        mov     ds, ax
+  1516 0000D9D5 B013                        mov     al, 0x13
+  1517 0000D9D7 E680                        out     0x80, al
+  1518                                      JMP_ABS 0x1AFB
+    18 0000D9D9 E9(1F41)            <1>  jmp near (((%1) - (($ - rom_start) + 3) + 0x8000) & 0xFFFF) - 0x8000
+  1519                                  
+  1520                                  ; F000:E05B — reset gateway.
+  1521 0000D9DC FF<rep 67Fh>            times 0xE05B - ($ - rom_start) db 0xFF
+  1522                                  reset_gateway:
+  1523 0000E05B E9A6F5                      jmp     near bios_post_entry
+  1524                                  reset_gateway_end:
+  1525                                  %if (reset_gateway_end - reset_gateway) != 3
+  1526                                      %error "Unexpected reset gateway size"
+  1527                                  %endif
+  1528                                  
+  1529                                  ; ---------------------------------------------------------------------------
+  1530                                  ; F000:EE94 — CMOS indexed read helper.
+  1531 0000E05E FF<rep E36h>            times 0xEE94 - ($ - rom_start) db 0xFF
+  1532                                  bios_cmos_read_index:
+  1533 0000EE94 E670                        out     0x70, al
+  1534 0000EE96 E300                        jcxz    $+2
+  1535 0000EE98 E300                        jcxz    $+2
+  1536 0000EE9A E471                        in      al, 0x71
+  1537 0000EE9C C3                          ret
+  1538                                  
+  1539                                  ; F000:EE9D — CMOS indexed write helper.
+  1540                                  bios_cmos_write_index:
+  1541 0000EE9D E670                        out     0x70, al
+  1542 0000EE9F 86C4                        xchg    al, ah
+  1543 0000EEA1 E300                        jcxz    $+2
+  1544 0000EEA3 E300                        jcxz    $+2
+  1545 0000EEA5 E671                        out     0x71, al
+  1546 0000EEA7 86C4                        xchg    al, ah
+  1547 0000EEA9 C3                          ret
+  1548                                  
+  1549                                  ; F000:EEE7 — 8259 PIC initialization.
+  1550 0000EEAA FF<rep 3Dh>             times 0xEEE7 - ($ - rom_start) db 0xFF
+  1551                                  bios_pic_initialize:
+  1552 0000EEE7 B000                        mov     al, 0
+  1553 0000EEE9 E6F1                        out     0xF1, al
+  1554 0000EEEB E300                        jcxz    $+2
+  1555 0000EEED E300                        jcxz    $+2
+  1556 0000EEEF B011                        mov     al, 0x11
+  1557 0000EEF1 E6A0                        out     0xA0, al
+  1558 0000EEF3 E300                        jcxz    $+2
+  1559 0000EEF5 E300                        jcxz    $+2
+  1560 0000EEF7 E620                        out     0x20, al
+  1561 0000EEF9 E300                        jcxz    $+2
+  1562 0000EEFB E300                        jcxz    $+2
+  1563 0000EEFD 88D8                        mov     al, bl
+  1564 0000EEFF E6A1                        out     0xA1, al
+  1565 0000EF01 E300                        jcxz    $+2
+  1566 0000EF03 E300                        jcxz    $+2
+  1567 0000EF05 88F8                        mov     al, bh
+  1568 0000EF07 E621                        out     0x21, al
+  1569 0000EF09 E300                        jcxz    $+2
+  1570 0000EF0B E300                        jcxz    $+2
+  1571 0000EF0D B002                        mov     al, 0x02
+  1572 0000EF0F E6A1                        out     0xA1, al
+  1573 0000EF11 E300                        jcxz    $+2
+  1574 0000EF13 E300                        jcxz    $+2
+  1575 0000EF15 B004                        mov     al, 0x04
+  1576 0000EF17 E621                        out     0x21, al
+  1577 0000EF19 E300                        jcxz    $+2
+  1578 0000EF1B E300                        jcxz    $+2
+  1579 0000EF1D B001                        mov     al, 0x01
+  1580 0000EF1F E6A1                        out     0xA1, al
+  1581 0000EF21 E300                        jcxz    $+2
+  1582 0000EF23 E300                        jcxz    $+2
+  1583 0000EF25 E621                        out     0x21, al
+  1584 0000EF27 E300                        jcxz    $+2
+  1585 0000EF29 E300                        jcxz    $+2
+  1586 0000EF2B B0FF                        mov     al, 0xFF
+  1587 0000EF2D E6A1                        out     0xA1, al
+  1588 0000EF2F E300                        jcxz    $+2
+  1589 0000EF31 E300                        jcxz    $+2
+  1590 0000EF33 E621                        out     0x21, al
+  1591 0000EF35 C3                          ret
+  1592                                  
+  1593                                  ; ---------------------------------------------------------------------------
+  1594                                  ; F000:F60F — bounded 8042 output-buffer read helper.
+  1595 0000EF36 FF<rep 6D9h>            times 0xF60F - ($ - rom_start) db 0xFF
+  1596                                  bios_8042_read_output:
+  1597 0000F60F B40C                        mov     ah, 0x0C
+  1598 0000F611 31C9                        xor     cx, cx
+  1599                                  bios_8042_read_output_wait:
+  1600 0000F613 E464                        in      al, 0x64
+  1601 0000F615 A801                        test    al, 0x01
+  1602 0000F617 E1FA                        loope   bios_8042_read_output_wait
+  1603 0000F619 7504                        jnz     bios_8042_read_output_data
+  1604 0000F61B FECC                        dec     ah
+  1605 0000F61D 75F4                        jnz     bios_8042_read_output_wait
+  1606                                  bios_8042_read_output_data:
+  1607 0000F61F E460                        in      al, 0x60
+  1608 0000F621 C3                          ret
+  1609                                  
+  1610                                  ; F000:F659 — 8042 input-buffer-empty wait helper.
+  1611 0000F622 FF<rep 37h>             times 0xF659 - ($ - rom_start) db 0xFF
+  1612                                  bios_8042_wait_input_empty:
+  1613 0000F659 31C9                        xor     cx, cx
+  1614                                  bios_8042_wait_input_empty_first:
+  1615 0000F65B E464                        in      al, 0x64
+  1616 0000F65D A802                        test    al, 0x02
+  1617 0000F65F E0FA                        loopne  bios_8042_wait_input_empty_first
+  1618 0000F661 7406                        jz      bios_8042_wait_input_empty_done
+  1619                                  bios_8042_wait_input_empty_second:
+  1620 0000F663 E464                        in      al, 0x64
+  1621 0000F665 A802                        test    al, 0x02
+  1622 0000F667 E0FA                        loopne  bios_8042_wait_input_empty_second
+  1623                                  bios_8042_wait_input_empty_done:
+  1624 0000F669 C3                          ret
+  1625                                  
+  1626                                  ; F000:F66Ah/F66Eh — 8042 A20 output-port enable/disable helpers.
+  1627                                  times 0xF66A - ($ - rom_start) db 0xFF
+  1628                                  bios_8042_a20_enable:
+  1629 0000F66A B4DF                        mov     ah, 0xDF
+  1630 0000F66C EB02                        jmp     short bios_8042_a20_write
+  1631                                  bios_8042_a20_disable:
+  1632 0000F66E B4DD                        mov     ah, 0xDD
+  1633                                  bios_8042_a20_write:
+  1634 0000F670 31C9                        xor     cx, cx
+  1635                                  bios_8042_a20_wait_command:
+  1636 0000F672 E464                        in      al, 0x64
+  1637 0000F674 A802                        test    al, 0x02
+  1638 0000F676 E0FA                        loopne  bios_8042_a20_wait_command
+  1639 0000F678 B0D1                        mov     al, 0xD1
+  1640 0000F67A E664                        out     0x64, al
+  1641 0000F67C 31C9                        xor     cx, cx
+  1642                                  bios_8042_a20_wait_data:
+  1643 0000F67E E464                        in      al, 0x64
+  1644 0000F680 A802                        test    al, 0x02
+  1645 0000F682 E0FA                        loopne  bios_8042_a20_wait_data
+  1646 0000F684 88E0                        mov     al, ah
+  1647 0000F686 E660                        out     0x60, al
+  1648 0000F688 31C9                        xor     cx, cx
+  1649                                  bios_8042_a20_wait_finish:
+  1650 0000F68A E464                        in      al, 0x64
+  1651 0000F68C A802                        test    al, 0x02
+  1652 0000F68E E0FA                        loopne  bios_8042_a20_wait_finish
+  1653 0000F690 C3                          ret
+  1654                                  
+  1655                                  ; FFFF:0000 reset vector -> F000:E05B.
+  1656 0000F691 FF<rep 95Fh>            times 0xFFF0 - ($ - rom_start) db 0xFF
+  1657                                  bios_reset_vector:
+  1658 0000FFF0 EA[5BE0]00F0                jmp     0xF000:reset_gateway
+  1659                                  
+  1660 0000FFF5 FF<rep Bh>              times ROM_SIZE - ($ - rom_start) db 0xFF
+  1661                                  %if ($ - rom_start) != ROM_SIZE
+  1662                                      %error "Incorrect BIOS ROM size"
+  1663                                  %endif
