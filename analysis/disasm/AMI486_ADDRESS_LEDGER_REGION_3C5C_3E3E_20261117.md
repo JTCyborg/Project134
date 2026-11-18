@@ -79,3 +79,8 @@ The candidate generator now:
 - extends the Setup handler pointer table from 11 to 12 entries (3446h–345Dh).
 
 GitHub Actions run 44086115994 completed successfully. The manifest reports 838 candidate windows, 239 data ranges, 41,876 unique code-window bytes, 19,705 unique data-range bytes, 293 overlap bytes, and a 61,288-byte union (93.52%). There are 62 uncovered intervals; the next largest is 0236h–03D3h (414 bytes).
+
+
+## Native-source integration verified on 2026-11-18
+
+The interval `3C5Ch–3E3Eh` is now emitted by `bios/src/reset.asm` as NASM instructions/data, including the two zero padding bytes at `3C5Ch–3C5Dh`. The adjacent shared renderer, parser, and metric formatter at `3E3Fh–3F49h` are also source-emitted. GitHub Actions run `44384426423` confirms the entire ROM remains byte-identical to the reference.
