@@ -927,6 +927,38 @@ bios_post_keyboard_init_done:
     out     0x80, al
     jmp     0x1AF8
 
+; ---------------------------------------------------------------------------
+; F000:D82F — first 8042 command/data exchange after POST 09h.
+times 0xD82F - ($ - rom_start) db 0xFF
+bios_post_8042_command_60:
+    mov     al, 0x60
+    out     0x64, al
+    nop
+    mov     sp, 0xD83A
+    jmp     0xF659
+
+times 0xD83A - ($ - rom_start) db 0xFF
+bios_post_8042_command_60_return:
+    dw      0xD83C
+bios_post_8042_command_60_continue:
+    cmp     al, 0xD8
+    mov     al, 0x0A
+    out     0x80, al
+    test    byte [cs:0x8280], 0x10
+    mov     al, 0x55
+    jz      short bios_post_8042_command_data
+    mov     al, 0x74
+bios_post_8042_command_data:
+    out     0x60, al
+    mov     sp, 0xD854
+    jmp     0xF659
+
+times 0xD854 - ($ - rom_start) db 0xFF
+bios_post_8042_command_data_return:
+    dw      0xD856
+; D856h is an overlapping continuation and remains pending instruction-level
+; reconstruction. Do not replace it with a guessed instruction stream.
+
 ; F000:E05B — reset gateway.
 times 0xE05B - ($ - rom_start) db 0xFF
 reset_gateway:
