@@ -1921,7 +1921,7 @@ bios_post_speaker_off:
 
 ; F000:F5BC/F5C9 — 8042 command/data exchange and response compare.
 bios_post_8042_compare_command:
-    call    bios_post_8042_write_command
+    call    bios_post_8042_write_command_byte
     jnz     short bios_post_8042_compare_done
     call    bios_post_8042_read_response
     jz      short bios_post_8042_compare_success
