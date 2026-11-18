@@ -41,6 +41,7 @@ jobs:
           Write-Host "Compatibility image SHA256: $output"
 
       - name: Upload BIOS artifacts
+        if: always()
         uses: actions/upload-artifact@v4
         with:
           name: project134-bios
