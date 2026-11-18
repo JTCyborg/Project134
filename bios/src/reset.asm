@@ -436,7 +436,7 @@ bios_stack_test_entry:
     jnz     bios_stack_test_failure
     mov     ax, 0x5555
     mov     sp, 0xD6FC
-    jmp     0xD6C4
+    jmp     short 0xD6C4
 
 ; D6FCh — continuation reached through the D6C4h JMP SP trampoline.
 bios_stack_test_pattern_5555:
@@ -444,7 +444,7 @@ bios_stack_test_pattern_5555:
     jnz     bios_stack_test_failure
     mov     ax, 0xAAAA
     mov     sp, 0xD709
-    jmp     0xD6C4
+    jmp     short 0xD6C4
 
 ; D709h — second pattern check, then CMOS marker and delay.
 bios_stack_test_pattern_aaaa:
