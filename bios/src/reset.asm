@@ -3492,7 +3492,7 @@ bios_hd_size_geometry_initialize_done:
     mov     ax, [0xE423]
     inc     ax
     call    near 0x4EE7
-    cmp     ax, 0x001B
+    db      0x3D, 0x1B, 0x00           ; cmp ax, 001Bh
     je      short bios_hd_size_geometry_initialize_return
     inc     word [0xE423]
     mov     ax, [0xE423]
@@ -3504,7 +3504,7 @@ bios_hd_size_geometry_initialize_return:
 ; 4E1Fh prompts for a new end-cylinder value.
 bios_hd_size_edit_end:
     call    near bios_hd_size_edit_start_input
-    cmp     ax, 0x001B
+    db      0x3D, 0x1B, 0x00           ; cmp ax, 001Bh
     je      short bios_hd_size_edit_end_return
     mov     ax, [0xE427]
     call    near 0x4EE7
@@ -3514,7 +3514,7 @@ bios_hd_size_edit_end_return:
 ; 4E2Eh prompts for a new start-cylinder value.
 bios_hd_size_edit_start:
     call    near bios_hd_size_edit_start_input
-    cmp     ax, 0x001B
+    db      0x3D, 0x1B, 0x00           ; cmp ax, 001Bh
     je      short bios_hd_size_edit_start_return
     mov     ax, [0xE427]
     db      0x8B, 0xD8                 ; mov bx, ax
@@ -3557,7 +3557,7 @@ bios_hd_size_edit_start_loop:
     mov     [0xE19F], al
     call    near 0x5902
     mov     [0xE182], ax
-    cmp     ax, 0x000D
+    db      0x3D, 0x0D, 0x00           ; cmp ax, 000Dh
     je      short bios_hd_size_edit_start_done
     db      0x8B, 0xC6                 ; mov ax, si
     mov     dl, 0x13
@@ -3581,6 +3581,7 @@ bios_hd_size_edit_start_previous:
     dec     word [0xE427]
     dec     word [0xE425]
     jns     short bios_hd_size_edit_start_loop
+bios_hd_size_edit_start_redraw:
     call    near bios_hd_utility_draw_confirmation
     jmp     short bios_hd_size_edit_start_loop
 bios_hd_size_edit_start_next:
@@ -3592,9 +3593,6 @@ bios_hd_size_edit_start_next:
     cmp     word [0xE425], 0x000A
     jl      short bios_hd_size_edit_start_loop
     jmp     short bios_hd_size_edit_start_redraw
-bios_hd_size_edit_start_redraw:
-    call    near bios_hd_utility_draw_confirmation
-    jmp     short bios_hd_size_edit_start_loop
 bios_hd_size_edit_start_done:
     mov     ax, [0xE182]
     pop     si
