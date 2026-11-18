@@ -1467,7 +1467,75 @@ bios_cmos_e052_timing_return:
 %if ($ - rom_start) != 0x2D11
     %error "CMOS E042/E052 selectors must end at 2D11h"
 %endif
-incbin  "ami486.bin", ($ - rom_start), (0x8280 - ($ - rom_start)) ; inherited reference bytes from 2D11h to 8280h
+; F000:2D11h–2DF4h — inherited candidate timing benchmark stream.
+; Its stack entry contract is unresolved (no aligned near-call target/prologue was found).
+incbin  "ami486.bin", ($ - rom_start), (0x2DF5 - ($ - rom_start)) ; inherited 2D11h-2DF4h benchmark entry stream
+
+; F000:2DF5h–2E72h — PIT channel-2 measurement, counter read and setup.
+bios_pit_measurement:
+    cli
+    in      al, 0x61
+    mov     [0xF804], al
+    call    near 0x2E58
+    mov     bx, 0xFFFF
+    mov     al, [0xF804]
+    or      al, 0x01
+    out     0x61, al
+    jmp     short $+2
+    call    far 0x1000:0x0000
+    mov     al, [0xF804]
+    and     al, 0xFC
+    out     0x61, al
+    jmp     short $+2
+    call    near 0x2E49
+    mov     [0xF800], ax
+    in      al, 0x61
+    mov     [0xF804], al
+    call    near 0x2E58
+    mov     bx, 0xFFFF
+    mov     al, [0xF804]
+    or      al, 0x01
+    out     0x61, al
+    call    far 0x1000:0x0800
+    mov     al, [0xF804]
+    and     al, 0xFC
+    out     0x61, al
+    jmp     short $+2
+    call    near 0x2E49
+    sub     word [0xF800], ax
+    mov     ax, [0xF800]
+    ret
+
+bios_pit_read_channel2:
+    in      al, 0x42
+    jmp     short $+2
+    db      0x8A, 0xE0                 ; mov ah, al
+    in      al, 0x42
+    jmp     short $+2
+    db      0x86, 0xE0                 ; xchg ah, al
+    neg     ax
+    ret
+
+bios_pit_channel2_setup:
+    in      al, 0x61
+    and     al, 0xFC
+    out     0x61, al
+    jmp     short $+2
+    mov     al, 0xB4
+    out     0x43, al
+    jmp     short $+2
+    db      0x2A, 0xC0                 ; sub al, al
+    out     0x42, al
+    jmp     short $+2
+    jmp     short $+2
+    out     0x42, al
+    jmp     short $+2
+    ret
+
+%if ($ - rom_start) != 0x2E73
+    %error "PIT channel-2 measurement helpers must end at 2E73h"
+%endif
+incbin  "ami486.bin", ($ - rom_start), (0x8280 - ($ - rom_start)) ; inherited reference bytes from 2E73h to 8280h
     db      0x2F, 0x00, 0xE7, 0x03, 0x00, 0x00, 0x12, 0x00
 
 ; F000:82D0 — original POST callback vector table.
