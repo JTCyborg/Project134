@@ -14,23 +14,23 @@ Build output:
 - `out\\Debug\\Project134.bin`
 - `out\\Release\\Project134.bin`
 
-## Reconstruction status — Stage 1
+## Reconstruction status — Stage 2
 
 The source now uses the reset-vector and first-stage entry addresses observed in the target ROM:
 
 - ROM size: 65,536 bytes.
 - Reset vector at ROM offset `FFF0h`: far jump to `F000:E05B`.
 - Reset gateway at ROM offset `E05Bh`: near jump to `F000:D604`.
-- Reset-continuation entries at `8A04h` and `8A20h`, plus the ALi indexed-I/O helper cluster at `8CCDh–8DECh` and CMOS/PIC helpers at `EE94h–EF35h`.
+- Initial 8042-clear POST branch at `88CEh–8A03h` (310 bytes copied verbatim from the immutable reference ROM), plus reset-continuation entries at `8A04h` and `8A20h`, ALi indexed-I/O helper cluster at `8CCDh–8DECh`, and CMOS/PIC helpers at `EE94h–EF35h`.
 - Early POST entry at ROM offset `D604h` and continuation through `D776h`: byte-backed dispatcher, stack-threaded RAM test, CMOS/8042 checks, and the first POST `80h` status writes.
 
 The reset-vector and entry bytes are checked by `validate_rom.ps1`.
 
-**This is not yet a functional or PCem-bootable BIOS.** The early POST code branches to additional routines at `88CEh`, `2686h`, `F1E2h` and other destinations that have not yet been reconstructed into source. The remaining ROM is currently filled with `FFh`. Do not select this image as the AMI486 machine BIOS yet.
+**This is not yet a functional or PCem-bootable BIOS.** The `88CEh` branch is now present, but its downstream call graph still reaches additional routines including `2686h`, `F1E2h` and other destinations that have not yet been reconstructed into source. The remaining ROM is currently filled with `FFh`. The latest PCem run still produces no POST-80h or E9h output and stops in real mode at `CS=0046`, `PC=6604E` after 139,167,469 instructions. This confirms execution has not completed early POST; it does not yet identify the exact failing instruction. Do not treat this image as bootable.
 
 ## Next implementation boundary
 
-Continue reconstructing the reset/POST call graph from the exact disassembly, starting with all direct destinations reached from `D604h`. Preserve alternate entries, stack-crafted returns, register/flag contracts and POST port-80h writes. Only mark a routine complete when its bytes, incoming references and outgoing control flow are reconciled.
+Continue reconstructing the reset/POST call graph from the exact disassembly, starting with the `88CEh` branch now present and all of its direct and indirect destinations; then continue with the remaining early-POST targets. Preserve alternate entries, stack-crafted returns, register/flag contracts and POST port-80h writes. Only mark a routine complete when its bytes, incoming references and outgoing control flow are reconciled.
 
 ## Reference ROM
 
@@ -41,7 +41,7 @@ The original `ami486.bin` remains unchanged. Keep it separate from generated out
 The post-build PowerShell validator checks:
 - exact output size (currently 65,536 bytes);
 - immutable reference ROM identity (SHA-256 `91fd62ce3ccb0b79b42f5fd6c6a7262ed52824b8ade917181b8a12267fec003b`);
-- the implemented reset-continuation window `8A04h–8A1Fh`, `8A20h–8A74h`, `8CCDh–8DEBh`, `EE94h–EF35h` and `D604h–D776h` against the reference ROM, not only its first instructions;
+- the implemented windows `88CEh–8A03h`, `8A04h–8A1Fh`, `8A20h–8A74h`, `8CCDh–8DEBh`, `EE94h–EF35h` and `D604h–D776h` against the reference ROM, not only its first instructions;
 - the reference reset-vector bytes at `FFF0h`;
 - the reset gateway at `E05Bh`;
 - the first verified POST instructions at `D604h`.
