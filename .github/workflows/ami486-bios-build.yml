@@ -46,6 +46,7 @@ jobs:
         with:
           name: project134-bios
           path: |
+            ami486.bin
             out/Debug/Project134.bin
             out/Debug/Project134.native-candidate.bin
             out/Debug/Project134.native-candidate.lst
