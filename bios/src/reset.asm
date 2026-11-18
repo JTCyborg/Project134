@@ -812,8 +812,8 @@ bios_extended_memory_probe_load_segment:
     mov     sp, 0x27CA
     JMP_ABS 0x29BB
     dw      0x27CC
-bios_extended_memory_probe_bad:
     je      near bios_extended_memory_probe_next_segment
+bios_extended_memory_probe_bad:
     or      bp, 0x4000
     mov     sp, 0x27DA
     JMP_ABS 0x8D83
