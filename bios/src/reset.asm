@@ -177,7 +177,6 @@ times 0x1B2A - ($ - rom_start) db 0xFF
 bios_cmos_profile_write_return:
     dw      0x1B2C
 bios_cmos_profile_write_continue:
-    sub     al, 0x1B
     loop    bios_cmos_profile_table_write
 
 bios_speaker_pit_init:
