@@ -956,8 +956,267 @@ bios_post_8042_command_data:
 times 0xD854 - ($ - rom_start) db 0xFF
 bios_post_8042_command_data_return:
     dw      0xD856
-; D856h is an overlapping continuation and remains pending instruction-level
-; reconstruction. Do not replace it with a guessed instruction stream.
+times 0xD856 - ($ - rom_start) db 0xFF
+bios_post_8042_command_0b:
+    mov     al, 0x0B
+    out     0x80, al
+    test    byte [cs:0x8280], 0x20
+    mov     al, 0xC8
+    jz      short bios_post_8042_command_c8
+    mov     al, 0xC9
+bios_post_8042_command_c8:
+    out     0x64, al
+    mov     sp, 0xD86E
+    jmp     0xF659
+
+times 0xD86E - ($ - rom_start) db 0xFF
+bios_post_8042_command_0b_return:
+    dw      0xD870
+bios_post_8042_command_0b_continue:
+    mov     al, 0x0C
+    out     0x80, al
+    jcxz    $+2
+    jcxz    $+2
+    mov     al, 0xFF
+    out     0x64, al
+    mov     sp, 0xD882
+    jmp     0xF659
+
+times 0xD882 - ($ - rom_start) db 0xFF
+bios_post_cmos_8f_55_return:
+    dw      0xD884
+bios_post_cmos_8f_55_continue:
+    test    al, bl
+    mov     al, 0x0D
+    out     0x80, al
+    mov     ax, 0x558F
+    nop
+    mov     sp, 0xD892
+    jmp     0xEE9D
+
+times 0xD892 - ($ - rom_start) db 0xFF
+bios_post_cmos_8f_55_read_return:
+    dw      0xD894
+bios_post_cmos_8f_55_read_continue:
+    mov     sp, 0xD89A
+    jmp     0xEE94
+
+times 0xD89A - ($ - rom_start) db 0xFF
+bios_post_cmos_8f_55_compare_return:
+    dw      0xD89C
+bios_post_cmos_8f_55_compare_continue:
+    xor     al, ah
+    jnz     short bios_post_cmos_8f_mismatch
+    mov     ax, 0xAA8F
+    nop
+    mov     sp, 0xD8AA
+    jmp     0xEE9D
+
+times 0xD8AA - ($ - rom_start) db 0xFF
+bios_post_cmos_8f_aa_write_return:
+    dw      0xD8AC
+bios_post_cmos_8f_aa_write_continue:
+    mov     sp, 0xD8B2
+    jmp     0xEE94
+
+times 0xD8B2 - ($ - rom_start) db 0xFF
+bios_post_cmos_8f_aa_read_return:
+    dw      0xD8B4
+bios_post_cmos_8f_aa_read_continue:
+    xor     al, ah
+    jz      short bios_post_cmos_8e_read
+bios_post_cmos_8f_mismatch:
+    mov     bp, 0x000A
+    jmp     0xF4A5
+
+bios_post_cmos_8e_read:
+    mov     al, 0x0E
+    out     0x80, al
+    mov     al, 0x8D
+    mov     sp, 0xD8CA
+    jmp     0xEE94
+
+times 0xD8CA - ($ - rom_start) db 0xFF
+bios_post_cmos_8e_read_return:
+    dw      0xD8CC
+bios_post_cmos_8e_read_continue:
+    or      al, al
+    mov     ax, 0x8E8E
+    nop
+    mov     sp, 0xD8D8
+    jmp     0xEE94
+
+times 0xD8D8 - ($ - rom_start) db 0xFF
+bios_post_cmos_8e_flags_return:
+    dw      0xD8DA
+bios_post_cmos_8e_flags_continue:
+    js      short bios_post_cmos_8e_negative
+    or      bp, 0x0008
+    or      al, 0xDC
+    jmp     short bios_post_cmos_8e_flags_done
+bios_post_cmos_8e_negative:
+    or      al, al
+    js      short bios_post_cmos_8e_sign
+    jmp     0x868B
+bios_post_cmos_8e_zero:
+    jz      short bios_post_cmos_8e_mask
+    or      al, 0x5C
+    or      bp, 0x0020
+    jmp     short bios_post_cmos_8e_flags_done
+bios_post_cmos_8e_sign:
+    or      bp, 0x0010
+    jmp     short bios_post_cmos_8e_flags_done
+bios_post_cmos_8e_mask:
+    and     al, 0x8B
+bios_post_cmos_8e_flags_done:
+    and     al, 0xFE
+    xchg    ah, al
+    mov     sp, 0xD904
+    jmp     0xEE9D
+
+times 0xD904 - ($ - rom_start) db 0xFF
+bios_post_cmos_8e_write_return:
+    dw      0xD906
+bios_post_cmos_8e_write_continue:
+    mov     al, 0x0F
+    out     0x80, al
+    mov     ax, 0x8B8B
+    mov     sp, 0xD91A
+    jmp     0xEE94
+
+times 0xD91A - ($ - rom_start) db 0xFF
+bios_post_cmos_8b_read_return:
+    dw      0xD91C
+bios_post_cmos_8b_read_continue:
+    and     al, 0x07
+    xchg    ah, al
+    mov     sp, 0xD926
+    jmp     0xEE9D
+
+times 0xD926 - ($ - rom_start) db 0xFF
+bios_post_cmos_8c_read_return:
+    dw      0xD928
+bios_post_cmos_8c_read_continue:
+    mov     al, 0x8C
+    mov     sp, 0xD930
+    jmp     0xEE94
+
+times 0xD930 - ($ - rom_start) db 0xFF
+bios_post_cmos_8a_read_return:
+    dw      0xD932
+bios_post_cmos_8a_read_continue:
+    mov     ax, 0x8A8A
+    nop
+    mov     sp, 0xD93C
+    jmp     0xEE94
+
+times 0xD93C - ($ - rom_start) db 0xFF
+bios_post_cmos_8a_compare_return:
+    dw      0xD93E
+bios_post_cmos_8a_compare_continue:
+    and     al, 0x0F
+    jnz     short bios_post_cmos_8a_enable_keyboard
+    mov     al, 0x26
+    xchg    ah, al
+    mov     sp, 0xD94C
+    jmp     0xEE9D
+
+times 0xD94C - ($ - rom_start) db 0xFF
+bios_post_keyboard_enable_return:
+    dw      0xD94E
+bios_post_keyboard_enable_continue:
+bios_post_cmos_8a_enable_keyboard:
+    mov     al, 0xAE
+    out     0x64, al
+    jcxz    $+2
+    jcxz    $+2
+    nop
+    mov     sp, 0xD958
+    jmp     0xF659
+
+times 0xD958 - ($ - rom_start) db 0xFF
+bios_post_keyboard_ack_return:
+    dw      0xD95A
+bios_post_keyboard_ack_continue:
+    mov     cx, 0x4000
+bios_post_keyboard_ack_wait:
+    in      al, 0x60
+    cmp     al, 0x52
+    loopne  bios_post_keyboard_ack_wait
+    jnz     bios_post_keyboard_disable
+    mov     ax, 0x8E8E
+    mov     sp, 0xD96E
+    jmp     0xEE94
+
+times 0xD96E - ($ - rom_start) db 0xFF
+bios_post_cmos_8e_update_return:
+    dw      0xD970
+bios_post_cmos_8e_update_continue:
+    or      al, 0x01
+    xchg    ah, al
+    mov     sp, 0xD97A
+    jmp     0xEE9D
+
+times 0xD97A - ($ - rom_start) db 0xFF
+bios_post_keyboard_disable_return:
+    dw      0xD97C
+bios_post_keyboard_disable:
+    mov     al, 0xAD
+    out     0x64, al
+    mov     sp, 0xD986
+    jmp     0xF659
+
+times 0xD986 - ($ - rom_start) db 0xFF
+bios_post_pic_setup_return:
+    dw      0xD988
+bios_post_pic_setup_continue:
+    mov     al, 0x11
+    out     0x80, al
+    mov     al, 0x04
+    out     0x08, al
+    jcxz    $+2
+    jcxz    $+2
+    out     0xD0, al
+    mov     bx, 0x0870
+    nop
+    mov     sp, 0xD9A0
+    jmp     0xEEEF
+
+times 0xD9A0 - ($ - rom_start) db 0xFF
+bios_post_chipset_io_return:
+    dw      0xD9A2
+bios_post_chipset_io_continue:
+    mov     al, 0x12
+    out     0x80, al
+    xor     ax, ax
+    mov     dx, 0x03D8
+    out     dx, al
+    jcxz    $+2
+    jcxz    $+2
+    inc     ax
+    mov     dl, 0xB8
+    out     dx, al
+    jcxz    $+2
+    jcxz    $+2
+    mov     dl, 0xBA
+    in      al, dx
+    jcxz    $+2
+    jcxz    $+2
+    mov     dl, 0xDA
+    in      al, dx
+    jcxz    $+2
+    jcxz    $+2
+    mov     dl, 0xC0
+    mov     al, 0
+    out     dx, al
+    jcxz    $+2
+    jcxz    $+2
+    xor     ax, ax
+    mov     es, ax
+    mov     ds, ax
+    mov     al, 0x13
+    out     0x80, al
+    jmp     0x1AFB
 
 ; F000:E05B — reset gateway.
 times 0xE05B - ($ - rom_start) db 0xFF
