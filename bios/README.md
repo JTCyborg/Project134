@@ -41,18 +41,21 @@ Translated into NASM in `bios/src/reset.asm`:
   stack-return words and the `F60Fh`/`F659h` wait helpers.
 - 8042 A20 output-port enable/disable routines `F66Ah–F690h`.
 - Reset-entry trampoline at `2065h`, six-byte LGDT pseudo-descriptor at `2068h`, and the three-entry protected-mode GDT at `2070h`, expressed as NASM instructions/data declarations. The five-byte adjacent parameter area at `2088h` is retained as data; its semantics remain unresolved.
+- ALi1429 21-record table walker at `208Dh–20C8h`, including the two stack-return trampolines into `8DDCh`; A20 enable and protected-mode/GDT setup at `20C9h–20FAh`.
 
-The translations above follow the available instruction listing. The following
-regions are still incomplete and prevent a meaningful PCem boot test:
+The translations above follow the available instruction listing. The GDT fields at `2068h–2087h` were cross-checked against the reference disassembly, including the nonzero reserved high descriptor byte and the exact access/limit flags. A source-level audit now finds 95 ascending `TIMES` origins and no duplicate labels; this is not a substitute for running NASM.
+
+The following regions are still incomplete and prevent a meaningful PCem boot test:
 - Additional POST/error handlers and the remainder of the startup/boot path.
+- The protected-mode memory-alias test beginning at `20FCh` and its return-to-real-mode/A20-disable tail through `23CEh`.
 - Remaining RAM test, chipset initialization, interrupt services, BIOS vectors
   and data.
 
 ## Test readiness
 
 **Not ready for a PCem boot test.** The reset path now reaches the POST 09h checkpoint after the initial memory
-checksum and first 8042 exchanges. The later 8042 command sequence, CMOS/PIT
-checks, chipset setup, and the low-ROM continuation at `1AF8h` remain incomplete. A run now would stop in unimplemented
+checksum and first 8042 exchanges. The protected-mode memory-alias test at `20FCh–23CEh`, subsequent memory sizing,
+chipset setup and the remaining low-ROM continuation remain incomplete. A run now would stop in unimplemented
 ROM space or execute incomplete dispatch behavior.
 
 The first PCem test will be announced only after:
