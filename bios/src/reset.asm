@@ -2310,7 +2310,7 @@ bios_post_system_config_display:
     mov     si, 0x4337
     call    near bios_rom_print_si
     pop     ax
-    call    near bios_post_cmos_option
+    call    near bios_post_equipment_display
     mov     si, 0x43C7
     call    near bios_rom_print_si
     mov     ah, 0x88
