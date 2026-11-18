@@ -36,9 +36,9 @@ plugin_path = C:\Users\JTCyb\.pcem/plugins/
 Config data :
 []
 Config loaded
-loadfont 0 mda.rom 0000027630307C70
-loadfont 3 wy700.rom 0000027630307C70
-loadfont 4 8x12.bin 0000027630307C70
+loadfont 0 mda.rom 00000222B55B8ED0
+loadfont 3 wy700.rom 00000222B55B8ED0
+loadfont 4 8x12.bin 00000222B55B8ED0
 loadfont 8 im1024font.bin 0000000000000000
 Starting with romset 16
 timer_reset
@@ -63,1708 +63,1708 @@ Video timing 8 16 32
 Recalc - 0 0 0
 Path is \\.\
 SDL 2.32.10 initialized.
-loadfont 0 mda.rom 0000027630307C70
-loadfont 3 wy700.rom 0000027630307C70
-loadfont 4 8x12.bin 0000027630307C70
+loadfont 0 mda.rom 00000222B55B8ED0
+loadfont 3 wy700.rom 00000222B55B8ED0
+loadfont 4 8x12.bin 00000222B55B8ED0
 loadfont 8 im1024font.bin 0000000000000000
 Starting with romset 0
 romset 0 - 1
-loadfont 0 mda.rom 0000027630307C70
-loadfont 3 wy700.rom 0000027630307C70
-loadfont 4 8x12.bin 0000027630307C70
+loadfont 0 mda.rom 00000222B55B8ED0
+loadfont 3 wy700.rom 00000222B55B8ED0
+loadfont 4 8x12.bin 00000222B55B8ED0
 loadfont 8 im1024font.bin 0000000000000000
 Starting with romset 1
 romset 1 - 1
-loadfont 0 mda.rom 0000027630307C70
-loadfont 3 wy700.rom 0000027630307C70
-loadfont 4 8x12.bin 0000027630307C70
+loadfont 0 mda.rom 00000222B55B8ED0
+loadfont 3 wy700.rom 00000222B55B8ED0
+loadfont 4 8x12.bin 00000222B55B8ED0
 loadfont 8 im1024font.bin 0000000000000000
 Starting with romset 2
 romset 2 - 1
-loadfont 0 mda.rom 0000027630307C70
-loadfont 3 wy700.rom 0000027630307C70
-loadfont 4 8x12.bin 0000027630307C70
+loadfont 0 mda.rom 00000222B55B8ED0
+loadfont 3 wy700.rom 00000222B55B8ED0
+loadfont 4 8x12.bin 00000222B55B8ED0
 loadfont 8 im1024font.bin 0000000000000000
 Starting with romset 3
 romset 3 - 1
-loadfont 0 mda.rom 0000027630307C70
-loadfont 3 wy700.rom 0000027630307C70
-loadfont 4 8x12.bin 0000027630307C70
+loadfont 0 mda.rom 00000222B55B8ED0
+loadfont 3 wy700.rom 00000222B55B8ED0
+loadfont 4 8x12.bin 00000222B55B8ED0
 loadfont 8 im1024font.bin 0000000000000000
 Starting with romset 4
 Failed to load ROM!
 romset 4 - 0
-loadfont 0 mda.rom 0000027630307C70
-loadfont 3 wy700.rom 0000027630307C70
-loadfont 4 8x12.bin 0000027630307C70
+loadfont 0 mda.rom 00000222B55B8ED0
+loadfont 3 wy700.rom 00000222B55B8ED0
+loadfont 4 8x12.bin 00000222B55B8ED0
 loadfont 8 im1024font.bin 0000000000000000
 Starting with romset 5
 Failed to load ROM!
 romset 5 - 0
-loadfont 0 mda.rom 0000027630307C70
-loadfont 3 wy700.rom 0000027630307C70
-loadfont 4 8x12.bin 0000027630307C70
+loadfont 0 mda.rom 00000222B55B8ED0
+loadfont 3 wy700.rom 00000222B55B8ED0
+loadfont 4 8x12.bin 00000222B55B8ED0
 loadfont 8 im1024font.bin 0000000000000000
 Starting with romset 6
 Failed to load ROM!
 romset 6 - 0
-loadfont 0 mda.rom 0000027630307C70
-loadfont 3 wy700.rom 0000027630307C70
-loadfont 4 8x12.bin 0000027630307C70
+loadfont 0 mda.rom 00000222B55B8ED0
+loadfont 3 wy700.rom 00000222B55B8ED0
+loadfont 4 8x12.bin 00000222B55B8ED0
 loadfont 8 im1024font.bin 0000000000000000
 Starting with romset 7
 romset 7 - 1
-loadfont 0 mda.rom 0000027630307C70
-loadfont 3 wy700.rom 0000027630307C70
-loadfont 4 8x12.bin 0000027630307C70
+loadfont 0 mda.rom 00000222B55B8ED0
+loadfont 3 wy700.rom 00000222B55B8ED0
+loadfont 4 8x12.bin 00000222B55B8ED0
 loadfont 8 im1024font.bin 0000000000000000
 Starting with romset 8
 romset 8 - 1
-loadfont 0 mda.rom 0000027630307C70
-loadfont 3 wy700.rom 0000027630307C70
-loadfont 4 8x12.bin 0000027630307C70
+loadfont 0 mda.rom 00000222B55B8ED0
+loadfont 3 wy700.rom 00000222B55B8ED0
+loadfont 4 8x12.bin 00000222B55B8ED0
 loadfont 8 im1024font.bin 0000000000000000
 Starting with romset 9
 romset 9 - 1
-loadfont 0 mda.rom 0000027630307C70
-loadfont 3 wy700.rom 0000027630307C70
-loadfont 4 8x12.bin 0000027630307C70
+loadfont 0 mda.rom 00000222B55B8ED0
+loadfont 3 wy700.rom 00000222B55B8ED0
+loadfont 4 8x12.bin 00000222B55B8ED0
 loadfont 8 im1024font.bin 0000000000000000
 Starting with romset 10
 romset 10 - 1
-loadfont 0 mda.rom 0000027630307C70
-loadfont 3 wy700.rom 0000027630307C70
-loadfont 4 8x12.bin 0000027630307C70
+loadfont 0 mda.rom 00000222B55B8ED0
+loadfont 3 wy700.rom 00000222B55B8ED0
+loadfont 4 8x12.bin 00000222B55B8ED0
 loadfont 8 im1024font.bin 0000000000000000
 Starting with romset 11
-loadfont 2 pc1512/40078.ic127 0000027630307C70
+loadfont 2 pc1512/40078.ic127 00000222B55B8ED0
 romset 11 - 1
-loadfont 0 mda.rom 0000027630307C70
-loadfont 3 wy700.rom 0000027630307C70
-loadfont 4 8x12.bin 0000027630307C70
+loadfont 0 mda.rom 00000222B55B8ED0
+loadfont 3 wy700.rom 00000222B55B8ED0
+loadfont 4 8x12.bin 00000222B55B8ED0
 loadfont 8 im1024font.bin 0000000000000000
 Starting with romset 12
-loadfont 1 pc200/40109.bin 0000027630307C70
+loadfont 1 pc200/40109.bin 00000222B55B8ED0
 romset 12 - 1
-loadfont 0 mda.rom 0000027630307C70
-loadfont 3 wy700.rom 0000027630307C70
-loadfont 4 8x12.bin 0000027630307C70
+loadfont 0 mda.rom 00000222B55B8ED0
+loadfont 3 wy700.rom 00000222B55B8ED0
+loadfont 4 8x12.bin 00000222B55B8ED0
 loadfont 8 im1024font.bin 0000000000000000
 Starting with romset 13
 romset 13 - 1
-loadfont 0 mda.rom 0000027630307C70
-loadfont 3 wy700.rom 0000027630307C70
-loadfont 4 8x12.bin 0000027630307C70
+loadfont 0 mda.rom 00000222B55B8ED0
+loadfont 3 wy700.rom 00000222B55B8ED0
+loadfont 4 8x12.bin 00000222B55B8ED0
 loadfont 8 im1024font.bin 0000000000000000
 Starting with romset 14
 Loading BIOS
 FF FF FF
 romset 14 - 1
-loadfont 0 mda.rom 0000027630307C70
-loadfont 3 wy700.rom 0000027630307C70
-loadfont 4 8x12.bin 0000027630307C70
+loadfont 0 mda.rom 00000222B55B8ED0
+loadfont 3 wy700.rom 00000222B55B8ED0
+loadfont 4 8x12.bin 00000222B55B8ED0
 loadfont 8 im1024font.bin 0000000000000000
 Starting with romset 15
 romset 15 - 1
-loadfont 0 mda.rom 0000027630307C70
-loadfont 3 wy700.rom 0000027630307C70
-loadfont 4 8x12.bin 0000027630307C70
+loadfont 0 mda.rom 00000222B55B8ED0
+loadfont 3 wy700.rom 00000222B55B8ED0
+loadfont 4 8x12.bin 00000222B55B8ED0
 loadfont 8 im1024font.bin 0000000000000000
 Starting with romset 16
 romset 16 - 1
-loadfont 0 mda.rom 0000027630307C70
-loadfont 3 wy700.rom 0000027630307C70
-loadfont 4 8x12.bin 0000027630307C70
+loadfont 0 mda.rom 00000222B55B8ED0
+loadfont 3 wy700.rom 00000222B55B8ED0
+loadfont 4 8x12.bin 00000222B55B8ED0
 loadfont 8 im1024font.bin 0000000000000000
 Starting with romset 17
 romset 17 - 1
-loadfont 0 mda.rom 0000027630307C70
-loadfont 3 wy700.rom 0000027630307C70
-loadfont 4 8x12.bin 0000027630307C70
+loadfont 0 mda.rom 00000222B55B8ED0
+loadfont 3 wy700.rom 00000222B55B8ED0
+loadfont 4 8x12.bin 00000222B55B8ED0
 loadfont 8 im1024font.bin 0000000000000000
 Starting with romset 18
 romset 18 - 1
-loadfont 0 mda.rom 0000027630307C70
-loadfont 3 wy700.rom 0000027630307C70
-loadfont 4 8x12.bin 0000027630307C70
+loadfont 0 mda.rom 00000222B55B8ED0
+loadfont 3 wy700.rom 00000222B55B8ED0
+loadfont 4 8x12.bin 00000222B55B8ED0
 loadfont 8 im1024font.bin 0000000000000000
 Starting with romset 19
 romset 19 - 1
-loadfont 0 mda.rom 0000027630307C70
-loadfont 3 wy700.rom 0000027630307C70
-loadfont 4 8x12.bin 0000027630307C70
+loadfont 0 mda.rom 00000222B55B8ED0
+loadfont 3 wy700.rom 00000222B55B8ED0
+loadfont 4 8x12.bin 00000222B55B8ED0
 loadfont 8 im1024font.bin 0000000000000000
 Starting with romset 20
 romset 20 - 1
-loadfont 0 mda.rom 0000027630307C70
-loadfont 3 wy700.rom 0000027630307C70
-loadfont 4 8x12.bin 0000027630307C70
+loadfont 0 mda.rom 00000222B55B8ED0
+loadfont 3 wy700.rom 00000222B55B8ED0
+loadfont 4 8x12.bin 00000222B55B8ED0
 loadfont 8 im1024font.bin 0000000000000000
 Starting with romset 21
 romset 21 - 1
-loadfont 0 mda.rom 0000027630307C70
-loadfont 3 wy700.rom 0000027630307C70
-loadfont 4 8x12.bin 0000027630307C70
+loadfont 0 mda.rom 00000222B55B8ED0
+loadfont 3 wy700.rom 00000222B55B8ED0
+loadfont 4 8x12.bin 00000222B55B8ED0
 loadfont 8 im1024font.bin 0000000000000000
 Starting with romset 22
 romset 22 - 1
-loadfont 0 mda.rom 0000027630307C70
-loadfont 3 wy700.rom 0000027630307C70
-loadfont 4 8x12.bin 0000027630307C70
+loadfont 0 mda.rom 00000222B55B8ED0
+loadfont 3 wy700.rom 00000222B55B8ED0
+loadfont 4 8x12.bin 00000222B55B8ED0
 loadfont 8 im1024font.bin 0000000000000000
 Starting with romset 23
 romset 23 - 1
-loadfont 0 mda.rom 0000027630307C70
-loadfont 3 wy700.rom 0000027630307C70
-loadfont 4 8x12.bin 0000027630307C70
+loadfont 0 mda.rom 00000222B55B8ED0
+loadfont 3 wy700.rom 00000222B55B8ED0
+loadfont 4 8x12.bin 00000222B55B8ED0
 loadfont 8 im1024font.bin 0000000000000000
 Starting with romset 24
 romset 24 - 1
-loadfont 0 mda.rom 0000027630307C70
-loadfont 3 wy700.rom 0000027630307C70
-loadfont 4 8x12.bin 0000027630307C70
+loadfont 0 mda.rom 00000222B55B8ED0
+loadfont 3 wy700.rom 00000222B55B8ED0
+loadfont 4 8x12.bin 00000222B55B8ED0
 loadfont 8 im1024font.bin 0000000000000000
 Starting with romset 25
 romset 25 - 1
-loadfont 0 mda.rom 0000027630307C70
-loadfont 3 wy700.rom 0000027630307C70
-loadfont 4 8x12.bin 0000027630307C70
+loadfont 0 mda.rom 00000222B55B8ED0
+loadfont 3 wy700.rom 00000222B55B8ED0
+loadfont 4 8x12.bin 00000222B55B8ED0
 loadfont 8 im1024font.bin 0000000000000000
 Starting with romset 26
 romset 26 - 1
-loadfont 0 mda.rom 0000027630307C70
-loadfont 3 wy700.rom 0000027630307C70
-loadfont 4 8x12.bin 0000027630307C70
+loadfont 0 mda.rom 00000222B55B8ED0
+loadfont 3 wy700.rom 00000222B55B8ED0
+loadfont 4 8x12.bin 00000222B55B8ED0
 loadfont 8 im1024font.bin 0000000000000000
 Starting with romset 27
 romset 27 - 1
-loadfont 0 mda.rom 0000027630307C70
-loadfont 3 wy700.rom 0000027630307C70
-loadfont 4 8x12.bin 0000027630307C70
+loadfont 0 mda.rom 00000222B55B8ED0
+loadfont 3 wy700.rom 00000222B55B8ED0
+loadfont 4 8x12.bin 00000222B55B8ED0
 loadfont 8 im1024font.bin 0000000000000000
 Starting with romset 28
 romset 28 - 1
-loadfont 0 mda.rom 0000027630307C70
-loadfont 3 wy700.rom 0000027630307C70
-loadfont 4 8x12.bin 0000027630307C70
+loadfont 0 mda.rom 00000222B55B8ED0
+loadfont 3 wy700.rom 00000222B55B8ED0
+loadfont 4 8x12.bin 00000222B55B8ED0
 loadfont 8 im1024font.bin 0000000000000000
 Starting with romset 29
 romset 29 - 1
-loadfont 0 mda.rom 0000027630307C70
-loadfont 3 wy700.rom 0000027630307C70
-loadfont 4 8x12.bin 0000027630307C70
+loadfont 0 mda.rom 00000222B55B8ED0
+loadfont 3 wy700.rom 00000222B55B8ED0
+loadfont 4 8x12.bin 00000222B55B8ED0
 loadfont 8 im1024font.bin 0000000000000000
 Starting with romset 30
 romset 30 - 1
-loadfont 0 mda.rom 0000027630307C70
-loadfont 3 wy700.rom 0000027630307C70
-loadfont 4 8x12.bin 0000027630307C70
+loadfont 0 mda.rom 00000222B55B8ED0
+loadfont 3 wy700.rom 00000222B55B8ED0
+loadfont 4 8x12.bin 00000222B55B8ED0
 loadfont 8 im1024font.bin 0000000000000000
 Starting with romset 31
 Failed to load ROM!
 romset 31 - 0
-loadfont 0 mda.rom 0000027630307C70
-loadfont 3 wy700.rom 0000027630307C70
-loadfont 4 8x12.bin 0000027630307C70
+loadfont 0 mda.rom 00000222B55B8ED0
+loadfont 3 wy700.rom 00000222B55B8ED0
+loadfont 4 8x12.bin 00000222B55B8ED0
 loadfont 8 im1024font.bin 0000000000000000
 Starting with romset 32
 romset 32 - 1
-loadfont 0 mda.rom 0000027630307C70
-loadfont 3 wy700.rom 0000027630307C70
-loadfont 4 8x12.bin 0000027630307C70
+loadfont 0 mda.rom 00000222B55B8ED0
+loadfont 3 wy700.rom 00000222B55B8ED0
+loadfont 4 8x12.bin 00000222B55B8ED0
 loadfont 8 im1024font.bin 0000000000000000
 Starting with romset 33
 romset 33 - 1
-loadfont 0 mda.rom 0000027630307C70
-loadfont 3 wy700.rom 0000027630307C70
-loadfont 4 8x12.bin 0000027630307C70
+loadfont 0 mda.rom 00000222B55B8ED0
+loadfont 3 wy700.rom 00000222B55B8ED0
+loadfont 4 8x12.bin 00000222B55B8ED0
 loadfont 8 im1024font.bin 0000000000000000
 Starting with romset 34
 romset 34 - 1
-loadfont 0 mda.rom 0000027630307C70
-loadfont 3 wy700.rom 0000027630307C70
-loadfont 4 8x12.bin 0000027630307C70
+loadfont 0 mda.rom 00000222B55B8ED0
+loadfont 3 wy700.rom 00000222B55B8ED0
+loadfont 4 8x12.bin 00000222B55B8ED0
 loadfont 8 im1024font.bin 0000000000000000
 Starting with romset 35
 romset 35 - 1
-loadfont 0 mda.rom 0000027630307C70
-loadfont 3 wy700.rom 0000027630307C70
-loadfont 4 8x12.bin 0000027630307C70
+loadfont 0 mda.rom 00000222B55B8ED0
+loadfont 3 wy700.rom 00000222B55B8ED0
+loadfont 4 8x12.bin 00000222B55B8ED0
 loadfont 8 im1024font.bin 0000000000000000
 Starting with romset 36
 romset 36 - 1
-loadfont 0 mda.rom 0000027630307C70
-loadfont 3 wy700.rom 0000027630307C70
-loadfont 4 8x12.bin 0000027630307C70
+loadfont 0 mda.rom 00000222B55B8ED0
+loadfont 3 wy700.rom 00000222B55B8ED0
+loadfont 4 8x12.bin 00000222B55B8ED0
 loadfont 8 im1024font.bin 0000000000000000
 Starting with romset 37
 Failed to load ROM!
 romset 37 - 0
-loadfont 0 mda.rom 0000027630307C70
-loadfont 3 wy700.rom 0000027630307C70
-loadfont 4 8x12.bin 0000027630307C70
+loadfont 0 mda.rom 00000222B55B8ED0
+loadfont 3 wy700.rom 00000222B55B8ED0
+loadfont 4 8x12.bin 00000222B55B8ED0
 loadfont 8 im1024font.bin 0000000000000000
 Starting with romset 38
 romset 38 - 1
-loadfont 0 mda.rom 0000027630307C70
-loadfont 3 wy700.rom 0000027630307C70
-loadfont 4 8x12.bin 0000027630307C70
+loadfont 0 mda.rom 00000222B55B8ED0
+loadfont 3 wy700.rom 00000222B55B8ED0
+loadfont 4 8x12.bin 00000222B55B8ED0
 loadfont 8 im1024font.bin 0000000000000000
 Starting with romset 39
 romset 39 - 1
-loadfont 0 mda.rom 0000027630307C70
-loadfont 3 wy700.rom 0000027630307C70
-loadfont 4 8x12.bin 0000027630307C70
+loadfont 0 mda.rom 00000222B55B8ED0
+loadfont 3 wy700.rom 00000222B55B8ED0
+loadfont 4 8x12.bin 00000222B55B8ED0
 loadfont 8 im1024font.bin 0000000000000000
 Starting with romset 40
 romset 40 - 1
-loadfont 0 mda.rom 0000027630307C70
-loadfont 3 wy700.rom 0000027630307C70
-loadfont 4 8x12.bin 0000027630307C70
+loadfont 0 mda.rom 00000222B55B8ED0
+loadfont 3 wy700.rom 00000222B55B8ED0
+loadfont 4 8x12.bin 00000222B55B8ED0
 loadfont 8 im1024font.bin 0000000000000000
 Starting with romset 41
 romset 41 - 1
-loadfont 0 mda.rom 0000027630307C70
-loadfont 3 wy700.rom 0000027630307C70
-loadfont 4 8x12.bin 0000027630307C70
+loadfont 0 mda.rom 00000222B55B8ED0
+loadfont 3 wy700.rom 00000222B55B8ED0
+loadfont 4 8x12.bin 00000222B55B8ED0
 loadfont 8 im1024font.bin 0000000000000000
 Starting with romset 42
 romset 42 - 1
-loadfont 0 mda.rom 0000027630307C70
-loadfont 3 wy700.rom 0000027630307C70
-loadfont 4 8x12.bin 0000027630307C70
+loadfont 0 mda.rom 00000222B55B8ED0
+loadfont 3 wy700.rom 00000222B55B8ED0
+loadfont 4 8x12.bin 00000222B55B8ED0
 loadfont 8 im1024font.bin 0000000000000000
 Starting with romset 43
 romset 43 - 1
-loadfont 0 mda.rom 0000027630307C70
-loadfont 3 wy700.rom 0000027630307C70
-loadfont 4 8x12.bin 0000027630307C70
+loadfont 0 mda.rom 00000222B55B8ED0
+loadfont 3 wy700.rom 00000222B55B8ED0
+loadfont 4 8x12.bin 00000222B55B8ED0
 loadfont 8 im1024font.bin 0000000000000000
 Starting with romset 44
 romset 44 - 1
-loadfont 0 mda.rom 0000027630307C70
-loadfont 3 wy700.rom 0000027630307C70
-loadfont 4 8x12.bin 0000027630307C70
+loadfont 0 mda.rom 00000222B55B8ED0
+loadfont 3 wy700.rom 00000222B55B8ED0
+loadfont 4 8x12.bin 00000222B55B8ED0
 loadfont 8 im1024font.bin 0000000000000000
 Starting with romset 45
 romset 45 - 1
-loadfont 0 mda.rom 0000027630307C70
-loadfont 3 wy700.rom 0000027630307C70
-loadfont 4 8x12.bin 0000027630307C70
+loadfont 0 mda.rom 00000222B55B8ED0
+loadfont 3 wy700.rom 00000222B55B8ED0
+loadfont 4 8x12.bin 00000222B55B8ED0
 loadfont 8 im1024font.bin 0000000000000000
 Starting with romset 46
 romset 46 - 1
-loadfont 0 mda.rom 0000027630307C70
-loadfont 3 wy700.rom 0000027630307C70
-loadfont 4 8x12.bin 0000027630307C70
+loadfont 0 mda.rom 00000222B55B8ED0
+loadfont 3 wy700.rom 00000222B55B8ED0
+loadfont 4 8x12.bin 00000222B55B8ED0
 loadfont 8 im1024font.bin 0000000000000000
 Starting with romset 47
 romset 47 - 1
-loadfont 0 mda.rom 0000027630307C70
-loadfont 3 wy700.rom 0000027630307C70
-loadfont 4 8x12.bin 0000027630307C70
+loadfont 0 mda.rom 00000222B55B8ED0
+loadfont 3 wy700.rom 00000222B55B8ED0
+loadfont 4 8x12.bin 00000222B55B8ED0
 loadfont 8 im1024font.bin 0000000000000000
 Starting with romset 48
 romset 48 - 1
-loadfont 0 mda.rom 0000027630307C70
-loadfont 3 wy700.rom 0000027630307C70
-loadfont 4 8x12.bin 0000027630307C70
+loadfont 0 mda.rom 00000222B55B8ED0
+loadfont 3 wy700.rom 00000222B55B8ED0
+loadfont 4 8x12.bin 00000222B55B8ED0
 loadfont 8 im1024font.bin 0000000000000000
 Starting with romset 49
 Load SIS496 ea ff
 romset 49 - 1
-loadfont 0 mda.rom 0000027630307C70
-loadfont 3 wy700.rom 0000027630307C70
-loadfont 4 8x12.bin 0000027630307C70
+loadfont 0 mda.rom 00000222B55B8ED0
+loadfont 3 wy700.rom 00000222B55B8ED0
+loadfont 4 8x12.bin 00000222B55B8ED0
 loadfont 8 im1024font.bin 0000000000000000
 Starting with romset 50
 romset 50 - 1
-loadfont 0 mda.rom 0000027630307C70
-loadfont 3 wy700.rom 0000027630307C70
-loadfont 4 8x12.bin 0000027630307C70
+loadfont 0 mda.rom 00000222B55B8ED0
+loadfont 3 wy700.rom 00000222B55B8ED0
+loadfont 4 8x12.bin 00000222B55B8ED0
 loadfont 8 im1024font.bin 0000000000000000
 Starting with romset 51
 romset 51 - 1
-loadfont 0 mda.rom 0000027630307C70
-loadfont 3 wy700.rom 0000027630307C70
-loadfont 4 8x12.bin 0000027630307C70
+loadfont 0 mda.rom 00000222B55B8ED0
+loadfont 3 wy700.rom 00000222B55B8ED0
+loadfont 4 8x12.bin 00000222B55B8ED0
 loadfont 8 im1024font.bin 0000000000000000
 Starting with romset 52
 romset 52 - 1
-loadfont 0 mda.rom 0000027630307C70
-loadfont 3 wy700.rom 0000027630307C70
-loadfont 4 8x12.bin 0000027630307C70
+loadfont 0 mda.rom 00000222B55B8ED0
+loadfont 3 wy700.rom 00000222B55B8ED0
+loadfont 4 8x12.bin 00000222B55B8ED0
 loadfont 8 im1024font.bin 0000000000000000
 Starting with romset 53
 romset 53 - 1
-loadfont 0 mda.rom 0000027630307C70
-loadfont 3 wy700.rom 0000027630307C70
-loadfont 4 8x12.bin 0000027630307C70
+loadfont 0 mda.rom 00000222B55B8ED0
+loadfont 3 wy700.rom 00000222B55B8ED0
+loadfont 4 8x12.bin 00000222B55B8ED0
 loadfont 8 im1024font.bin 0000000000000000
 Starting with romset 54
 romset 54 - 1
-loadfont 0 mda.rom 0000027630307C70
-loadfont 3 wy700.rom 0000027630307C70
-loadfont 4 8x12.bin 0000027630307C70
+loadfont 0 mda.rom 00000222B55B8ED0
+loadfont 3 wy700.rom 00000222B55B8ED0
+loadfont 4 8x12.bin 00000222B55B8ED0
 loadfont 8 im1024font.bin 0000000000000000
 Starting with romset 55
 romset 55 - 1
-loadfont 0 mda.rom 0000027630307C70
-loadfont 3 wy700.rom 0000027630307C70
-loadfont 4 8x12.bin 0000027630307C70
+loadfont 0 mda.rom 00000222B55B8ED0
+loadfont 3 wy700.rom 00000222B55B8ED0
+loadfont 4 8x12.bin 00000222B55B8ED0
 loadfont 8 im1024font.bin 0000000000000000
 Starting with romset 56
 romset 56 - 1
-loadfont 0 mda.rom 0000027630307C70
-loadfont 3 wy700.rom 0000027630307C70
-loadfont 4 8x12.bin 0000027630307C70
+loadfont 0 mda.rom 00000222B55B8ED0
+loadfont 3 wy700.rom 00000222B55B8ED0
+loadfont 4 8x12.bin 00000222B55B8ED0
 loadfont 8 im1024font.bin 0000000000000000
 Starting with romset 57
 romset 57 - 1
-loadfont 0 mda.rom 0000027630307C70
-loadfont 3 wy700.rom 0000027630307C70
-loadfont 4 8x12.bin 0000027630307C70
+loadfont 0 mda.rom 00000222B55B8ED0
+loadfont 3 wy700.rom 00000222B55B8ED0
+loadfont 4 8x12.bin 00000222B55B8ED0
 loadfont 8 im1024font.bin 0000000000000000
 Starting with romset 58
 romset 58 - 1
-loadfont 0 mda.rom 0000027630307C70
-loadfont 3 wy700.rom 0000027630307C70
-loadfont 4 8x12.bin 0000027630307C70
+loadfont 0 mda.rom 00000222B55B8ED0
+loadfont 3 wy700.rom 00000222B55B8ED0
+loadfont 4 8x12.bin 00000222B55B8ED0
 loadfont 8 im1024font.bin 0000000000000000
 Starting with romset 59
 romset 59 - 1
-loadfont 0 mda.rom 0000027630307C70
-loadfont 3 wy700.rom 0000027630307C70
-loadfont 4 8x12.bin 0000027630307C70
+loadfont 0 mda.rom 00000222B55B8ED0
+loadfont 3 wy700.rom 00000222B55B8ED0
+loadfont 4 8x12.bin 00000222B55B8ED0
 loadfont 8 im1024font.bin 0000000000000000
 Starting with romset 60
 romset 60 - 1
-loadfont 0 mda.rom 0000027630307C70
-loadfont 3 wy700.rom 0000027630307C70
-loadfont 4 8x12.bin 0000027630307C70
+loadfont 0 mda.rom 00000222B55B8ED0
+loadfont 3 wy700.rom 00000222B55B8ED0
+loadfont 4 8x12.bin 00000222B55B8ED0
 loadfont 8 im1024font.bin 0000000000000000
 Starting with romset 61
 romset 61 - 1
-loadfont 0 mda.rom 0000027630307C70
-loadfont 3 wy700.rom 0000027630307C70
-loadfont 4 8x12.bin 0000027630307C70
+loadfont 0 mda.rom 00000222B55B8ED0
+loadfont 3 wy700.rom 00000222B55B8ED0
+loadfont 4 8x12.bin 00000222B55B8ED0
 loadfont 8 im1024font.bin 0000000000000000
 Starting with romset 62
 romset 62 - 1
-loadfont 0 mda.rom 0000027630307C70
-loadfont 3 wy700.rom 0000027630307C70
-loadfont 4 8x12.bin 0000027630307C70
+loadfont 0 mda.rom 00000222B55B8ED0
+loadfont 3 wy700.rom 00000222B55B8ED0
+loadfont 4 8x12.bin 00000222B55B8ED0
 loadfont 8 im1024font.bin 0000000000000000
 Starting with romset 63
 romset 63 - 1
-loadfont 0 mda.rom 0000027630307C70
-loadfont 3 wy700.rom 0000027630307C70
-loadfont 4 8x12.bin 0000027630307C70
+loadfont 0 mda.rom 00000222B55B8ED0
+loadfont 3 wy700.rom 00000222B55B8ED0
+loadfont 4 8x12.bin 00000222B55B8ED0
 loadfont 8 im1024font.bin 0000000000000000
 Starting with romset 64
 romset 64 - 1
-loadfont 0 mda.rom 0000027630307C70
-loadfont 3 wy700.rom 0000027630307C70
-loadfont 4 8x12.bin 0000027630307C70
+loadfont 0 mda.rom 00000222B55B8ED0
+loadfont 3 wy700.rom 00000222B55B8ED0
+loadfont 4 8x12.bin 00000222B55B8ED0
 loadfont 8 im1024font.bin 0000000000000000
 Starting with romset 65
 romset 65 - 1
-loadfont 0 mda.rom 0000027630307C70
-loadfont 3 wy700.rom 0000027630307C70
-loadfont 4 8x12.bin 0000027630307C70
+loadfont 0 mda.rom 00000222B55B8ED0
+loadfont 3 wy700.rom 00000222B55B8ED0
+loadfont 4 8x12.bin 00000222B55B8ED0
 loadfont 8 im1024font.bin 0000000000000000
 Starting with romset 66
 romset 66 - 1
-loadfont 0 mda.rom 0000027630307C70
-loadfont 3 wy700.rom 0000027630307C70
-loadfont 4 8x12.bin 0000027630307C70
+loadfont 0 mda.rom 00000222B55B8ED0
+loadfont 3 wy700.rom 00000222B55B8ED0
+loadfont 4 8x12.bin 00000222B55B8ED0
 loadfont 8 im1024font.bin 0000000000000000
 Starting with romset 67
 romset 67 - 1
-loadfont 0 mda.rom 0000027630307C70
-loadfont 3 wy700.rom 0000027630307C70
-loadfont 4 8x12.bin 0000027630307C70
+loadfont 0 mda.rom 00000222B55B8ED0
+loadfont 3 wy700.rom 00000222B55B8ED0
+loadfont 4 8x12.bin 00000222B55B8ED0
 loadfont 8 im1024font.bin 0000000000000000
 Starting with romset 68
 romset 68 - 1
-loadfont 0 mda.rom 0000027630307C70
-loadfont 3 wy700.rom 0000027630307C70
-loadfont 4 8x12.bin 0000027630307C70
+loadfont 0 mda.rom 00000222B55B8ED0
+loadfont 3 wy700.rom 00000222B55B8ED0
+loadfont 4 8x12.bin 00000222B55B8ED0
 loadfont 8 im1024font.bin 0000000000000000
 Starting with romset 69
 romset 69 - 1
-loadfont 0 mda.rom 0000027630307C70
-loadfont 3 wy700.rom 0000027630307C70
-loadfont 4 8x12.bin 0000027630307C70
+loadfont 0 mda.rom 00000222B55B8ED0
+loadfont 3 wy700.rom 00000222B55B8ED0
+loadfont 4 8x12.bin 00000222B55B8ED0
 loadfont 8 im1024font.bin 0000000000000000
 Starting with romset 70
-loadfont 5 t3100e/t3100e_font.bin 0000027630307C70
+loadfont 5 t3100e/t3100e_font.bin 00000222B55B8ED0
 romset 70 - 1
-loadfont 0 mda.rom 0000027630307C70
-loadfont 3 wy700.rom 0000027630307C70
-loadfont 4 8x12.bin 0000027630307C70
+loadfont 0 mda.rom 00000222B55B8ED0
+loadfont 3 wy700.rom 00000222B55B8ED0
+loadfont 4 8x12.bin 00000222B55B8ED0
 loadfont 8 im1024font.bin 0000000000000000
 Starting with romset 71
-loadfont 2 t1000/t1000font.rom 0000027630307C70
+loadfont 2 t1000/t1000font.rom 00000222B55B8ED0
 romset 71 - 1
-loadfont 0 mda.rom 0000027630307C70
-loadfont 3 wy700.rom 0000027630307C70
-loadfont 4 8x12.bin 0000027630307C70
+loadfont 0 mda.rom 00000222B55B8ED0
+loadfont 3 wy700.rom 00000222B55B8ED0
+loadfont 4 8x12.bin 00000222B55B8ED0
 loadfont 8 im1024font.bin 0000000000000000
 Starting with romset 72
-loadfont 2 t1200/t1000font.rom 0000027630307C70
+loadfont 2 t1200/t1000font.rom 00000222B55B8ED0
 romset 72 - 1
-loadfont 0 mda.rom 0000027630307C70
-loadfont 3 wy700.rom 0000027630307C70
-loadfont 4 8x12.bin 0000027630307C70
+loadfont 0 mda.rom 00000222B55B8ED0
+loadfont 3 wy700.rom 00000222B55B8ED0
+loadfont 4 8x12.bin 00000222B55B8ED0
 loadfont 8 im1024font.bin 0000000000000000
 Starting with romset 73
 romset 73 - 1
-loadfont 0 mda.rom 0000027630307C70
-loadfont 3 wy700.rom 0000027630307C70
-loadfont 4 8x12.bin 0000027630307C70
+loadfont 0 mda.rom 00000222B55B8ED0
+loadfont 3 wy700.rom 00000222B55B8ED0
+loadfont 4 8x12.bin 00000222B55B8ED0
 loadfont 8 im1024font.bin 0000000000000000
 Starting with romset 74
 romset 74 - 1
-loadfont 0 mda.rom 0000027630307C70
-loadfont 3 wy700.rom 0000027630307C70
-loadfont 4 8x12.bin 0000027630307C70
+loadfont 0 mda.rom 00000222B55B8ED0
+loadfont 3 wy700.rom 00000222B55B8ED0
+loadfont 4 8x12.bin 00000222B55B8ED0
 loadfont 8 im1024font.bin 0000000000000000
 Starting with romset 75
 romset 75 - 1
-loadfont 0 mda.rom 0000027630307C70
-loadfont 3 wy700.rom 0000027630307C70
-loadfont 4 8x12.bin 0000027630307C70
+loadfont 0 mda.rom 00000222B55B8ED0
+loadfont 3 wy700.rom 00000222B55B8ED0
+loadfont 4 8x12.bin 00000222B55B8ED0
 loadfont 8 im1024font.bin 0000000000000000
 Starting with romset 76
 romset 76 - 1
-loadfont 0 mda.rom 0000027630307C70
-loadfont 3 wy700.rom 0000027630307C70
-loadfont 4 8x12.bin 0000027630307C70
+loadfont 0 mda.rom 00000222B55B8ED0
+loadfont 3 wy700.rom 00000222B55B8ED0
+loadfont 4 8x12.bin 00000222B55B8ED0
 loadfont 8 im1024font.bin 0000000000000000
 Starting with romset 77
 romset 77 - 1
-loadfont 0 mda.rom 0000027630307C70
-loadfont 3 wy700.rom 0000027630307C70
-loadfont 4 8x12.bin 0000027630307C70
+loadfont 0 mda.rom 00000222B55B8ED0
+loadfont 3 wy700.rom 00000222B55B8ED0
+loadfont 4 8x12.bin 00000222B55B8ED0
 loadfont 8 im1024font.bin 0000000000000000
 Starting with romset 78
 romset 78 - 1
-loadfont 0 mda.rom 0000027630307C70
-loadfont 3 wy700.rom 0000027630307C70
-loadfont 4 8x12.bin 0000027630307C70
+loadfont 0 mda.rom 00000222B55B8ED0
+loadfont 3 wy700.rom 00000222B55B8ED0
+loadfont 4 8x12.bin 00000222B55B8ED0
 loadfont 8 im1024font.bin 0000000000000000
 Starting with romset 79
 romset 79 - 1
-loadfont 0 mda.rom 0000027630307C70
-loadfont 3 wy700.rom 0000027630307C70
-loadfont 4 8x12.bin 0000027630307C70
+loadfont 0 mda.rom 00000222B55B8ED0
+loadfont 3 wy700.rom 00000222B55B8ED0
+loadfont 4 8x12.bin 00000222B55B8ED0
 loadfont 8 im1024font.bin 0000000000000000
 Starting with romset 80
 romset 80 - 1
-loadfont 0 mda.rom 0000027630307C70
-loadfont 3 wy700.rom 0000027630307C70
-loadfont 4 8x12.bin 0000027630307C70
+loadfont 0 mda.rom 00000222B55B8ED0
+loadfont 3 wy700.rom 00000222B55B8ED0
+loadfont 4 8x12.bin 00000222B55B8ED0
 loadfont 8 im1024font.bin 0000000000000000
 Starting with romset 81
 romset 81 - 1
-loadfont 0 mda.rom 0000027630307C70
-loadfont 3 wy700.rom 0000027630307C70
-loadfont 4 8x12.bin 0000027630307C70
+loadfont 0 mda.rom 00000222B55B8ED0
+loadfont 3 wy700.rom 00000222B55B8ED0
+loadfont 4 8x12.bin 00000222B55B8ED0
 loadfont 8 im1024font.bin 0000000000000000
 Starting with romset 82
 romset 82 - 1
-loadfont 0 mda.rom 0000027630307C70
-loadfont 3 wy700.rom 0000027630307C70
-loadfont 4 8x12.bin 0000027630307C70
+loadfont 0 mda.rom 00000222B55B8ED0
+loadfont 3 wy700.rom 00000222B55B8ED0
+loadfont 4 8x12.bin 00000222B55B8ED0
 loadfont 8 im1024font.bin 0000000000000000
 Starting with romset 83
 romset 83 - 1
-loadfont 0 mda.rom 0000027630307C70
-loadfont 3 wy700.rom 0000027630307C70
-loadfont 4 8x12.bin 0000027630307C70
+loadfont 0 mda.rom 00000222B55B8ED0
+loadfont 3 wy700.rom 00000222B55B8ED0
+loadfont 4 8x12.bin 00000222B55B8ED0
 loadfont 8 im1024font.bin 0000000000000000
 Starting with romset 84
 romset 84 - 1
-loadfont 0 mda.rom 0000027630307C70
-loadfont 3 wy700.rom 0000027630307C70
-loadfont 4 8x12.bin 0000027630307C70
+loadfont 0 mda.rom 00000222B55B8ED0
+loadfont 3 wy700.rom 00000222B55B8ED0
+loadfont 4 8x12.bin 00000222B55B8ED0
 loadfont 8 im1024font.bin 0000000000000000
 Starting with romset 85
 romset 85 - 1
-loadfont 0 mda.rom 0000027630307C70
-loadfont 3 wy700.rom 0000027630307C70
-loadfont 4 8x12.bin 0000027630307C70
+loadfont 0 mda.rom 00000222B55B8ED0
+loadfont 3 wy700.rom 00000222B55B8ED0
+loadfont 4 8x12.bin 00000222B55B8ED0
 loadfont 8 im1024font.bin 0000000000000000
 Starting with romset 86
 romset 86 - 1
-loadfont 0 mda.rom 0000027630307C70
-loadfont 3 wy700.rom 0000027630307C70
-loadfont 4 8x12.bin 0000027630307C70
+loadfont 0 mda.rom 00000222B55B8ED0
+loadfont 3 wy700.rom 00000222B55B8ED0
+loadfont 4 8x12.bin 00000222B55B8ED0
 loadfont 8 im1024font.bin 0000000000000000
 Starting with romset 87
 romset 87 - 1
-loadfont 0 mda.rom 0000027630307C70
-loadfont 3 wy700.rom 0000027630307C70
-loadfont 4 8x12.bin 0000027630307C70
+loadfont 0 mda.rom 00000222B55B8ED0
+loadfont 3 wy700.rom 00000222B55B8ED0
+loadfont 4 8x12.bin 00000222B55B8ED0
 loadfont 8 im1024font.bin 0000000000000000
 Starting with romset 88
-loadfont 1 ppc512/40109.bin 0000027630307C70
+loadfont 1 ppc512/40109.bin 00000222B55B8ED0
 romset 88 - 1
-loadfont 0 mda.rom 0000027630307C70
-loadfont 3 wy700.rom 0000027630307C70
-loadfont 4 8x12.bin 0000027630307C70
+loadfont 0 mda.rom 00000222B55B8ED0
+loadfont 3 wy700.rom 00000222B55B8ED0
+loadfont 4 8x12.bin 00000222B55B8ED0
 loadfont 8 im1024font.bin 0000000000000000
 Starting with romset 89
 romset 89 - 1
-loadfont 0 mda.rom 0000027630307C70
-loadfont 3 wy700.rom 0000027630307C70
-loadfont 4 8x12.bin 0000027630307C70
+loadfont 0 mda.rom 00000222B55B8ED0
+loadfont 3 wy700.rom 00000222B55B8ED0
+loadfont 4 8x12.bin 00000222B55B8ED0
 loadfont 8 im1024font.bin 0000000000000000
 Starting with romset 90
 romset 90 - 1
-loadfont 0 mda.rom 0000027630307C70
-loadfont 3 wy700.rom 0000027630307C70
-loadfont 4 8x12.bin 0000027630307C70
+loadfont 0 mda.rom 00000222B55B8ED0
+loadfont 3 wy700.rom 00000222B55B8ED0
+loadfont 4 8x12.bin 00000222B55B8ED0
 loadfont 8 im1024font.bin 0000000000000000
 Starting with romset 91
 romset 91 - 1
-loadfont 0 mda.rom 0000027630307C70
-loadfont 3 wy700.rom 0000027630307C70
-loadfont 4 8x12.bin 0000027630307C70
+loadfont 0 mda.rom 00000222B55B8ED0
+loadfont 3 wy700.rom 00000222B55B8ED0
+loadfont 4 8x12.bin 00000222B55B8ED0
 loadfont 8 im1024font.bin 0000000000000000
 Starting with romset 92
 romset 92 - 1
-loadfont 0 mda.rom 0000027630307C70
-loadfont 3 wy700.rom 0000027630307C70
-loadfont 4 8x12.bin 0000027630307C70
+loadfont 0 mda.rom 00000222B55B8ED0
+loadfont 3 wy700.rom 00000222B55B8ED0
+loadfont 4 8x12.bin 00000222B55B8ED0
 loadfont 8 im1024font.bin 0000000000000000
 Starting with romset 93
 romset 93 - 1
-loadfont 0 mda.rom 0000027630307C70
-loadfont 3 wy700.rom 0000027630307C70
-loadfont 4 8x12.bin 0000027630307C70
+loadfont 0 mda.rom 00000222B55B8ED0
+loadfont 3 wy700.rom 00000222B55B8ED0
+loadfont 4 8x12.bin 00000222B55B8ED0
 loadfont 8 im1024font.bin 0000000000000000
 Starting with romset 94
 romset 94 - 1
-loadfont 0 mda.rom 0000027630307C70
-loadfont 3 wy700.rom 0000027630307C70
-loadfont 4 8x12.bin 0000027630307C70
+loadfont 0 mda.rom 00000222B55B8ED0
+loadfont 3 wy700.rom 00000222B55B8ED0
+loadfont 4 8x12.bin 00000222B55B8ED0
 loadfont 8 im1024font.bin 0000000000000000
 Starting with romset 95
 romset 95 - 1
-loadfont 0 mda.rom 0000027630307C70
-loadfont 3 wy700.rom 0000027630307C70
-loadfont 4 8x12.bin 0000027630307C70
+loadfont 0 mda.rom 00000222B55B8ED0
+loadfont 3 wy700.rom 00000222B55B8ED0
+loadfont 4 8x12.bin 00000222B55B8ED0
 loadfont 8 im1024font.bin 0000000000000000
 Starting with romset 96
 romset 96 - 1
-loadfont 0 mda.rom 0000027630307C70
-loadfont 3 wy700.rom 0000027630307C70
-loadfont 4 8x12.bin 0000027630307C70
+loadfont 0 mda.rom 00000222B55B8ED0
+loadfont 3 wy700.rom 00000222B55B8ED0
+loadfont 4 8x12.bin 00000222B55B8ED0
 loadfont 8 im1024font.bin 0000000000000000
 Starting with romset 97
 romset 97 - 1
-loadfont 0 mda.rom 0000027630307C70
-loadfont 3 wy700.rom 0000027630307C70
-loadfont 4 8x12.bin 0000027630307C70
+loadfont 0 mda.rom 00000222B55B8ED0
+loadfont 3 wy700.rom 00000222B55B8ED0
+loadfont 4 8x12.bin 00000222B55B8ED0
 loadfont 8 im1024font.bin 0000000000000000
 Starting with romset 98
 ROM read failed: Expected 1, read 0
 romset 98 - 1
-loadfont 0 mda.rom 0000027630307C70
-loadfont 3 wy700.rom 0000027630307C70
-loadfont 4 8x12.bin 0000027630307C70
+loadfont 0 mda.rom 00000222B55B8ED0
+loadfont 3 wy700.rom 00000222B55B8ED0
+loadfont 4 8x12.bin 00000222B55B8ED0
 loadfont 8 im1024font.bin 0000000000000000
 Starting with romset 99
 romset 99 - 1
-loadfont 0 mda.rom 0000027630307C70
-loadfont 3 wy700.rom 0000027630307C70
-loadfont 4 8x12.bin 0000027630307C70
+loadfont 0 mda.rom 00000222B55B8ED0
+loadfont 3 wy700.rom 00000222B55B8ED0
+loadfont 4 8x12.bin 00000222B55B8ED0
 loadfont 8 im1024font.bin 0000000000000000
 Starting with romset 100
 romset 100 - 1
-loadfont 0 mda.rom 0000027630307C70
-loadfont 3 wy700.rom 0000027630307C70
-loadfont 4 8x12.bin 0000027630307C70
+loadfont 0 mda.rom 00000222B55B8ED0
+loadfont 3 wy700.rom 00000222B55B8ED0
+loadfont 4 8x12.bin 00000222B55B8ED0
 loadfont 8 im1024font.bin 0000000000000000
 Starting with romset 101
 Failed to load ROM!
 romset 101 - 0
-loadfont 0 mda.rom 0000027630307C70
-loadfont 3 wy700.rom 0000027630307C70
-loadfont 4 8x12.bin 0000027630307C70
+loadfont 0 mda.rom 00000222B55B8ED0
+loadfont 3 wy700.rom 00000222B55B8ED0
+loadfont 4 8x12.bin 00000222B55B8ED0
 loadfont 8 im1024font.bin 0000000000000000
 Starting with romset 102
 Failed to load ROM!
 romset 102 - 0
-loadfont 0 mda.rom 0000027630307C70
-loadfont 3 wy700.rom 0000027630307C70
-loadfont 4 8x12.bin 0000027630307C70
+loadfont 0 mda.rom 00000222B55B8ED0
+loadfont 3 wy700.rom 00000222B55B8ED0
+loadfont 4 8x12.bin 00000222B55B8ED0
 loadfont 8 im1024font.bin 0000000000000000
 Starting with romset 103
 Failed to load ROM!
 romset 103 - 0
-loadfont 0 mda.rom 0000027630307C70
-loadfont 3 wy700.rom 0000027630307C70
-loadfont 4 8x12.bin 0000027630307C70
+loadfont 0 mda.rom 00000222B55B8ED0
+loadfont 3 wy700.rom 00000222B55B8ED0
+loadfont 4 8x12.bin 00000222B55B8ED0
 loadfont 8 im1024font.bin 0000000000000000
 Starting with romset 104
 Failed to load ROM!
 romset 104 - 0
-loadfont 0 mda.rom 0000027630307C70
-loadfont 3 wy700.rom 0000027630307C70
-loadfont 4 8x12.bin 0000027630307C70
+loadfont 0 mda.rom 00000222B55B8ED0
+loadfont 3 wy700.rom 00000222B55B8ED0
+loadfont 4 8x12.bin 00000222B55B8ED0
 loadfont 8 im1024font.bin 0000000000000000
 Starting with romset 105
 Failed to load ROM!
 romset 105 - 0
-loadfont 0 mda.rom 0000027630307C70
-loadfont 3 wy700.rom 0000027630307C70
-loadfont 4 8x12.bin 0000027630307C70
+loadfont 0 mda.rom 00000222B55B8ED0
+loadfont 3 wy700.rom 00000222B55B8ED0
+loadfont 4 8x12.bin 00000222B55B8ED0
 loadfont 8 im1024font.bin 0000000000000000
 Starting with romset 106
 Failed to load ROM!
 romset 106 - 0
-loadfont 0 mda.rom 0000027630307C70
-loadfont 3 wy700.rom 0000027630307C70
-loadfont 4 8x12.bin 0000027630307C70
+loadfont 0 mda.rom 00000222B55B8ED0
+loadfont 3 wy700.rom 00000222B55B8ED0
+loadfont 4 8x12.bin 00000222B55B8ED0
 loadfont 8 im1024font.bin 0000000000000000
 Starting with romset 107
 Failed to load ROM!
 romset 107 - 0
-loadfont 0 mda.rom 0000027630307C70
-loadfont 3 wy700.rom 0000027630307C70
-loadfont 4 8x12.bin 0000027630307C70
+loadfont 0 mda.rom 00000222B55B8ED0
+loadfont 3 wy700.rom 00000222B55B8ED0
+loadfont 4 8x12.bin 00000222B55B8ED0
 loadfont 8 im1024font.bin 0000000000000000
 Starting with romset 108
 Failed to load ROM!
 romset 108 - 0
-loadfont 0 mda.rom 0000027630307C70
-loadfont 3 wy700.rom 0000027630307C70
-loadfont 4 8x12.bin 0000027630307C70
+loadfont 0 mda.rom 00000222B55B8ED0
+loadfont 3 wy700.rom 00000222B55B8ED0
+loadfont 4 8x12.bin 00000222B55B8ED0
 loadfont 8 im1024font.bin 0000000000000000
 Starting with romset 109
 Failed to load ROM!
 romset 109 - 0
-loadfont 0 mda.rom 0000027630307C70
-loadfont 3 wy700.rom 0000027630307C70
-loadfont 4 8x12.bin 0000027630307C70
+loadfont 0 mda.rom 00000222B55B8ED0
+loadfont 3 wy700.rom 00000222B55B8ED0
+loadfont 4 8x12.bin 00000222B55B8ED0
 loadfont 8 im1024font.bin 0000000000000000
 Starting with romset 110
 Failed to load ROM!
 romset 110 - 0
-loadfont 0 mda.rom 0000027630307C70
-loadfont 3 wy700.rom 0000027630307C70
-loadfont 4 8x12.bin 0000027630307C70
+loadfont 0 mda.rom 00000222B55B8ED0
+loadfont 3 wy700.rom 00000222B55B8ED0
+loadfont 4 8x12.bin 00000222B55B8ED0
 loadfont 8 im1024font.bin 0000000000000000
 Starting with romset 111
 Failed to load ROM!
 romset 111 - 0
-loadfont 0 mda.rom 0000027630307C70
-loadfont 3 wy700.rom 0000027630307C70
-loadfont 4 8x12.bin 0000027630307C70
+loadfont 0 mda.rom 00000222B55B8ED0
+loadfont 3 wy700.rom 00000222B55B8ED0
+loadfont 4 8x12.bin 00000222B55B8ED0
 loadfont 8 im1024font.bin 0000000000000000
 Starting with romset 112
 Failed to load ROM!
 romset 112 - 0
-loadfont 0 mda.rom 0000027630307C70
-loadfont 3 wy700.rom 0000027630307C70
-loadfont 4 8x12.bin 0000027630307C70
+loadfont 0 mda.rom 00000222B55B8ED0
+loadfont 3 wy700.rom 00000222B55B8ED0
+loadfont 4 8x12.bin 00000222B55B8ED0
 loadfont 8 im1024font.bin 0000000000000000
 Starting with romset 113
 Failed to load ROM!
 romset 113 - 0
-loadfont 0 mda.rom 0000027630307C70
-loadfont 3 wy700.rom 0000027630307C70
-loadfont 4 8x12.bin 0000027630307C70
+loadfont 0 mda.rom 00000222B55B8ED0
+loadfont 3 wy700.rom 00000222B55B8ED0
+loadfont 4 8x12.bin 00000222B55B8ED0
 loadfont 8 im1024font.bin 0000000000000000
 Starting with romset 114
 Failed to load ROM!
 romset 114 - 0
-loadfont 0 mda.rom 0000027630307C70
-loadfont 3 wy700.rom 0000027630307C70
-loadfont 4 8x12.bin 0000027630307C70
+loadfont 0 mda.rom 00000222B55B8ED0
+loadfont 3 wy700.rom 00000222B55B8ED0
+loadfont 4 8x12.bin 00000222B55B8ED0
 loadfont 8 im1024font.bin 0000000000000000
 Starting with romset 115
 Failed to load ROM!
 romset 115 - 0
-loadfont 0 mda.rom 0000027630307C70
-loadfont 3 wy700.rom 0000027630307C70
-loadfont 4 8x12.bin 0000027630307C70
+loadfont 0 mda.rom 00000222B55B8ED0
+loadfont 3 wy700.rom 00000222B55B8ED0
+loadfont 4 8x12.bin 00000222B55B8ED0
 loadfont 8 im1024font.bin 0000000000000000
 Starting with romset 116
 Failed to load ROM!
 romset 116 - 0
-loadfont 0 mda.rom 0000027630307C70
-loadfont 3 wy700.rom 0000027630307C70
-loadfont 4 8x12.bin 0000027630307C70
+loadfont 0 mda.rom 00000222B55B8ED0
+loadfont 3 wy700.rom 00000222B55B8ED0
+loadfont 4 8x12.bin 00000222B55B8ED0
 loadfont 8 im1024font.bin 0000000000000000
 Starting with romset 117
 Failed to load ROM!
 romset 117 - 0
-loadfont 0 mda.rom 0000027630307C70
-loadfont 3 wy700.rom 0000027630307C70
-loadfont 4 8x12.bin 0000027630307C70
+loadfont 0 mda.rom 00000222B55B8ED0
+loadfont 3 wy700.rom 00000222B55B8ED0
+loadfont 4 8x12.bin 00000222B55B8ED0
 loadfont 8 im1024font.bin 0000000000000000
 Starting with romset 118
 Failed to load ROM!
 romset 118 - 0
-loadfont 0 mda.rom 0000027630307C70
-loadfont 3 wy700.rom 0000027630307C70
-loadfont 4 8x12.bin 0000027630307C70
+loadfont 0 mda.rom 00000222B55B8ED0
+loadfont 3 wy700.rom 00000222B55B8ED0
+loadfont 4 8x12.bin 00000222B55B8ED0
 loadfont 8 im1024font.bin 0000000000000000
 Starting with romset 119
 Failed to load ROM!
 romset 119 - 0
-loadfont 0 mda.rom 0000027630307C70
-loadfont 3 wy700.rom 0000027630307C70
-loadfont 4 8x12.bin 0000027630307C70
+loadfont 0 mda.rom 00000222B55B8ED0
+loadfont 3 wy700.rom 00000222B55B8ED0
+loadfont 4 8x12.bin 00000222B55B8ED0
 loadfont 8 im1024font.bin 0000000000000000
 Starting with romset 120
 Failed to load ROM!
 romset 120 - 0
-loadfont 0 mda.rom 0000027630307C70
-loadfont 3 wy700.rom 0000027630307C70
-loadfont 4 8x12.bin 0000027630307C70
+loadfont 0 mda.rom 00000222B55B8ED0
+loadfont 3 wy700.rom 00000222B55B8ED0
+loadfont 4 8x12.bin 00000222B55B8ED0
 loadfont 8 im1024font.bin 0000000000000000
 Starting with romset 121
 Failed to load ROM!
 romset 121 - 0
-loadfont 0 mda.rom 0000027630307C70
-loadfont 3 wy700.rom 0000027630307C70
-loadfont 4 8x12.bin 0000027630307C70
+loadfont 0 mda.rom 00000222B55B8ED0
+loadfont 3 wy700.rom 00000222B55B8ED0
+loadfont 4 8x12.bin 00000222B55B8ED0
 loadfont 8 im1024font.bin 0000000000000000
 Starting with romset 122
 Failed to load ROM!
 romset 122 - 0
-loadfont 0 mda.rom 0000027630307C70
-loadfont 3 wy700.rom 0000027630307C70
-loadfont 4 8x12.bin 0000027630307C70
+loadfont 0 mda.rom 00000222B55B8ED0
+loadfont 3 wy700.rom 00000222B55B8ED0
+loadfont 4 8x12.bin 00000222B55B8ED0
 loadfont 8 im1024font.bin 0000000000000000
 Starting with romset 123
 Failed to load ROM!
 romset 123 - 0
-loadfont 0 mda.rom 0000027630307C70
-loadfont 3 wy700.rom 0000027630307C70
-loadfont 4 8x12.bin 0000027630307C70
+loadfont 0 mda.rom 00000222B55B8ED0
+loadfont 3 wy700.rom 00000222B55B8ED0
+loadfont 4 8x12.bin 00000222B55B8ED0
 loadfont 8 im1024font.bin 0000000000000000
 Starting with romset 124
 Failed to load ROM!
 romset 124 - 0
-loadfont 0 mda.rom 0000027630307C70
-loadfont 3 wy700.rom 0000027630307C70
-loadfont 4 8x12.bin 0000027630307C70
+loadfont 0 mda.rom 00000222B55B8ED0
+loadfont 3 wy700.rom 00000222B55B8ED0
+loadfont 4 8x12.bin 00000222B55B8ED0
 loadfont 8 im1024font.bin 0000000000000000
 Starting with romset 125
 Failed to load ROM!
 romset 125 - 0
-loadfont 0 mda.rom 0000027630307C70
-loadfont 3 wy700.rom 0000027630307C70
-loadfont 4 8x12.bin 0000027630307C70
+loadfont 0 mda.rom 00000222B55B8ED0
+loadfont 3 wy700.rom 00000222B55B8ED0
+loadfont 4 8x12.bin 00000222B55B8ED0
 loadfont 8 im1024font.bin 0000000000000000
 Starting with romset 126
 Failed to load ROM!
 romset 126 - 0
-loadfont 0 mda.rom 0000027630307C70
-loadfont 3 wy700.rom 0000027630307C70
-loadfont 4 8x12.bin 0000027630307C70
+loadfont 0 mda.rom 00000222B55B8ED0
+loadfont 3 wy700.rom 00000222B55B8ED0
+loadfont 4 8x12.bin 00000222B55B8ED0
 loadfont 8 im1024font.bin 0000000000000000
 Starting with romset 127
 Failed to load ROM!
 romset 127 - 0
-loadfont 0 mda.rom 0000027630307C70
-loadfont 3 wy700.rom 0000027630307C70
-loadfont 4 8x12.bin 0000027630307C70
+loadfont 0 mda.rom 00000222B55B8ED0
+loadfont 3 wy700.rom 00000222B55B8ED0
+loadfont 4 8x12.bin 00000222B55B8ED0
 loadfont 8 im1024font.bin 0000000000000000
 Starting with romset 128
 Failed to load ROM!
 romset 128 - 0
-loadfont 0 mda.rom 0000027630307C70
-loadfont 3 wy700.rom 0000027630307C70
-loadfont 4 8x12.bin 0000027630307C70
+loadfont 0 mda.rom 00000222B55B8ED0
+loadfont 3 wy700.rom 00000222B55B8ED0
+loadfont 4 8x12.bin 00000222B55B8ED0
 loadfont 8 im1024font.bin 0000000000000000
 Starting with romset 129
 Failed to load ROM!
 romset 129 - 0
-loadfont 0 mda.rom 0000027630307C70
-loadfont 3 wy700.rom 0000027630307C70
-loadfont 4 8x12.bin 0000027630307C70
+loadfont 0 mda.rom 00000222B55B8ED0
+loadfont 3 wy700.rom 00000222B55B8ED0
+loadfont 4 8x12.bin 00000222B55B8ED0
 loadfont 8 im1024font.bin 0000000000000000
 Starting with romset 130
 Failed to load ROM!
 romset 130 - 0
-loadfont 0 mda.rom 0000027630307C70
-loadfont 3 wy700.rom 0000027630307C70
-loadfont 4 8x12.bin 0000027630307C70
+loadfont 0 mda.rom 00000222B55B8ED0
+loadfont 3 wy700.rom 00000222B55B8ED0
+loadfont 4 8x12.bin 00000222B55B8ED0
 loadfont 8 im1024font.bin 0000000000000000
 Starting with romset 131
 Failed to load ROM!
 romset 131 - 0
-loadfont 0 mda.rom 0000027630307C70
-loadfont 3 wy700.rom 0000027630307C70
-loadfont 4 8x12.bin 0000027630307C70
+loadfont 0 mda.rom 00000222B55B8ED0
+loadfont 3 wy700.rom 00000222B55B8ED0
+loadfont 4 8x12.bin 00000222B55B8ED0
 loadfont 8 im1024font.bin 0000000000000000
 Starting with romset 132
 Failed to load ROM!
 romset 132 - 0
-loadfont 0 mda.rom 0000027630307C70
-loadfont 3 wy700.rom 0000027630307C70
-loadfont 4 8x12.bin 0000027630307C70
+loadfont 0 mda.rom 00000222B55B8ED0
+loadfont 3 wy700.rom 00000222B55B8ED0
+loadfont 4 8x12.bin 00000222B55B8ED0
 loadfont 8 im1024font.bin 0000000000000000
 Starting with romset 133
 Failed to load ROM!
 romset 133 - 0
-loadfont 0 mda.rom 0000027630307C70
-loadfont 3 wy700.rom 0000027630307C70
-loadfont 4 8x12.bin 0000027630307C70
+loadfont 0 mda.rom 00000222B55B8ED0
+loadfont 3 wy700.rom 00000222B55B8ED0
+loadfont 4 8x12.bin 00000222B55B8ED0
 loadfont 8 im1024font.bin 0000000000000000
 Starting with romset 134
 Failed to load ROM!
 romset 134 - 0
-loadfont 0 mda.rom 0000027630307C70
-loadfont 3 wy700.rom 0000027630307C70
-loadfont 4 8x12.bin 0000027630307C70
+loadfont 0 mda.rom 00000222B55B8ED0
+loadfont 3 wy700.rom 00000222B55B8ED0
+loadfont 4 8x12.bin 00000222B55B8ED0
 loadfont 8 im1024font.bin 0000000000000000
 Starting with romset 135
 Failed to load ROM!
 romset 135 - 0
-loadfont 0 mda.rom 0000027630307C70
-loadfont 3 wy700.rom 0000027630307C70
-loadfont 4 8x12.bin 0000027630307C70
+loadfont 0 mda.rom 00000222B55B8ED0
+loadfont 3 wy700.rom 00000222B55B8ED0
+loadfont 4 8x12.bin 00000222B55B8ED0
 loadfont 8 im1024font.bin 0000000000000000
 Starting with romset 136
 Failed to load ROM!
 romset 136 - 0
-loadfont 0 mda.rom 0000027630307C70
-loadfont 3 wy700.rom 0000027630307C70
-loadfont 4 8x12.bin 0000027630307C70
+loadfont 0 mda.rom 00000222B55B8ED0
+loadfont 3 wy700.rom 00000222B55B8ED0
+loadfont 4 8x12.bin 00000222B55B8ED0
 loadfont 8 im1024font.bin 0000000000000000
 Starting with romset 137
 Failed to load ROM!
 romset 137 - 0
-loadfont 0 mda.rom 0000027630307C70
-loadfont 3 wy700.rom 0000027630307C70
-loadfont 4 8x12.bin 0000027630307C70
+loadfont 0 mda.rom 00000222B55B8ED0
+loadfont 3 wy700.rom 00000222B55B8ED0
+loadfont 4 8x12.bin 00000222B55B8ED0
 loadfont 8 im1024font.bin 0000000000000000
 Starting with romset 138
 Failed to load ROM!
 romset 138 - 0
-loadfont 0 mda.rom 0000027630307C70
-loadfont 3 wy700.rom 0000027630307C70
-loadfont 4 8x12.bin 0000027630307C70
+loadfont 0 mda.rom 00000222B55B8ED0
+loadfont 3 wy700.rom 00000222B55B8ED0
+loadfont 4 8x12.bin 00000222B55B8ED0
 loadfont 8 im1024font.bin 0000000000000000
 Starting with romset 139
 Failed to load ROM!
 romset 139 - 0
-loadfont 0 mda.rom 0000027630307C70
-loadfont 3 wy700.rom 0000027630307C70
-loadfont 4 8x12.bin 0000027630307C70
+loadfont 0 mda.rom 00000222B55B8ED0
+loadfont 3 wy700.rom 00000222B55B8ED0
+loadfont 4 8x12.bin 00000222B55B8ED0
 loadfont 8 im1024font.bin 0000000000000000
 Starting with romset 140
 Failed to load ROM!
 romset 140 - 0
-loadfont 0 mda.rom 0000027630307C70
-loadfont 3 wy700.rom 0000027630307C70
-loadfont 4 8x12.bin 0000027630307C70
+loadfont 0 mda.rom 00000222B55B8ED0
+loadfont 3 wy700.rom 00000222B55B8ED0
+loadfont 4 8x12.bin 00000222B55B8ED0
 loadfont 8 im1024font.bin 0000000000000000
 Starting with romset 141
 Failed to load ROM!
 romset 141 - 0
-loadfont 0 mda.rom 0000027630307C70
-loadfont 3 wy700.rom 0000027630307C70
-loadfont 4 8x12.bin 0000027630307C70
+loadfont 0 mda.rom 00000222B55B8ED0
+loadfont 3 wy700.rom 00000222B55B8ED0
+loadfont 4 8x12.bin 00000222B55B8ED0
 loadfont 8 im1024font.bin 0000000000000000
 Starting with romset 142
 Failed to load ROM!
 romset 142 - 0
-loadfont 0 mda.rom 0000027630307C70
-loadfont 3 wy700.rom 0000027630307C70
-loadfont 4 8x12.bin 0000027630307C70
+loadfont 0 mda.rom 00000222B55B8ED0
+loadfont 3 wy700.rom 00000222B55B8ED0
+loadfont 4 8x12.bin 00000222B55B8ED0
 loadfont 8 im1024font.bin 0000000000000000
 Starting with romset 143
 Failed to load ROM!
 romset 143 - 0
-loadfont 0 mda.rom 0000027630307C70
-loadfont 3 wy700.rom 0000027630307C70
-loadfont 4 8x12.bin 0000027630307C70
+loadfont 0 mda.rom 00000222B55B8ED0
+loadfont 3 wy700.rom 00000222B55B8ED0
+loadfont 4 8x12.bin 00000222B55B8ED0
 loadfont 8 im1024font.bin 0000000000000000
 Starting with romset 144
 Failed to load ROM!
 romset 144 - 0
-loadfont 0 mda.rom 0000027630307C70
-loadfont 3 wy700.rom 0000027630307C70
-loadfont 4 8x12.bin 0000027630307C70
+loadfont 0 mda.rom 00000222B55B8ED0
+loadfont 3 wy700.rom 00000222B55B8ED0
+loadfont 4 8x12.bin 00000222B55B8ED0
 loadfont 8 im1024font.bin 0000000000000000
 Starting with romset 145
 Failed to load ROM!
 romset 145 - 0
-loadfont 0 mda.rom 0000027630307C70
-loadfont 3 wy700.rom 0000027630307C70
-loadfont 4 8x12.bin 0000027630307C70
+loadfont 0 mda.rom 00000222B55B8ED0
+loadfont 3 wy700.rom 00000222B55B8ED0
+loadfont 4 8x12.bin 00000222B55B8ED0
 loadfont 8 im1024font.bin 0000000000000000
 Starting with romset 146
 Failed to load ROM!
 romset 146 - 0
-loadfont 0 mda.rom 0000027630307C70
-loadfont 3 wy700.rom 0000027630307C70
-loadfont 4 8x12.bin 0000027630307C70
+loadfont 0 mda.rom 00000222B55B8ED0
+loadfont 3 wy700.rom 00000222B55B8ED0
+loadfont 4 8x12.bin 00000222B55B8ED0
 loadfont 8 im1024font.bin 0000000000000000
 Starting with romset 147
 Failed to load ROM!
 romset 147 - 0
-loadfont 0 mda.rom 0000027630307C70
-loadfont 3 wy700.rom 0000027630307C70
-loadfont 4 8x12.bin 0000027630307C70
+loadfont 0 mda.rom 00000222B55B8ED0
+loadfont 3 wy700.rom 00000222B55B8ED0
+loadfont 4 8x12.bin 00000222B55B8ED0
 loadfont 8 im1024font.bin 0000000000000000
 Starting with romset 148
 Failed to load ROM!
 romset 148 - 0
-loadfont 0 mda.rom 0000027630307C70
-loadfont 3 wy700.rom 0000027630307C70
-loadfont 4 8x12.bin 0000027630307C70
+loadfont 0 mda.rom 00000222B55B8ED0
+loadfont 3 wy700.rom 00000222B55B8ED0
+loadfont 4 8x12.bin 00000222B55B8ED0
 loadfont 8 im1024font.bin 0000000000000000
 Starting with romset 149
 Failed to load ROM!
 romset 149 - 0
-loadfont 0 mda.rom 0000027630307C70
-loadfont 3 wy700.rom 0000027630307C70
-loadfont 4 8x12.bin 0000027630307C70
+loadfont 0 mda.rom 00000222B55B8ED0
+loadfont 3 wy700.rom 00000222B55B8ED0
+loadfont 4 8x12.bin 00000222B55B8ED0
 loadfont 8 im1024font.bin 0000000000000000
 Starting with romset 150
 Failed to load ROM!
 romset 150 - 0
-loadfont 0 mda.rom 0000027630307C70
-loadfont 3 wy700.rom 0000027630307C70
-loadfont 4 8x12.bin 0000027630307C70
+loadfont 0 mda.rom 00000222B55B8ED0
+loadfont 3 wy700.rom 00000222B55B8ED0
+loadfont 4 8x12.bin 00000222B55B8ED0
 loadfont 8 im1024font.bin 0000000000000000
 Starting with romset 151
 Failed to load ROM!
 romset 151 - 0
-loadfont 0 mda.rom 0000027630307C70
-loadfont 3 wy700.rom 0000027630307C70
-loadfont 4 8x12.bin 0000027630307C70
+loadfont 0 mda.rom 00000222B55B8ED0
+loadfont 3 wy700.rom 00000222B55B8ED0
+loadfont 4 8x12.bin 00000222B55B8ED0
 loadfont 8 im1024font.bin 0000000000000000
 Starting with romset 152
 Failed to load ROM!
 romset 152 - 0
-loadfont 0 mda.rom 0000027630307C70
-loadfont 3 wy700.rom 0000027630307C70
-loadfont 4 8x12.bin 0000027630307C70
+loadfont 0 mda.rom 00000222B55B8ED0
+loadfont 3 wy700.rom 00000222B55B8ED0
+loadfont 4 8x12.bin 00000222B55B8ED0
 loadfont 8 im1024font.bin 0000000000000000
 Starting with romset 153
 Failed to load ROM!
 romset 153 - 0
-loadfont 0 mda.rom 0000027630307C70
-loadfont 3 wy700.rom 0000027630307C70
-loadfont 4 8x12.bin 0000027630307C70
+loadfont 0 mda.rom 00000222B55B8ED0
+loadfont 3 wy700.rom 00000222B55B8ED0
+loadfont 4 8x12.bin 00000222B55B8ED0
 loadfont 8 im1024font.bin 0000000000000000
 Starting with romset 154
 Failed to load ROM!
 romset 154 - 0
-loadfont 0 mda.rom 0000027630307C70
-loadfont 3 wy700.rom 0000027630307C70
-loadfont 4 8x12.bin 0000027630307C70
+loadfont 0 mda.rom 00000222B55B8ED0
+loadfont 3 wy700.rom 00000222B55B8ED0
+loadfont 4 8x12.bin 00000222B55B8ED0
 loadfont 8 im1024font.bin 0000000000000000
 Starting with romset 155
 Failed to load ROM!
 romset 155 - 0
-loadfont 0 mda.rom 0000027630307C70
-loadfont 3 wy700.rom 0000027630307C70
-loadfont 4 8x12.bin 0000027630307C70
+loadfont 0 mda.rom 00000222B55B8ED0
+loadfont 3 wy700.rom 00000222B55B8ED0
+loadfont 4 8x12.bin 00000222B55B8ED0
 loadfont 8 im1024font.bin 0000000000000000
 Starting with romset 156
 Failed to load ROM!
 romset 156 - 0
-loadfont 0 mda.rom 0000027630307C70
-loadfont 3 wy700.rom 0000027630307C70
-loadfont 4 8x12.bin 0000027630307C70
+loadfont 0 mda.rom 00000222B55B8ED0
+loadfont 3 wy700.rom 00000222B55B8ED0
+loadfont 4 8x12.bin 00000222B55B8ED0
 loadfont 8 im1024font.bin 0000000000000000
 Starting with romset 157
 Failed to load ROM!
 romset 157 - 0
-loadfont 0 mda.rom 0000027630307C70
-loadfont 3 wy700.rom 0000027630307C70
-loadfont 4 8x12.bin 0000027630307C70
+loadfont 0 mda.rom 00000222B55B8ED0
+loadfont 3 wy700.rom 00000222B55B8ED0
+loadfont 4 8x12.bin 00000222B55B8ED0
 loadfont 8 im1024font.bin 0000000000000000
 Starting with romset 158
 Failed to load ROM!
 romset 158 - 0
-loadfont 0 mda.rom 0000027630307C70
-loadfont 3 wy700.rom 0000027630307C70
-loadfont 4 8x12.bin 0000027630307C70
+loadfont 0 mda.rom 00000222B55B8ED0
+loadfont 3 wy700.rom 00000222B55B8ED0
+loadfont 4 8x12.bin 00000222B55B8ED0
 loadfont 8 im1024font.bin 0000000000000000
 Starting with romset 159
 Failed to load ROM!
 romset 159 - 0
-loadfont 0 mda.rom 0000027630307C70
-loadfont 3 wy700.rom 0000027630307C70
-loadfont 4 8x12.bin 0000027630307C70
+loadfont 0 mda.rom 00000222B55B8ED0
+loadfont 3 wy700.rom 00000222B55B8ED0
+loadfont 4 8x12.bin 00000222B55B8ED0
 loadfont 8 im1024font.bin 0000000000000000
 Starting with romset 160
 Failed to load ROM!
 romset 160 - 0
-loadfont 0 mda.rom 0000027630307C70
-loadfont 3 wy700.rom 0000027630307C70
-loadfont 4 8x12.bin 0000027630307C70
+loadfont 0 mda.rom 00000222B55B8ED0
+loadfont 3 wy700.rom 00000222B55B8ED0
+loadfont 4 8x12.bin 00000222B55B8ED0
 loadfont 8 im1024font.bin 0000000000000000
 Starting with romset 161
 Failed to load ROM!
 romset 161 - 0
-loadfont 0 mda.rom 0000027630307C70
-loadfont 3 wy700.rom 0000027630307C70
-loadfont 4 8x12.bin 0000027630307C70
+loadfont 0 mda.rom 00000222B55B8ED0
+loadfont 3 wy700.rom 00000222B55B8ED0
+loadfont 4 8x12.bin 00000222B55B8ED0
 loadfont 8 im1024font.bin 0000000000000000
 Starting with romset 162
 Failed to load ROM!
 romset 162 - 0
-loadfont 0 mda.rom 0000027630307C70
-loadfont 3 wy700.rom 0000027630307C70
-loadfont 4 8x12.bin 0000027630307C70
+loadfont 0 mda.rom 00000222B55B8ED0
+loadfont 3 wy700.rom 00000222B55B8ED0
+loadfont 4 8x12.bin 00000222B55B8ED0
 loadfont 8 im1024font.bin 0000000000000000
 Starting with romset 163
 Failed to load ROM!
 romset 163 - 0
-loadfont 0 mda.rom 0000027630307C70
-loadfont 3 wy700.rom 0000027630307C70
-loadfont 4 8x12.bin 0000027630307C70
+loadfont 0 mda.rom 00000222B55B8ED0
+loadfont 3 wy700.rom 00000222B55B8ED0
+loadfont 4 8x12.bin 00000222B55B8ED0
 loadfont 8 im1024font.bin 0000000000000000
 Starting with romset 164
 Failed to load ROM!
 romset 164 - 0
-loadfont 0 mda.rom 0000027630307C70
-loadfont 3 wy700.rom 0000027630307C70
-loadfont 4 8x12.bin 0000027630307C70
+loadfont 0 mda.rom 00000222B55B8ED0
+loadfont 3 wy700.rom 00000222B55B8ED0
+loadfont 4 8x12.bin 00000222B55B8ED0
 loadfont 8 im1024font.bin 0000000000000000
 Starting with romset 165
 Failed to load ROM!
 romset 165 - 0
-loadfont 0 mda.rom 0000027630307C70
-loadfont 3 wy700.rom 0000027630307C70
-loadfont 4 8x12.bin 0000027630307C70
+loadfont 0 mda.rom 00000222B55B8ED0
+loadfont 3 wy700.rom 00000222B55B8ED0
+loadfont 4 8x12.bin 00000222B55B8ED0
 loadfont 8 im1024font.bin 0000000000000000
 Starting with romset 166
 Failed to load ROM!
 romset 166 - 0
-loadfont 0 mda.rom 0000027630307C70
-loadfont 3 wy700.rom 0000027630307C70
-loadfont 4 8x12.bin 0000027630307C70
+loadfont 0 mda.rom 00000222B55B8ED0
+loadfont 3 wy700.rom 00000222B55B8ED0
+loadfont 4 8x12.bin 00000222B55B8ED0
 loadfont 8 im1024font.bin 0000000000000000
 Starting with romset 167
 Failed to load ROM!
 romset 167 - 0
-loadfont 0 mda.rom 0000027630307C70
-loadfont 3 wy700.rom 0000027630307C70
-loadfont 4 8x12.bin 0000027630307C70
+loadfont 0 mda.rom 00000222B55B8ED0
+loadfont 3 wy700.rom 00000222B55B8ED0
+loadfont 4 8x12.bin 00000222B55B8ED0
 loadfont 8 im1024font.bin 0000000000000000
 Starting with romset 168
 Failed to load ROM!
 romset 168 - 0
-loadfont 0 mda.rom 0000027630307C70
-loadfont 3 wy700.rom 0000027630307C70
-loadfont 4 8x12.bin 0000027630307C70
+loadfont 0 mda.rom 00000222B55B8ED0
+loadfont 3 wy700.rom 00000222B55B8ED0
+loadfont 4 8x12.bin 00000222B55B8ED0
 loadfont 8 im1024font.bin 0000000000000000
 Starting with romset 169
 Failed to load ROM!
 romset 169 - 0
-loadfont 0 mda.rom 0000027630307C70
-loadfont 3 wy700.rom 0000027630307C70
-loadfont 4 8x12.bin 0000027630307C70
+loadfont 0 mda.rom 00000222B55B8ED0
+loadfont 3 wy700.rom 00000222B55B8ED0
+loadfont 4 8x12.bin 00000222B55B8ED0
 loadfont 8 im1024font.bin 0000000000000000
 Starting with romset 170
 Failed to load ROM!
 romset 170 - 0
-loadfont 0 mda.rom 0000027630307C70
-loadfont 3 wy700.rom 0000027630307C70
-loadfont 4 8x12.bin 0000027630307C70
+loadfont 0 mda.rom 00000222B55B8ED0
+loadfont 3 wy700.rom 00000222B55B8ED0
+loadfont 4 8x12.bin 00000222B55B8ED0
 loadfont 8 im1024font.bin 0000000000000000
 Starting with romset 171
 Failed to load ROM!
 romset 171 - 0
-loadfont 0 mda.rom 0000027630307C70
-loadfont 3 wy700.rom 0000027630307C70
-loadfont 4 8x12.bin 0000027630307C70
+loadfont 0 mda.rom 00000222B55B8ED0
+loadfont 3 wy700.rom 00000222B55B8ED0
+loadfont 4 8x12.bin 00000222B55B8ED0
 loadfont 8 im1024font.bin 0000000000000000
 Starting with romset 172
 Failed to load ROM!
 romset 172 - 0
-loadfont 0 mda.rom 0000027630307C70
-loadfont 3 wy700.rom 0000027630307C70
-loadfont 4 8x12.bin 0000027630307C70
+loadfont 0 mda.rom 00000222B55B8ED0
+loadfont 3 wy700.rom 00000222B55B8ED0
+loadfont 4 8x12.bin 00000222B55B8ED0
 loadfont 8 im1024font.bin 0000000000000000
 Starting with romset 173
 Failed to load ROM!
 romset 173 - 0
-loadfont 0 mda.rom 0000027630307C70
-loadfont 3 wy700.rom 0000027630307C70
-loadfont 4 8x12.bin 0000027630307C70
+loadfont 0 mda.rom 00000222B55B8ED0
+loadfont 3 wy700.rom 00000222B55B8ED0
+loadfont 4 8x12.bin 00000222B55B8ED0
 loadfont 8 im1024font.bin 0000000000000000
 Starting with romset 174
 Failed to load ROM!
 romset 174 - 0
-loadfont 0 mda.rom 0000027630307C70
-loadfont 3 wy700.rom 0000027630307C70
-loadfont 4 8x12.bin 0000027630307C70
+loadfont 0 mda.rom 00000222B55B8ED0
+loadfont 3 wy700.rom 00000222B55B8ED0
+loadfont 4 8x12.bin 00000222B55B8ED0
 loadfont 8 im1024font.bin 0000000000000000
 Starting with romset 175
 Failed to load ROM!
 romset 175 - 0
-loadfont 0 mda.rom 0000027630307C70
-loadfont 3 wy700.rom 0000027630307C70
-loadfont 4 8x12.bin 0000027630307C70
+loadfont 0 mda.rom 00000222B55B8ED0
+loadfont 3 wy700.rom 00000222B55B8ED0
+loadfont 4 8x12.bin 00000222B55B8ED0
 loadfont 8 im1024font.bin 0000000000000000
 Starting with romset 176
 Failed to load ROM!
 romset 176 - 0
-loadfont 0 mda.rom 0000027630307C70
-loadfont 3 wy700.rom 0000027630307C70
-loadfont 4 8x12.bin 0000027630307C70
+loadfont 0 mda.rom 00000222B55B8ED0
+loadfont 3 wy700.rom 00000222B55B8ED0
+loadfont 4 8x12.bin 00000222B55B8ED0
 loadfont 8 im1024font.bin 0000000000000000
 Starting with romset 177
 Failed to load ROM!
 romset 177 - 0
-loadfont 0 mda.rom 0000027630307C70
-loadfont 3 wy700.rom 0000027630307C70
-loadfont 4 8x12.bin 0000027630307C70
+loadfont 0 mda.rom 00000222B55B8ED0
+loadfont 3 wy700.rom 00000222B55B8ED0
+loadfont 4 8x12.bin 00000222B55B8ED0
 loadfont 8 im1024font.bin 0000000000000000
 Starting with romset 178
 Failed to load ROM!
 romset 178 - 0
-loadfont 0 mda.rom 0000027630307C70
-loadfont 3 wy700.rom 0000027630307C70
-loadfont 4 8x12.bin 0000027630307C70
+loadfont 0 mda.rom 00000222B55B8ED0
+loadfont 3 wy700.rom 00000222B55B8ED0
+loadfont 4 8x12.bin 00000222B55B8ED0
 loadfont 8 im1024font.bin 0000000000000000
 Starting with romset 179
 Failed to load ROM!
 romset 179 - 0
-loadfont 0 mda.rom 0000027630307C70
-loadfont 3 wy700.rom 0000027630307C70
-loadfont 4 8x12.bin 0000027630307C70
+loadfont 0 mda.rom 00000222B55B8ED0
+loadfont 3 wy700.rom 00000222B55B8ED0
+loadfont 4 8x12.bin 00000222B55B8ED0
 loadfont 8 im1024font.bin 0000000000000000
 Starting with romset 180
 Failed to load ROM!
 romset 180 - 0
-loadfont 0 mda.rom 0000027630307C70
-loadfont 3 wy700.rom 0000027630307C70
-loadfont 4 8x12.bin 0000027630307C70
+loadfont 0 mda.rom 00000222B55B8ED0
+loadfont 3 wy700.rom 00000222B55B8ED0
+loadfont 4 8x12.bin 00000222B55B8ED0
 loadfont 8 im1024font.bin 0000000000000000
 Starting with romset 181
 Failed to load ROM!
 romset 181 - 0
-loadfont 0 mda.rom 0000027630307C70
-loadfont 3 wy700.rom 0000027630307C70
-loadfont 4 8x12.bin 0000027630307C70
+loadfont 0 mda.rom 00000222B55B8ED0
+loadfont 3 wy700.rom 00000222B55B8ED0
+loadfont 4 8x12.bin 00000222B55B8ED0
 loadfont 8 im1024font.bin 0000000000000000
 Starting with romset 182
 Failed to load ROM!
 romset 182 - 0
-loadfont 0 mda.rom 0000027630307C70
-loadfont 3 wy700.rom 0000027630307C70
-loadfont 4 8x12.bin 0000027630307C70
+loadfont 0 mda.rom 00000222B55B8ED0
+loadfont 3 wy700.rom 00000222B55B8ED0
+loadfont 4 8x12.bin 00000222B55B8ED0
 loadfont 8 im1024font.bin 0000000000000000
 Starting with romset 183
 Failed to load ROM!
 romset 183 - 0
-loadfont 0 mda.rom 0000027630307C70
-loadfont 3 wy700.rom 0000027630307C70
-loadfont 4 8x12.bin 0000027630307C70
+loadfont 0 mda.rom 00000222B55B8ED0
+loadfont 3 wy700.rom 00000222B55B8ED0
+loadfont 4 8x12.bin 00000222B55B8ED0
 loadfont 8 im1024font.bin 0000000000000000
 Starting with romset 184
 Failed to load ROM!
 romset 184 - 0
-loadfont 0 mda.rom 0000027630307C70
-loadfont 3 wy700.rom 0000027630307C70
-loadfont 4 8x12.bin 0000027630307C70
+loadfont 0 mda.rom 00000222B55B8ED0
+loadfont 3 wy700.rom 00000222B55B8ED0
+loadfont 4 8x12.bin 00000222B55B8ED0
 loadfont 8 im1024font.bin 0000000000000000
 Starting with romset 185
 Failed to load ROM!
 romset 185 - 0
-loadfont 0 mda.rom 0000027630307C70
-loadfont 3 wy700.rom 0000027630307C70
-loadfont 4 8x12.bin 0000027630307C70
+loadfont 0 mda.rom 00000222B55B8ED0
+loadfont 3 wy700.rom 00000222B55B8ED0
+loadfont 4 8x12.bin 00000222B55B8ED0
 loadfont 8 im1024font.bin 0000000000000000
 Starting with romset 186
 Failed to load ROM!
 romset 186 - 0
-loadfont 0 mda.rom 0000027630307C70
-loadfont 3 wy700.rom 0000027630307C70
-loadfont 4 8x12.bin 0000027630307C70
+loadfont 0 mda.rom 00000222B55B8ED0
+loadfont 3 wy700.rom 00000222B55B8ED0
+loadfont 4 8x12.bin 00000222B55B8ED0
 loadfont 8 im1024font.bin 0000000000000000
 Starting with romset 187
 Failed to load ROM!
 romset 187 - 0
-loadfont 0 mda.rom 0000027630307C70
-loadfont 3 wy700.rom 0000027630307C70
-loadfont 4 8x12.bin 0000027630307C70
+loadfont 0 mda.rom 00000222B55B8ED0
+loadfont 3 wy700.rom 00000222B55B8ED0
+loadfont 4 8x12.bin 00000222B55B8ED0
 loadfont 8 im1024font.bin 0000000000000000
 Starting with romset 188
 Failed to load ROM!
 romset 188 - 0
-loadfont 0 mda.rom 0000027630307C70
-loadfont 3 wy700.rom 0000027630307C70
-loadfont 4 8x12.bin 0000027630307C70
+loadfont 0 mda.rom 00000222B55B8ED0
+loadfont 3 wy700.rom 00000222B55B8ED0
+loadfont 4 8x12.bin 00000222B55B8ED0
 loadfont 8 im1024font.bin 0000000000000000
 Starting with romset 189
 Failed to load ROM!
 romset 189 - 0
-loadfont 0 mda.rom 0000027630307C70
-loadfont 3 wy700.rom 0000027630307C70
-loadfont 4 8x12.bin 0000027630307C70
+loadfont 0 mda.rom 00000222B55B8ED0
+loadfont 3 wy700.rom 00000222B55B8ED0
+loadfont 4 8x12.bin 00000222B55B8ED0
 loadfont 8 im1024font.bin 0000000000000000
 Starting with romset 190
 Failed to load ROM!
 romset 190 - 0
-loadfont 0 mda.rom 0000027630307C70
-loadfont 3 wy700.rom 0000027630307C70
-loadfont 4 8x12.bin 0000027630307C70
+loadfont 0 mda.rom 00000222B55B8ED0
+loadfont 3 wy700.rom 00000222B55B8ED0
+loadfont 4 8x12.bin 00000222B55B8ED0
 loadfont 8 im1024font.bin 0000000000000000
 Starting with romset 191
 Failed to load ROM!
 romset 191 - 0
-loadfont 0 mda.rom 0000027630307C70
-loadfont 3 wy700.rom 0000027630307C70
-loadfont 4 8x12.bin 0000027630307C70
+loadfont 0 mda.rom 00000222B55B8ED0
+loadfont 3 wy700.rom 00000222B55B8ED0
+loadfont 4 8x12.bin 00000222B55B8ED0
 loadfont 8 im1024font.bin 0000000000000000
 Starting with romset 192
 Failed to load ROM!
 romset 192 - 0
-loadfont 0 mda.rom 0000027630307C70
-loadfont 3 wy700.rom 0000027630307C70
-loadfont 4 8x12.bin 0000027630307C70
+loadfont 0 mda.rom 00000222B55B8ED0
+loadfont 3 wy700.rom 00000222B55B8ED0
+loadfont 4 8x12.bin 00000222B55B8ED0
 loadfont 8 im1024font.bin 0000000000000000
 Starting with romset 193
 Failed to load ROM!
 romset 193 - 0
-loadfont 0 mda.rom 0000027630307C70
-loadfont 3 wy700.rom 0000027630307C70
-loadfont 4 8x12.bin 0000027630307C70
+loadfont 0 mda.rom 00000222B55B8ED0
+loadfont 3 wy700.rom 00000222B55B8ED0
+loadfont 4 8x12.bin 00000222B55B8ED0
 loadfont 8 im1024font.bin 0000000000000000
 Starting with romset 194
 Failed to load ROM!
 romset 194 - 0
-loadfont 0 mda.rom 0000027630307C70
-loadfont 3 wy700.rom 0000027630307C70
-loadfont 4 8x12.bin 0000027630307C70
+loadfont 0 mda.rom 00000222B55B8ED0
+loadfont 3 wy700.rom 00000222B55B8ED0
+loadfont 4 8x12.bin 00000222B55B8ED0
 loadfont 8 im1024font.bin 0000000000000000
 Starting with romset 195
 Failed to load ROM!
 romset 195 - 0
-loadfont 0 mda.rom 0000027630307C70
-loadfont 3 wy700.rom 0000027630307C70
-loadfont 4 8x12.bin 0000027630307C70
+loadfont 0 mda.rom 00000222B55B8ED0
+loadfont 3 wy700.rom 00000222B55B8ED0
+loadfont 4 8x12.bin 00000222B55B8ED0
 loadfont 8 im1024font.bin 0000000000000000
 Starting with romset 196
 Failed to load ROM!
 romset 196 - 0
-loadfont 0 mda.rom 0000027630307C70
-loadfont 3 wy700.rom 0000027630307C70
-loadfont 4 8x12.bin 0000027630307C70
+loadfont 0 mda.rom 00000222B55B8ED0
+loadfont 3 wy700.rom 00000222B55B8ED0
+loadfont 4 8x12.bin 00000222B55B8ED0
 loadfont 8 im1024font.bin 0000000000000000
 Starting with romset 197
 Failed to load ROM!
 romset 197 - 0
-loadfont 0 mda.rom 0000027630307C70
-loadfont 3 wy700.rom 0000027630307C70
-loadfont 4 8x12.bin 0000027630307C70
+loadfont 0 mda.rom 00000222B55B8ED0
+loadfont 3 wy700.rom 00000222B55B8ED0
+loadfont 4 8x12.bin 00000222B55B8ED0
 loadfont 8 im1024font.bin 0000000000000000
 Starting with romset 198
 Failed to load ROM!
 romset 198 - 0
-loadfont 0 mda.rom 0000027630307C70
-loadfont 3 wy700.rom 0000027630307C70
-loadfont 4 8x12.bin 0000027630307C70
+loadfont 0 mda.rom 00000222B55B8ED0
+loadfont 3 wy700.rom 00000222B55B8ED0
+loadfont 4 8x12.bin 00000222B55B8ED0
 loadfont 8 im1024font.bin 0000000000000000
 Starting with romset 199
 Failed to load ROM!
 romset 199 - 0
-loadfont 0 mda.rom 0000027630307C70
-loadfont 3 wy700.rom 0000027630307C70
-loadfont 4 8x12.bin 0000027630307C70
+loadfont 0 mda.rom 00000222B55B8ED0
+loadfont 3 wy700.rom 00000222B55B8ED0
+loadfont 4 8x12.bin 00000222B55B8ED0
 loadfont 8 im1024font.bin 0000000000000000
 Starting with romset 200
 Failed to load ROM!
 romset 200 - 0
-loadfont 0 mda.rom 0000027630307C70
-loadfont 3 wy700.rom 0000027630307C70
-loadfont 4 8x12.bin 0000027630307C70
+loadfont 0 mda.rom 00000222B55B8ED0
+loadfont 3 wy700.rom 00000222B55B8ED0
+loadfont 4 8x12.bin 00000222B55B8ED0
 loadfont 8 im1024font.bin 0000000000000000
 Starting with romset 201
 Failed to load ROM!
 romset 201 - 0
-loadfont 0 mda.rom 0000027630307C70
-loadfont 3 wy700.rom 0000027630307C70
-loadfont 4 8x12.bin 0000027630307C70
+loadfont 0 mda.rom 00000222B55B8ED0
+loadfont 3 wy700.rom 00000222B55B8ED0
+loadfont 4 8x12.bin 00000222B55B8ED0
 loadfont 8 im1024font.bin 0000000000000000
 Starting with romset 202
 Failed to load ROM!
 romset 202 - 0
-loadfont 0 mda.rom 0000027630307C70
-loadfont 3 wy700.rom 0000027630307C70
-loadfont 4 8x12.bin 0000027630307C70
+loadfont 0 mda.rom 00000222B55B8ED0
+loadfont 3 wy700.rom 00000222B55B8ED0
+loadfont 4 8x12.bin 00000222B55B8ED0
 loadfont 8 im1024font.bin 0000000000000000
 Starting with romset 203
 Failed to load ROM!
 romset 203 - 0
-loadfont 0 mda.rom 0000027630307C70
-loadfont 3 wy700.rom 0000027630307C70
-loadfont 4 8x12.bin 0000027630307C70
+loadfont 0 mda.rom 00000222B55B8ED0
+loadfont 3 wy700.rom 00000222B55B8ED0
+loadfont 4 8x12.bin 00000222B55B8ED0
 loadfont 8 im1024font.bin 0000000000000000
 Starting with romset 204
 Failed to load ROM!
 romset 204 - 0
-loadfont 0 mda.rom 0000027630307C70
-loadfont 3 wy700.rom 0000027630307C70
-loadfont 4 8x12.bin 0000027630307C70
+loadfont 0 mda.rom 00000222B55B8ED0
+loadfont 3 wy700.rom 00000222B55B8ED0
+loadfont 4 8x12.bin 00000222B55B8ED0
 loadfont 8 im1024font.bin 0000000000000000
 Starting with romset 205
 Failed to load ROM!
 romset 205 - 0
-loadfont 0 mda.rom 0000027630307C70
-loadfont 3 wy700.rom 0000027630307C70
-loadfont 4 8x12.bin 0000027630307C70
+loadfont 0 mda.rom 00000222B55B8ED0
+loadfont 3 wy700.rom 00000222B55B8ED0
+loadfont 4 8x12.bin 00000222B55B8ED0
 loadfont 8 im1024font.bin 0000000000000000
 Starting with romset 206
 Failed to load ROM!
 romset 206 - 0
-loadfont 0 mda.rom 0000027630307C70
-loadfont 3 wy700.rom 0000027630307C70
-loadfont 4 8x12.bin 0000027630307C70
+loadfont 0 mda.rom 00000222B55B8ED0
+loadfont 3 wy700.rom 00000222B55B8ED0
+loadfont 4 8x12.bin 00000222B55B8ED0
 loadfont 8 im1024font.bin 0000000000000000
 Starting with romset 207
 Failed to load ROM!
 romset 207 - 0
-loadfont 0 mda.rom 0000027630307C70
-loadfont 3 wy700.rom 0000027630307C70
-loadfont 4 8x12.bin 0000027630307C70
+loadfont 0 mda.rom 00000222B55B8ED0
+loadfont 3 wy700.rom 00000222B55B8ED0
+loadfont 4 8x12.bin 00000222B55B8ED0
 loadfont 8 im1024font.bin 0000000000000000
 Starting with romset 208
 Failed to load ROM!
 romset 208 - 0
-loadfont 0 mda.rom 0000027630307C70
-loadfont 3 wy700.rom 0000027630307C70
-loadfont 4 8x12.bin 0000027630307C70
+loadfont 0 mda.rom 00000222B55B8ED0
+loadfont 3 wy700.rom 00000222B55B8ED0
+loadfont 4 8x12.bin 00000222B55B8ED0
 loadfont 8 im1024font.bin 0000000000000000
 Starting with romset 209
 Failed to load ROM!
 romset 209 - 0
-loadfont 0 mda.rom 0000027630307C70
-loadfont 3 wy700.rom 0000027630307C70
-loadfont 4 8x12.bin 0000027630307C70
+loadfont 0 mda.rom 00000222B55B8ED0
+loadfont 3 wy700.rom 00000222B55B8ED0
+loadfont 4 8x12.bin 00000222B55B8ED0
 loadfont 8 im1024font.bin 0000000000000000
 Starting with romset 210
 Failed to load ROM!
 romset 210 - 0
-loadfont 0 mda.rom 0000027630307C70
-loadfont 3 wy700.rom 0000027630307C70
-loadfont 4 8x12.bin 0000027630307C70
+loadfont 0 mda.rom 00000222B55B8ED0
+loadfont 3 wy700.rom 00000222B55B8ED0
+loadfont 4 8x12.bin 00000222B55B8ED0
 loadfont 8 im1024font.bin 0000000000000000
 Starting with romset 211
 Failed to load ROM!
 romset 211 - 0
-loadfont 0 mda.rom 0000027630307C70
-loadfont 3 wy700.rom 0000027630307C70
-loadfont 4 8x12.bin 0000027630307C70
+loadfont 0 mda.rom 00000222B55B8ED0
+loadfont 3 wy700.rom 00000222B55B8ED0
+loadfont 4 8x12.bin 00000222B55B8ED0
 loadfont 8 im1024font.bin 0000000000000000
 Starting with romset 212
 Failed to load ROM!
 romset 212 - 0
-loadfont 0 mda.rom 0000027630307C70
-loadfont 3 wy700.rom 0000027630307C70
-loadfont 4 8x12.bin 0000027630307C70
+loadfont 0 mda.rom 00000222B55B8ED0
+loadfont 3 wy700.rom 00000222B55B8ED0
+loadfont 4 8x12.bin 00000222B55B8ED0
 loadfont 8 im1024font.bin 0000000000000000
 Starting with romset 213
 Failed to load ROM!
 romset 213 - 0
-loadfont 0 mda.rom 0000027630307C70
-loadfont 3 wy700.rom 0000027630307C70
-loadfont 4 8x12.bin 0000027630307C70
+loadfont 0 mda.rom 00000222B55B8ED0
+loadfont 3 wy700.rom 00000222B55B8ED0
+loadfont 4 8x12.bin 00000222B55B8ED0
 loadfont 8 im1024font.bin 0000000000000000
 Starting with romset 214
 Failed to load ROM!
 romset 214 - 0
-loadfont 0 mda.rom 0000027630307C70
-loadfont 3 wy700.rom 0000027630307C70
-loadfont 4 8x12.bin 0000027630307C70
+loadfont 0 mda.rom 00000222B55B8ED0
+loadfont 3 wy700.rom 00000222B55B8ED0
+loadfont 4 8x12.bin 00000222B55B8ED0
 loadfont 8 im1024font.bin 0000000000000000
 Starting with romset 215
 Failed to load ROM!
 romset 215 - 0
-loadfont 0 mda.rom 0000027630307C70
-loadfont 3 wy700.rom 0000027630307C70
-loadfont 4 8x12.bin 0000027630307C70
+loadfont 0 mda.rom 00000222B55B8ED0
+loadfont 3 wy700.rom 00000222B55B8ED0
+loadfont 4 8x12.bin 00000222B55B8ED0
 loadfont 8 im1024font.bin 0000000000000000
 Starting with romset 216
 Failed to load ROM!
 romset 216 - 0
-loadfont 0 mda.rom 0000027630307C70
-loadfont 3 wy700.rom 0000027630307C70
-loadfont 4 8x12.bin 0000027630307C70
+loadfont 0 mda.rom 00000222B55B8ED0
+loadfont 3 wy700.rom 00000222B55B8ED0
+loadfont 4 8x12.bin 00000222B55B8ED0
 loadfont 8 im1024font.bin 0000000000000000
 Starting with romset 217
 Failed to load ROM!
 romset 217 - 0
-loadfont 0 mda.rom 0000027630307C70
-loadfont 3 wy700.rom 0000027630307C70
-loadfont 4 8x12.bin 0000027630307C70
+loadfont 0 mda.rom 00000222B55B8ED0
+loadfont 3 wy700.rom 00000222B55B8ED0
+loadfont 4 8x12.bin 00000222B55B8ED0
 loadfont 8 im1024font.bin 0000000000000000
 Starting with romset 218
 Failed to load ROM!
 romset 218 - 0
-loadfont 0 mda.rom 0000027630307C70
-loadfont 3 wy700.rom 0000027630307C70
-loadfont 4 8x12.bin 0000027630307C70
+loadfont 0 mda.rom 00000222B55B8ED0
+loadfont 3 wy700.rom 00000222B55B8ED0
+loadfont 4 8x12.bin 00000222B55B8ED0
 loadfont 8 im1024font.bin 0000000000000000
 Starting with romset 219
 Failed to load ROM!
 romset 219 - 0
-loadfont 0 mda.rom 0000027630307C70
-loadfont 3 wy700.rom 0000027630307C70
-loadfont 4 8x12.bin 0000027630307C70
+loadfont 0 mda.rom 00000222B55B8ED0
+loadfont 3 wy700.rom 00000222B55B8ED0
+loadfont 4 8x12.bin 00000222B55B8ED0
 loadfont 8 im1024font.bin 0000000000000000
 Starting with romset 220
 Failed to load ROM!
 romset 220 - 0
-loadfont 0 mda.rom 0000027630307C70
-loadfont 3 wy700.rom 0000027630307C70
-loadfont 4 8x12.bin 0000027630307C70
+loadfont 0 mda.rom 00000222B55B8ED0
+loadfont 3 wy700.rom 00000222B55B8ED0
+loadfont 4 8x12.bin 00000222B55B8ED0
 loadfont 8 im1024font.bin 0000000000000000
 Starting with romset 221
 Failed to load ROM!
 romset 221 - 0
-loadfont 0 mda.rom 0000027630307C70
-loadfont 3 wy700.rom 0000027630307C70
-loadfont 4 8x12.bin 0000027630307C70
+loadfont 0 mda.rom 00000222B55B8ED0
+loadfont 3 wy700.rom 00000222B55B8ED0
+loadfont 4 8x12.bin 00000222B55B8ED0
 loadfont 8 im1024font.bin 0000000000000000
 Starting with romset 222
 Failed to load ROM!
 romset 222 - 0
-loadfont 0 mda.rom 0000027630307C70
-loadfont 3 wy700.rom 0000027630307C70
-loadfont 4 8x12.bin 0000027630307C70
+loadfont 0 mda.rom 00000222B55B8ED0
+loadfont 3 wy700.rom 00000222B55B8ED0
+loadfont 4 8x12.bin 00000222B55B8ED0
 loadfont 8 im1024font.bin 0000000000000000
 Starting with romset 223
 Failed to load ROM!
 romset 223 - 0
-loadfont 0 mda.rom 0000027630307C70
-loadfont 3 wy700.rom 0000027630307C70
-loadfont 4 8x12.bin 0000027630307C70
+loadfont 0 mda.rom 00000222B55B8ED0
+loadfont 3 wy700.rom 00000222B55B8ED0
+loadfont 4 8x12.bin 00000222B55B8ED0
 loadfont 8 im1024font.bin 0000000000000000
 Starting with romset 224
 Failed to load ROM!
 romset 224 - 0
-loadfont 0 mda.rom 0000027630307C70
-loadfont 3 wy700.rom 0000027630307C70
-loadfont 4 8x12.bin 0000027630307C70
+loadfont 0 mda.rom 00000222B55B8ED0
+loadfont 3 wy700.rom 00000222B55B8ED0
+loadfont 4 8x12.bin 00000222B55B8ED0
 loadfont 8 im1024font.bin 0000000000000000
 Starting with romset 225
 Failed to load ROM!
 romset 225 - 0
-loadfont 0 mda.rom 0000027630307C70
-loadfont 3 wy700.rom 0000027630307C70
-loadfont 4 8x12.bin 0000027630307C70
+loadfont 0 mda.rom 00000222B55B8ED0
+loadfont 3 wy700.rom 00000222B55B8ED0
+loadfont 4 8x12.bin 00000222B55B8ED0
 loadfont 8 im1024font.bin 0000000000000000
 Starting with romset 226
 Failed to load ROM!
 romset 226 - 0
-loadfont 0 mda.rom 0000027630307C70
-loadfont 3 wy700.rom 0000027630307C70
-loadfont 4 8x12.bin 0000027630307C70
+loadfont 0 mda.rom 00000222B55B8ED0
+loadfont 3 wy700.rom 00000222B55B8ED0
+loadfont 4 8x12.bin 00000222B55B8ED0
 loadfont 8 im1024font.bin 0000000000000000
 Starting with romset 227
 Failed to load ROM!
 romset 227 - 0
-loadfont 0 mda.rom 0000027630307C70
-loadfont 3 wy700.rom 0000027630307C70
-loadfont 4 8x12.bin 0000027630307C70
+loadfont 0 mda.rom 00000222B55B8ED0
+loadfont 3 wy700.rom 00000222B55B8ED0
+loadfont 4 8x12.bin 00000222B55B8ED0
 loadfont 8 im1024font.bin 0000000000000000
 Starting with romset 228
 Failed to load ROM!
 romset 228 - 0
-loadfont 0 mda.rom 0000027630307C70
-loadfont 3 wy700.rom 0000027630307C70
-loadfont 4 8x12.bin 0000027630307C70
+loadfont 0 mda.rom 00000222B55B8ED0
+loadfont 3 wy700.rom 00000222B55B8ED0
+loadfont 4 8x12.bin 00000222B55B8ED0
 loadfont 8 im1024font.bin 0000000000000000
 Starting with romset 229
 Failed to load ROM!
 romset 229 - 0
-loadfont 0 mda.rom 0000027630307C70
-loadfont 3 wy700.rom 0000027630307C70
-loadfont 4 8x12.bin 0000027630307C70
+loadfont 0 mda.rom 00000222B55B8ED0
+loadfont 3 wy700.rom 00000222B55B8ED0
+loadfont 4 8x12.bin 00000222B55B8ED0
 loadfont 8 im1024font.bin 0000000000000000
 Starting with romset 230
 Failed to load ROM!
 romset 230 - 0
-loadfont 0 mda.rom 0000027630307C70
-loadfont 3 wy700.rom 0000027630307C70
-loadfont 4 8x12.bin 0000027630307C70
+loadfont 0 mda.rom 00000222B55B8ED0
+loadfont 3 wy700.rom 00000222B55B8ED0
+loadfont 4 8x12.bin 00000222B55B8ED0
 loadfont 8 im1024font.bin 0000000000000000
 Starting with romset 231
 Failed to load ROM!
 romset 231 - 0
-loadfont 0 mda.rom 0000027630307C70
-loadfont 3 wy700.rom 0000027630307C70
-loadfont 4 8x12.bin 0000027630307C70
+loadfont 0 mda.rom 00000222B55B8ED0
+loadfont 3 wy700.rom 00000222B55B8ED0
+loadfont 4 8x12.bin 00000222B55B8ED0
 loadfont 8 im1024font.bin 0000000000000000
 Starting with romset 232
 Failed to load ROM!
 romset 232 - 0
-loadfont 0 mda.rom 0000027630307C70
-loadfont 3 wy700.rom 0000027630307C70
-loadfont 4 8x12.bin 0000027630307C70
+loadfont 0 mda.rom 00000222B55B8ED0
+loadfont 3 wy700.rom 00000222B55B8ED0
+loadfont 4 8x12.bin 00000222B55B8ED0
 loadfont 8 im1024font.bin 0000000000000000
 Starting with romset 233
 Failed to load ROM!
 romset 233 - 0
-loadfont 0 mda.rom 0000027630307C70
-loadfont 3 wy700.rom 0000027630307C70
-loadfont 4 8x12.bin 0000027630307C70
+loadfont 0 mda.rom 00000222B55B8ED0
+loadfont 3 wy700.rom 00000222B55B8ED0
+loadfont 4 8x12.bin 00000222B55B8ED0
 loadfont 8 im1024font.bin 0000000000000000
 Starting with romset 234
 Failed to load ROM!
 romset 234 - 0
-loadfont 0 mda.rom 0000027630307C70
-loadfont 3 wy700.rom 0000027630307C70
-loadfont 4 8x12.bin 0000027630307C70
+loadfont 0 mda.rom 00000222B55B8ED0
+loadfont 3 wy700.rom 00000222B55B8ED0
+loadfont 4 8x12.bin 00000222B55B8ED0
 loadfont 8 im1024font.bin 0000000000000000
 Starting with romset 235
 Failed to load ROM!
 romset 235 - 0
-loadfont 0 mda.rom 0000027630307C70
-loadfont 3 wy700.rom 0000027630307C70
-loadfont 4 8x12.bin 0000027630307C70
+loadfont 0 mda.rom 00000222B55B8ED0
+loadfont 3 wy700.rom 00000222B55B8ED0
+loadfont 4 8x12.bin 00000222B55B8ED0
 loadfont 8 im1024font.bin 0000000000000000
 Starting with romset 236
 Failed to load ROM!
 romset 236 - 0
-loadfont 0 mda.rom 0000027630307C70
-loadfont 3 wy700.rom 0000027630307C70
-loadfont 4 8x12.bin 0000027630307C70
+loadfont 0 mda.rom 00000222B55B8ED0
+loadfont 3 wy700.rom 00000222B55B8ED0
+loadfont 4 8x12.bin 00000222B55B8ED0
 loadfont 8 im1024font.bin 0000000000000000
 Starting with romset 237
 Failed to load ROM!
 romset 237 - 0
-loadfont 0 mda.rom 0000027630307C70
-loadfont 3 wy700.rom 0000027630307C70
-loadfont 4 8x12.bin 0000027630307C70
+loadfont 0 mda.rom 00000222B55B8ED0
+loadfont 3 wy700.rom 00000222B55B8ED0
+loadfont 4 8x12.bin 00000222B55B8ED0
 loadfont 8 im1024font.bin 0000000000000000
 Starting with romset 238
 Failed to load ROM!
 romset 238 - 0
-loadfont 0 mda.rom 0000027630307C70
-loadfont 3 wy700.rom 0000027630307C70
-loadfont 4 8x12.bin 0000027630307C70
+loadfont 0 mda.rom 00000222B55B8ED0
+loadfont 3 wy700.rom 00000222B55B8ED0
+loadfont 4 8x12.bin 00000222B55B8ED0
 loadfont 8 im1024font.bin 0000000000000000
 Starting with romset 239
 Failed to load ROM!
 romset 239 - 0
-loadfont 0 mda.rom 0000027630307C70
-loadfont 3 wy700.rom 0000027630307C70
-loadfont 4 8x12.bin 0000027630307C70
+loadfont 0 mda.rom 00000222B55B8ED0
+loadfont 3 wy700.rom 00000222B55B8ED0
+loadfont 4 8x12.bin 00000222B55B8ED0
 loadfont 8 im1024font.bin 0000000000000000
 Starting with romset 240
 Failed to load ROM!
 romset 240 - 0
-loadfont 0 mda.rom 0000027630307C70
-loadfont 3 wy700.rom 0000027630307C70
-loadfont 4 8x12.bin 0000027630307C70
+loadfont 0 mda.rom 00000222B55B8ED0
+loadfont 3 wy700.rom 00000222B55B8ED0
+loadfont 4 8x12.bin 00000222B55B8ED0
 loadfont 8 im1024font.bin 0000000000000000
 Starting with romset 241
 Failed to load ROM!
 romset 241 - 0
-loadfont 0 mda.rom 0000027630307C70
-loadfont 3 wy700.rom 0000027630307C70
-loadfont 4 8x12.bin 0000027630307C70
+loadfont 0 mda.rom 00000222B55B8ED0
+loadfont 3 wy700.rom 00000222B55B8ED0
+loadfont 4 8x12.bin 00000222B55B8ED0
 loadfont 8 im1024font.bin 0000000000000000
 Starting with romset 242
 Failed to load ROM!
 romset 242 - 0
-loadfont 0 mda.rom 0000027630307C70
-loadfont 3 wy700.rom 0000027630307C70
-loadfont 4 8x12.bin 0000027630307C70
+loadfont 0 mda.rom 00000222B55B8ED0
+loadfont 3 wy700.rom 00000222B55B8ED0
+loadfont 4 8x12.bin 00000222B55B8ED0
 loadfont 8 im1024font.bin 0000000000000000
 Starting with romset 243
 Failed to load ROM!
 romset 243 - 0
-loadfont 0 mda.rom 0000027630307C70
-loadfont 3 wy700.rom 0000027630307C70
-loadfont 4 8x12.bin 0000027630307C70
+loadfont 0 mda.rom 00000222B55B8ED0
+loadfont 3 wy700.rom 00000222B55B8ED0
+loadfont 4 8x12.bin 00000222B55B8ED0
 loadfont 8 im1024font.bin 0000000000000000
 Starting with romset 244
 Failed to load ROM!
 romset 244 - 0
-loadfont 0 mda.rom 0000027630307C70
-loadfont 3 wy700.rom 0000027630307C70
-loadfont 4 8x12.bin 0000027630307C70
+loadfont 0 mda.rom 00000222B55B8ED0
+loadfont 3 wy700.rom 00000222B55B8ED0
+loadfont 4 8x12.bin 00000222B55B8ED0
 loadfont 8 im1024font.bin 0000000000000000
 Starting with romset 245
 Failed to load ROM!
 romset 245 - 0
-loadfont 0 mda.rom 0000027630307C70
-loadfont 3 wy700.rom 0000027630307C70
-loadfont 4 8x12.bin 0000027630307C70
+loadfont 0 mda.rom 00000222B55B8ED0
+loadfont 3 wy700.rom 00000222B55B8ED0
+loadfont 4 8x12.bin 00000222B55B8ED0
 loadfont 8 im1024font.bin 0000000000000000
 Starting with romset 246
 Failed to load ROM!
 romset 246 - 0
-loadfont 0 mda.rom 0000027630307C70
-loadfont 3 wy700.rom 0000027630307C70
-loadfont 4 8x12.bin 0000027630307C70
+loadfont 0 mda.rom 00000222B55B8ED0
+loadfont 3 wy700.rom 00000222B55B8ED0
+loadfont 4 8x12.bin 00000222B55B8ED0
 loadfont 8 im1024font.bin 0000000000000000
 Starting with romset 247
 Failed to load ROM!
 romset 247 - 0
-loadfont 0 mda.rom 0000027630307C70
-loadfont 3 wy700.rom 0000027630307C70
-loadfont 4 8x12.bin 0000027630307C70
+loadfont 0 mda.rom 00000222B55B8ED0
+loadfont 3 wy700.rom 00000222B55B8ED0
+loadfont 4 8x12.bin 00000222B55B8ED0
 loadfont 8 im1024font.bin 0000000000000000
 Starting with romset 248
 Failed to load ROM!
 romset 248 - 0
-loadfont 0 mda.rom 0000027630307C70
-loadfont 3 wy700.rom 0000027630307C70
-loadfont 4 8x12.bin 0000027630307C70
+loadfont 0 mda.rom 00000222B55B8ED0
+loadfont 3 wy700.rom 00000222B55B8ED0
+loadfont 4 8x12.bin 00000222B55B8ED0
 loadfont 8 im1024font.bin 0000000000000000
 Starting with romset 249
 Failed to load ROM!
 romset 249 - 0
-loadfont 0 mda.rom 0000027630307C70
-loadfont 3 wy700.rom 0000027630307C70
-loadfont 4 8x12.bin 0000027630307C70
+loadfont 0 mda.rom 00000222B55B8ED0
+loadfont 3 wy700.rom 00000222B55B8ED0
+loadfont 4 8x12.bin 00000222B55B8ED0
 loadfont 8 im1024font.bin 0000000000000000
 Starting with romset 250
 Failed to load ROM!
 romset 250 - 0
-loadfont 0 mda.rom 0000027630307C70
-loadfont 3 wy700.rom 0000027630307C70
-loadfont 4 8x12.bin 0000027630307C70
+loadfont 0 mda.rom 00000222B55B8ED0
+loadfont 3 wy700.rom 00000222B55B8ED0
+loadfont 4 8x12.bin 00000222B55B8ED0
 loadfont 8 im1024font.bin 0000000000000000
 Starting with romset 251
 Failed to load ROM!
 romset 251 - 0
-loadfont 0 mda.rom 0000027630307C70
-loadfont 3 wy700.rom 0000027630307C70
-loadfont 4 8x12.bin 0000027630307C70
+loadfont 0 mda.rom 00000222B55B8ED0
+loadfont 3 wy700.rom 00000222B55B8ED0
+loadfont 4 8x12.bin 00000222B55B8ED0
 loadfont 8 im1024font.bin 0000000000000000
 Starting with romset 252
 Failed to load ROM!
 romset 252 - 0
-loadfont 0 mda.rom 0000027630307C70
-loadfont 3 wy700.rom 0000027630307C70
-loadfont 4 8x12.bin 0000027630307C70
+loadfont 0 mda.rom 00000222B55B8ED0
+loadfont 3 wy700.rom 00000222B55B8ED0
+loadfont 4 8x12.bin 00000222B55B8ED0
 loadfont 8 im1024font.bin 0000000000000000
 Starting with romset 253
 Failed to load ROM!
 romset 253 - 0
-loadfont 0 mda.rom 0000027630307C70
-loadfont 3 wy700.rom 0000027630307C70
-loadfont 4 8x12.bin 0000027630307C70
+loadfont 0 mda.rom 00000222B55B8ED0
+loadfont 3 wy700.rom 00000222B55B8ED0
+loadfont 4 8x12.bin 00000222B55B8ED0
 loadfont 8 im1024font.bin 0000000000000000
 Starting with romset 254
 Failed to load ROM!
 romset 254 - 0
-loadfont 0 mda.rom 0000027630307C70
-loadfont 3 wy700.rom 0000027630307C70
-loadfont 4 8x12.bin 0000027630307C70
+loadfont 0 mda.rom 00000222B55B8ED0
+loadfont 3 wy700.rom 00000222B55B8ED0
+loadfont 4 8x12.bin 00000222B55B8ED0
 loadfont 8 im1024font.bin 0000000000000000
 Starting with romset 255
 Failed to load ROM!
@@ -1897,14 +1897,14 @@ input_stretch = 0
 shader_refresh_rate = 0.000000
 [GL3 Shaders]
 shaders = 0
-loadfont 0 mda.rom 0000027630307C70
-loadfont 3 wy700.rom 0000027630307C70
-loadfont 4 8x12.bin 0000027630307C70
+loadfont 0 mda.rom 00000222B55B8ED0
+loadfont 3 wy700.rom 00000222B55B8ED0
+loadfont 4 8x12.bin 00000222B55B8ED0
 loadfont 8 im1024font.bin 0000000000000000
 Starting with romset 46
-loadfont 0 mda.rom 0000027630307C70
-loadfont 3 wy700.rom 0000027630307C70
-loadfont 4 8x12.bin 0000027630307C70
+loadfont 0 mda.rom 00000222B55B8ED0
+loadfont 3 wy700.rom 00000222B55B8ED0
+loadfont 4 8x12.bin 00000222B55B8ED0
 loadfont 8 im1024font.bin 0000000000000000
 Starting with romset 46
 timer_reset
@@ -1924,7 +1924,7 @@ znp16 65b1 = 4 04
 Video timing 96 192 384
 Cannot open file '': Invalid argumentCannot open file '': Invalid argumentNVR try opening C:\Users\JTCyb\.pcem/nvr/1.ami486.nvr
 Path is \\.\
-MsgWindowProcedure: WM_NCCREATE hwnd=000000000033074A\nMsgWindowProcedure: WM_CREATE hwnd=000000000033074A\nwindows_setup: message-only window created hwnd=000000000033074A\nPreparing scan code map list...
+MsgWindowProcedure: WM_NCCREATE hwnd=000000000033074C\nMsgWindowProcedure: WM_CREATE hwnd=000000000033074C\nwindows_setup: message-only window created hwnd=000000000033074C\nPreparing scan code map list...
 Done preparing!
 Raw input registered!
 [POST80] 01
@@ -1932,43 +1932,9 @@ Raw input registered!
 [POST80] 03
 [POST80] 04
 [POST80] 05
+[POST80] 06
 Start rendering...
 renderer_doreset
-Bad getpccache 01000000
-Bad getpccache 01000000
-Bad getpccache 000A0000
-Bad getpccache 000A0000
-Bad getpccache 000A0000
-Bad getpccache 000A0000
-Bad getpccache 000A0000
-Bad getpccache 000A0000
-Bad getpccache 000A0000
-Bad getpccache 000A0000
-Bad getpccache 000A0000
-Bad getpccache 000A0000
-Bad getpccache 000A0000
-Bad getpccache 000A0000
-Bad getpccache 000A0000
-Bad getpccache 000A0000
-Bad getpccache 000A0000
-Bad getpccache 000A0000
-Bad getpccache 000A0000
-Bad getpccache 000A0000
-Bad getpccache 000A0000
-Bad getpccache 000A0000
-Bad getpccache 000A0000
-Bad getpccache 000A0000
-Bad getpccache 000A0000
-Bad getpccache 000A0000
-Bad getpccache 000A0000
-Bad getpccache 000A0000
-Bad getpccache 000A0000
-Bad getpccache 000A0000
-Bad getpccache 000A0000
-Bad getpccache 000A0000
-Bad getpccache 000A0000
-Bad getpccache 000A0000
-Bad getpccache 000A0000
 Bad getpccache 000A0000
 Bad getpccache 000A0000
 Bad getpccache 000A0000
@@ -1982,311 +1948,10 @@ Bad getpccache 000A0000
 Bad getpccache 000A0000
 Bad getpccache 000A0000
 onesec
-Bad getpccache 000A0000
-Bad getpccache 000A0000
-Bad getpccache 000A0000
-Bad getpccache 000A0000
-Bad getpccache 000A0000
-Bad getpccache 000A0000
-Bad getpccache 000A0000
-Bad getpccache 000A0000
-Bad getpccache 000A0000
-Bad getpccache 000A0000
-Bad getpccache 000A0000
-Bad getpccache 000A0000
-Bad getpccache 000A0000
-Bad getpccache 000A0000
-Bad getpccache 000A0000
-Bad getpccache 000A0000
-Bad getpccache 000A0000
-Bad getpccache 000A0000
-Bad getpccache 000A0000
-Bad getpccache 000A0000
-Bad getpccache 000A0000
-Bad getpccache 000A0000
-Bad getpccache 000A0000
-Bad getpccache 000A0000
-Bad getpccache 000A0000
-Bad getpccache 000A0000
-Bad getpccache 000A0000
-Bad getpccache 000A0000
-Bad getpccache 000A0000
-Bad getpccache 000A0000
-Bad getpccache 000A0000
-Bad getpccache 000A0000
-Bad getpccache 000A0000
-Bad getpccache 000A0000
-Bad getpccache 000A0000
-Bad getpccache 000A0000
-Bad getpccache 000A0000
-Bad getpccache 000A0000
-Bad getpccache 000A0000
-Bad getpccache 000A0000
-Bad getpccache 000A0000
-Bad getpccache 000A0000
-Bad getpccache 000A0000
-Bad getpccache 000A0000
-Bad getpccache 000A0000
-Bad getpccache 000A0000
-Bad getpccache 000A0000
-Bad getpccache 000A0000
-Bad getpccache 000A0000
-Bad getpccache 000A0000
-Bad getpccache 000A0000
-Bad getpccache 000A0000
-Bad getpccache 000A0000
-Bad getpccache 000A0000
-Bad getpccache 000A0000
-Bad getpccache 000A0000
-Bad getpccache 000A0000
-Bad getpccache 000A0000
-Bad getpccache 000A0000
-Bad getpccache 000A0000
-Bad getpccache 000A0000
-Bad getpccache 000A0000
-Bad getpccache 000A0000
-Bad getpccache 000A0000
-Bad getpccache 000A0000
-Bad getpccache 000A0000
-Bad getpccache 000A0000
-Bad getpccache 000A0000
 onesec
-Bad getpccache 000A0000
-Bad getpccache 000A0000
-Bad getpccache 000A0000
-Bad getpccache 000A0000
-Bad getpccache 000A0000
-Bad getpccache 000A0000
-Bad getpccache 000A0000
-Bad getpccache 000A0000
-Bad getpccache 000A0000
-Bad getpccache 000A0000
-Bad getpccache 000A0000
-Bad getpccache 000A0000
-Bad getpccache 000A0000
-Bad getpccache 000A0000
-Bad getpccache 000A0000
-Bad getpccache 000A0000
-Bad getpccache 000A0000
-Bad getpccache 000A0000
-Bad getpccache 000A0000
-Bad getpccache 000A0000
-Bad getpccache 000A0000
-Bad getpccache 000A0000
-Bad getpccache 000A0000
-Bad getpccache 000A0000
-Bad getpccache 000A0000
-Bad getpccache 000A0000
-Bad getpccache 000A0000
-Bad getpccache 000A0000
-Bad getpccache 000A0000
-Bad getpccache 000A0000
-Bad getpccache 000A0000
-Bad getpccache 000A0000
-Bad getpccache 000A0000
-Bad getpccache 000A0000
-Bad getpccache 000A0000
-Bad getpccache 000A0000
-Bad getpccache 000A0000
-Bad getpccache 000A0000
-Bad getpccache 000A0000
-Bad getpccache 000A0000
-Bad getpccache 000A0000
-Bad getpccache 000A0000
-Bad getpccache 000A0000
-Bad getpccache 000A0000
-Bad getpccache 000A0000
-Bad getpccache 000A0000
-Bad getpccache 000A0000
-Bad getpccache 000A0000
-Bad getpccache 000A0000
-Bad getpccache 000A0000
-Bad getpccache 000A0000
-Bad getpccache 000A0000
-Bad getpccache 000A0000
-Bad getpccache 000A0000
-Bad getpccache 000A0000
-Bad getpccache 000A0000
-Bad getpccache 000A0000
-Bad getpccache 000A0000
-Bad getpccache 000A0000
-Bad getpccache 000A0000
-Bad getpccache 000A0000
-Bad getpccache 000A0000
-Bad getpccache 000A0000
-Bad getpccache 000A0000
-Bad getpccache 000A0000
-Bad getpccache 000A0000
-Bad getpccache 000A0000
-Bad getpccache 000A0000
 onesec
-Bad getpccache 000A0000
-Bad getpccache 000A0000
-Bad getpccache 000A0000
-Bad getpccache 000A0000
-Bad getpccache 000A0000
-Bad getpccache 000A0000
-Bad getpccache 000A0000
-Bad getpccache 000A0000
-Bad getpccache 000A0000
-Bad getpccache 000A0000
-Bad getpccache 000A0000
-Bad getpccache 000A0000
-Bad getpccache 000A0000
-Bad getpccache 000A0000
-Bad getpccache 000A0000
-Bad getpccache 000A0000
-Bad getpccache 000A0000
-Bad getpccache 000A0000
-Bad getpccache 000A0000
-Bad getpccache 000A0000
-Bad getpccache 000A0000
-Bad getpccache 000A0000
-Bad getpccache 000A0000
-Bad getpccache 000A0000
-Bad getpccache 000A0000
-Bad getpccache 000A0000
-Bad getpccache 000A0000
-Bad getpccache 000A0000
-Bad getpccache 000A0000
-Bad getpccache 000A0000
-Bad getpccache 000A0000
-Bad getpccache 000A0000
-Bad getpccache 000A0000
-Bad getpccache 000A0000
-Bad getpccache 000A0000
-Bad getpccache 000A0000
-Bad getpccache 000A0000
-Bad getpccache 000A0000
-Bad getpccache 000A0000
-Bad getpccache 000A0000
-Bad getpccache 000A0000
-Bad getpccache 000A0000
-Bad getpccache 000A0000
-Bad getpccache 000A0000
-Bad getpccache 000A0000
-Bad getpccache 000A0000
-Bad getpccache 000A0000
-Bad getpccache 000A0000
-Bad getpccache 000A0000
-Bad getpccache 000A0000
-Bad getpccache 000A0000
-Bad getpccache 000A0000
-Bad getpccache 000A0000
-Bad getpccache 000A0000
-Bad getpccache 000A0000
-Bad getpccache 000A0000
-Bad getpccache 000A0000
-Bad getpccache 000A0000
-Bad getpccache 000A0000
-Bad getpccache 000A0000
-Bad getpccache 000A0000
-Bad getpccache 000A0000
-Bad getpccache 000A0000
-Bad getpccache 000A0000
-Bad getpccache 000A0000
-Bad getpccache 000A0000
-Bad getpccache 000A0000
-Bad getpccache 000A0000
 onesec
-Bad getpccache 000A0000
-Bad getpccache 000A0000
-Bad getpccache 000A0000
-Bad getpccache 000A0000
-Bad getpccache 000A0000
-Bad getpccache 000A0000
-Bad getpccache 000A0000
-Bad getpccache 000A0000
-Bad getpccache 000A0000
-Bad getpccache 000A0000
-Bad getpccache 000A0000
-Bad getpccache 000A0000
-Bad getpccache 000A0000
-Bad getpccache 000A0000
-Bad getpccache 000A0000
-Bad getpccache 000A0000
-Bad getpccache 000A0000
-Bad getpccache 000A0000
-Bad getpccache 000A0000
-Bad getpccache 000A0000
-Bad getpccache 000A0000
-Bad getpccache 000A0000
-Bad getpccache 000A0000
-Bad getpccache 000A0000
-Bad getpccache 000A0000
-Bad getpccache 000A0000
-Bad getpccache 000A0000
-Bad getpccache 000A0000
-Bad getpccache 000A0000
-Bad getpccache 000A0000
-Bad getpccache 000A0000
-Bad getpccache 000A0000
-Bad getpccache 000A0000
-Bad getpccache 000A0000
-Bad getpccache 000A0000
-Bad getpccache 000A0000
-Bad getpccache 000A0000
-Bad getpccache 000A0000
-Bad getpccache 000A0000
-Bad getpccache 000A0000
-Bad getpccache 000A0000
-Bad getpccache 000A0000
-Bad getpccache 000A0000
-Bad getpccache 000A0000
-Bad getpccache 000A0000
-Bad getpccache 000A0000
-Bad getpccache 000A0000
-Bad getpccache 000A0000
-Bad getpccache 000A0000
-Bad getpccache 000A0000
-Bad getpccache 000A0000
-Bad getpccache 000A0000
-Bad getpccache 000A0000
-Bad getpccache 000A0000
-Bad getpccache 000A0000
-Bad getpccache 000A0000
-Bad getpccache 000A0000
-Bad getpccache 000A0000
-Bad getpccache 000A0000
-Bad getpccache 000A0000
-Bad getpccache 000A0000
-Bad getpccache 000A0000
-Bad getpccache 000A0000
-Bad getpccache 000A0000
-Bad getpccache 000A0000
-Bad getpccache 000A0000
-Bad getpccache 000A0000
-Bad getpccache 000A0000
 onesec
-Bad getpccache 000A0000
-Bad getpccache 000A0000
-Bad getpccache 000A0000
-Bad getpccache 000A0000
-Bad getpccache 000A0000
-Bad getpccache 000A0000
-Bad getpccache 000A0000
-Bad getpccache 000A0000
-Bad getpccache 000A0000
-Bad getpccache 000A0000
-Bad getpccache 000A0000
-Bad getpccache 000A0000
-Bad getpccache 000A0000
-Bad getpccache 000A0000
-Bad getpccache 000A0000
-Bad getpccache 000A0000
-Bad getpccache 000A0000
-Bad getpccache 000A0000
-Bad getpccache 000A0000
-Bad getpccache 000A0000
-Bad getpccache 000A0000
-Bad getpccache 000A0000
-Bad getpccache 000A0000
-Bad getpccache 000A0000
-Bad getpccache 000A0000
-Bad getpccache 000A0000
-Bad getpccache 000A0000
-Bad getpccache 000A0000
-Bad getpccache 000A0000
 onesec
 onesec
 onesec
@@ -2300,11 +1965,11 @@ Dir C:\Users\JTCyb\.pcem/configs/*.cfg
 Shutting down...
 PIC1 : MASK FF PEND 00 INS 00 VECTOR 08
 PIC2 : MASK FF PEND 00 INS 00 VECTOR 00
-EAX=00000000 EBX=000050AA ECX=0000AAAA EDX=0000AAAA
-EDI=0000940C ESI=0000C743 EBP=00000000 ESP=0000AB7B
-PC=BF98 CS=0000 DS=0000 ES=0000 SS=F000 FLAGS=0092
-BF96
-189127739 ins
+EAX=60008AFD EBX=000050B2 ECX=00002800 EDX=0000A6BC
+EDI=0000215C ESI=00000003 EBP=0000216A ESP=0000FFE1
+PC=50B5 CS=0000 DS=0000 ES=0000 SS=F000 FLAGS=0497
+50B4
+99559337 ins
 In real mode
 CS : base=000000 limit=0000FFFF access=02  limit_low=00000000 limit_high=0000FFFF
 DS : base=000000 limit=0000FFFF access=62  limit_low=00000000 limit_high=0000FFFF
@@ -2317,7 +1982,7 @@ LDT : base=000000 limit=0000
 IDT : base=000000 limit=03FF
 TR  : base=000000 limit=0000
 386 in 16-bit mode   stack in 16-bit mode
-CR0=40000000 CR2=00000000 CR3=00000000 CR4=00000000
+CR0=60000010 CR2=00000000 CR3=00000000 CR4=00000000
 SMBASE=00030000
 Entries in readlookup : 0    writelookup : 0
 Entries in readlookup : 1048576    writelookup : 1048576
