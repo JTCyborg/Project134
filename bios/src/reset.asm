@@ -20,6 +20,14 @@ rom_start:
     jmp near %1
 %endmacro
 
+
+; Preserve the original 386+ near conditional-branch encoding (0F 8x rel16).
+; NASM may otherwise relax an explicit "near" Jcc to a 2-byte short branch,
+; shifting every subsequent fixed-offset BIOS block.
+%macro JCC_NEAR 2
+    db      0x0F, %1
+    dw      %2 - ($ + 2)
+%endmacro
 ; F000:19AB–19AF — stock callback trampolines used by the POST hook slots.
 incbin  "ami486.bin", ($ - rom_start), (0x19AB - ($ - rom_start)) ; inherited reference bytes up to 19ABh
 bios_callback_jmp_di:
@@ -50,11 +58,11 @@ bios_cmos_b3_profile_return:
     dw      0x1B06
 bios_cmos_b3_profile_continue:
     test    al, 0x0C
-    jz      near bios_speaker_pit_init
+    JCC_NEAR 0x84, bios_speaker_pit_init
     mov     si, 0x8E4E
     mov     cx, 0x8E62
     test    al, 0x04
-    jnz     near bios_cmos_profile_table_loop
+    JCC_NEAR 0x85, bios_cmos_profile_table_loop
     mov     si, 0x8E76
     mov     cx, 0x8E7A
 bios_cmos_profile_table_loop:
@@ -210,46 +218,46 @@ bios_memory_alias_probe:
     db      0x26,0x66,0xC7,0x06,0x00,0x00,0x55,0x55,0xAA,0xAA ; mov dword [es:0000],AAAA5555h
     db      0x26,0x66,0xC7,0x06,0x00,0x01,0xFF,0xFF,0xFF,0xFF ; mov dword [es:0100],FFFFFFFFh
     db      0x26,0x66,0x81,0x3E,0x00,0x00,0x55,0x55,0xAA,0xAA ; cmp dword [es:0000],AAAA5555h
-    jnz     near bios_memory_alias_low_fail
+    JCC_NEAR 0x85, bios_memory_alias_low_fail
     db      0x26,0x66,0xC7,0x06,0x00,0x00,0xAA,0xAA,0x55,0x55 ; mov dword [es:0000],5555AAAAh
     db      0x26,0x66,0xC7,0x06,0x00,0x01,0xFF,0xFF,0xFF,0xFF ; mov dword [es:0100],FFFFFFFFh
     db      0x26,0x66,0x81,0x3E,0x00,0x00,0xAA,0xAA,0x55,0x55 ; cmp dword [es:0000],5555AAAAh
-    jnz     near bios_memory_alias_low_fail
+    JCC_NEAR 0x85, bios_memory_alias_low_fail
     mov     dl, 0x00
     db      0x26,0x67,0x66,0x81,0x3D,0x00,0x00,0x80,0x00,0xAA,0xAA,0x55,0x55 ; cmp dword [es:00800000],5555AAAAh
-    jz      near bios_memory_alias_low_fail
+    JCC_NEAR 0x84, bios_memory_alias_low_fail
     mov     dl, 0x02
     db      0x26,0x66,0x81,0x3E,0x00,0x08,0xAA,0xAA,0x55,0x55 ; cmp dword [es:0800],5555AAAAh
-    jz      near bios_memory_alias_low_fail
+    JCC_NEAR 0x84, bios_memory_alias_low_fail
     mov     dl, 0x01
     db      0x26,0x66,0x81,0x3E,0x00,0x10,0xAA,0xAA,0x55,0x55 ; cmp dword [es:1000],5555AAAAh
-    jz      near bios_memory_alias_low_fail
+    JCC_NEAR 0x84, bios_memory_alias_low_fail
     mov     dl, 0x03
     db      0x26,0x66,0x81,0x3E,0x00,0x20,0xAA,0xAA,0x55,0x55 ; cmp dword [es:2000],5555AAAAh
-    jz      near bios_memory_alias_low_fail
+    JCC_NEAR 0x84, bios_memory_alias_low_fail
     mov     dl, 0x04
 bios_memory_alias_low_fail:
     mov     dh, 0xFF
     db      0x26,0x67,0x66,0xC7,0x05,0x00,0x00,0x00,0x04,0x55,0x55,0xAA,0xAA ; mov dword [es:04000000],AAAA5555h
     db      0x26,0x67,0x66,0xC7,0x05,0x00,0x01,0x00,0x04,0xFF,0xFF,0xFF,0xFF ; mov dword [es:04000100],FFFFFFFFh
     db      0x26,0x67,0x66,0x81,0x3D,0x00,0x00,0x00,0x04,0x55,0x55,0xAA,0xAA ; cmp dword [es:04000000],AAAA5555h
-    jnz     near bios_memory_alias_high_fail
+    JCC_NEAR 0x85, bios_memory_alias_high_fail
     db      0x26,0x67,0x66,0xC7,0x05,0x00,0x00,0x00,0x04,0xAA,0xAA,0x55,0x55 ; mov dword [es:04000000],5555AAAAh
     db      0x26,0x67,0x66,0xC7,0x05,0x00,0x01,0x00,0x04,0xFF,0xFF,0xFF,0xFF ; mov dword [es:04000100],FFFFFFFFh
     db      0x26,0x67,0x66,0x81,0x3D,0x00,0x00,0x00,0x04,0xAA,0xAA,0x55,0x55 ; cmp dword [es:04000000],5555AAAAh
-    jnz     near bios_memory_alias_high_fail
+    JCC_NEAR 0x85, bios_memory_alias_high_fail
     mov     dh, 0x00
     db      0x26,0x67,0x66,0x81,0x3D,0x00,0x00,0x80,0x04,0xAA,0xAA,0x55,0x55 ; cmp dword [es:04800000],5555AAAAh
-    jz      near bios_memory_alias_high_fail
+    JCC_NEAR 0x84, bios_memory_alias_high_fail
     mov     dh, 0x02
     db      0x26,0x67,0x66,0x81,0x3D,0x00,0x08,0x00,0x04,0xAA,0xAA,0x55,0x55 ; cmp dword [es:04000800],5555AAAAh
-    jz      near bios_memory_alias_high_fail
+    JCC_NEAR 0x84, bios_memory_alias_high_fail
     mov     dh, 0x01
     db      0x26,0x67,0x66,0x81,0x3D,0x00,0x10,0x00,0x04,0xAA,0xAA,0x55,0x55 ; cmp dword [es:04001000],5555AAAAh
-    jz      near bios_memory_alias_high_fail
+    JCC_NEAR 0x84, bios_memory_alias_high_fail
     mov     dh, 0x03
     db      0x26,0x67,0x66,0x81,0x3D,0x00,0x20,0x00,0x04,0xAA,0xAA,0x55,0x55 ; cmp dword [es:04002000],5555AAAAh
-    jz      near bios_memory_alias_high_fail
+    JCC_NEAR 0x84, bios_memory_alias_high_fail
     mov     dh, 0x04
 bios_memory_alias_high_fail:
     mov     ax, 0x1616
@@ -273,46 +281,46 @@ bios_memory_alias_second_pass:
     db      0x26,0x66,0xC7,0x06,0x00,0x00,0x55,0x55,0xAA,0xAA ; mov dword [es:0000],AAAA5555h
     db      0x26,0x66,0xC7,0x06,0x00,0x01,0xFF,0xFF,0xFF,0xFF
     db      0x26,0x66,0x81,0x3E,0x00,0x00,0x55,0x55,0xAA,0xAA
-    jnz     near bios_memory_alias_second_low_fail
+    JCC_NEAR 0x85, bios_memory_alias_second_low_fail
     db      0x26,0x66,0xC7,0x06,0x00,0x00,0xAA,0xAA,0x55,0x55
     db      0x26,0x66,0xC7,0x06,0x00,0x01,0xFF,0xFF,0xFF,0xFF
     db      0x26,0x66,0x81,0x3E,0x00,0x00,0xAA,0xAA,0x55,0x55
-    jnz     near bios_memory_alias_second_low_fail
+    JCC_NEAR 0x85, bios_memory_alias_second_low_fail
     mov     bl, 0x00
     db      0x26,0x67,0x66,0x81,0x3D,0x00,0x00,0x80,0x00,0xAA,0xAA,0x55,0x55
-    jz      near bios_memory_alias_second_low_fail
+    JCC_NEAR 0x84, bios_memory_alias_second_low_fail
     mov     bl, 0x02
     db      0x26,0x66,0x81,0x3E,0x00,0x08,0xAA,0xAA,0x55,0x55
-    jz      near bios_memory_alias_second_low_fail
+    JCC_NEAR 0x84, bios_memory_alias_second_low_fail
     mov     bl, 0x01
     db      0x26,0x66,0x81,0x3E,0x00,0x10,0xAA,0xAA,0x55,0x55
-    jz      near bios_memory_alias_second_low_fail
+    JCC_NEAR 0x84, bios_memory_alias_second_low_fail
     mov     bl, 0x03
     db      0x26,0x66,0x81,0x3E,0x00,0x20,0xAA,0xAA,0x55,0x55
-    jz      near bios_memory_alias_second_low_fail
+    JCC_NEAR 0x84, bios_memory_alias_second_low_fail
     mov     bl, 0x04
 bios_memory_alias_second_low_fail:
     mov     bh, 0xFF
     db      0x26,0x67,0x66,0xC7,0x05,0x00,0x00,0x00,0x04,0x55,0x55,0xAA,0xAA
     db      0x26,0x67,0x66,0xC7,0x05,0x00,0x01,0x00,0x04,0xFF,0xFF,0xFF,0xFF
     db      0x26,0x67,0x66,0x81,0x3D,0x00,0x00,0x00,0x04,0x55,0x55,0xAA,0xAA
-    jnz     near bios_memory_alias_second_high_fail
+    JCC_NEAR 0x85, bios_memory_alias_second_high_fail
     db      0x26,0x67,0x66,0xC7,0x05,0x00,0x00,0x00,0x04,0xAA,0xAA,0x55,0x55
     db      0x26,0x67,0x66,0xC7,0x05,0x00,0x01,0x00,0x04,0xFF,0xFF,0xFF,0xFF
     db      0x26,0x67,0x66,0x81,0x3D,0x00,0x00,0x00,0x04,0xAA,0xAA,0x55,0x55
-    jnz     near bios_memory_alias_second_high_fail
+    JCC_NEAR 0x85, bios_memory_alias_second_high_fail
     mov     bh, 0x00
     db      0x26,0x67,0x66,0x81,0x3D,0x00,0x00,0x80,0x04,0xAA,0xAA,0x55,0x55
-    jz      near bios_memory_alias_second_high_fail
+    JCC_NEAR 0x84, bios_memory_alias_second_high_fail
     mov     bh, 0x02
     db      0x26,0x67,0x66,0x81,0x3D,0x00,0x08,0x00,0x04,0xAA,0xAA,0x55,0x55
-    jz      near bios_memory_alias_second_high_fail
+    JCC_NEAR 0x84, bios_memory_alias_second_high_fail
     mov     bh, 0x01
     db      0x26,0x67,0x66,0x81,0x3D,0x00,0x10,0x00,0x04,0xAA,0xAA,0x55,0x55
-    jz      near bios_memory_alias_second_high_fail
+    JCC_NEAR 0x84, bios_memory_alias_second_high_fail
     mov     bh, 0x03
     db      0x26,0x67,0x66,0x81,0x3D,0x00,0x20,0x00,0x04,0xAA,0xAA,0x55,0x55
-    jz      near bios_memory_alias_second_high_fail
+    JCC_NEAR 0x84, bios_memory_alias_second_high_fail
     mov     bh, 0x04
 bios_memory_alias_second_high_fail:
     and     dx, 0x0F0F
@@ -474,7 +482,7 @@ bios_ali_register_12_weighted:
     db      0x8B, 0xD0                 ; mov dx, ax
     cmp     ah, 0x0F
     mov     ah, 0x00
-    je      near bios_ali_weight_bh
+    JCC_NEAR 0x84, bios_ali_weight_bh
     shr     dx, 8
     db      0x03, 0xF2                 ; add si, dx
     mov     ah, [cs:si]
@@ -484,7 +492,7 @@ bios_ali_weight_bh:
     db      0x8B, 0xD3                 ; mov dx, bx
     cmp     bh, 0xF0
     mov     bh, 0x00
-    je      near bios_ali_weight_al
+    JCC_NEAR 0x84, bios_ali_weight_al
     shr     dx, 12
     db      0x03, 0xF2                 ; add si, dx
     mov     bh, [cs:si]
@@ -495,7 +503,7 @@ bios_ali_weight_al:
     db      0x8A, 0xD0                 ; mov dl, al
     cmp     al, 0x0F
     mov     al, 0x00
-    je      near bios_ali_weight_bl
+    JCC_NEAR 0x84, bios_ali_weight_bl
     db      0x03, 0xF2                 ; add si, dx
     mov     al, [cs:si]
     db      0x33, 0xD2                 ; xor dx, dx
@@ -504,7 +512,7 @@ bios_ali_weight_bl:
     db      0x8A, 0xD3                 ; mov dl, bl
     cmp     bl, 0xF0
     mov     bl, 0x00
-    je      near bios_ali_weight_sum
+    JCC_NEAR 0x84, bios_ali_weight_sum
     shr     dl, 4
     db      0x03, 0xF2                 ; add si, dx
     mov     bl, [cs:si]
@@ -531,7 +539,7 @@ bios_autoconfig_write_reg20:
     mov     ax, 0x0202
     call    near 0x8DCF
     test    al, 0x08
-    je      near bios_autoconfig_reg20_standard
+    JCC_NEAR 0x84, bios_autoconfig_reg20_standard
     inc     si
     cs lodsw
     and     ah, 0x07
@@ -600,10 +608,10 @@ bios_autoconfig_row_offset:
     mov     ax, 0xB3B3
     call    near 0xEE94
     test    al, 0x04
-    jnz     near bios_autoconfig_row_bda_plus6
+    JCC_NEAR 0x85, bios_autoconfig_row_bda_plus6
     smsw    ax
     db      0x0A, 0xE4                 ; or ah, ah
-    jnz     near bios_autoconfig_row_bda_plus6
+    JCC_NEAR 0x85, bios_autoconfig_row_bda_plus6
     push    ds
     mov     bx, 0x0040
     mov     ds, bx
@@ -611,11 +619,11 @@ bios_autoconfig_row_offset:
     pop     ds
     and     al, 0x07
     cmp     al, 0x05
-    jne     near bios_autoconfig_row_multiply
+    JCC_NEAR 0x85, bios_autoconfig_row_multiply
     mov     ax, 0xB3B3
     call    near 0xEE94
     test    al, 0x02
-    je      near bios_autoconfig_row_multiply
+    JCC_NEAR 0x84, bios_autoconfig_row_multiply
     mov     ax, 0x0007
     mov     cl, 0x14
     imul    cl
@@ -798,12 +806,12 @@ bios_extended_memory_probe_loop:
     db      0x67,0x66,0x8B,0x9E,0x00,0x18,0x00,0x00 ; mov ebx,[esi+1800h]
     db      0x67,0x66,0x8B,0x9E,0x00,0x20,0x00,0x00 ; mov ebx,[esi+2000h]
     db      0x67,0x66,0x3B,0x06       ; cmp eax,[esi]
-    jne     near bios_extended_memory_probe_failed
+    JCC_NEAR 0x85, bios_extended_memory_probe_failed
     db      0x66,0x83,0xC6,0x04       ; add esi,4
     loop    bios_extended_memory_probe_loop
 bios_extended_memory_probe_failed:
     db      0x0B,0xC9                 ; or cx,cx
-    jne     near bios_extended_memory_probe_bad
+    JCC_NEAR 0x85, bios_extended_memory_probe_bad
     mov     ax, 0x1000
 bios_extended_memory_probe_load_segment:
     mov     ds, ax
@@ -812,7 +820,7 @@ bios_extended_memory_probe_load_segment:
     mov     sp, 0x27CA
     JMP_ABS 0x29BB
     dw      0x27CC
-    je      near bios_extended_memory_probe_next_segment
+    JCC_NEAR 0x84, bios_extended_memory_probe_next_segment
 bios_extended_memory_probe_bad:
     or      bp, 0x4000
     mov     sp, 0x27DA
@@ -905,37 +913,37 @@ bios_post_memory_chipset_config_19_second:
 bios_post_memory_type_map:
     call    near 0x28F2
     cmp     al, 0x70
-    jne     near bios_post_memory_type_60
+    JCC_NEAR 0x85, bios_post_memory_type_60
     mov     bl, 0x70
     jmp     short bios_post_memory_type_apply
     nop
 bios_post_memory_type_60:
     cmp     al, 0x60
-    jne     near bios_post_memory_type_50
+    JCC_NEAR 0x85, bios_post_memory_type_50
     mov     bl, 0x30
     jmp     short bios_post_memory_type_apply
     nop
 bios_post_memory_type_50:
     cmp     al, 0x50
-    jne     near bios_post_memory_type_40
+    JCC_NEAR 0x85, bios_post_memory_type_40
     mov     bl, 0x50
     jmp     short bios_post_memory_type_apply
     nop
 bios_post_memory_type_40:
     cmp     al, 0x40
-    jne     near bios_post_memory_type_30
+    JCC_NEAR 0x85, bios_post_memory_type_30
     mov     bl, 0x10
     jmp     short bios_post_memory_type_apply
     nop
 bios_post_memory_type_30:
     cmp     al, 0x30
-    jne     near bios_post_memory_type_20
+    JCC_NEAR 0x85, bios_post_memory_type_20
     mov     bl, 0x40
     jmp     short bios_post_memory_type_apply
     nop
 bios_post_memory_type_20:
     cmp     al, 0x20
-    jne     near bios_post_memory_type_unknown
+    JCC_NEAR 0x85, bios_post_memory_type_unknown
     mov     bl, 0x00
     jmp     short bios_post_memory_type_apply
     nop
@@ -980,11 +988,11 @@ bios_memory_segment_timer_loop:
     nop
 bios_memory_segment_pit:
     db      0x2B, 0xDA                 ; sub bx, dx
-    jns     near bios_memory_segment_positive
+    JCC_NEAR 0x89, bios_memory_segment_positive
     neg     bx
 bios_memory_segment_positive:
     cmp     bh, 0x01
-    jb      near bios_memory_segment_complete
+    JCC_NEAR 0x82, bios_memory_segment_complete
     inc     bp
     mov     ax, ds
     add     ah, 0x04
@@ -997,13 +1005,13 @@ bios_memory_segment_complete:
     db      0x8B, 0xC3                 ; mov ax, bx
     out     0x81, al
     cmp     bx, 0x20
-    jbe     near bios_memory_segment_banks_ready
+    JCC_NEAR 0x86, bios_memory_segment_banks_ready
     mov     bx, 0x0040
 bios_memory_segment_banks_ready:
     mov     cx, 0x0008
 bios_memory_segment_bank_loop:
     shl     bl, 1
-    jb      near bios_memory_segment_bank_done
+    JCC_NEAR 0x82, bios_memory_segment_bank_done
     loop    bios_memory_segment_bank_loop
 bios_memory_segment_bank_done:
     and     cl, 0x07
@@ -1078,7 +1086,7 @@ bios_ram_pattern_test_repeat:
     mov     cx, 0x2000
     db      0x33, 0xFF                 ; xor di, di
     rep     scasw
-    jne     near bios_ram_pattern_test_failed
+    JCC_NEAR 0x85, bios_ram_pattern_test_failed
     not     ax
     cmp     ax, 0x55AA
     jne     short bios_ram_pattern_test_repeat
@@ -1110,9 +1118,9 @@ bios_chipset_cmos_merge:
     and     byte [0xE036], 0xFE
     and     byte [0xE066], 0x00
     db      0x0A, 0xC0                 ; or al, al
-    jne     near bios_chipset_cmos_nonzero
+    JCC_NEAR 0x85, bios_chipset_cmos_nonzero
     test    bl, 0x01
-    je      near bios_chipset_cmos_no_flag
+    JCC_NEAR 0x84, bios_chipset_cmos_no_flag
     or      byte [0xE066], 0x01
     jmp     short bios_chipset_cmos_read_flags
     nop
@@ -1148,7 +1156,7 @@ bios_chipset_cmos_read_flags:
     mov     ax, 0x0202
     call    near 0x8DCF
     test    al, 0x08
-    je      near bios_chipset_cmos_mask_standard
+    JCC_NEAR 0x84, bios_chipset_cmos_mask_standard
     inc     si
     cs lodsw
     and     ah, 0x07
@@ -1171,7 +1179,7 @@ bios_chipset_cmos_mask_ready:
     db      0x08, 0x16, 0x50, 0xE0    ; or [E050h], dl
     db      0x33, 0xC0                 ; xor ax, ax
     test    byte [0xE066], 0x01
-    je      near bios_chipset_cmos_return
+    JCC_NEAR 0x84, bios_chipset_cmos_return
     JMP_ABS 0x2A1E
 bios_chipset_cmos_return:
     pop     di
@@ -1196,7 +1204,7 @@ bios_chipset_cmos_select_handler:
     mov     si, 0x2AB3
     mov     bl, [0xE050]
     test    byte [0xE036], 0x01
-    je      near bios_chipset_cmos_select_normalize
+    JCC_NEAR 0x84, bios_chipset_cmos_select_normalize
     and     bl, 0x07
     shl     bl, 1
     db      0x03, 0xF3                 ; add si, bx
@@ -1208,10 +1216,10 @@ bios_chipset_cmos_select_normalize:
     db      0x02, 0xD8                 ; add bl, al
     and     bl, 0x07
     cmp     bl, 0x07
-    jne     near bios_chipset_cmos_select_store
+    JCC_NEAR 0x85, bios_chipset_cmos_select_store
     mov     bl, 0x06
     cmp     al, 0x80
-    ja      near bios_chipset_cmos_select_store
+    JCC_NEAR 0x87, bios_chipset_cmos_select_store
     mov     bl, 0x00
 bios_chipset_cmos_select_store:
     db      0x08, 0x1E, 0x50, 0xE0    ; or [E050h], bl
@@ -1238,7 +1246,7 @@ bios_cmos_e046_low_selector:
     mov     si, 0x2B0B
     mov     bl, [0xE046]
     test    byte [0xE036], 0x01
-    je      near bios_cmos_e046_low_normalize
+    JCC_NEAR 0x84, bios_cmos_e046_low_normalize
     and     bl, 0x03
     shl     bl, 1
     db      0x03, 0xF3                 ; add si, bx
@@ -1265,7 +1273,7 @@ bios_cmos_e046_high_selector:
     mov     si, 0x2B0B
     mov     bl, [0xE046]
     test    byte [0xE036], 0x01
-    je      near bios_cmos_e046_high_normalize
+    JCC_NEAR 0x84, bios_cmos_e046_high_normalize
     and     bl, 0x0C
     shr     bl, 1
     db      0x03, 0xF3                 ; add si, bx
@@ -1299,7 +1307,7 @@ bios_cmos_e049_bit6_selector:
     mov     si, 0x2B8D
     mov     bl, [0xE049]
     test    byte [0xE036], 0x01
-    je      near bios_cmos_e049_bit6_normalize
+    JCC_NEAR 0x84, bios_cmos_e049_bit6_normalize
     and     bl, 0x40
     shr     bl, 5
     db      0x03, 0xF3                 ; add si, bx
@@ -1329,7 +1337,7 @@ bios_cmos_e049_bit5_selector:
     mov     si, 0x2B8D
     mov     bl, [0xE049]
     test    byte [0xE036], 0x01
-    je      near bios_cmos_e049_bit5_normalize
+    JCC_NEAR 0x84, bios_cmos_e049_bit5_normalize
     and     bl, 0x20
     shr     bl, 4
     db      0x03, 0xF3                 ; add si, bx
@@ -1363,7 +1371,7 @@ bios_cmos_e047_low_selector:
     mov     si, 0x2C15
     mov     bl, [0xE047]
     test    byte [0xE036], 0x01
-    je      near bios_cmos_e047_low_normalize
+    JCC_NEAR 0x84, bios_cmos_e047_low_normalize
     and     bl, 0x03
     shl     bl, 1
     db      0x03, 0xF3                 ; add si, bx
@@ -1375,10 +1383,10 @@ bios_cmos_e047_low_normalize:
     db      0x02, 0xD8                 ; add bl, al
     and     bl, 0x03
     cmp     bl, 0x00
-    jne     near bios_cmos_e047_low_store
+    JCC_NEAR 0x85, bios_cmos_e047_low_store
     mov     bl, 0x03
     cmp     al, 0x80
-    ja      near bios_cmos_e047_low_store
+    JCC_NEAR 0x87, bios_cmos_e047_low_store
     mov     bl, 0x01
 bios_cmos_e047_low_store:
     db      0x08, 0x1E, 0x47, 0xE0    ; or [E047h], bl
@@ -1400,11 +1408,11 @@ bios_cmos_e042_enable_selector:
     push    di
     mov     bl, [0xE042]
     db      0x0A, 0xC0                 ; or al, al
-    jne     near bios_cmos_e042_enable_nonzero
+    JCC_NEAR 0x85, bios_cmos_e042_enable_nonzero
     or      byte [0xE042], 0x20
     mov     si, 0xB571
     test    bl, 0x20
-    jne     near bios_cmos_e042_enable_selected
+    JCC_NEAR 0x85, bios_cmos_e042_enable_selected
     and     byte [0xE042], 0x1F
     mov     si, 0xB568
 bios_cmos_e042_enable_selected:
@@ -1415,7 +1423,7 @@ bios_cmos_e042_enable_nonzero:
     shr     bl, 5
     db      0x02, 0xC3                 ; add al, bl
     and     al, 0x01
-    je      near bios_cmos_e042_enable_clear
+    JCC_NEAR 0x84, bios_cmos_e042_enable_clear
     or      byte [0xE042], 0x20
     jmp     short bios_cmos_e042_enable_return
     nop
@@ -1441,7 +1449,7 @@ bios_cmos_e052_timing_selector:
     mov     si, 0x2CAF
     mov     bl, [0xE052]
     test    byte [0xE052], 0x01
-    jne     near bios_cmos_e052_timing_update
+    JCC_NEAR 0x85, bios_cmos_e052_timing_update
     and     bl, 0xF0
     shr     bl, 3
     db      0x03, 0xF3                 ; add si, bx
