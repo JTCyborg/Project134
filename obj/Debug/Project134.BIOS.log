@@ -3,31 +3,31 @@
   Source: C:\Temp\trdos\134\bios\src\reset.asm
   Output: C:\Temp\trdos\134\out\Debug\Project134.bin
   Size:   65536 bytes
-  C:\Temp\trdos\134\bios\src\reset.asm:1214: error: TIMES value -1 is negative
-  C:\Temp\trdos\134\bios\src\reset.asm:1224: error: TIMES value -1 is negative
-  C:\Temp\trdos\134\bios\src\reset.asm:1232: error: TIMES value -1 is negative
-  C:\Temp\trdos\134\bios\src\reset.asm:1248: error: TIMES value -3 is negative
-  C:\Temp\trdos\134\bios\src\reset.asm:1251: error: TIMES value -3 is negative
-  C:\Temp\trdos\134\bios\src\reset.asm:1264: error: TIMES value -3 is negative
-  C:\Temp\trdos\134\bios\src\reset.asm:1277: error: TIMES value -3 is negative
-  C:\Temp\trdos\134\bios\src\reset.asm:1289: error: TIMES value -5 is negative
-  C:\Temp\trdos\134\bios\src\reset.asm:1296: error: TIMES value -5 is negative
-  C:\Temp\trdos\134\bios\src\reset.asm:1307: error: TIMES value -5 is negative
-  C:\Temp\trdos\134\bios\src\reset.asm:1314: error: TIMES value -5 is negative
-  C:\Temp\trdos\134\bios\src\reset.asm:1331: error: TIMES value -5 is negative
-  C:\Temp\trdos\134\bios\src\reset.asm:1341: error: TIMES value -5 is negative
-  C:\Temp\trdos\134\bios\src\reset.asm:1369: error: TIMES value -5 is negative
-  C:\Temp\trdos\134\bios\src\reset.asm:1378: error: TIMES value -5 is negative
-  C:\Temp\trdos\134\bios\src\reset.asm:1386: error: TIMES value -5 is negative
-  C:\Temp\trdos\134\bios\src\reset.asm:1395: error: TIMES value -5 is negative
-  C:\Temp\trdos\134\bios\src\reset.asm:1403: error: TIMES value -5 is negative
-  C:\Temp\trdos\134\bios\src\reset.asm:1412: error: TIMES value -5 is negative
-  C:\Temp\trdos\134\bios\src\reset.asm:1423: error: TIMES value -5 is negative
-  C:\Temp\trdos\134\bios\src\reset.asm:1436: error: TIMES value -10 is negative
-  C:\Temp\trdos\134\bios\src\reset.asm:1450: error: TIMES value -10 is negative
-  C:\Temp\trdos\134\bios\src\reset.asm:1459: error: TIMES value -10 is negative
-  C:\Temp\trdos\134\bios\src\reset.asm:1468: error: TIMES value -10 is negative
-  C:\Temp\trdos\134\bios\src\reset.asm:1484: error: TIMES value -10 is negative
+  C:\Temp\trdos\134\bios\src\reset.asm:1220: error: TIMES value -2 is negative
+  C:\Temp\trdos\134\bios\src\reset.asm:1230: error: TIMES value -2 is negative
+  C:\Temp\trdos\134\bios\src\reset.asm:1238: error: TIMES value -2 is negative
+  C:\Temp\trdos\134\bios\src\reset.asm:1253: error: TIMES value -2 is negative
+  C:\Temp\trdos\134\bios\src\reset.asm:1256: error: TIMES value -2 is negative
+  C:\Temp\trdos\134\bios\src\reset.asm:1269: error: TIMES value -2 is negative
+  C:\Temp\trdos\134\bios\src\reset.asm:1282: error: TIMES value -2 is negative
+  C:\Temp\trdos\134\bios\src\reset.asm:1293: error: TIMES value -2 is negative
+  C:\Temp\trdos\134\bios\src\reset.asm:1300: error: TIMES value -2 is negative
+  C:\Temp\trdos\134\bios\src\reset.asm:1311: error: TIMES value -2 is negative
+  C:\Temp\trdos\134\bios\src\reset.asm:1318: error: TIMES value -2 is negative
+  C:\Temp\trdos\134\bios\src\reset.asm:1335: error: TIMES value -2 is negative
+  C:\Temp\trdos\134\bios\src\reset.asm:1345: error: TIMES value -2 is negative
+  C:\Temp\trdos\134\bios\src\reset.asm:1373: error: TIMES value -2 is negative
+  C:\Temp\trdos\134\bios\src\reset.asm:1382: error: TIMES value -2 is negative
+  C:\Temp\trdos\134\bios\src\reset.asm:1390: error: TIMES value -2 is negative
+  C:\Temp\trdos\134\bios\src\reset.asm:1399: error: TIMES value -2 is negative
+  C:\Temp\trdos\134\bios\src\reset.asm:1407: error: TIMES value -2 is negative
+  C:\Temp\trdos\134\bios\src\reset.asm:1416: error: TIMES value -2 is negative
+  C:\Temp\trdos\134\bios\src\reset.asm:1427: error: TIMES value -2 is negative
+  C:\Temp\trdos\134\bios\src\reset.asm:1437: error: TIMES value -2 is negative
+  C:\Temp\trdos\134\bios\src\reset.asm:1451: error: TIMES value -2 is negative
+  C:\Temp\trdos\134\bios\src\reset.asm:1460: error: TIMES value -2 is negative
+  C:\Temp\trdos\134\bios\src\reset.asm:1469: error: TIMES value -2 is negative
+  C:\Temp\trdos\134\bios\src\reset.asm:1485: error: TIMES value -2 is negative
   Listing: C:\Temp\trdos\134\out\Debug\Project134.lst
   NASM failed with exit code 1
   At C:\Temp\trdos\134\bios\tools\build_bios.ps1:121 char:5
