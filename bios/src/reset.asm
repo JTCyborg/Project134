@@ -94,6 +94,34 @@ bios_callback_ret_1b5e:
 bios_callback_ret_1b5f:
     ret
 
+; F000:2065 — reset-entry trampoline and protected-mode GDT.
+; The descriptor and GDT are reconstructed as NASM data declarations.
+times 0x2065 - ($ - rom_start) db 0xFF
+bios_reset_entry_trampoline:
+    jmp     0xE05B
+
+; F000:2068 — 16-bit LGDT pseudo-descriptor.
+bios_pm_gdt_descriptor:
+    dw      0x0017
+    dd      0x000F2070
+
+times 0x2070 - ($ - rom_start) db 0x00
+bios_pm_gdt:
+    dq      0x0000000000000000
+    ; Selector 0008h: flat, present, ring-0, writable 32-bit data, 4-GiB.
+    dw      0xFFFF, 0x0000
+    db      0x00, 0x92, 0xCF, 0x00
+    ; Selector 0010h: base-zero, present, ring-0, writable 16-bit data, 64-KiB.
+    dw      0xFFFF, 0x0000
+    db      0x00, 0x92, 0x00, 0x00
+bios_pm_gdt_end:
+%if (bios_pm_gdt_end - bios_pm_gdt) != 24
+    %error "Protected-mode GDT must contain three descriptors"
+%endif
+
+; F000:2088 — five-byte parameter area; meaning remains unresolved.
+    db      0x01, 0x04, 0x02, 0x10, 0x40
+
 ; F000:8400 — CMOS 8Eh extended-register clear/restore path.
 times 0x8400 - ($ - rom_start) db 0xFF
 bios_cmos_8e_extended_entry:
