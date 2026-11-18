@@ -81,3 +81,15 @@ milestones will cover memory sizing, chipset setup, interrupt vectors and boot.
 Use the existing Visual Studio 2026 solution and `bios/tools/build_bios.ps1`.
 NASM must be available to the build. The build and PCem have not been run in
 this editing session; do not infer success from source edits or Git commits.
+
+## PCem runtime checkpoint — 2026-11-18
+
+The latest checked-in `pcem.log` now contains a BIOS execution trace (the log file is present). It records:
+
+- POST port `80h`: `01`, `02`, `03`, `04`, `05`, then `06`.
+- No `POST80 07` checkpoint is reached.
+- Execution enters the fatal POST handler at `F000:F4A5` and is later paused at `F000:F4B0`.
+- The captured register state has `EBP=00000009`, matching the explicit checksum-failure code assigned at `D777h` before the jump to `F4A5h`.
+- The trace therefore confirms that the BIOS reaches the memory-checksum stage, but does **not** pass the 16-bit ROM checksum. The following 8042 drain / POST07 sequence is not reached.
+
+This is a diagnosed failure, not a successful BIOS startup. Do not change the fatal handler, skip the checksum branch, or patch the checksum field merely to make POST continue: the reconstructed image still contains large inherited/unimplemented regions, and masking this failure would create a false-positive boot milestone. The next implementation task is to complete and validate the ROM content that participates in the checksum, then rebuild and repeat the same PCem test. Preserve this log as the current runtime baseline.
