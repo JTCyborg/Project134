@@ -41,6 +41,7 @@ bios_cmos_8e_initial_read_continue:
     mov     al, 0x8E
     mov     cx, 0x0072
     xor     ah, ah
+bios_cmos_8e_clear_iteration:
     mov     sp, 0x842A
     jmp     0xEE9D
 
@@ -50,10 +51,6 @@ bios_cmos_8e_clear_return:
 bios_cmos_8e_clear_continue:
     inc     al
     loop    bios_cmos_8e_clear_iteration
-
-bios_cmos_8e_clear_iteration:
-    mov     sp, 0x842A
-    jmp     0xEE9D
 
 ; The loop's first iteration enters the helper body at 8424h.
 times 0x8430 - ($ - rom_start) db 0xFF
