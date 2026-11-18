@@ -76,7 +76,7 @@ Do not implement the disk service as complete until read, write, verify, format,
 
 ## Current status
 
-The current NASM candidate is **byte-identical to the original 64-KiB ROM**. GitHub Actions run [`44382969490`](https://github.com/JTCyborg/Project134/actions/runs/44382969490) completed successfully:
+The current NASM candidate is **byte-identical to the original 64-KiB ROM**. GitHub Actions run [`44384426423`](https://github.com/JTCyborg/Project134/actions/runs/44384426423) completed successfully:
 
 - Full comparison: 65,536/65,536 bytes equal.
 - POST06 16-bit word checksum: `0000h`.
@@ -84,16 +84,17 @@ The current NASM candidate is **byte-identical to the original 64-KiB ROM**. Git
 - NASM structural validation: 65,536 bytes.
 - PCem was not launched by this CI job; runtime boot confirmation remains a separate test.
 
-This is **not yet a fully independent native reconstruction**. The verified NASM listing contains 55,961 bytes (85.39%) inherited from explicit `incbin "ami486.bin"` slices and 9,575 bytes (14.61%) emitted directly by source as instructions, explicit data, and fill. The source-emitted bytes have been compared against the reference. Inherited code is preserved, not reimplemented.
+This is **not yet a fully independent native reconstruction**. The verified NASM listing contains 55,218 bytes (84.26%) inherited from explicit `incbin "ami486.bin"` slices and 10,318 bytes (15.74%) emitted directly by source as instructions, explicit data, and fill. The source-emitted bytes have been compared against the reference. Inherited code is preserved, not reimplemented.
 
 The current source now contains these newly verified regions:
 
 - `2065h–2F23h`: POST memory/CMOS/selector paths, including the previously transcribed `29F6h–2D10h` handlers, memory benchmark/PIT measurement routines at `2D11h–2E72h`, B513/B519 Setup selector handlers at `2E74h–2EF0h`, and the existing PIT helpers and Setup relocation handoff.
 - `2F24h–3043h`: Setup exit prompts, saved-stack restoration, BDA clear helper, and temporary IVT/INT 13h AH=14h path.
 - `3C5Ch–3F49h`: Setup main menu, shared header renderer, value parser, and metric formatter.
+- `3F4Ah–4230h`: POST system-configuration display, CPU/equipment identification, decimal/hex output, and display helpers.
 - `8300h–83FFh`: CPU/cache profile selector and CMOS 8Eh update path.
 
-See `analysis/disasm/PROJECT134_BYTE_EXACT_BUILD_AUDIT_20261118.md` for the exact build and inherited-range inventory. The next selected code interval is `3F4Ah–4230h`, the POST system-configuration display path called from `164Ch`.
+See `analysis/disasm/PROJECT134_BYTE_EXACT_BUILD_AUDIT_20261118.md` for the exact build and inherited-range inventory. The next selected executable interval is `4628h–4890h`, the Setup hard-disk utility menu and display helpers. Its entry at `4628h` is confirmed by the Setup handler table; strings and lookup tables before it remain inherited.
 
 The Visual Studio build produces two artifacts:
 
