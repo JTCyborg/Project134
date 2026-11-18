@@ -19,6 +19,8 @@ The clean NASM-only restart is in progress.
 Translated into NASM in `bios/src/reset.asm`:
 - Reset vector `FFF0h` and gateway `E05Bh`.
 - Initial POST branch at `D604h`.
+- Primary `8042h`/CMOS reset branch at `88CEh–8A03h`, including the
+  stack-threaded ALi C2h/C3h probe and semantic `dw` return slots.
 - Reset-mode branch at `8A04h–8A1Fh`.
 - CMOS marker read/clear and dispatch at `D615h–D654h`.
 - CMOS marker dispatcher instruction stream at `8A20h–8A75h`.
@@ -35,9 +37,10 @@ Translated into NASM in `bios/src/reset.asm`:
 
 The translations above follow the available instruction listing. The following
 regions are still incomplete and prevent a meaningful PCem boot test:
-- `88CEh–8A03h`: primary 8042-clear branch, including stack-threaded
-  continuations and helper dependencies.
-- `8A78h–8AD4h`: secondary CMOS/POST routines reached after checkpoint 05h.
+- `8A78h–8AD4h`: dynamic hook and secondary CMOS/POST routines reached after
+  checkpoint 05h.
+- `8A78h–8AD4h`: dynamic hook and secondary CMOS/POST routines reached after
+  checkpoint 05h.
 - `8A78h–8AD4h`: secondary CMOS/POST routines reached after checkpoint 05h.
 - Additional POST/error handlers and the remainder of the startup/boot path.
 - Remaining RAM test, chipset initialization, interrupt services, BIOS vectors
@@ -45,9 +48,10 @@ regions are still incomplete and prevent a meaningful PCem boot test:
 
 ## Test readiness
 
-**Not ready for a PCem boot test.** The primary branch at `88CEh` and the secondary `8A78h–8AD4h` routines remain
-incomplete. Some indexed helper paths are now present, but their complete
-control-flow closure and the subsequent POST/boot path are not yet established. A run now would stop in unimplemented ROM space
+**Not ready for a PCem boot test.** The `88CEh–8A03h` primary branch and its
+stack-threaded ALi/CMOS helpers are now translated, but the secondary
+`8A78h–8AD4h` path and POST stages after checkpoint 05h remain incomplete.
+The complete control-flow closure and later POST/boot path are not yet established. A run now would stop in unimplemented ROM space
 or execute incomplete dispatch behavior.
 
 The first PCem test will be announced only after:
