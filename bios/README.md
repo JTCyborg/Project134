@@ -1,14 +1,14 @@
 # BIOS workspace
 
-The BIOS is developed independently for Project134. The original AMI486 ROM is an immutable behavioral reference; it is not modified by the build.
+The BIOS is developed independently for Project134. The original AMI486 ROM is an immutable behavioral reference and is never modified by the build.
 
 ## Visual Studio build
 
 Open `Project134.sln` in Microsoft Visual Studio 2026 and build `Project134.BIOS`.
 
-Visual Studio/MSBuild orchestrates NASM to emit a flat 16-bit x86 ROM image. MSVC does not compile or link the BIOS code.
+Visual Studio/MSBuild invokes NASM to emit a flat 16-bit x86 ROM image. MSVC does not compile or link the BIOS code.
 
-Prerequisite: NASM available as `nasm.exe` on `PATH`. If installed elsewhere, pass `/p:NasmExe="C:\\path\\to\\nasm.exe"` to MSBuild.
+Prerequisite: `nasm.exe` on `PATH`. If NASM is installed elsewhere, pass `/p:NasmExe="C:\\path\\to\\nasm.exe"` to MSBuild.
 
 Build output:
 - `out\\Debug\\Project134.bin`
@@ -16,62 +16,45 @@ Build output:
 
 ## Reconstruction status — Stage 4
 
-The source now uses the reset-vector and first-stage entry addresses observed in the target ROM:
+The reconstructed image is 65,536 bytes and preserves the original ROM address layout. Implemented windows are copied verbatim from the immutable `ami486.bin` reference:
 
-- ROM size: 65,536 bytes.
-- Reset vector at ROM offset `FFF0h`: far jump to `F000:E05B`.
-- Reset gateway at ROM offset `E05Bh`: near jump to `F000:D604`.
-- Initial 8042-clear POST branch at `88CEh–8A03h` (310 bytes copied verbatim from the immutable reference ROM), plus reset-continuation entries at `8A04h` and `8A20h`, POST continuation/helper cluster at `8A75h–8CCCh`, indirect dispatch pointer/trampoline at `82DAh` and `19ABh–19AFh`, GDT plus protected-mode memory-read helper at `2646h–26BDh`, and ALi indexed-I/O continuation at `8DEDh–8E0Ch`, ALi indexed-I/O helper cluster at `8CCDh–8DECh`, and CMOS/PIC helpers at `EE94h–EF35h`.
-- Early POST entry at ROM offset `D604h` and continuation through `D776h`: byte-backed dispatcher, stack-threaded RAM test, CMOS/8042 checks, and the first POST `80h` status writes.
+| ROM offsets | Restored content |
+|---|---|
+| `19ABh–19AFh` | POST indirect-dispatch trampoline and RET stubs |
+| `2646h–26BDh` | GDT descriptors and protected-mode 1 MiB memory-read helper |
+| `82DAh–82DBh` | POST dispatch pointer selecting `19ABh` |
+| `88CEh–8A03h` | Initial 8042-clear POST branch (310 bytes) |
+| `8A04h–8A1Fh` | Reset continuation and CMOS[8Fh] branch |
+| `8A20h–8A74h` | CMOS dispatch helper |
+| `8A75h–8CCCh` | POST continuation, dispatch stubs and chipset/device helper code (600 bytes) |
+| `8CCDh–8DECh` | ALi indexed-I/O helper cluster |
+| `8DEDh–8E0Ch` | ALi indexed-I/O read/write tail helpers and `JMP DI` trampoline |
+| `D604h–D776h` | Early POST dispatcher, stack-threaded RAM test, CMOS/8042 checks and POST 80h writes |
+| `E05Bh–E05Dh` | Reset gateway: near jump to `D604h` |
+| `EE94h–EF35h` | CMOS/PIC helpers |
+| `FFF0h–FFF4h` | Reset vector: far jump to `F000:E05B` |
 
-The reset-vector and reconstructed code windows are checked byte-for-byte against the immutable reference by `validate_rom.ps1`.
+`bios/tools/validate_rom.ps1` checks the immutable reference ROM SHA-256, output size, reset vector and every restored byte window listed above. It must be run against the built ROM and original `ami486.bin`.
 
-**PCem status: early POST is now executing, but boot is not yet demonstrated.** The latest run with the reconstructed ROM produces POST port-80h values `01h` and `02h`. It then pauses at `F000:D71E` after 7,869,468 instructions. This is an intentional delay loop in the reference stream: `D716` loads the byte at `CS:8284h` (observed as `87h` in the CPU dump), `D71E` executes `LOOP # BIOS workspace
+## POST path established by static analysis
 
-The BIOS is developed independently for Project134. The original AMI486 ROM is an immutable behavioral reference; it is not modified by the build.
+1. CPU reset enters `F000:E05B`, which jumps to `F000:D604`.
+2. The 8042 status selects the branch at `88CEh` or `8A04h`.
+3. The early RAM/CMOS/8042 path emits POST codes `01h` and `02h`.
+4. The delay loop at `D71Eh` decrements the delay count loaded from `CS:8284h`; changing AL/CX values in successive PCem snapshots confirmed forward progress.
+5. After the delay, `D724h` tests `CS:8281h`, emits POST `03h`, and jumps through `D749h` to `8A75h`.
+6. `8A75h` redirects to `D74Ch`; POST `04h` is emitted, then the path reaches `8A78h`.
+7. `8A78h` reads the pointer at `CS:82DAh` (`19ABh)); the trampoline at `19ABh` jumps through DI to `8A81h`, which enters the indexed-I/O helper path.
+8. The restored path uses the ALi indexed-I/O helpers and the protected-mode memory-read routine at `2686h`, then returns through the DI-threaded continuation.
 
-## Visual Studio build
+This establishes the next static control-flow segment; it does not establish successful runtime completion.
 
-Open `Project134.sln` in Microsoft Visual Studio 2026 and build `Project134.BIOS`.
+## PCem status
 
-Visual Studio/MSBuild orchestrates NASM to emit a flat 16-bit x86 ROM image. MSVC does not compile or link the BIOS code.
+The latest available `pcem.log` snapshot, captured before the Stage 4 source updates, reports POST port-80h values `01h` and `02h`, with CPU at `F000:D71E`, `AL=59h`, `CX=1BA0h`, and approximately 10,916,287 instructions. This is progress inside the intentional delay loop, not proof of a hang or successful boot.
 
-Prerequisite: NASM available as `nasm.exe` on `PATH`. If installed elsewhere, pass `/p:NasmExe="C:\\path\\to\\nasm.exe"` to MSBuild.
+**No NASM build, validator run, or PCem test has yet been confirmed after the Stage 4 commits.** Rebuild in Visual Studio 2026, run the ROM validator, then test that exact output ROM in PCem and capture the next CPU/POST snapshot. The `Bad getpccache 000A0000` message is not treated as the cause of a BIOS failure without further evidence.
 
-Build output:
-- `out\\Debug\\Project134.bin`
-- `out\\Release\\Project134.bin`
+## Current limitation
 
-## Reconstruction status — Stage 2
-
-The source now uses the reset-vector and first-stage entry addresses observed in the target ROM:
-
-- ROM size: 65,536 bytes.
-- Reset vector at ROM offset `FFF0h`: far jump to `F000:E05B`.
-- Reset gateway at ROM offset `E05Bh`: near jump to `F000:D604`.
-- Initial 8042-clear POST branch at `88CEh–8A03h` (310 bytes copied verbatim from the immutable reference ROM), plus reset-continuation entries at `8A04h` and `8A20h`, ALi indexed-I/O helper cluster at `8CCDh–8DECh`, and CMOS/PIC helpers at `EE94h–EF35h`.
-- Early POST entry at ROM offset `D604h` and continuation through `D776h`: byte-backed dispatcher, stack-threaded RAM test, CMOS/8042 checks, and the first POST `80h` status writes.
-
-The reset-vector and entry bytes are checked by `validate_rom.ps1`.
-
-, and `D720` decrements AL before repeating. The register/segment state (`DS=ES=SS=AAAAh`, `SP=D709h`) is consistent with the preceding stack-threaded segment-register test at `D6C4h–D70Ch`; it is not, by itself, evidence of stack corruption. The user paused emulation while the delay loop was still running (`CX=98E7h`, `AL=87h`). Therefore this log does not show a BIOS hang or a completed POST. Resume the same run and allow this delay to finish; capture the next POST-80h values and final CPU state. E9h output is not expected unless the original BIOS explicitly writes to that debug port.
-
-## Next implementation boundary
-
-Continue reconstructing the reset/POST call graph from the exact disassembly, starting with the `88CEh` branch now present and all of its direct and indirect destinations; then continue with the remaining early-POST targets. Preserve alternate entries, stack-crafted returns, register/flag contracts and POST port-80h writes. Only mark a routine complete when its bytes, incoming references and outgoing control flow are reconciled.
-
-## Reference ROM
-
-The original `ami486.bin` remains unchanged. Keep it separate from generated output and do not overwrite it. Any binary compatibility payload must be explicitly identified as inherited rather than native reconstruction.
-
-## Validation
-
-The post-build PowerShell validator checks:
-- exact output size (currently 65,536 bytes);
-- immutable reference ROM identity (SHA-256 `91fd62ce3ccb0b79b42f5fd6c6a7262ed52824b8ade917181b8a12267fec003b`);
-- the implemented windows `88CEh–8A03h`, `8A04h–8A1Fh`, `8A20h–8A74h`, `8CCDh–8DEBh`, `EE94h–EF35h` and `D604h–D776h` against the reference ROM, not only its first instructions;
-- the reference reset-vector bytes at `FFF0h`;
-- the reset gateway at `E05Bh`;
-- the first verified POST instructions at `D604h`.
-
-A successful assembly/layout check is not evidence of a successful BIOS boot. PCem differential testing remains required.
+The image is still incomplete. Unrestored ROM destinations and data referenced by later POST/setup paths remain filled with `FFh`; the image is not yet claimed to be PCem-bootable.
