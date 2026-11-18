@@ -27,6 +27,21 @@ function Assert-Bytes {
     }
 }
 
+# The 8300h–83FFh CPU/cache profile routines have been transcribed as
+# executable NASM and must match the reference instruction stream byte-for-byte.
+if ($ReferenceRomPath -and (Test-Path -LiteralPath $ReferenceRomPath -PathType Leaf)) {
+    $referenceBytes = [System.IO.File]::ReadAllBytes($ReferenceRomPath)
+    if ($referenceBytes.Length -ne $ExpectedSize) {
+        throw ("Reference ROM has invalid size: {0}; expected {1}" -f $referenceBytes.Length, $ExpectedSize)
+    }
+    for ($i = 0x8300; $i -lt 0x8400; $i++) {
+        if ($bytes[$i] -ne $referenceBytes[$i]) {
+            throw ("CPU/cache profile reconstruction mismatch at 0x{0:X4}: candidate=0x{1:X2}, reference=0x{2:X2}" -f $i, $bytes[$i], $referenceBytes[$i])
+        }
+    }
+    Write-Host "CPU/cache profile routines 8300h–83FFh match the reference byte-for-byte." -ForegroundColor Green
+}
+
 # These checks validate the assembled instruction stream, not a reference ROM.
 # NASM may choose an equivalent MOV r/m8,r8 encoding (88 C3) for MOV BL,AL.
 Assert-Bytes -Offset 0xFFF0 -Expected ([byte[]](0xEA, 0x5B, 0xE0, 0x00, 0xF0)) -Description "NASM reset far jump"
