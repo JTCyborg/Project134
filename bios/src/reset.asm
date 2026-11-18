@@ -1200,7 +1200,6 @@ times 0xD806 - ($ - rom_start) db 0xFF
 bios_post_8042_a1_return:
     dw      0xD808
 bios_post_8042_a1_continue:
-    or      al, bl
     xor     cx, cx
 bios_post_8042_a1_wait:
     in      al, 0x64
