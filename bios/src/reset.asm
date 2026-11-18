@@ -2255,7 +2255,406 @@ bios_setup_menu_metric_clamped:
     %error "Setup menu/parser/formatter region must end at 3F4Ah"
 %endif
 
-incbin  "ami486.bin", ($ - rom_start), (0x8280 - ($ - rom_start)) ; inherited reference bytes from 3F4Ah to 8280h
+; F000:3F4A–4230 — POST system-configuration display and helpers.
+bios_post_system_config_entry:
+    call    near bios_post_system_config_display
+    mov     si, 0x45D8
+    call    near bios_rom_print_si
+    call    near 0x19FB
+    ret
+
+bios_post_system_config_alt_entry:
+    call    near bios_rom_print_si
+    call    near bios_post_newline
+    ret
+
+bios_rom_print_si:
+    push    ax
+    call    near 0xF52E
+    pop     ax
+    ret
+
+bios_print_hex_byte:
+    push    ax
+    shr     al, 4
+    call    near bios_print_hex_nibble
+    pop     ax
+    ret
+
+bios_print_hex_nibble:
+    and     al, 0x0F
+    cmp     al, 0x0A
+    jb      short bios_print_hex_emit
+    add     al, 0x07
+bios_print_hex_emit:
+    add     al, 0x30
+    mov     ah, 0x0E
+    int     0x10
+    ret
+
+bios_post_system_config_display:
+    mov     si, 0x4231
+    call    near bios_rom_print_si
+    mov     si, 0x431F
+    call    near bios_rom_print_si
+    call    near bios_post_cpu_info_select
+    push    ax
+    mov     si, 0x43AF
+    call    near bios_rom_print_si
+    push    ds
+    db      0x33, 0xC0                 ; xor ax, ax
+    mov     ds, ax
+    mov     ax, [0x0467]
+    pop     ds
+    call    near bios_print_decimal
+    call    near bios_post_kb_suffix
+    mov     si, 0x4337
+    call    near bios_rom_print_si
+    pop     ax
+    call    near bios_post_cmos_option
+    mov     si, 0x43C7
+    call    near bios_rom_print_si
+    mov     ah, 0x88
+    int     0x15
+    call    near bios_print_decimal
+    call    near bios_post_kb_suffix
+    mov     si, 0x434F
+    call    near bios_rom_print_si
+    mov     al, 0x90
+    call    near 0xEE94
+    push    ax
+    shr     al, 4
+    call    near bios_post_cmos_option
+    mov     si, 0x43DF
+    call    near bios_rom_print_si
+    mov     al, 0x92
+    call    near 0xEE94
+    push    ax
+    shr     al, 4
+    mov     ah, 0x99
+    call    near bios_post_cmos_nibble
+    call    near bios_post_newline
+    mov     si, 0x4367
+    call    near bios_rom_print_si
+    pop     cx
+    pop     ax
+    push    cx
+    call    near bios_post_cmos_option
+    mov     si, 0x43F7
+    call    near bios_rom_print_si
+    pop     ax
+    mov     ah, 0x9A
+    call    near bios_post_cmos_nibble
+    call    near bios_post_newline
+    mov     si, 0x437F
+    call    near bios_rom_print_si
+    mov     si, 0x45BF
+    push    ds
+    db      0x33, 0xC0                 ; xor ax, ax
+    mov     ds, ax
+    mov     ax, [0x0042]
+    pop     ds
+    cmp     ax, 0xC800
+    jb      short bios_post_video_base_display
+    cmp     ax, 0xE000
+    jb      short bios_post_video_base_ready
+    cmp     ax, 0xF000
+    jb      short bios_post_video_base_display
+bios_post_video_base_ready:
+    int     0x11
+    mov     si, 0x458F
+    and     al, 0x30
+    cmp     al, 0x30
+    je      short bios_post_video_base_display
+    mov     si, 0x459F
+    cmp     al, 0x20
+    je      short bios_post_video_base_display
+    mov     si, 0x45AF
+bios_post_video_base_display:
+    call    near bios_rom_print_si
+    mov     si, 0x440F
+    call    near bios_rom_print_si
+    mov     cx, 0x0004
+    mov     si, 0x0400
+    call    near bios_post_print_word_list
+    call    near bios_post_newline
+    mov     si, 0x4397
+    call    near bios_rom_print_si
+    mov     cx, 0x0008
+    mov     si, 0xFFF5
+bios_post_rom_id_loop:
+    mov     al, [cs:si]
+    inc     si
+    mov     ah, 0x0E
+    int     0x10
+    loop    bios_post_rom_id_loop
+    mov     cx, 0x0007
+bios_post_rom_id_delay:
+    call    near 0x098A
+    loop    bios_post_rom_id_delay
+    mov     si, 0x4427
+    call    near bios_rom_print_si
+    mov     cx, 0x0003
+    mov     si, 0x0408
+    call    near bios_post_print_word_list
+    call    near bios_post_newline
+    ret
+
+bios_post_print_word_list:
+    push    ds
+    db      0x33, 0xC0                 ; xor ax, ax
+    mov     ds, ax
+bios_post_print_word_list_loop:
+    mov     ax, [si]
+    inc     si
+    inc     si
+    db      0x0B, 0xC0                 ; or ax, ax
+    je      short bios_post_print_word_list_next
+    push    ax
+    db      0x8A, 0xC4                 ; mov al, ah
+    call    near bios_print_hex_nibble
+    pop     ax
+    call    near bios_print_hex_byte
+    mov     ax, 0x0E2C
+    int     0x10
+    mov     ch, 0x55
+bios_post_print_word_list_next:
+    dec     cl
+    jne     short bios_post_print_word_list_loop
+    pop     ds
+    db      0x0A, 0xED                 ; or ch, ch
+    jne     short bios_post_print_word_list_done
+    mov     si, 0x457F
+    call    near bios_rom_print_si
+    ret
+bios_post_print_word_list_done:
+    call    near 0x0985
+    ret
+
+bios_post_cmos_nibble:
+    mov     si, 0x457F
+    and     al, 0x0F
+    je      short bios_post_cmos_nibble_empty
+    cmp     al, 0x0F
+    jne     short bios_post_cmos_nibble_numeric
+    db      0x8A, 0xC4                 ; mov al, ah
+    call    near 0xEE94
+bios_post_cmos_nibble_numeric:
+    db      0x32, 0xE4                 ; xor ah, ah
+    call    near bios_print_decimal
+    ret
+bios_post_cmos_nibble_empty:
+    call    near bios_rom_print_si
+    ret
+
+bios_post_cmos_option:
+    push    ax
+    mov     si, 0x457F
+    db      0x25, 0x0F, 0x00           ; and ax, 000Fh
+    je      short bios_post_cmos_option_empty
+    mov     si, 0x452F
+    dec     ax
+    je      short bios_post_cmos_option_print
+    mov     si, 0x453F
+    dec     ax
+    je      short bios_post_cmos_option_print
+    mov     si, 0x454F
+    dec     ax
+    je      short bios_post_cmos_option_print
+    mov     si, 0x455F
+    dec     ax
+    je      short bios_post_cmos_option_print
+    mov     si, 0x456F
+    dec     ax
+bios_post_cmos_option_print:
+    call    near bios_rom_print_si
+    pop     ax
+    ret
+bios_post_cmos_option_empty:
+    call    near bios_rom_print_si
+    pop     ax
+    ret
+
+bios_post_newline:
+    push    bx
+    push    cx
+    push    dx
+    mov     ah, 0x03
+    mov     bh, 0x00
+    int     0x10
+    db      0x32, 0xF6                 ; xor dh, dh
+    mov     cx, 0x004C
+    db      0x2B, 0xCA                 ; sub cx, dx
+    jcxz    short bios_post_newline_column_ready
+bios_post_newline_delay:
+    call    near 0x098A
+    loop    bios_post_newline_delay
+bios_post_newline_column_ready:
+    mov     ax, 0x0EBA
+    int     0x10
+    pop     dx
+    pop     cx
+    pop     bx
+    mov     ax, 0x0E0D
+    int     0x10
+    mov     ax, 0x0E0A
+    int     0x10
+    ret
+
+bios_post_kb_suffix:
+    call    near 0x098A
+    mov     ax, 0x0E4B
+    int     0x10
+    mov     ax, 0x0E42
+    int     0x10
+    call    near bios_post_newline
+    ret
+
+bios_print_decimal:
+    mov     cx, 0x000A
+bios_print_decimal_divide:
+    db      0x33, 0xD2                 ; xor dx, dx
+    div     cx
+    db      0x0B, 0xC0                 ; or ax, ax
+    je      short bios_print_decimal_emit
+    push    dx
+    call    near bios_print_decimal_divide
+    pop     dx
+bios_print_decimal_emit:
+    db      0x8B, 0xC2                 ; mov ax, dx
+    db      0x0D, 0x30, 0x0E           ; or ax, 0E30h
+    int     0x10
+    ret
+
+bios_post_cpu_info_select:
+    pushf
+    cli
+    mov     ax, 0xF000
+    push    ax
+    popf
+    pushf
+    pop     ax
+    and     ah, 0xF0
+    mov     si, 0x449F
+    jne     short bios_post_cpu_info_probe
+    JMP_ABS 0x41DF
+bios_post_cpu_info_probe:
+    smsw    ax
+    db      0x0A, 0xE4                 ; or ah, ah
+    je      short bios_post_cpu_type_select
+bios_post_cpu_protected_mode:
+    push    ax
+    mov     eax, cr0
+    push    eax
+    and     al, 0xEF
+    mov     cr0, eax
+    mov     eax, cr0
+    test    al, 0x10
+    pop     eax
+    mov     cr0, eax
+    pop     ax
+    mov     si, 0x447F
+    jne     short bios_post_cpu_v86
+    db      0x0A, 0xE4                 ; or ah, ah
+    jne     short bios_post_cpu_info_display
+    mov     si, 0x44CF
+    mov     al, 0xB3
+    call    near 0xEE94
+    test    al, 0x02
+    je      short bios_post_cpu_info_display
+    mov     si, 0x44DF
+    jmp     short bios_post_cpu_info_display
+bios_post_cpu_v86:
+    mov     si, 0x448F
+    db      0x0A, 0xE4                 ; or ah, ah
+    jne     short bios_post_cpu_info_display
+    mov     si, 0x44AF
+    mov     al, 0xB3
+    call    near 0xEE94
+    test    al, 0x02
+    je      short bios_post_cpu_info_display
+    mov     si, 0x44BF
+    jmp     short bios_post_cpu_info_display
+bios_post_cpu_type_select:
+    mov     al, 0xB3
+    call    near 0xEE94
+    test    al, 0x04
+    jne     short bios_post_cpu_protected_mode
+    test    al, 0x08
+    jne     short bios_post_cpu_486_mode
+    test    al, 0x02
+    mov     si, 0x444F
+    jne     short bios_post_cpu_info_display
+    int     0x11
+    test    al, 0x02
+    mov     si, 0x445F
+    jne     short bios_post_cpu_info_display
+    mov     al, [cs:0xB513]
+    call    near 0x8300
+    mov     si, 0x443F
+    je      short bios_post_cpu_info_display
+    mov     si, 0x446F
+    jmp     short bios_post_cpu_info_display
+bios_post_cpu_486_mode:
+    test    al, 0x02
+    mov     si, 0x44FF
+    jne     short bios_post_cpu_info_display
+    mov     si, 0x44EF
+bios_post_cpu_info_display:
+    mov     ah, 0xFF
+bios_post_cpu_info_emit:
+    call    near bios_rom_print_si
+    popf
+    ret
+
+bios_post_equipment_display:
+    pushf
+    push    ax
+    int     0x11
+    test    al, 0x02
+    mov     si, 0x457F
+    je      short bios_post_equipment_no_math
+    mov     si, 0x450F
+    call    near bios_rom_print_si
+    pop     ax
+    call    near bios_post_equipment_suffix
+    jae     short bios_post_equipment_done
+    mov     cx, 0x0008
+bios_post_equipment_delay1:
+    call    near 0x0985
+    loop    bios_post_equipment_delay1
+    mov     ax, 0x0E2C
+    int     0x10
+    call    near bios_rom_print_si
+    mov     cx, 0x0008
+bios_post_equipment_delay2:
+    call    near 0x0985
+    loop    bios_post_equipment_delay2
+    jmp     short bios_post_equipment_done
+bios_post_equipment_no_math:
+    pop     ax
+    call    near bios_post_equipment_suffix
+    call    near bios_rom_print_si
+bios_post_equipment_done:
+    popf
+    ret
+
+bios_post_equipment_suffix:
+    db      0x0A, 0xE4                 ; or ah, ah
+    je      short bios_post_equipment_suffix_done
+    db      0x66, 0x33, 0xC0           ; xor eax, eax
+    int     0x11
+    db      0x66, 0xC1, 0xE0, 0x08    ; shl eax, 8
+    jae     short bios_post_equipment_suffix_done
+    mov     si, 0x451F
+bios_post_equipment_suffix_done:
+    ret
+
+%if ($ - rom_start) != 0x4231
+    %error "POST system-configuration display code must end at 4231h"
+%endif
+
+incbin  "ami486.bin", ($ - rom_start), (0x8280 - ($ - rom_start)) ; inherited strings/data from 4231h to 8280h
     db      0x2F, 0x00, 0xE7, 0x03, 0x00, 0x00, 0x12, 0x00
 
 ; F000:82D0 — original POST callback vector table.
