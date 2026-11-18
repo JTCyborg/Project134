@@ -58,7 +58,7 @@ bios_cmos_b3_profile_continue:
     mov     si, 0x8E76
     mov     cx, 0x8E7A
 bios_cmos_profile_table_loop:
-    sub     cx, si
+    db      0x2B, 0xCE                 ; sub cx, si
     shr     cx, 1
 bios_cmos_profile_table_write:
     cs lodsw
@@ -89,7 +89,7 @@ bios_speaker_pit_init:
     jcxz    $+2
     jcxz    $+2
     mov     cx, 0x0400
-    xor     di, di
+    db      0x33, 0xFF                 ; xor di, di
 bios_speaker_buffer_clear:
     stosb
     loop    bios_speaker_buffer_clear
@@ -149,16 +149,16 @@ bios_ali_profile_select_continue:
 bios_ali_profile_record_loop:
     cs lodsw
     sub     al, 0x30
-    mov     bl, al
+    db      0x8A, 0xD8                 ; mov bl, al
     cmp     al, 0x26
-    jne     bios_ali_profile_record_write
+    db      0x0F, 0x85, 0x06, 0x00      ; jne near 20B7h
     dec     cx
     add     si, 2
     jmp     short bios_ali_profile_record_loop
 
 bios_ali_profile_record_write:
     cs lodsw
-    mov     al, bl
+    db      0x8A, 0xC3                 ; mov al, bl
     nop
     mov     sp, 0x20C2
     JMP_ABS 0x8DDC
@@ -371,7 +371,7 @@ bios_cmos_8e_initial_read_continue:
     and     bp, 0xFFC7
     mov     al, 0x8E
     mov     cx, 0x0072
-    xor     ah, ah
+    db      0x32, 0xE4                 ; xor ah, ah
 bios_cmos_8e_clear_iteration:
     mov     sp, 0x842A
     JMP_ABS 0xEE9D
@@ -390,7 +390,7 @@ bios_cmos_8e_restore_setup:
     mov     cx, 0x0032
     mov     si, 0x820E
 bios_cmos_8e_restore_loop:
-    mov     ah, al
+    db      0x8A, 0xE0                 ; mov ah, al
     cs lodsb
     xchg    ah, al
     mov     sp, 0x8444
@@ -420,15 +420,15 @@ bios_cmos_8e_rom_table_read_return:
 bios_cmos_8e_rom_table_read_continue:
     mov     ah, [cs:si+2]
     mov     dl, [cs:si+1]
-    and     ah, dl
+    db      0x22, 0xE2                 ; and ah, dl
     not     dl
-    and     al, dl
-    or      ah, al
+    db      0x22, 0xC2                 ; and al, dl
+    db      0x0A, 0xE0                 ; or ah, al
     mov     al, [cs:si]
     or      al, 0x80
     nop
     mov     sp, 0x847E
-    JMP_ABS 0xEE94
+    JMP_ABS 0xEE9D
 
 incbin  "ami486.bin", ($ - rom_start), (0x847E - ($ - rom_start)) ; inherited reference bytes up to 847Eh
 bios_cmos_8e_rom_table_write_return:
@@ -455,10 +455,10 @@ bios_cmos_8e_descriptor_read_return:
 bios_cmos_8e_descriptor_read_continue:
     mov     ah, [cs:si+2]
     mov     dl, [cs:si+1]
-    and     ah, dl
+    db      0x22, 0xE2                 ; and ah, dl
     not     dl
-    and     al, dl
-    or      ah, al
+    db      0x22, 0xC2                 ; and al, dl
+    db      0x0A, 0xE0                 ; or ah, al
     mov     al, [cs:si]
     or      al, 0x80
     nop
@@ -490,7 +490,7 @@ bios_8042_delay:
     smsw    ax
     test    al, 0x01
     jnz     short bios_8042_reset_reentry
-    or      ah, ah
+    db      0x0A, 0xE4                 ; or ah, ah
     jnz     short bios_8042_set_ah_zero
     cmp     dh, 0x04
     jnz     short bios_8042_set_ah_zero
@@ -531,7 +531,7 @@ bios_8042_cmos_read_return:
     dw      0x8910
 bios_8042_cmos_read_continue:
     and     al, 0xF1
-    or      ah, al
+    db      0x0A, 0xE0                 ; or ah, al
     mov     al, 0xB3
     mov     sp, 0x891C
     JMP_ABS 0xEE9D
@@ -557,7 +557,7 @@ bios_8042_arithmetic_probe:
 ; ALi C2h/C3h indexed-register probe. Each helper returns through an inline
 ; word (DW) to the aligned continuation immediately following that word.
 bios_ali_probe_start:
-    xor     cl, cl
+    db      0x32, 0xC9                 ; xor cl, cl
     mov     ax, 0xC2C2
     mov     sp, 0x893C
     JMP_ABS 0x8DCF
@@ -566,9 +566,9 @@ incbin  "ami486.bin", ($ - rom_start), (0x893C - ($ - rom_start)) ; inherited re
 bios_ali_read_c2_return:
     dw      0x893E
 bios_ali_read_c2_continue:
-    mov     bl, al
+    db      0x8A, 0xD8                 ; mov bl, al
     or      al, 0x04
-    xchg    ah, al
+    db      0x86, 0xC4                 ; xchg ah, al
     mov     sp, 0x894A
     JMP_ABS 0x8DDC
 
@@ -585,7 +585,7 @@ bios_ali_read_c3_return:
 bios_ali_read_c3_continue:
     test    al, 0x04
     jz      short bios_ali_c2_set_flag
-    mov     ah, bl
+    db      0x8A, 0xE3                 ; mov ah, bl
     and     ah, 0xFB
     mov     al, 0xC2
     nop
@@ -608,11 +608,11 @@ bios_ali_read_c2_second_continue:
 bios_ali_c2_set_flag:
     or      cl, 0x02
 bios_ali_c2_common_write:
-    mov     ah, bl
+    db      0x8A, 0xE3                 ; mov ah, bl
     mov     al, 0xC2
     nop
     mov     sp, 0x8982
-    JMP_ABS 0x8DDC
+    JMP_ABS 0x8DCF
 
 incbin  "ami486.bin", ($ - rom_start), (0x8982 - ($ - rom_start)) ; inherited reference bytes up to 8982h
 bios_ali_write_c3_return:
@@ -627,11 +627,11 @@ incbin  "ami486.bin", ($ - rom_start), (0x898E - ($ - rom_start)) ; inherited re
 bios_ali_read_c3_second_return:
     dw      0x8990
 bios_ali_read_c3_second_continue:
-    mov     bl, al
+    db      0x8A, 0xD8                 ; mov bl, al
     or      al, 0x02
-    xchg    ah, al
-    mov     sp, 0x89A4
-    JMP_ABS 0x8DCF
+    db      0x86, 0xC4                 ; xchg ah, al
+    mov     sp, 0x899C
+    JMP_ABS 0x8DDC
 
 incbin  "ami486.bin", ($ - rom_start), (0x89A4 - ($ - rom_start)) ; inherited reference bytes up to 89A4h
 bios_ali_read_c3_third_return:
@@ -639,8 +639,8 @@ bios_ali_read_c3_third_return:
 bios_ali_read_c3_third_continue:
     test    al, 0x02
     jz      short 0x89C6
-    mov     ah, bl
-    and     ah, 0xFB
+    db      0x8A, 0xE3                 ; mov ah, bl
+    and     ah, 0xFD
     mov     al, 0xC3
     nop
     mov     sp, 0x89B8
@@ -661,7 +661,7 @@ bios_ali_read_c3_fourth_continue:
     jz      short bios_ali_c3_fourth_no_bit1
     or      cl, 0x01
 bios_ali_c3_fourth_no_bit1:
-    mov     ah, bl
+    db      0x8A, 0xE3                 ; mov ah, bl
     mov     al, 0xC3
     nop
     mov     sp, 0x89D4
@@ -696,7 +696,7 @@ bios_ali_read_final_continue:
     jnz     short bios_ali_dispatch_di
     mov     ah, 0x08
 bios_ali_dispatch_di:
-    jmp     di
+    db      0xFF, 0xE7                 ; jmp di
 
 ; ---------------------------------------------------------------------------
 ; F000:8A04 — reset-mode dispatch.
@@ -721,7 +721,7 @@ bios_reset_to_post_delay:
 ; F000:8A20 — CMOS marker dispatcher.
 incbin  "ami486.bin", ($ - rom_start), (0x8A20 - ($ - rom_start)) ; inherited reference bytes up to 8A20h
 bios_cmos_dispatch:
-    mov     ax, si
+    db      0x8B, 0xC6                 ; mov ax, si
     cmp     al, 0x05
     je      bios_cmos_pic_dispatch
     cmp     al, 0x09
@@ -735,9 +735,9 @@ bios_cmos_pic_dispatch:
 bios_cmos_pic_return:
     cmp     [bp+si+0x0CA8], cl
     jz      bios_cmos_post_55
-    mov     dl, al
+    db      0x8A, 0xD0                 ; mov dl, al
     ror     eax, 16
-    mov     bx, ax
+    db      0x8B, 0xD8                 ; mov bx, ax
     mov     di, bios_cmos_mode_table
     JMP_ABS 0x8CCD
 bios_cmos_mode_table:
@@ -756,7 +756,7 @@ bios_cmos_mode_selected:
 bios_cmos_mode_return:
     push    word 0xE28A
     int1
-    mov     ax, bx
+    db      0x8B, 0xC3                 ; mov ax, bx
     ror     eax, 16
 bios_cmos_post_55:
     or      al, 0xFF
@@ -793,7 +793,7 @@ bios_post_cmos_b3_read_return:
     dw      0x8A9C
 bios_post_cmos_b3_read_continue:
     and     al, 0xFE
-    xchg    ah, al
+    db      0x86, 0xC4                 ; xchg ah, al
     mov     sp, 0x8AA6
     JMP_ABS 0xEE9D
 
@@ -842,9 +842,9 @@ incbin  "ami486.bin", ($ - rom_start), (0x8AD5 - ($ - rom_start)) ; inherited re
 bios_reset_keyboard_wait:
     cli
     cli
-    xor     cx, cx
-    jcxz    $+2
+    db      0x33, 0xC9                 ; xor cx, cx
 bios_keyboard_wait_busy:
+    jcxz    $+2
     in      al, 0x64
     test    al, 0x02
     loopne  bios_keyboard_wait_busy
@@ -861,7 +861,7 @@ bios_cr0_disable_cache_if_real_mode:
     smsw    ax
     test    al, 0x01
     jnz     bios_indexed_jump_di
-    or      ah, ah
+    db      0x0A, 0xE4                 ; or ah, ah
     jnz     bios_indexed_jump_di
     mov     eax, cr0
     or      eax, 0x60000000
@@ -883,7 +883,7 @@ bios_8042_wait_input_empty_8ceb:
     test    al, 0x02
     loopne  bios_8042_wait_input_empty_8ceb
     jnz     bios_8042_command_done
-    mov     al, ah
+    db      0x8A, 0xC4                 ; mov al, ah
     out     0x64, al
     xor     cx, cx
 bios_8042_wait_output_full:
