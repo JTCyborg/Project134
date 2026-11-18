@@ -270,6 +270,70 @@ reset_gateway_end:
     %error "Unexpected reset gateway size"
 %endif
 
+; ---------------------------------------------------------------------------
+; F000:EE94 — CMOS indexed read helper.
+times 0xEE94 - ($ - rom_start) db 0xFF
+bios_cmos_read_index:
+    out     0x70, al
+    jcxz    $+2
+    jcxz    $+2
+    in      al, 0x71
+    ret
+
+; F000:EE9D — CMOS indexed write helper.
+bios_cmos_write_index:
+    out     0x70, al
+    xchg    al, ah
+    jcxz    $+2
+    jcxz    $+2
+    out     0x71, al
+    xchg    al, ah
+    ret
+
+; F000:EEE7 — 8259 PIC initialization.
+times 0xEEE7 - ($ - rom_start) db 0xFF
+bios_pic_initialize:
+    mov     al, 0
+    out     0xF1, al
+    jcxz    $+2
+    jcxz    $+2
+    mov     al, 0x11
+    out     0xA0, al
+    jcxz    $+2
+    jcxz    $+2
+    out     0x20, al
+    jcxz    $+2
+    jcxz    $+2
+    mov     al, bl
+    out     0xA1, al
+    jcxz    $+2
+    jcxz    $+2
+    mov     al, bh
+    out     0x21, al
+    jcxz    $+2
+    jcxz    $+2
+    mov     al, 0x02
+    out     0xA1, al
+    jcxz    $+2
+    jcxz    $+2
+    mov     al, 0x04
+    out     0x21, al
+    jcxz    $+2
+    jcxz    $+2
+    mov     al, 0x01
+    out     0xA1, al
+    jcxz    $+2
+    jcxz    $+2
+    out     0x21, al
+    jcxz    $+2
+    jcxz    $+2
+    mov     al, 0xFF
+    out     0xA1, al
+    jcxz    $+2
+    jcxz    $+2
+    out     0x21, al
+    ret
+
 ; FFFF:0000 reset vector -> F000:E05B.
 times 0xFFF0 - ($ - rom_start) db 0xFF
 bios_reset_vector:
