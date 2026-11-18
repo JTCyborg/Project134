@@ -3602,7 +3602,109 @@ bios_hd_size_edit_start_done:
     %error "Disk-size/geometry menu helper block must end at 4EE7h"
 %endif
 
-incbin  "ami486.bin", ($ - rom_start), (0x8280 - ($ - rom_start)) ; inherited reference bytes from 4EE7h to 8280h
+; F000:4EE7 — edit the selected hard-disk geometry record.
+bios_hd_size_edit_record:
+    push    bp
+    db      0x8B, 0xEC                 ; mov bp, sp
+    sub     sp, 0x0006
+    push    ax
+    push    si
+    mov     al, [0xE1A6]
+    mov     [0xE19F], al
+    mov     ax, 0x1118
+    mov     dx, 0x1637
+    mov     bx, 0x0003
+    call    near 0x578D
+    mov     ax, 0x1418
+    mov     dl, 0x20
+    mov     bx, 0x2016
+    call    near 0x5862
+    lea     bx, [0x3945]
+    mov     ax, 0x121C
+    call    near 0x58D3
+    lea     bx, [0x3958]
+    mov     ax, 0x1320
+    call    near 0x58D3
+    call    near 0x099D
+    mov     bx, [bp-0x08]
+    db      0x8B, 0xC3                 ; mov ax, bx
+    shl     bx, 1
+    db      0x03, 0xD8                 ; add bx, ax
+    db      0x81, 0xC3, 0x36, 0xE4    ; add bx, E436h
+    mov     [bp-0x02], bx
+    mov     ax, [bx]
+    mov     [bp-0x06], ax
+    mov     al, [bx+0x02]
+    mov     [bp-0x04], al
+    mov     al, 0x05
+    push    ax
+    mov     dx, [0xE411]
+    dec     dx
+    mov     ax, 0x122F
+    lea     bx, [bp-0x06]
+    call    near 0x06C9
+    mov     [0xE182], ax
+    db      0x3D, 0x1B, 0x00           ; cmp ax, 001Bh
+    je      short bios_hd_size_edit_record_finish
+    mov     al, 0x03
+    push    ax
+    mov     dl, [0xE413]
+    db      0x2A, 0xF6                 ; sub dh, dh
+    dec     dx
+    mov     ax, 0x132F
+    lea     bx, [bp-0x04]
+    call    near 0x06C9
+    mov     [0xE182], ax
+bios_hd_size_edit_record_finish:
+    db      0x3D, 0x1B, 0x00           ; cmp ax, 001Bh
+    je      short bios_hd_size_edit_record_return
+    mov     dx, 0x0001
+    mov     si, 0xE439
+bios_hd_size_edit_record_compare:
+    cmp     [0xE423], dx
+    jb      short bios_hd_size_edit_record_store
+    cmp     [bp-0x08], dx
+    je      short bios_hd_size_edit_record_not_match
+    mov     ax, [si]
+    cmp     [bp-0x06], ax
+    jne     short bios_hd_size_edit_record_not_match
+    mov     al, [bp-0x04]
+    cmp     [si+0x02], al
+    je      short bios_hd_size_edit_record_match
+bios_hd_size_edit_record_not_match:
+    inc     dx
+    add     si, 0x0003
+    jmp     short bios_hd_size_edit_record_compare
+bios_hd_size_edit_record_match:
+    lea     bx, [0x3967]
+    mov     ax, 0x1528
+    call    near 0x58A1
+    call    near 0xF571
+    jmp     short bios_hd_size_edit_record
+bios_hd_size_edit_record_store:
+    mov     ax, [bp-0x06]
+    mov     bx, [bp-0x02]
+    mov     [bx], ax
+    mov     al, [bp-0x04]
+    mov     [bx+0x02], al
+bios_hd_size_edit_record_return:
+    mov     al, [0xE1A2]
+    mov     [0xE19F], al
+    mov     ax, 0x1118
+    mov     dx, 0x1637
+    call    near 0x5802
+    call    near 0x0995
+    mov     ax, [0xE182]
+    pop     si
+    db      0x8B, 0xE5                 ; mov sp, bp
+    pop     bp
+    ret
+
+%if ($ - rom_start) != 0x4FCF
+    %error "Geometry-record editor must end at 4FCFh"
+%endif
+
+incbin  "ami486.bin", ($ - rom_start), (0x8280 - ($ - rom_start)) ; inherited reference bytes from 4FCFh to 8280h
     db      0x2F, 0x00, 0xE7, 0x03, 0x00, 0x00, 0x12, 0x00
 
 ; F000:82D0 — original POST callback vector table.
