@@ -36,7 +36,11 @@ if ($ReferenceRomPath -and (Test-Path -LiteralPath $ReferenceRomPath -PathType L
     }
     for ($i = 0x8300; $i -lt 0x8400; $i++) {
         if ($bytes[$i] -ne $referenceBytes[$i]) {
-            throw ("CPU/cache profile reconstruction mismatch at 0x{0:X4}: candidate=0x{1:X2}, reference=0x{2:X2}" -f $i, $bytes[$i], $referenceBytes[$i])
+            $contextStart = [Math]::Max(0, $i - 8)
+            $contextEnd = [Math]::Min($ExpectedSize - 1, $i + 8)
+            $candidateContext = (($contextStart..$contextEnd | ForEach-Object { "{0:X2}" -f $bytes[$_] }) -join " ")
+            $referenceContext = (($contextStart..$contextEnd | ForEach-Object { "{0:X2}" -f $referenceBytes[$_] }) -join " ")
+            throw ("CPU/cache profile mismatch at 0x{0:X4}: candidate=0x{1:X2}, reference=0x{2:X2}; candidate[{3:X4}-{4:X4}]={5}; reference={6}" -f $i, $bytes[$i], $referenceBytes[$i], $contextStart, $contextEnd, $candidateContext, $referenceContext)
         }
     }
     Write-Host "CPU/cache profile routines 8300h–83FFh match the reference byte-for-byte." -ForegroundColor Green
