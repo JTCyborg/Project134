@@ -119,15 +119,11 @@ bios_ali_read_c3_return:
     dw      0x8954
 bios_ali_read_c3_continue:
     test    al, 0x04
-    jz      short bios_ali_c2_no_bit2
+    jz      short bios_ali_c2_set_flag
     mov     ah, bl
     and     ah, 0xFB
     mov     al, 0xC2
     nop
-    mov     sp, 0x8966
-    jmp     0x8DDC
-bios_ali_c2_no_bit2:
-    ; This aligned continuation is reached by the original JZ at 8956h.
     mov     sp, 0x8966
     jmp     0x8DDC
 
@@ -143,9 +139,10 @@ bios_ali_read_c2_second_return:
     dw      0x8970
 bios_ali_read_c2_second_continue:
     test    al, 0x04
-    jz      short bios_ali_c2_second_no_bit2
+    jz      short bios_ali_c2_common_write
+bios_ali_c2_set_flag:
     or      cl, 0x02
-bios_ali_c2_second_no_bit2:
+bios_ali_c2_common_write:
     mov     ah, bl
     mov     al, 0xC2
     nop
