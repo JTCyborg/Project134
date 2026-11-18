@@ -126,6 +126,27 @@ if (-not $NativeOnly) {
     Write-Host "BOOT IMAGE: byte-identical reference compatibility baseline." -ForegroundColor Green
 }
 
+New-Item -ItemType Directory -Path $outputDirectory -Force | Out-Null
+
+# Publish the known-good image before attempting the incomplete native candidate.
+# A NASM failure must never leave the previously failing Project134.bin in place.
+if (-not $NativeOnly) {
+    if (-not (Test-Path -LiteralPath $referenceRomPath -PathType Leaf)) {
+        throw "Reference compatibility image not found: $referenceRomPath"
+    }
+    $referenceBytes = [System.IO.File]::ReadAllBytes($referenceRomPath)
+    if ($referenceBytes.Length -ne $RomSize) {
+        throw ("Reference BIOS has invalid size: {0}; expected {1}" -f $referenceBytes.Length, $RomSize)
+    }
+    [System.IO.File]::WriteAllBytes($outputPath, $referenceBytes)
+    $referenceHash = (Get-FileHash -LiteralPath $referenceRomPath -Algorithm SHA256).Hash
+    $outputHash = (Get-FileHash -LiteralPath $outputPath -Algorithm SHA256).Hash
+    if ($referenceHash -ne $outputHash) {
+        throw "Compatibility output is not byte-identical to the reference BIOS."
+    }
+    Write-Host "BOOT IMAGE: byte-identical reference compatibility baseline." -ForegroundColor Green
+}
+
 $nasmPath = Resolve-NasmExecutable -RequestedPath $NasmExe
 
 Write-Host "Project134 BIOS build"
