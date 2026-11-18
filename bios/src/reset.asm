@@ -545,7 +545,7 @@ bios_8042_reset_reentry:
 
 ; The crafted stack at 88EEh returns here after the arithmetic/flags probe.
 bios_8042_arithmetic_probe:
-    xor     ax, ax
+    db      0x33, 0xC0                 ; xor ax, ax
     sahf
     mov     ax, 0x0005
     mov     bx, 0x0002
@@ -597,7 +597,7 @@ bios_ali_write_c2_second_return:
     dw      0x8968
 bios_ali_write_c2_second_continue:
     mov     sp, 0x896E
-    JMP_ABS 0x8DDC
+    JMP_ABS 0x8DCF
 
 incbin  "ami486.bin", ($ - rom_start), (0x896E - ($ - rom_start)) ; inherited reference bytes up to 896Eh
 bios_ali_read_c2_second_return:
@@ -612,7 +612,7 @@ bios_ali_c2_common_write:
     mov     al, 0xC2
     nop
     mov     sp, 0x8982
-    JMP_ABS 0x8DCF
+    JMP_ABS 0x8DDC
 
 incbin  "ami486.bin", ($ - rom_start), (0x8982 - ($ - rom_start)) ; inherited reference bytes up to 8982h
 bios_ali_write_c3_return:
@@ -867,7 +867,7 @@ bios_cr0_disable_cache_if_real_mode:
     or      eax, 0x60000000
     mov     cr0, eax
     wbinvd
-    xor     ax, ax
+    db      0x33, 0xC0                 ; xor ax, ax
 bios_indexed_jump_di:
     jmp     di
 
@@ -885,7 +885,7 @@ bios_8042_wait_input_empty_8ceb:
     jnz     bios_8042_command_done
     db      0x8A, 0xC4                 ; mov al, ah
     out     0x64, al
-    xor     cx, cx
+    db      0x33, 0xC9                 ; xor cx, cx
 bios_8042_wait_output_full:
     jcxz    $+2
     in      al, 0x64
@@ -1042,7 +1042,7 @@ bios_ali_write_then_return:
     jcxz    $+2
     jcxz    $+2
     xchg    al, ah
-    ret
+    db      0xFF, 0xE7                 ; jmp di
 
 ; ---------------------------------------------------------------------------
 ; F000:D604 — reset-time POST entry and CMOS marker dispatch.
@@ -1205,7 +1205,7 @@ bios_stack_test_pattern_aaaa:
     mov     al, 0x02
     out     0x80, al
     mov     al, [cs:0x8284]
-    or      al, al
+    db      0x0A, 0xC0                 ; or al, al
     jz      bios_post_delay_complete
 bios_post_delay_loop:
     loop    bios_post_delay_loop
@@ -1218,7 +1218,7 @@ bios_post_delay_complete:
     test    byte [cs:0x8281], 0x40
     jnz     bios_post_checkpoint_03
     smsw    ax
-    or      ah, ah
+    db      0x0A, 0xE4                 ; or ah, ah
     jz      bios_post_checkpoint_03
     mov     eax, cr0
     or      al, 0x10
@@ -1305,7 +1305,7 @@ bios_post_8042_test_input:
 bios_post_8042_command_aa:
     out     0x64, al
     in      al, 0x64
-    xor     di, di
+    db      0x33, 0xFF                 ; xor di, di
     test    al, 0x01
     jz      bios_post_8042_response_wait
     dec     di
@@ -1346,7 +1346,7 @@ incbin  "ami486.bin", ($ - rom_start), (0xD806 - ($ - rom_start)) ; inherited re
 bios_post_8042_a1_return:
     dw      0xD808
 bios_post_8042_a1_continue:
-    xor     cx, cx
+    db      0x33, 0xC9                 ; xor cx, cx
 bios_post_8042_a1_wait:
     in      al, 0x64
     test    al, 0x01
@@ -1598,7 +1598,7 @@ bios_post_cmos_8e_update_return:
     dw      0xD970
 bios_post_cmos_8e_update_continue:
     or      al, 0x01
-    xchg    ah, al
+    db      0x86, 0xC4                 ; xchg ah, al
     mov     sp, 0xD97A
     JMP_ABS 0xEE9D
 
@@ -1722,7 +1722,7 @@ bios_post_pit_channel2_ok:
     mov     al, [cs:0x8285]
     db      0x0A, 0xC0                 ; or al, al
     jnz     short bios_post_pit_test_done
-    xor     bx, bx
+    db      0x33, 0xDB                 ; xor bx, bx
     mov     ah, 0x10
     mov     dx, 0x0061
     nop
@@ -1741,7 +1741,7 @@ bios_post_pit_wait_high:
     in      al, 0x61
     test    ah, al
     jz      short bios_post_pit_wait_high
-    xor     cx, cx
+    db      0x33, 0xC9                 ; xor cx, cx
 bios_post_pit_wait_low:
     in      al, 0x61
     test    ah, al
@@ -1892,7 +1892,7 @@ bios_pic_initialize:
 ; After each 128-cycle speaker burst, JMP SP enters that stack-threaded delay.
 incbin  "ami486.bin", ($ - rom_start), (0xF4A5 - ($ - rom_start)) ; inherited reference bytes up to F4A5h
 bios_post_fatal_error:
-    mov     dx, bp
+    db      0x8B, 0xD5                 ; mov dx, bp
 bios_post_fatal_error_stack_setup:
     mov     sp, 0xF4AC
     jmp     short bios_post_fatal_beep
@@ -1916,29 +1916,29 @@ bios_post_fatal_stack_delay_4:
     out     0x80, al
     jcxz    $+2
     jcxz    $+2
-    mov     ax, si
+    db      0x8B, 0xC6                 ; mov ax, si
     out     0x81, al
     jcxz    $+2
     jcxz    $+2
-    mov     al, ah
+    db      0x8A, 0xC4                 ; mov al, ah
     out     0x82, al
     jcxz    $+2
     jcxz    $+2
-    mov     ax, di
+    db      0x8B, 0xC7                 ; mov ax, di
     out     0x83, al
     jcxz    $+2
     jcxz    $+2
-    mov     al, ah
+    db      0x8A, 0xC4                 ; mov al, ah
     out     0x84, al
     jmp     short bios_post_fatal_error
 
 bios_post_fatal_beep:
     mov     bx, 0x0080
-bios_post_fatal_beep_loop:
     in      al, 0x61
     and     al, 0xFE
     jcxz    $+2
     jcxz    $+2
+bios_post_fatal_beep_loop:
     or      al, 0x02
     out     0x61, al
     mov     cx, 0x00E0
@@ -1971,7 +1971,8 @@ bios_post_fatal_text_entry:
 bios_post_fatal_keyboard_wait:
     cli
     call    bios_post_speaker_tone_5
-    loop    bios_post_fatal_keyboard_wait
+bios_post_fatal_keyboard_wait_loop:
+    loop    bios_post_fatal_keyboard_wait_loop
     jmp     short bios_post_fatal_keyboard_wait
 bios_post_fatal_keyboard_ready:
     mov     sp, 0xF52A
@@ -2057,7 +2058,7 @@ bios_post_speaker_tone_5:
 
 ; F000:F598 — wait for selected port bits to clear/set.
 bios_post_wait_port_bits:
-    xor     cx, cx
+    db      0x33, 0xC9                 ; xor cx, cx
 bios_post_wait_port_bits_clear:
     in      al, dx
     test    ah, al
@@ -2141,7 +2142,7 @@ bios_post_8042_wait_output_ready:
     mov     cx, 0x000C
 bios_post_8042_wait_output_retry:
     push    cx
-    xor     cx, cx
+    db      0x33, 0xC9                 ; xor cx, cx
 bios_post_8042_wait_output_inner:
     in      al, 0x64
     test    al, 0x01
@@ -2159,7 +2160,7 @@ bios_post_8042_wait_output_inner:
 incbin  "ami486.bin", ($ - rom_start), (0xF60F - ($ - rom_start)) ; inherited reference bytes up to F60Fh
 bios_8042_read_output:
     mov     ah, 0x0C
-    xor     cx, cx
+    db      0x33, 0xC9                 ; xor cx, cx
 bios_8042_read_output_wait:
     in      al, 0x64
     test    al, 0x01
@@ -2210,7 +2211,7 @@ bios_post_8042_write_data_done:
     ret
 
 bios_post_8042_write_output_port_data:
-    mov     ah, al
+    db      0x8A, 0xE0                 ; mov ah, al
     mov     al, 0x60
     call    bios_post_8042_write_command
     ret
@@ -2222,7 +2223,7 @@ bios_post_8042_write_output_port_data:
 ; F000:F659 — 8042 input-buffer-empty wait helper.
 incbin  "ami486.bin", ($ - rom_start), (0xF659 - ($ - rom_start)) ; inherited reference bytes up to F659h
 bios_8042_wait_input_empty:
-    xor     cx, cx
+    db      0x33, 0xC9                 ; xor cx, cx
 bios_8042_wait_input_empty_first:
     in      al, 0x64
     test    al, 0x02
@@ -2243,21 +2244,21 @@ bios_8042_a20_enable:
 bios_8042_a20_disable:
     mov     ah, 0xDD
 bios_8042_a20_write:
-    xor     cx, cx
+    db      0x33, 0xC9                 ; xor cx, cx
 bios_8042_a20_wait_command:
     in      al, 0x64
     test    al, 0x02
     loopne  bios_8042_a20_wait_command
     mov     al, 0xD1
     out     0x64, al
-    xor     cx, cx
+    db      0x33, 0xC9                 ; xor cx, cx
 bios_8042_a20_wait_data:
     in      al, 0x64
     test    al, 0x02
     loopne  bios_8042_a20_wait_data
-    mov     al, ah
+    db      0x8A, 0xC4                 ; mov al, ah
     out     0x60, al
-    xor     cx, cx
+    db      0x33, 0xC9                 ; xor cx, cx
 bios_8042_a20_wait_finish:
     in      al, 0x64
     test    al, 0x02
