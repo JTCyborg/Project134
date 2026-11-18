@@ -1482,7 +1482,7 @@ bios_pit_measurement:
     or      al, 0x01
     out     0x61, al
     jmp     short $+2
-    call    far 0x1000:0x0000
+    db      0x9A,0x00,0x00,0x00,0x10 ; call far 1000:0000
     mov     al, [0xF804]
     and     al, 0xFC
     out     0x61, al
@@ -1496,7 +1496,7 @@ bios_pit_measurement:
     mov     al, [0xF804]
     or      al, 0x01
     out     0x61, al
-    call    far 0x1000:0x0800
+    db      0x9A,0x00,0x08,0x00,0x10 ; call far 1000:0800
     mov     al, [0xF804]
     and     al, 0xFC
     out     0x61, al
