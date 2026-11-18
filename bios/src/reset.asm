@@ -3928,7 +3928,7 @@ bios_post_memory_controller_poll:
     pop     cx
     loopnz  bios_post_memory_controller_poll
     db      0x0B, 0xD2                 ; or dx, dx
-    je      short bios_post_memory_controller_clear_low
+    je      short bios_post_memory_controller_clear_low_done
     mov     byte [si], 0x00
     mov     byte [si+0x03], 0x00
 bios_post_memory_controller_clear_low:
@@ -3937,6 +3937,7 @@ bios_post_memory_controller_clear_low:
     call    near 0x5520
     dec     dx
     jne     short bios_post_memory_controller_clear_low
+bios_post_memory_controller_clear_low_done:
     mov     al, 0x4C
     out     0x80, al
     db      0x0B, 0xDB                 ; or bx, bx
@@ -3990,9 +3991,9 @@ bios_post_memory_controller_probe_next:
     call    near 0x53C5
     pop     dx
     pop     bp
-bios_post_memory_controller_set_map:
     mov     al, 0x52
     out     0x80, al
+bios_post_memory_controller_set_map:
     shl     dx, 0x06
     cmp     bx, 0x03FF
     jbe     short bios_post_memory_controller_map_size_ready
@@ -4102,9 +4103,9 @@ bios_post_print_decimal_digit:
 bios_post_memory_word_probe:
     mov     [si], al
     mov     [si+0x03], ah
+bios_post_memory_word_probe_retry:
     db      0x8C, 0xC1                 ; mov cx, es
     mov     es, cx
-bios_post_memory_word_probe_retry:
     db      0x26, 0xC7, 0x05, 0xAA, 0x55 ; mov word es:[di],55AAh
     push    ax
     pop     ax
@@ -4136,6 +4137,7 @@ bios_post_memory_word_probe_next:
 bios_post_memory_byte_probe:
     mov     [si], al
     mov     [si+0x03], ah
+bios_post_memory_byte_probe_retry:
     db      0x8C, 0xC1                 ; mov cx, es
     mov     es, cx
     stc
@@ -4149,9 +4151,9 @@ bios_post_memory_byte_probe_write:
     dec     byte [si+0x03]
 bios_post_memory_byte_probe_compare:
     db      0x3A, 0x1C                 ; cmp bl, [si]
-    jne     short bios_post_memory_byte_probe
+    jne     short bios_post_memory_byte_probe_retry
     db      0x3A, 0x7C, 0x03           ; cmp bh, [si+3]
-    jne     short bios_post_memory_byte_probe
+    jne     short bios_post_memory_byte_probe_retry
     ret
 
 %if ($ - rom_start) != 0x5371
