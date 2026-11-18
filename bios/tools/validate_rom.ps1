@@ -111,7 +111,9 @@ if ($ReferenceRomPath -and (Test-Path -LiteralPath $ReferenceRomPath -PathType L
 
 $wordSum = 0
 for ($i = 0; $i -lt $bytes.Length; $i += 2) {
-    $wordSum = ($wordSum + [int]$bytes[$i] + ([int]$bytes[$i + 1] -shl 8)) -band 0xFFFF
+    # Multiply explicitly instead of using PowerShell's shift operator here;
+    # this keeps the checksum expression unambiguous across Windows PowerShell.
+    $wordSum = ($wordSum + [int]$bytes[$i] + ([int]$bytes[$i + 1] * 256)) % 65536
 }
 if ($wordSum -eq 0) {
     Write-Host "BIOS POST06 ROM checksum PASS (16-bit sum = 0000h)." -ForegroundColor Green
