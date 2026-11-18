@@ -235,7 +235,7 @@ bios_cpu_profile_selector:
     sub     bx, 0xB508
     cmp     ax, bx
     mov     bx, 0xB7D0
-    jc      short bios_cpu_profile_walk
+    jc      short bios_cpu_profile_record
     mov     bx, 0xB55D
     sub     bx, 0xB508
     sub     ax, bx
@@ -322,7 +322,7 @@ bios_cpu_profile_descriptor:
     sub     bx, 0xB508
     cmp     ax, bx
     mov     bx, 0xB7D0
-    jc      short bios_cpu_profile_descriptor_walk
+    jc      short bios_cpu_profile_descriptor_record
     mov     bx, 0xB55D
     sub     bx, 0xB508
     sub     ax, bx
