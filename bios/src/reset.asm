@@ -3830,7 +3830,7 @@ bios_post_extended_memory_int15_ok:
     mov     es, ax
     mov     al, 0x44
     out     0x80, al
-    xor     di, di
+    db      0x33, 0xFF                 ; xor di, di
     mov     si, 0x0244
     mov     word [0x0238], 0xFFFF
     mov     word [0x023D], 0x0093
@@ -3871,7 +3871,7 @@ bios_post_extended_memory_skip_byte_probe:
     mov     al, 0x47
     out     0x80, al
     mov     ax, 0x0009
-    xor     bx, bx
+    mov     bx, 0x0000
     call    near 0x534C
     push    ax
     mov     al, 0x48
@@ -3880,14 +3880,14 @@ bios_post_extended_memory_skip_byte_probe:
     mov     bx, 0x000A
     mov     byte [si], 0x00
     mov     byte [si+0x03], 0x00
-    xor     dx, dx
+    db      0x33, 0xD2                 ; xor dx, dx
     call    near 0x5371
     mov     al, 0x49
     out     0x80, al
     pop     ax
     pop     bx
     push    dx
-    xor     dx, dx
+    db      0x33, 0xD2                 ; xor dx, dx
     mov     byte [si], 0x0F
     mov     byte [si+0x03], 0x00
     cmp     bx, 0x0010
