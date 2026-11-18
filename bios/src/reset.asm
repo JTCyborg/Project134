@@ -27,9 +27,9 @@ bios_8042_delay:
     test    al, 0x01
     jnz     short bios_8042_reset_reentry
     or      ah, ah
-    jnz     short bios_8042_cmos_read
+    jnz     short bios_8042_set_ah_zero
     cmp     dh, 0x04
-    jnz     short bios_8042_cmos_read
+    jnz     short bios_8042_set_ah_zero
     nop
     mov     sp, 0x88EE
     jmp     short bios_8042_arithmetic_probe
@@ -45,7 +45,7 @@ bios_8042_probe_return:
 bios_8042_probe_result:
     jnz     short bios_8042_alternate_cmos
     mov     di, 0x88F8
-    jmp     short bios_8042_alternate_test
+    jmp     short bios_ali_probe_start
     nop
 bios_8042_alternate_test:
     jmp     short bios_8042_cmos_read
@@ -54,8 +54,9 @@ bios_8042_alternate_cmos:
     cmp     dl, 0x30
     mov     ah, 0x02
     jz      short bios_8042_cmos_read
-bios_8042_cmos_read:
+bios_8042_set_ah_zero:
     mov     ah, 0x00
+bios_8042_cmos_read:
     mov     al, 0xB3
     mov     sp, 0x890E
     jmp     0xEE94
