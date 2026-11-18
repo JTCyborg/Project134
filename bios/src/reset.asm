@@ -1515,7 +1515,7 @@ bios_memory_benchmark_average_loop:
     loop    bios_memory_benchmark_average_loop
     pop     cx
     div     cx
-    mov     cx, ax
+    db      0x8B, 0xC8                 ; mov cx, ax
     mov     [0xF800], ax
     mov     dx, 0x000E
     mov     ax, 0x236E
@@ -1655,7 +1655,7 @@ bios_cmos_b513_selector_handler:
 bios_cmos_b513_mode_ready:
     mov     al, [cs:0xB513]
     call    near 0x83AE
-    mov     si, ax
+    db      0x8B, 0xF0                 ; mov si, ax
     and     si, 0x7F
     pop     bx
     db      0x8A, 0xFC                 ; mov bh, ah
