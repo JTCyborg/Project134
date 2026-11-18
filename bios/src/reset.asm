@@ -4229,13 +4229,13 @@ bios_post_memory_controller_probe_poll:
     push    bx
     call    near 0x552A
     pop     bx
-    jne     short bios_post_memory_controller_error
+    jne     short bios_post_memory_controller_probe_error
     in      al, 0x61
     test    al, 0xC0
     je      short bios_post_memory_controller_clear
     db      0x2E, 0xA0, 0x0E, 0xB5    ; mov al, [cs:0B50Eh]
     call    near 0x8300
-    jne     short bios_post_memory_controller_error
+    jne     short bios_post_memory_controller_probe_error
 bios_post_memory_controller_clear:
     call    near 0x5520
     inc     bx
@@ -4256,16 +4256,16 @@ bios_post_memory_controller_probe_retry:
     dec     dx
     jne     short bios_post_memory_controller_probe_retry
     jmp     short bios_post_memory_controller_probe_finish
-bios_post_memory_controller_error:
+bios_post_memory_controller_probe_error:
     push    bx
     mov     bx, 0x0003
     call    near 0x5F8E
     pop     bx
     cli
-bios_post_memory_controller_error_wait:
+bios_post_memory_controller_probe_error_wait:
     mov     al, [0x0012]
     test    al, 0x20
-    je      short bios_post_memory_controller_error_wait
+    je      short bios_post_memory_controller_probe_error_wait
 %if ($ - rom_start) != 0x5434
     %error "POST memory-controller probe coordinator must end at 5434h"
 %endif
