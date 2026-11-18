@@ -1519,6 +1519,152 @@ bios_post_chipset_io_continue:
     out     0x80, al
     JMP_ABS 0x1AFB
 
+; F000:D9DCh — PIT channel-2 latch/readback test and channel-0 setup.
+times 0xD9DC - ($ - rom_start) db 0xFF
+bios_post_pit_channel2_test:
+    mov     al, 0x14
+    out     0x80, al
+    mov     ax, cs
+    mov     ss, ax
+    xor     ax, ax
+    mov     es, ax
+    mov     ds, ax
+    mov     al, 0xFC
+    out     0x61, al
+    jcxz    $+2
+    jcxz    $+2
+    mov     al, 0xB4
+    out     0x43, al
+    mov     al, 0x55
+    jcxz    $+2
+    jcxz    $+2
+    out     0x42, al
+    mov     al, 0xAA
+    jcxz    $+2
+    jcxz    $+2
+    out     0x42, al
+    mov     al, 0x80
+    jcxz    $+2
+    jcxz    $+2
+    out     0x43, al
+    jcxz    $+2
+    jcxz    $+2
+    in      al, 0x42
+    mov     ah, al
+    jcxz    $+2
+    jcxz    $+2
+    in      al, 0x42
+    cmp     ax, 0x55AA
+    jz      short bios_post_pit_channel2_ok
+    test    byte [cs:0x8280], 0x80
+    jz      short bios_post_pit_channel2_ok
+    or      bp, 0x0001
+bios_post_pit_channel2_ok:
+    mov     al, 0x15
+    out     0x80, al
+    jcxz    $+2
+    jcxz    $+2
+    mov     al, 0x36
+    out     0x43, al
+    mov     al, 0
+    jcxz    $+2
+    jcxz    $+2
+    out     0x40, al
+    jcxz    $+2
+    jcxz    $+2
+    out     0x40, al
+    test    byte [cs:0x8280], 0x80
+    jz      short bios_post_pit_test_done
+    mov     al, [cs:0x8285]
+    or      al, al
+    jnz     short bios_post_pit_test_done
+    xor     bx, bx
+    mov     ah, 0x10
+    mov     dx, 0x0061
+    nop
+    mov     sp, 0xDA64
+    JMP_ABS 0xF598
+
+; The F598h timing helper returns through this inline word.
+times 0xDA64 - ($ - rom_start) db 0xFF
+bios_post_pit_timing_return:
+    dw      0xDA66
+bios_post_pit_timing_continue:
+    jcxz    $+2
+    mov     al, 0x1A
+    out     0x80, al
+bios_post_pit_wait_high:
+    in      al, 0x61
+    test    ah, al
+    jz      short bios_post_pit_wait_high
+    xor     cx, cx
+bios_post_pit_wait_low:
+    in      al, 0x61
+    test    ah, al
+    loopne  bios_post_pit_wait_low
+    xchg    bx, cx
+bios_post_pit_wait_second_high:
+    in      al, 0x61
+    test    ah, al
+    loope   bios_post_pit_wait_second_high
+    sub     cx, bx
+    jns     short bios_post_pit_delta_ready
+    neg     cx
+bios_post_pit_delta_ready:
+    cmp     cx, 0x000A
+    jc      short bios_post_pit_test_done
+    test    byte [cs:0x8280], 0x80
+    jz      short bios_post_pit_test_done
+    mov     bp, 0x0001
+    JMP_ABS 0xF4A5
+bios_post_pit_test_done:
+    mov     al, 0x1B
+    out     0x80, al
+    JMP_ABS 0x5BF8
+
+; F000:DAA2-DFFF — verified zero-filled data/padding area.
+times 0xE000 - ($ - rom_start) db 0x00
+
+; F000:E000 — alternate far-entry stub to F000:E005.
+    jmp     0xF000:0xE005
+; F000:E005 — alternate near-entry stub into the POST continuation.
+    jmp     near 0xF73B
+times 0xE00E - ($ - rom_start) db 0x00
+bios_ibm_compatibility_notice:
+    db "IBM COMPATIBLE IBM IS A TRADEMARK OF INTERNATIONAL BUSINESS MACHINES CORP."
+times 0xE05B - ($ - rom_start) db 0x00
+    mov     al, 0x12
+    out     0x80, al
+    xor     ax, ax
+    mov     dx, 0x03D8
+    out     dx, al
+    jcxz    $+2
+    jcxz    $+2
+    inc     ax
+    mov     dl, 0xB8
+    out     dx, al
+    jcxz    $+2
+    jcxz    $+2
+    mov     dl, 0xBA
+    in      al, dx
+    jcxz    $+2
+    jcxz    $+2
+    mov     dl, 0xDA
+    in      al, dx
+    jcxz    $+2
+    jcxz    $+2
+    mov     dl, 0xC0
+    mov     al, 0
+    out     dx, al
+    jcxz    $+2
+    jcxz    $+2
+    xor     ax, ax
+    mov     es, ax
+    mov     ds, ax
+    mov     al, 0x13
+    out     0x80, al
+    JMP_ABS 0x1AFB
+
 ; F000:E05B — reset gateway.
 times 0xE05B - ($ - rom_start) db 0xFF
 reset_gateway:
