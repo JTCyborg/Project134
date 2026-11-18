@@ -32,6 +32,7 @@ The reconstructed image is 65,536 bytes and preserves the original ROM address l
 | `D604h–D776h` | Early POST dispatcher, stack-threaded RAM test, CMOS/8042 checks and POST 80h writes |
 | `E05Bh–E05Dh` | Reset gateway: near jump to `D604h` |
 | `EE94h–EF35h` | CMOS/PIC helpers |
+| `F60Fh–F621h` | 8042 output-buffer wait helper used after POST code 08h |
 | `F659h–F690h` | 8042 status-wait and command-byte helpers |
 | `FFF0h–FFF4h` | Reset vector: far jump to `F000:E05B` |
 
