@@ -4408,7 +4408,7 @@ bios_post_advance_probe_address_done:
     %error "POST 8042, chipset-gate and memory-size helpers must end at 5520h"
 %endif
 
-incbin  "ami486.bin", ($ - rom_start), (0x5520 - ($ - rom_start)) ; no inherited POST code before 5520h
+; F000:5520 — next native POST helper begins immediately below.
 
 ; F000:5520 — clear all 64 KiB at ES:0000h.
 bios_post_clear_64k:
