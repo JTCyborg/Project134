@@ -14,14 +14,14 @@ Build output:
 - `out\\Debug\\Project134.bin`
 - `out\\Release\\Project134.bin`
 
-## Reconstruction status — Stage 3
+## Reconstruction status — Stage 4
 
 The source now uses the reset-vector and first-stage entry addresses observed in the target ROM:
 
 - ROM size: 65,536 bytes.
 - Reset vector at ROM offset `FFF0h`: far jump to `F000:E05B`.
 - Reset gateway at ROM offset `E05Bh`: near jump to `F000:D604`.
-- Initial 8042-clear POST branch at `88CEh–8A03h` (310 bytes copied verbatim from the immutable reference ROM), plus reset-continuation entries at `8A04h` and `8A20h`, POST continuation/helper cluster at `8A75h–8CCCh`, indirect dispatch pointer/trampoline at `82DAh` and `19ABh–19AFh`, ALi indexed-I/O helper cluster at `8CCDh–8DECh`, and CMOS/PIC helpers at `EE94h–EF35h`.
+- Initial 8042-clear POST branch at `88CEh–8A03h` (310 bytes copied verbatim from the immutable reference ROM), plus reset-continuation entries at `8A04h` and `8A20h`, POST continuation/helper cluster at `8A75h–8CCCh`, indirect dispatch pointer/trampoline at `82DAh` and `19ABh–19AFh`, GDT plus protected-mode memory-read helper at `2646h–26BDh`, and ALi indexed-I/O continuation at `8DEDh–8E0Ch`, ALi indexed-I/O helper cluster at `8CCDh–8DECh`, and CMOS/PIC helpers at `EE94h–EF35h`.
 - Early POST entry at ROM offset `D604h` and continuation through `D776h`: byte-backed dispatcher, stack-threaded RAM test, CMOS/8042 checks, and the first POST `80h` status writes.
 
 The reset-vector and reconstructed code windows are checked byte-for-byte against the immutable reference by `validate_rom.ps1`.
