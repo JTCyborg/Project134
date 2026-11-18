@@ -3636,6 +3636,7 @@ bios_hd_size_edit_record:
     mov     [bp-0x06], ax
     mov     al, [bx+0x02]
     mov     [bp-0x04], al
+bios_hd_size_edit_record_loop:
     mov     al, 0x05
     push    ax
     mov     dx, [0xE411]
@@ -3680,7 +3681,7 @@ bios_hd_size_edit_record_match:
     mov     ax, 0x1528
     call    near 0x58A1
     call    near 0xF571
-    jmp     short bios_hd_size_edit_record
+    jmp     short bios_hd_size_edit_record_loop
 bios_hd_size_edit_record_store:
     mov     ax, [bp-0x06]
     mov     bx, [bp-0x02]
