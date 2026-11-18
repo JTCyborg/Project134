@@ -3,5 +3,37 @@
   Source: C:\Temp\trdos\134\bios\src\reset.asm
   Output: C:\Temp\trdos\134\out\Debug\Project134.bin
   Size:   65536 bytes
-  BIOS ROM validation PASS: 65536 bytes; reset vector FFFF:0000 -> F000:E000
-  BUILD SUCCESS: C:\Temp\trdos\134\out\Debug\Project134.bin (65536 bytes)
+  C:\Temp\trdos\134\bios\src\reset.asm:1214: error: TIMES value -1 is negative
+  C:\Temp\trdos\134\bios\src\reset.asm:1224: error: TIMES value -1 is negative
+  C:\Temp\trdos\134\bios\src\reset.asm:1232: error: TIMES value -1 is negative
+  C:\Temp\trdos\134\bios\src\reset.asm:1248: error: TIMES value -3 is negative
+  C:\Temp\trdos\134\bios\src\reset.asm:1251: error: TIMES value -3 is negative
+  C:\Temp\trdos\134\bios\src\reset.asm:1264: error: TIMES value -3 is negative
+  C:\Temp\trdos\134\bios\src\reset.asm:1277: error: TIMES value -3 is negative
+  C:\Temp\trdos\134\bios\src\reset.asm:1289: error: TIMES value -5 is negative
+  C:\Temp\trdos\134\bios\src\reset.asm:1296: error: TIMES value -5 is negative
+  C:\Temp\trdos\134\bios\src\reset.asm:1307: error: TIMES value -5 is negative
+  C:\Temp\trdos\134\bios\src\reset.asm:1314: error: TIMES value -5 is negative
+  C:\Temp\trdos\134\bios\src\reset.asm:1331: error: TIMES value -5 is negative
+  C:\Temp\trdos\134\bios\src\reset.asm:1341: error: TIMES value -5 is negative
+  C:\Temp\trdos\134\bios\src\reset.asm:1369: error: TIMES value -5 is negative
+  C:\Temp\trdos\134\bios\src\reset.asm:1378: error: TIMES value -5 is negative
+  C:\Temp\trdos\134\bios\src\reset.asm:1386: error: TIMES value -5 is negative
+  C:\Temp\trdos\134\bios\src\reset.asm:1395: error: TIMES value -5 is negative
+  C:\Temp\trdos\134\bios\src\reset.asm:1403: error: TIMES value -5 is negative
+  C:\Temp\trdos\134\bios\src\reset.asm:1412: error: TIMES value -5 is negative
+  C:\Temp\trdos\134\bios\src\reset.asm:1423: error: TIMES value -5 is negative
+  C:\Temp\trdos\134\bios\src\reset.asm:1436: error: TIMES value -10 is negative
+  C:\Temp\trdos\134\bios\src\reset.asm:1450: error: TIMES value -10 is negative
+  C:\Temp\trdos\134\bios\src\reset.asm:1459: error: TIMES value -10 is negative
+  C:\Temp\trdos\134\bios\src\reset.asm:1468: error: TIMES value -10 is negative
+  C:\Temp\trdos\134\bios\src\reset.asm:1484: error: TIMES value -10 is negative
+  Listing: C:\Temp\trdos\134\out\Debug\Project134.lst
+  NASM failed with exit code 1
+  At C:\Temp\trdos\134\bios\tools\build_bios.ps1:121 char:5
+  +     throw "NASM failed with exit code $LASTEXITCODE"
+  +     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      + CategoryInfo          : OperationStopped: (NASM failed with exit code 1:String) [], RuntimeException
+      + FullyQualifiedErrorId : NASM failed with exit code 1
+   
+C:\Program Files\Microsoft Visual Studio\18\Community\MSBuild\Microsoft\VC\v180\Microsoft.MakeFile.Targets(45,5): error MSB3073: выход из команды "powershell.exe -NoLogo -NoProfile -ExecutionPolicy Bypass -File "C:\Temp\trdos\134\bios\tools\build_bios.ps1" -OutputDirectory "C:\Temp\trdos\134\bios\..\out\Debug" -NasmExe "nasm.exe" -RomSize 65536" с кодом 1.
