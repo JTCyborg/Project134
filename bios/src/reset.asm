@@ -1100,7 +1100,95 @@ bios_cmos_read_b6:
 %if ($ - rom_start) != 0x29F6
     %error "Memory measurement, PIT and RAM test helpers must end at 29F6h"
 %endif
-incbin  "ami486.bin", ($ - rom_start), (0x8280 - ($ - rom_start)) ; inherited reference bytes from 29F6h to 8280h
+; F000:29F6h–2AC1h — chipset/CMOS flag merge and seven-entry far-handler table.
+bios_chipset_cmos_merge:
+    push    es
+    push    si
+    push    di
+    db      0x33, 0xDB                 ; xor bx, bx
+    mov     bl, [0xE036]
+    and     byte [0xE036], 0xFE
+    and     byte [0xE066], 0x00
+    db      0x0A, 0xC0                 ; or al, al
+    jne     near bios_chipset_cmos_nonzero
+    test    bl, 0x01
+    je      near bios_chipset_cmos_no_flag
+    or      byte [0xE066], 0x01
+    jmp     short bios_chipset_cmos_read_flags
+    nop
+bios_chipset_cmos_no_flag:
+    or      byte [0xE036], 0x01
+    mov     ax, 0xB571
+    JMP_ABS 0x2AAF
+bios_chipset_cmos_nonzero:
+    mov     ax, 0xB568
+    JMP_ABS 0x2AAF
+bios_chipset_cmos_read_flags:
+    db      0x02, 0xC3                 ; add al, bl
+    and     al, 0x01
+    db      0x08, 0x06, 0x36, 0xE0    ; or [E036h], al
+    push    ds
+    mov     ax, 0x0040
+    mov     ds, ax
+    mov     si, 0x87A9
+    db      0x03, 0x36, 0xE6, 0x00    ; add si, [ds:00E6h]
+    cs lodsw
+    db      0x22, 0xE0                 ; and ah, al
+    db      0x8A, 0xFC                 ; mov bh, ah
+    add     si, 0x02
+    cs lodsw
+    db      0x22, 0xE0                 ; and ah, al
+    db      0x8A, 0xDC                 ; mov bl, ah
+    add     si, 0x02
+    cs lodsw
+    db      0x22, 0xE0                 ; and ah, al
+    db      0x8A, 0xF4                 ; mov dh, ah
+    add     si, 0x02
+    mov     ax, 0x0202
+    call    near 0x8DCF
+    test    al, 0x08
+    je      near bios_chipset_cmos_mask_standard
+    inc     si
+    cs lodsw
+    and     ah, 0x07
+    db      0x8A, 0xD4                 ; mov dl, ah
+    jmp     short bios_chipset_cmos_mask_ready
+    nop
+bios_chipset_cmos_mask_standard:
+    cs lodsw
+    db      0x22, 0xE0                 ; and ah, al
+    db      0x8A, 0xD4                 ; mov dl, ah
+bios_chipset_cmos_mask_ready:
+    pop     ds
+    and     byte [0xE046], 0xF0
+    and     byte [0xE047], 0x7C
+    and     byte [0xE049], 0x9F
+    and     byte [0xE050], 0xF8
+    db      0x08, 0x3E, 0x46, 0xE0    ; or [E046h], bh
+    db      0x08, 0x1E, 0x47, 0xE0    ; or [E047h], bl
+    db      0x08, 0x36, 0x49, 0xE0    ; or [E049h], dh
+    db      0x08, 0x16, 0x50, 0xE0    ; or [E050h], dl
+    db      0x33, 0xC0                 ; xor ax, ax
+    test    byte [0xE066], 0x01
+    je      near bios_chipset_cmos_return
+    JMP_ABS 0x2A1E
+bios_chipset_cmos_return:
+    pop     di
+    pop     si
+    pop     es
+    retf
+
+; Inline far-handler offset table consumed by the dispatcher above.
+bios_chipset_cmos_far_handlers:
+    dw      0xB62D, 0xB65C, 0xB664, 0xB66C
+    dw      0xB674, 0xB67C, 0xB685
+bios_chipset_cmos_next_entry:
+    push    si
+
+%if ($ - rom_start) != 0x2AC2
+    %error "Chipset CMOS merge routine and handler table must end at 2AC2h"
+%endif
+incbin  "ami486.bin", ($ - rom_start), (0x8280 - ($ - rom_start)) ; inherited reference bytes from 2AC2h to 8280h
     db      0x2F, 0x00, 0xE7, 0x03, 0x00, 0x00, 0x12, 0x00
 
 ; F000:82D0 — original POST callback vector table.
