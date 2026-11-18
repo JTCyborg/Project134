@@ -309,6 +309,15 @@ times 0xEE94 - ($ - rom_start) db 0xFF
     db 0x21, 0xC3
 
 ; ---------------------------------------------------------------------------
+; ---------------------------------------------------------------------------
+; Exact 8042 output-buffer wait helper at ROM offset F60Fh-F621h.
+; The POST path at D7DEh enters F60Fh and resumes at D7E4h after RET.
+; ---------------------------------------------------------------------------
+times 0xF60F - ($ - rom_start) db 0xFF
+bios_8042_output_buffer_wait:
+    db 0xb4, 0x0c, 0x33, 0xc9, 0xe4, 0x64, 0xa8, 0x01, 0xe1, 0xfa, 0x75, 0x04, 0xfe, 0xcc, 0x75, 0xf4
+    db 0xe4, 0x60, 0xc3
+
 ; Exact 8042 wait/command helpers at ROM offset F659h-F690h.
 ; The alternate POST dispatch entries at 8ACFh/8AD2h enter F66Ah/F66Eh
 ; to issue the D1h output-port command sequence to the keyboard controller.
