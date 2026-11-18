@@ -2450,7 +2450,7 @@ bios_post_cmos_option:
     push    ax
     mov     si, 0x457F
     db      0x25, 0x0F, 0x00           ; and ax, 000Fh
-    je      short bios_post_cmos_option_empty
+    je      short bios_post_cmos_option_print
     mov     si, 0x452F
     dec     ax
     je      short bios_post_cmos_option_print
@@ -2469,11 +2469,6 @@ bios_post_cmos_option_print:
     call    near bios_rom_print_si
     pop     ax
     ret
-bios_post_cmos_option_empty:
-    call    near bios_rom_print_si
-    pop     ax
-    ret
-
 bios_post_newline:
     push    bx
     push    cx
