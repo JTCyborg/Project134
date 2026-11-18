@@ -1694,7 +1694,7 @@ bios_cmos_b519_selector_handler:
 bios_cmos_b519_mode_ready:
     mov     al, [cs:0xB519]
     call    near 0x83AE
-    mov     si, ax
+    db      0x8B, 0xF0                 ; mov si, ax
     and     si, 0x7F
     pop     bx
     db      0x8A, 0xFC                 ; mov bh, ah
