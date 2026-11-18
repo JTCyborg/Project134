@@ -4286,7 +4286,7 @@ bios_post_8042_disable_keyboard:
     ret
 
 ; F000:5448 — consume the 8042 response and update the CMOS/controller marker.
-bios_post_8042_read_response:
+bios_post_memory_controller_8042_response:
     in      al, 0x60
     cmp     al, 0x01
     je      short bios_post_8042_response_mark
