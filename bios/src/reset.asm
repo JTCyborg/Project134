@@ -1903,7 +1903,356 @@ bios_setup_temp_int13_restore:
     %error "Temporary INT 13h path must end at 3044h"
 %endif
 
-incbin  "ami486.bin", ($ - rom_start), (0x8280 - ($ - rom_start)) ; inherited reference bytes from 3044h to 8280h
+incbin  "ami486.bin", ($ - rom_start), (0x3C5C - ($ - rom_start)) ; inherited strings/data from 3044h to 3C5Bh
+    db      0x00, 0x00
+
+%if ($ - rom_start) != 0x3C5E
+    %error "Setup main menu must begin at 3C5Eh"
+%endif
+
+; F000:3C5E — BIOS Setup main menu and twelve-item dispatch loop.
+bios_setup_main_menu:
+    push    bp
+    mov     bp, sp
+    sub     sp, 0x0002
+    call    near 0x84CB
+    call    near 0x566B
+    call    near 0x0995
+    lea     bx, [0x345E]
+    lea     ax, [0x3473]
+    call    near bios_setup_menu_header
+    mov     al, [0xE187]
+    mov     [0xE189], al
+    mov     al, [0xE188]
+    mov     [0xE18A], al
+    call    near bios_setup_menu_reset_selection
+bios_setup_menu_loop:
+    call    near 0x5AA2
+    db      0x0B, 0xC0                 ; or ax, ax
+    jne     short bios_setup_menu_key_ready
+    lea     bx, [0x34AB]
+    mov     ax, 0x0A28
+    call    near 0x58A1
+    lea     bx, [0x36DB]
+    mov     ax, 0x0C28
+    call    near 0x58A1
+    call    near 0x5902
+    call    near 0x2F80
+bios_setup_menu_key_ready:
+    mov     ax, 0x1200
+    mov     dl, 0x50
+    mov     bx, 0x2016
+    call    near 0x5862
+    mov     al, [0xE1A2]
+    call    near bios_setup_menu_draw_selection
+    mov     al, 0x01
+    call    near bios_setup_menu_move
+    cmp     byte [0xE187], 0x00
+    jne     short bios_setup_menu_refresh
+    mov     al, [0xE189]
+    mov     [0xE187], al
+    mov     al, [0xE18A]
+    mov     [0xE188], al
+bios_setup_menu_refresh:
+    mov     al, [0xE1A4]
+    mov     [0xE19F], al
+    mov     ax, 0x1301
+    mov     dx, 0x174E
+    call    near 0x5802
+    mov     al, [0xE187]
+    cbw
+    db      0x8B, 0xD8                 ; mov bx, ax
+    shl     bx, 1
+    mov     bx, [bx+0x342E]
+    mov     ax, 0x1528
+    call    near 0x58BE
+    mov     al, [0xE1A3]
+    call    near bios_setup_menu_draw_selection
+    call    near 0x5902
+    mov     [0xE182], ax
+    mov     al, [0xE1A2]
+    call    near bios_setup_menu_draw_selection
+    mov     ax, [0xE182]
+    sub     ax, 0x000D
+    je      short bios_setup_menu_warning
+    sub     ax, 0x000E
+    je      short bios_setup_menu_exit_no_save
+    sub     ax, 0x0121
+    jb      near bios_setup_menu_loop
+    sub     ax, 0x0001
+    jbe     short bios_setup_menu_palette
+    sub     ax, 0x0007
+    je      short bios_setup_menu_exit_save
+    sub     ax, 0x0004
+    je      short bios_setup_menu_move_down
+    sub     ax, 0x0003
+    je      short bios_setup_menu_move_down
+    dec     ax
+    dec     ax
+    je      short bios_setup_menu_move_up
+    sub     ax, 0x0003
+    je      short bios_setup_menu_move_up
+    jmp     short bios_setup_menu_loop
+bios_setup_menu_move_down:
+    mov     al, 0xFF
+    call    near bios_setup_menu_move
+    jmp     short bios_setup_menu_loop
+bios_setup_menu_move_up:
+    mov     al, 0x01
+    jmp     short bios_setup_menu_move_down
+bios_setup_menu_warning:
+    cmp     byte [0xE187], 0x04
+    jg      short bios_setup_menu_dispatch
+    call    near bios_setup_menu_warning_screen
+    cmp     ax, 0x001B
+    jne     short bios_setup_menu_dispatch
+    JMP_ABS 0x3C6D
+bios_setup_menu_dispatch:
+    mov     al, [0xE187]
+    cbw
+    db      0x8B, 0xD8                 ; mov bx, ax
+    shl     bx, 1
+    mov     ax, [bx+0x3446]
+    mov     [bp-0x02], ax
+    call    word [bp-0x02]
+    JMP_ABS 0x3C6D
+bios_setup_menu_exit_no_save:
+    call    near 0x2F76
+    JMP_ABS 0x3C6D
+bios_setup_menu_palette:
+    call    near 0x56AE
+    JMP_ABS 0x3C6D
+bios_setup_menu_exit_save:
+    call    near 0x2F67
+    JMP_ABS 0x3C6D
+
+bios_setup_menu_draw_selection:
+    mov     [0xE19F], al
+    mov     al, [0xE187]
+    cbw
+    db      0x8B, 0xD8                 ; mov bx, ax
+    shl     bx, 1
+    mov     bx, [bx+0x318C]
+    mov     ah, [0xE188]
+    db      0x2A, 0xC0                 ; sub al, al
+    add     ax, 0x0528
+    call    near 0x58C6
+    ret
+
+bios_setup_menu_warning_screen:
+    lea     bx, [0x34C1]
+    lea     ax, [0x34D4]
+    call    near bios_setup_menu_header
+    mov     al, [0xE1A3]
+    mov     [0xE19F], al
+    mov     ax, 0x0603
+    mov     dx, 0x144C
+    call    near 0x5821
+    lea     bx, [0x35DB]
+    mov     ax, 0x1228
+    call    near 0x58C6
+    lea     bx, [0x3577]
+    mov     ax, 0x0D16
+    call    near 0x58D3
+    lea     bx, [0x359F]
+    mov     ax, 0x0E16
+    call    near 0x58D3
+    lea     bx, [0x35BE]
+    mov     ax, 0x0F16
+    call    near 0x58D3
+    lea     bx, [0x34D5]
+    mov     ax, 0x0828
+    call    near 0x58BE
+    lea     bx, [0x3501]
+    mov     ax, 0x0A28
+    call    near 0x58BE
+    lea     bx, [0x354A]
+    mov     ax, 0x0C28
+    call    near 0x58BE
+    call    near 0x5902
+    ret
+
+bios_setup_menu_move:
+    push    bp
+    mov     bp, sp
+    push    ax
+    db      0x00, 0x06, 0x88, 0xE1    ; add byte [0xE188], al
+    mov     al, [bp-0x02]
+    db      0x00, 0x06, 0x87, 0xE1    ; add byte [0xE187], al
+    jns     short bios_setup_menu_move_in_range
+    call    near bios_setup_menu_move_to_last
+    jmp     short bios_setup_menu_move_poll
+bios_setup_menu_move_in_range:
+    cmp     byte [0xE187], 0x0B
+    jle     short bios_setup_menu_move_poll
+    call    near bios_setup_menu_reset_selection
+bios_setup_menu_move_poll:
+    call    near 0x5AA2
+    db      0x0B, 0xC0                 ; or ax, ax
+    je      short bios_setup_menu_move_in_range
+    db      0x8B, 0xE5                 ; mov sp, bp
+    pop     bp
+    ret
+
+bios_setup_menu_reset_selection:
+    db      0x2A, 0xC0                 ; sub al, al
+    mov     [0xE187], al
+    mov     [0xE188], al
+    ret
+
+bios_setup_menu_move_to_last:
+    call    near bios_setup_menu_reset_selection
+    jmp     short bios_setup_menu_last_loop
+bios_setup_menu_last_step:
+    mov     al, 0x01
+    call    near bios_setup_menu_move
+bios_setup_menu_last_loop:
+    cmp     byte [0xE187], 0x0B
+    jne     short bios_setup_menu_last_step
+    ret
+
+%if ($ - rom_start) != 0x3E3F
+    %error "Setup main-menu code must end at 3E3Fh"
+%endif
+
+; F000:3E3F — shared Setup menu/header renderer.
+bios_setup_menu_header:
+    push    bp
+    mov     bp, sp
+    push    ax
+    push    bx
+    mov     al, [0xE1A8]
+    mov     [0xE19F], al
+    db      0x2B, 0xC0                 ; sub ax, ax
+    mov     dx, 0x184F
+    mov     bx, 0x0003
+    call    near 0x578D
+    lea     bx, [0x360C]
+    mov     ax, 0x0112
+    call    near 0x58AF
+    mov     bx, [bp-0x04]
+    mov     ax, 0x012A
+    call    near 0x58AF
+    lea     bx, [0x8018]
+    mov     ax, 0x0228
+    call    near 0x58C6
+    mov     ax, 0x0300
+    mov     dl, 0x50
+    mov     bx, 0x2017
+    call    near 0x5862
+    mov     bx, [bp-0x02]
+    mov     ax, 0x1828
+    call    near bios_setup_menu_value_input
+    mov     al, [0xE1A2]
+    mov     [0xE19F], al
+    mov     ax, 0x0401
+    mov     dx, 0x174E
+    call    near 0x5802
+    db      0x8B, 0xE5                 ; mov sp, bp
+    pop     bp
+    ret
+
+%if ($ - rom_start) != 0x3E99
+    %error "Setup header renderer must end at 3E99h"
+%endif
+
+; F000:3E99 — Setup value-input/parser routine.
+bios_setup_menu_value_input:
+    push    bp
+    mov     bp, sp
+    sub     sp, 0x0004
+    push    bx
+    push    di
+    db      0x8B, 0xF8                 ; mov di, ax
+    mov     al, [0xE1A8]
+    mov     [0xE19F], al
+    mov     [0xE1A0], al
+    call    near 0x592A
+    db      0x8B, 0xC8                 ; mov cx, ax
+    add     ax, [bp-0x06]
+    dec     ax
+    mov     [bp-0x04], ax
+    dec     cx
+    shr     cx, 1
+    add     di, cx
+    jmp     short bios_setup_menu_value_input_loop_bound
+bios_setup_menu_value_input_loop:
+    mov     bx, [bp-0x04]
+    dec     word [bp-0x04]
+    mov     al, [bx]
+    mov     [bp-0x01], al
+    cmp     al, 0x3A
+    jne     short bios_setup_menu_value_input_not_colon
+    call    near 0x5891
+    jmp     short bios_setup_menu_value_input_emit
+bios_setup_menu_value_input_not_colon:
+    cmp     byte [bp-0x01], 0x20
+    jne     short bios_setup_menu_value_input_emit
+    call    near 0x58B5
+bios_setup_menu_value_input_emit:
+    db      0x8B, 0xD7                 ; mov dx, di
+    dec     di
+    mov     al, [bp-0x01]
+    call    near 0x58EE
+bios_setup_menu_value_input_loop_bound:
+    mov     ax, [bp-0x06]
+    cmp     [bp-0x04], ax
+    jae     short bios_setup_menu_value_input_loop
+    pop     di
+    db      0x8B, 0xE5                 ; mov sp, bp
+    pop     bp
+    ret
+
+%if ($ - rom_start) != 0x3EF2
+    %error "Setup value-input parser must end at 3EF2h"
+%endif
+
+; F000:3EF2 — Setup metric/value formatter.
+bios_setup_menu_metric_formatter:
+    push    bp
+    mov     bp, sp
+    sub     sp, 0x0002
+    push    bx
+    push    di
+    push    si
+    mov     si, 0x0019
+    call    near 0x592A
+    db      0x8B, 0xF8                 ; mov di, ax
+    db      0x3B, 0xFE                 ; cmp di, si
+    jbe     short bios_setup_menu_metric_clamped
+    db      0x8B, 0xF0                 ; mov si, ax
+bios_setup_menu_metric_clamped:
+    db      0x8B, 0xC6                 ; mov ax, si
+    shr     ax, 1
+    add     ax, 0x0003
+    db      0x8B, 0xC8                 ; mov cx, ax
+    sub     ax, 0x0A28
+    neg     ax
+    add     cx, 0x0E28
+    mov     dl, [0xE1A6]
+    mov     [0xE19F], dl
+    db      0x8B, 0xD1                 ; mov dx, cx
+    mov     bx, 0x0003
+    call    near 0x578D
+    mov     bx, [bp-0x04]
+    mov     ax, 0x0B28
+    call    near 0x58A1
+    lea     bx, [0x36DB]
+    mov     ax, 0x0D28
+    call    near 0x58A1
+    call    near 0xF571
+    call    near 0x5902
+    pop     si
+    pop     di
+    db      0x8B, 0xE5                 ; mov sp, bp
+    pop     bp
+    ret
+
+%if ($ - rom_start) != 0x3F4A
+    %error "Setup menu/parser/formatter region must end at 3F4Ah"
+%endif
+
+incbin  "ami486.bin", ($ - rom_start), (0x8280 - ($ - rom_start)) ; inherited reference bytes from 3F4Ah to 8280h
     db      0x2F, 0x00, 0xE7, 0x03, 0x00, 0x00, 0x12, 0x00
 
 ; F000:82D0 — original POST callback vector table.
