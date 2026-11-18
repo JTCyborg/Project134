@@ -13,33 +13,42 @@ The generic UI code at `60A0–60B0` performs:
 - `MOV BX,[SI+BX]` — fetch a 16-bit handler address.
 - Save registers/segments, then `CALL BX`.
 
-Thus `E195` points to a table of 16-bit near-call handler addresses, not an untyped byte list. The table is indexed by the selected item number.
+Thus `E195` points to a table of 16-bit near-call handler addresses, not an untyped byte list. The table is indexed by the selected item number. The corrected table contains 14 entries; the earlier transcription omitted 2EB4h and shifted every subsequent entry by one slot.
 
 At `B7B0`, the first word `0C00h` is likely a header/metadata field; the handler addresses begin at `B7B2`:
 
 ```
 B7B2: 2E74
-B7B4: 86DB
-B7B6: 29F6
-B7B8: 2AC1
-B7BA: 2B13
-B7BC: 2B4C
-B7BE: 2B91
-B7C0: 2BD3
-B7C2: 2C1D
-B7C4: 2C69
-B7C6: 2CCF
-B7C8: 0584
-B7CA: 08A5
+B7B4: 2EB4
+B7B6: 86DB
+B7B8: 29F6
+B7BA: 2AC1
+B7BC: 2B13
+B7BE: 2B4C
+B7C0: 2B91
+B7C2: 2BD3
+B7C4: 2C1D
+B7C6: 2C69
+B7C8: 2CCF
+B7CA: 0584
+B7CC: 08A5
 ```
 
 These are little-endian near offsets in the ROM code segment. The previous note's caution that the entries might be relative offsets is superseded for this table: the generic UI engine loads each word and calls it directly with `CALL BX`.
 
 ## 2. Handler families visible in the first entries
 
-### 2E74 and 86DB
+### 2E74 and 2EB4
 
-Both start with a similar register/segment and machine-state prologue. They inspect CPU/segment state and global flags, then branch into helper paths. These appear to be special Setup handlers, not simple bitfield setters. They require deeper call-target tracing before naming.
+These are two distinct Setup selector handlers and occupy entries 0 and 1 of the B7B2 table:
+
+- 2E74 reads the selector byte at CS:B513, calls 83AE, derives a working-image byte index from AX, and conditionally ORs the translated BH mask into [SI+E000h] when CS is F000h and the SMSW-derived mode flag permits it. Its BL/DI/CS branch combination transfers to 8727h, 8734h, or 8738h.
+- 2EB4 performs the corresponding selector operation using CS:B519; in the F000h/mode path it complements BH, ANDs the mask into [SI+E000h], then restores BH. It shares the same three continuation targets.
+- 2E73h and 2EF1h are zero bytes with no confirmed entry or branch reference; they are retained as data/alignment bytes, not included in either handler.
+
+### 86DB
+
+This is a separate handler-table entry (entry 2). It inspects CPU/segment state and global flags, then branches into helper paths. Its complete behavior remains to be traced.
 
 ### 29F6
 
@@ -85,4 +94,4 @@ The exact segment stack sequence should be reconstructed from the complete bytes
 
 ## Evidence limits
 
-This is a first-pass handler-family classification. It does not claim all 13 table entries are fully understood, nor that any E0xx field is an ALi1429 register. The ROM bytes and direct call-table use are confirmed; semantic labels remain provisional.
+This is a first-pass handler-family classification. It does not claim all 14 table entries are fully understood, nor that any E0xx field is an ALi1429 register. The ROM bytes and direct call-table use are confirmed; semantic labels remain provisional.
