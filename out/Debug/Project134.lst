@@ -1783,147 +1783,279 @@
     19                              <1> 
     20 0000D9D9 E9(FB1A)            <1>  jmp near %1
   1521                                  
-  1522                                  ; F000:E05B — reset gateway.
-  1523 0000D9DC FF<rep 67Fh>            times 0xE05B - ($ - rom_start) db 0xFF
-  1524                                  reset_gateway:
-  1525 0000E05B E9A6F5                      jmp     near bios_post_entry
-  1526                                  reset_gateway_end:
-  1527                                  %if (reset_gateway_end - reset_gateway) != 3
-  1528                                      %error "Unexpected reset gateway size"
-  1529                                  %endif
-  1530                                  
-  1531                                  ; ---------------------------------------------------------------------------
-  1532                                  ; F000:EE94 — CMOS indexed read helper.
-  1533 0000E05E FF<rep E36h>            times 0xEE94 - ($ - rom_start) db 0xFF
-  1534                                  bios_cmos_read_index:
-  1535 0000EE94 E670                        out     0x70, al
-  1536 0000EE96 E300                        jcxz    $+2
-  1537 0000EE98 E300                        jcxz    $+2
-  1538 0000EE9A E471                        in      al, 0x71
-  1539 0000EE9C C3                          ret
-  1540                                  
-  1541                                  ; F000:EE9D — CMOS indexed write helper.
-  1542                                  bios_cmos_write_index:
-  1543 0000EE9D E670                        out     0x70, al
-  1544 0000EE9F 86C4                        xchg    al, ah
-  1545 0000EEA1 E300                        jcxz    $+2
-  1546 0000EEA3 E300                        jcxz    $+2
-  1547 0000EEA5 E671                        out     0x71, al
-  1548 0000EEA7 86C4                        xchg    al, ah
-  1549 0000EEA9 C3                          ret
-  1550                                  
-  1551                                  ; F000:EEE7 — 8259 PIC initialization.
-  1552 0000EEAA FF<rep 3Dh>             times 0xEEE7 - ($ - rom_start) db 0xFF
-  1553                                  bios_pic_initialize:
-  1554 0000EEE7 B000                        mov     al, 0
-  1555 0000EEE9 E6F1                        out     0xF1, al
-  1556 0000EEEB E300                        jcxz    $+2
-  1557 0000EEED E300                        jcxz    $+2
-  1558 0000EEEF B011                        mov     al, 0x11
-  1559 0000EEF1 E6A0                        out     0xA0, al
-  1560 0000EEF3 E300                        jcxz    $+2
-  1561 0000EEF5 E300                        jcxz    $+2
-  1562 0000EEF7 E620                        out     0x20, al
-  1563 0000EEF9 E300                        jcxz    $+2
-  1564 0000EEFB E300                        jcxz    $+2
-  1565 0000EEFD 88D8                        mov     al, bl
-  1566 0000EEFF E6A1                        out     0xA1, al
-  1567 0000EF01 E300                        jcxz    $+2
-  1568 0000EF03 E300                        jcxz    $+2
-  1569 0000EF05 88F8                        mov     al, bh
-  1570 0000EF07 E621                        out     0x21, al
-  1571 0000EF09 E300                        jcxz    $+2
-  1572 0000EF0B E300                        jcxz    $+2
-  1573 0000EF0D B002                        mov     al, 0x02
-  1574 0000EF0F E6A1                        out     0xA1, al
-  1575 0000EF11 E300                        jcxz    $+2
-  1576 0000EF13 E300                        jcxz    $+2
-  1577 0000EF15 B004                        mov     al, 0x04
-  1578 0000EF17 E621                        out     0x21, al
-  1579 0000EF19 E300                        jcxz    $+2
-  1580 0000EF1B E300                        jcxz    $+2
-  1581 0000EF1D B001                        mov     al, 0x01
-  1582 0000EF1F E6A1                        out     0xA1, al
-  1583 0000EF21 E300                        jcxz    $+2
-  1584 0000EF23 E300                        jcxz    $+2
-  1585 0000EF25 E621                        out     0x21, al
-  1586 0000EF27 E300                        jcxz    $+2
-  1587 0000EF29 E300                        jcxz    $+2
-  1588 0000EF2B B0FF                        mov     al, 0xFF
-  1589 0000EF2D E6A1                        out     0xA1, al
-  1590 0000EF2F E300                        jcxz    $+2
-  1591 0000EF31 E300                        jcxz    $+2
-  1592 0000EF33 E621                        out     0x21, al
-  1593 0000EF35 C3                          ret
-  1594                                  
-  1595                                  ; ---------------------------------------------------------------------------
-  1596                                  ; F000:F60F — bounded 8042 output-buffer read helper.
-  1597 0000EF36 FF<rep 6D9h>            times 0xF60F - ($ - rom_start) db 0xFF
-  1598                                  bios_8042_read_output:
-  1599 0000F60F B40C                        mov     ah, 0x0C
-  1600 0000F611 31C9                        xor     cx, cx
-  1601                                  bios_8042_read_output_wait:
-  1602 0000F613 E464                        in      al, 0x64
-  1603 0000F615 A801                        test    al, 0x01
-  1604 0000F617 E1FA                        loope   bios_8042_read_output_wait
-  1605 0000F619 7504                        jnz     bios_8042_read_output_data
-  1606 0000F61B FECC                        dec     ah
-  1607 0000F61D 75F4                        jnz     bios_8042_read_output_wait
-  1608                                  bios_8042_read_output_data:
-  1609 0000F61F E460                        in      al, 0x60
-  1610 0000F621 C3                          ret
-  1611                                  
-  1612                                  ; F000:F659 — 8042 input-buffer-empty wait helper.
-  1613 0000F622 FF<rep 37h>             times 0xF659 - ($ - rom_start) db 0xFF
-  1614                                  bios_8042_wait_input_empty:
-  1615 0000F659 31C9                        xor     cx, cx
-  1616                                  bios_8042_wait_input_empty_first:
-  1617 0000F65B E464                        in      al, 0x64
-  1618 0000F65D A802                        test    al, 0x02
-  1619 0000F65F E0FA                        loopne  bios_8042_wait_input_empty_first
-  1620 0000F661 7406                        jz      bios_8042_wait_input_empty_done
-  1621                                  bios_8042_wait_input_empty_second:
-  1622 0000F663 E464                        in      al, 0x64
-  1623 0000F665 A802                        test    al, 0x02
-  1624 0000F667 E0FA                        loopne  bios_8042_wait_input_empty_second
-  1625                                  bios_8042_wait_input_empty_done:
-  1626 0000F669 C3                          ret
-  1627                                  
-  1628                                  ; F000:F66Ah/F66Eh — 8042 A20 output-port enable/disable helpers.
-  1629                                  times 0xF66A - ($ - rom_start) db 0xFF
-  1630                                  bios_8042_a20_enable:
-  1631 0000F66A B4DF                        mov     ah, 0xDF
-  1632 0000F66C EB02                        jmp     short bios_8042_a20_write
-  1633                                  bios_8042_a20_disable:
-  1634 0000F66E B4DD                        mov     ah, 0xDD
-  1635                                  bios_8042_a20_write:
-  1636 0000F670 31C9                        xor     cx, cx
-  1637                                  bios_8042_a20_wait_command:
-  1638 0000F672 E464                        in      al, 0x64
-  1639 0000F674 A802                        test    al, 0x02
-  1640 0000F676 E0FA                        loopne  bios_8042_a20_wait_command
-  1641 0000F678 B0D1                        mov     al, 0xD1
-  1642 0000F67A E664                        out     0x64, al
-  1643 0000F67C 31C9                        xor     cx, cx
-  1644                                  bios_8042_a20_wait_data:
-  1645 0000F67E E464                        in      al, 0x64
-  1646 0000F680 A802                        test    al, 0x02
-  1647 0000F682 E0FA                        loopne  bios_8042_a20_wait_data
-  1648 0000F684 88E0                        mov     al, ah
-  1649 0000F686 E660                        out     0x60, al
-  1650 0000F688 31C9                        xor     cx, cx
-  1651                                  bios_8042_a20_wait_finish:
-  1652 0000F68A E464                        in      al, 0x64
-  1653 0000F68C A802                        test    al, 0x02
-  1654 0000F68E E0FA                        loopne  bios_8042_a20_wait_finish
-  1655 0000F690 C3                          ret
-  1656                                  
-  1657                                  ; FFFF:0000 reset vector -> F000:E05B.
-  1658 0000F691 FF<rep 95Fh>            times 0xFFF0 - ($ - rom_start) db 0xFF
-  1659                                  bios_reset_vector:
-  1660 0000FFF0 EA[5BE0]00F0                jmp     0xF000:reset_gateway
-  1661                                  
-  1662 0000FFF5 FF<rep Bh>              times ROM_SIZE - ($ - rom_start) db 0xFF
-  1663                                  %if ($ - rom_start) != ROM_SIZE
-  1664                                      %error "Incorrect BIOS ROM size"
-  1665                                  %endif
+  1522                                  ; F000:D9DCh — PIT channel-2 latch/readback test and channel-0 setup.
+  1523                                  times 0xD9DC - ($ - rom_start) db 0xFF
+  1524                                  bios_post_pit_channel2_test:
+  1525 0000D9DC B014                        mov     al, 0x14
+  1526 0000D9DE E680                        out     0x80, al
+  1527 0000D9E0 8CC8                        mov     ax, cs
+  1528 0000D9E2 8ED0                        mov     ss, ax
+  1529 0000D9E4 31C0                        xor     ax, ax
+  1530 0000D9E6 8EC0                        mov     es, ax
+  1531 0000D9E8 8ED8                        mov     ds, ax
+  1532 0000D9EA B0FC                        mov     al, 0xFC
+  1533 0000D9EC E661                        out     0x61, al
+  1534 0000D9EE E300                        jcxz    $+2
+  1535 0000D9F0 E300                        jcxz    $+2
+  1536 0000D9F2 B0B4                        mov     al, 0xB4
+  1537 0000D9F4 E643                        out     0x43, al
+  1538 0000D9F6 B055                        mov     al, 0x55
+  1539 0000D9F8 E300                        jcxz    $+2
+  1540 0000D9FA E300                        jcxz    $+2
+  1541 0000D9FC E642                        out     0x42, al
+  1542 0000D9FE B0AA                        mov     al, 0xAA
+  1543 0000DA00 E300                        jcxz    $+2
+  1544 0000DA02 E300                        jcxz    $+2
+  1545 0000DA04 E642                        out     0x42, al
+  1546 0000DA06 B080                        mov     al, 0x80
+  1547 0000DA08 E300                        jcxz    $+2
+  1548 0000DA0A E300                        jcxz    $+2
+  1549 0000DA0C E643                        out     0x43, al
+  1550 0000DA0E E300                        jcxz    $+2
+  1551 0000DA10 E300                        jcxz    $+2
+  1552 0000DA12 E442                        in      al, 0x42
+  1553 0000DA14 88C4                        mov     ah, al
+  1554 0000DA16 E300                        jcxz    $+2
+  1555 0000DA18 E300                        jcxz    $+2
+  1556 0000DA1A E442                        in      al, 0x42
+  1557 0000DA1C 3DAA55                      cmp     ax, 0x55AA
+  1558 0000DA1F 740B                        jz      short bios_post_pit_channel2_ok
+  1559 0000DA21 2EF606808280                test    byte [cs:0x8280], 0x80
+  1560 0000DA27 7403                        jz      short bios_post_pit_channel2_ok
+  1561 0000DA29 83CD01                      or      bp, 0x0001
+  1562                                  bios_post_pit_channel2_ok:
+  1563 0000DA2C B015                        mov     al, 0x15
+  1564 0000DA2E E680                        out     0x80, al
+  1565 0000DA30 E300                        jcxz    $+2
+  1566 0000DA32 E300                        jcxz    $+2
+  1567 0000DA34 B036                        mov     al, 0x36
+  1568 0000DA36 E643                        out     0x43, al
+  1569 0000DA38 B000                        mov     al, 0
+  1570 0000DA3A E300                        jcxz    $+2
+  1571 0000DA3C E300                        jcxz    $+2
+  1572 0000DA3E E640                        out     0x40, al
+  1573 0000DA40 E300                        jcxz    $+2
+  1574 0000DA42 E300                        jcxz    $+2
+  1575 0000DA44 E640                        out     0x40, al
+  1576 0000DA46 2EF606808280                test    byte [cs:0x8280], 0x80
+  1577 0000DA4C 744D                        jz      short bios_post_pit_test_done
+  1578 0000DA4E 2EA08582                    mov     al, [cs:0x8285]
+  1579 0000DA52 08C0                        or      al, al
+  1580 0000DA54 7545                        jnz     short bios_post_pit_test_done
+  1581 0000DA56 31DB                        xor     bx, bx
+  1582 0000DA58 B410                        mov     ah, 0x10
+  1583 0000DA5A BA6100                      mov     dx, 0x0061
+  1584 0000DA5D 90                          nop
+  1585 0000DA5E BC64DA                      mov     sp, 0xDA64
+  1586                                      JMP_ABS 0xF598
+    18                              <1> 
+    19                              <1> 
+    20 0000DA61 E9(98F5)            <1>  jmp near %1
+  1587                                  
+  1588                                  ; The F598h timing helper returns through this inline word.
+  1589                                  times 0xDA64 - ($ - rom_start) db 0xFF
+  1590                                  bios_post_pit_timing_return:
+  1591 0000DA64 66DA                        dw      0xDA66
+  1592                                  bios_post_pit_timing_continue:
+  1593 0000DA66 E325                        jcxz    bios_post_pit_feature_check
+  1594 0000DA68 B01A                        mov     al, 0x1A
+  1595 0000DA6A E680                        out     0x80, al
+  1596                                  bios_post_pit_wait_high:
+  1597 0000DA6C E461                        in      al, 0x61
+  1598 0000DA6E 84C4                        test    ah, al
+  1599 0000DA70 74FA                        jz      short bios_post_pit_wait_high
+  1600 0000DA72 31C9                        xor     cx, cx
+  1601                                  bios_post_pit_wait_low:
+  1602 0000DA74 E461                        in      al, 0x61
+  1603 0000DA76 84C4                        test    ah, al
+  1604 0000DA78 E0FA                        loopne  bios_post_pit_wait_low
+  1605 0000DA7A 87D9                        xchg    bx, cx
+  1606                                  bios_post_pit_wait_second_high:
+  1607 0000DA7C E461                        in      al, 0x61
+  1608 0000DA7E 84C4                        test    ah, al
+  1609 0000DA80 E1FA                        loope   bios_post_pit_wait_second_high
+  1610 0000DA82 29D9                        sub     cx, bx
+  1611 0000DA84 7902                        jns     short bios_post_pit_delta_ready
+  1612 0000DA86 F7D9                        neg     cx
+  1613                                  bios_post_pit_delta_ready:
+  1614 0000DA88 83F90A                      cmp     cx, 0x000A
+  1615 0000DA8B 720E                        jc      short bios_post_pit_test_done
+  1616                                  bios_post_pit_feature_check:
+  1617 0000DA8D 2EF606808280                test    byte [cs:0x8280], 0x80
+  1618 0000DA93 7406                        jz      short bios_post_pit_test_done
+  1619 0000DA95 BD0100                      mov     bp, 0x0001
+  1620                                      JMP_ABS 0xF4A5
+    18                              <1> 
+    19                              <1> 
+    20 0000DA98 E9(A5F4)            <1>  jmp near %1
+  1621                                  bios_post_pit_test_done:
+  1622 0000DA9B B01B                        mov     al, 0x1B
+  1623 0000DA9D E680                        out     0x80, al
+  1624                                      JMP_ABS 0x5BF8
+    18                              <1> 
+    19                              <1> 
+    20 0000DA9F E9(F85B)            <1>  jmp near %1
+  1625                                  
+  1626                                  ; F000:DAA2-DFFF — verified zero-filled data/padding area.
+  1627 0000DAA2 00<rep 55Eh>            times 0xE000 - ($ - rom_start) db 0x00
+  1628                                  
+  1629                                  ; F000:E000 — alternate far-entry stub to F000:E005.
+  1630 0000E000 EA05E000F0                  jmp     0xF000:0xE005
+  1631                                  ; F000:E005 — alternate near-entry stub into the POST continuation.
+  1632 0000E005 E9(3BF7)                    jmp     near 0xF73B
+  1633 0000E008 00<rep 6h>              times 0xE00E - ($ - rom_start) db 0x00
+  1634                                  bios_ibm_compatibility_notice:
+  1635 0000E00E 49424D20434F4D5041-         db "IBM COMPATIBLE IBM IS A TRADEMARK OF INTERNATIONAL BUSINESS MACHINES CORP."
+  1635 0000E017 5449424C452049424D-
+  1635 0000E020 204953204120545241-
+  1635 0000E029 44454D41524B204F46-
+  1635 0000E032 20494E5445524E4154-
+  1635 0000E03B 494F4E414C20425553-
+  1635 0000E044 494E455353204D4143-
+  1635 0000E04D 48494E455320434F52-
+  1635 0000E056 502E               
+  1636 0000E058 00<rep 3h>              times 0xE05B - ($ - rom_start) db 0x00
+  1637                                  ; F000:E05B — reset gateway.
+  1638                                  times 0xE05B - ($ - rom_start) db 0xFF
+  1639                                  reset_gateway:
+  1640 0000E05B E9A6F5                      jmp     near bios_post_entry
+  1641                                  reset_gateway_end:
+  1642                                  %if (reset_gateway_end - reset_gateway) != 3
+  1643                                      %error "Unexpected reset gateway size"
+  1644                                  %endif
+  1645                                  
+  1646                                  ; ---------------------------------------------------------------------------
+  1647                                  ; F000:EE94 — CMOS indexed read helper.
+  1648 0000E05E FF<rep E36h>            times 0xEE94 - ($ - rom_start) db 0xFF
+  1649                                  bios_cmos_read_index:
+  1650 0000EE94 E670                        out     0x70, al
+  1651 0000EE96 E300                        jcxz    $+2
+  1652 0000EE98 E300                        jcxz    $+2
+  1653 0000EE9A E471                        in      al, 0x71
+  1654 0000EE9C C3                          ret
+  1655                                  
+  1656                                  ; F000:EE9D — CMOS indexed write helper.
+  1657                                  bios_cmos_write_index:
+  1658 0000EE9D E670                        out     0x70, al
+  1659 0000EE9F 86C4                        xchg    al, ah
+  1660 0000EEA1 E300                        jcxz    $+2
+  1661 0000EEA3 E300                        jcxz    $+2
+  1662 0000EEA5 E671                        out     0x71, al
+  1663 0000EEA7 86C4                        xchg    al, ah
+  1664 0000EEA9 C3                          ret
+  1665                                  
+  1666                                  ; F000:EEE7 — 8259 PIC initialization.
+  1667 0000EEAA FF<rep 3Dh>             times 0xEEE7 - ($ - rom_start) db 0xFF
+  1668                                  bios_pic_initialize:
+  1669 0000EEE7 B000                        mov     al, 0
+  1670 0000EEE9 E6F1                        out     0xF1, al
+  1671 0000EEEB E300                        jcxz    $+2
+  1672 0000EEED E300                        jcxz    $+2
+  1673 0000EEEF B011                        mov     al, 0x11
+  1674 0000EEF1 E6A0                        out     0xA0, al
+  1675 0000EEF3 E300                        jcxz    $+2
+  1676 0000EEF5 E300                        jcxz    $+2
+  1677 0000EEF7 E620                        out     0x20, al
+  1678 0000EEF9 E300                        jcxz    $+2
+  1679 0000EEFB E300                        jcxz    $+2
+  1680 0000EEFD 88D8                        mov     al, bl
+  1681 0000EEFF E6A1                        out     0xA1, al
+  1682 0000EF01 E300                        jcxz    $+2
+  1683 0000EF03 E300                        jcxz    $+2
+  1684 0000EF05 88F8                        mov     al, bh
+  1685 0000EF07 E621                        out     0x21, al
+  1686 0000EF09 E300                        jcxz    $+2
+  1687 0000EF0B E300                        jcxz    $+2
+  1688 0000EF0D B002                        mov     al, 0x02
+  1689 0000EF0F E6A1                        out     0xA1, al
+  1690 0000EF11 E300                        jcxz    $+2
+  1691 0000EF13 E300                        jcxz    $+2
+  1692 0000EF15 B004                        mov     al, 0x04
+  1693 0000EF17 E621                        out     0x21, al
+  1694 0000EF19 E300                        jcxz    $+2
+  1695 0000EF1B E300                        jcxz    $+2
+  1696 0000EF1D B001                        mov     al, 0x01
+  1697 0000EF1F E6A1                        out     0xA1, al
+  1698 0000EF21 E300                        jcxz    $+2
+  1699 0000EF23 E300                        jcxz    $+2
+  1700 0000EF25 E621                        out     0x21, al
+  1701 0000EF27 E300                        jcxz    $+2
+  1702 0000EF29 E300                        jcxz    $+2
+  1703 0000EF2B B0FF                        mov     al, 0xFF
+  1704 0000EF2D E6A1                        out     0xA1, al
+  1705 0000EF2F E300                        jcxz    $+2
+  1706 0000EF31 E300                        jcxz    $+2
+  1707 0000EF33 E621                        out     0x21, al
+  1708 0000EF35 C3                          ret
+  1709                                  
+  1710                                  ; ---------------------------------------------------------------------------
+  1711                                  ; F000:F60F — bounded 8042 output-buffer read helper.
+  1712 0000EF36 FF<rep 6D9h>            times 0xF60F - ($ - rom_start) db 0xFF
+  1713                                  bios_8042_read_output:
+  1714 0000F60F B40C                        mov     ah, 0x0C
+  1715 0000F611 31C9                        xor     cx, cx
+  1716                                  bios_8042_read_output_wait:
+  1717 0000F613 E464                        in      al, 0x64
+  1718 0000F615 A801                        test    al, 0x01
+  1719 0000F617 E1FA                        loope   bios_8042_read_output_wait
+  1720 0000F619 7504                        jnz     bios_8042_read_output_data
+  1721 0000F61B FECC                        dec     ah
+  1722 0000F61D 75F4                        jnz     bios_8042_read_output_wait
+  1723                                  bios_8042_read_output_data:
+  1724 0000F61F E460                        in      al, 0x60
+  1725 0000F621 C3                          ret
+  1726                                  
+  1727                                  ; F000:F659 — 8042 input-buffer-empty wait helper.
+  1728 0000F622 FF<rep 37h>             times 0xF659 - ($ - rom_start) db 0xFF
+  1729                                  bios_8042_wait_input_empty:
+  1730 0000F659 31C9                        xor     cx, cx
+  1731                                  bios_8042_wait_input_empty_first:
+  1732 0000F65B E464                        in      al, 0x64
+  1733 0000F65D A802                        test    al, 0x02
+  1734 0000F65F E0FA                        loopne  bios_8042_wait_input_empty_first
+  1735 0000F661 7406                        jz      bios_8042_wait_input_empty_done
+  1736                                  bios_8042_wait_input_empty_second:
+  1737 0000F663 E464                        in      al, 0x64
+  1738 0000F665 A802                        test    al, 0x02
+  1739 0000F667 E0FA                        loopne  bios_8042_wait_input_empty_second
+  1740                                  bios_8042_wait_input_empty_done:
+  1741 0000F669 C3                          ret
+  1742                                  
+  1743                                  ; F000:F66Ah/F66Eh — 8042 A20 output-port enable/disable helpers.
+  1744                                  times 0xF66A - ($ - rom_start) db 0xFF
+  1745                                  bios_8042_a20_enable:
+  1746 0000F66A B4DF                        mov     ah, 0xDF
+  1747 0000F66C EB02                        jmp     short bios_8042_a20_write
+  1748                                  bios_8042_a20_disable:
+  1749 0000F66E B4DD                        mov     ah, 0xDD
+  1750                                  bios_8042_a20_write:
+  1751 0000F670 31C9                        xor     cx, cx
+  1752                                  bios_8042_a20_wait_command:
+  1753 0000F672 E464                        in      al, 0x64
+  1754 0000F674 A802                        test    al, 0x02
+  1755 0000F676 E0FA                        loopne  bios_8042_a20_wait_command
+  1756 0000F678 B0D1                        mov     al, 0xD1
+  1757 0000F67A E664                        out     0x64, al
+  1758 0000F67C 31C9                        xor     cx, cx
+  1759                                  bios_8042_a20_wait_data:
+  1760 0000F67E E464                        in      al, 0x64
+  1761 0000F680 A802                        test    al, 0x02
+  1762 0000F682 E0FA                        loopne  bios_8042_a20_wait_data
+  1763 0000F684 88E0                        mov     al, ah
+  1764 0000F686 E660                        out     0x60, al
+  1765 0000F688 31C9                        xor     cx, cx
+  1766                                  bios_8042_a20_wait_finish:
+  1767 0000F68A E464                        in      al, 0x64
+  1768 0000F68C A802                        test    al, 0x02
+  1769 0000F68E E0FA                        loopne  bios_8042_a20_wait_finish
+  1770 0000F690 C3                          ret
+  1771                                  
+  1772                                  ; FFFF:0000 reset vector -> F000:E05B.
+  1773 0000F691 FF<rep 95Fh>            times 0xFFF0 - ($ - rom_start) db 0xFF
+  1774                                  bios_reset_vector:
+  1775 0000FFF0 EA[5BE0]00F0                jmp     0xF000:reset_gateway
+  1776                                  
+  1777 0000FFF5 FF<rep Bh>              times ROM_SIZE - ($ - rom_start) db 0xFF
+  1778                                  %if ($ - rom_start) != ROM_SIZE
+  1779                                      %error "Incorrect BIOS ROM size"
+  1780                                  %endif
