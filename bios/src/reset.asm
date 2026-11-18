@@ -23,7 +23,7 @@ ORG 0
 ; Bytes are copied from the immutable reference ROM and retain both paths:
 ; PE=1 clears CMOS[8Fh] and enters the 8042 reset wait; PE=0 resumes at D615h.
 ; ---------------------------------------------------------------------------
-times 0x8A04 - ($ - $) db 0xFF
+times 0x8A04 - ($ - 0) db 0xFF
 bios_reset_continuation:
     db 0x0F, 0x01, 0xE0             ; SMSW AX
     db 0xA8, 0x01                   ; TEST AL,01h
@@ -121,7 +121,7 @@ bios_post_entry:
 ; This preserves overlapping entry points, synthetic return words and the
 ; original POST 80h writes. The reference bytes are copied without rewriting.
 ; ---------------------------------------------------------------------------
-times 0xD6A7 - ($ - $) db 0xFF
+times 0xD6A7 - ($ - 0) db 0xFF
 bios_post_continuation:
     db 0x90, 0x24, 0xD7, 0xD1, 0x91, 0x1E, 0xF7, 0x80, 0x52, 0x24, 0xF7, 0x31, 0xF7, 0x86, 0x54, 0x5B
     db 0x1B, 0x1D, 0x8A, 0x06, 0x92, 0x37, 0xF7, 0xBD, 0x05, 0x00, 0xE9, 0xE1, 0x1D, 0x8B, 0xD8, 0x8B
