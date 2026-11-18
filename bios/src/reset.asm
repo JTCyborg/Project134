@@ -75,7 +75,7 @@ times 0x8CCD - ($ - 0) db 0xFF
 ; ---------------------------------------------------------------------------
     db 0xC3                         ; 8DECh: RET (end of indexed-I/O helper)
 
-times 0xD604 - ($ - $) db 0xFF
+times 0xD604 - ($ - 0) db 0xFF
 bios_post_entry:
     db 0xFA                         ; CLI
     db 0xFC                         ; CLD
@@ -173,7 +173,7 @@ bios_post_continuation:
 ; Reset gateway. The first instruction at E05Bh is a near JMP to D604h.
 ; Bytes E9 A6 F5 are verified from the target ROM disassembly.
 ; ---------------------------------------------------------------------------
-times 0xE05B - ($ - $$) db 0xFF
+times 0xE05B - ($ - 0) db 0xFF
 bios_reset_gateway:
     db 0xE9, 0xA6, 0xF5             ; JMP D604h
 
@@ -192,9 +192,9 @@ times 0xEE94 - ($ - 0) db 0xFF
     db 0x21, 0xC3
 
 ; x86 reset vector at physical FFFF0h: far jump to F000:E05B.
-times 0xFFF0 - ($ - $$) db 0xFF
+times 0xFFF0 - ($ - 0) db 0xFF
     db 0xEA
     dw 0xE05B
     dw 0xF000
 
-times ROM_SIZE - ($ - $$) db 0xFF
+times ROM_SIZE - ($ - 0) db 0xFF
