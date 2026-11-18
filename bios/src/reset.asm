@@ -1188,7 +1188,48 @@ bios_chipset_cmos_next_entry:
 %if ($ - rom_start) != 0x2AC2
     %error "Chipset CMOS merge routine and handler table must end at 2AC2h"
 %endif
-incbin  "ami486.bin", ($ - rom_start), (0x8280 - ($ - rom_start)) ; inherited reference bytes from 2AC2h to 8280h
+; F000:2AC2h–2B12h — CMOS-selected far-handler lookup and index normalization.
+bios_chipset_cmos_select_handler:
+    push    di
+    db      0x33, 0xDB                 ; xor bx, bx
+    mov     si, 0x2AB3
+    mov     bl, [0xE050]
+    test    byte [0xE036], 0x01
+    je      near bios_chipset_cmos_select_normalize
+    and     bl, 0x07
+    shl     bl, 1
+    db      0x03, 0xF3                 ; add si, bx
+    mov     ax, [cs:si]
+    jmp     short bios_chipset_cmos_select_return
+    nop
+bios_chipset_cmos_select_normalize:
+    and     byte [0xE050], 0xF8
+    db      0x02, 0xD8                 ; add bl, al
+    and     bl, 0x07
+    cmp     bl, 0x07
+    jne     near bios_chipset_cmos_select_store
+    mov     bl, 0x06
+    cmp     al, 0x80
+    ja      near bios_chipset_cmos_select_store
+    mov     bl, 0x00
+bios_chipset_cmos_select_store:
+    db      0x08, 0x1E, 0x50, 0xE0    ; or [E050h], bl
+    shl     bl, 1
+    db      0x03, 0xF3                 ; add si, bx
+    mov     ax, [cs:si]
+bios_chipset_cmos_select_return:
+    pop     di
+    pop     si
+    retf
+
+; Far-handler offset table at 2B0Bh.
+bios_chipset_cmos_select_table:
+    dw      0xB5FF, 0xB604, 0xB60B, 0xB610
+
+%if ($ - rom_start) != 0x2B13
+    %error "CMOS-selected far-handler lookup must end at 2B13h"
+%endif
+incbin  "ami486.bin", ($ - rom_start), (0x8280 - ($ - rom_start)) ; inherited reference bytes from 2B13h to 8280h
     db      0x2F, 0x00, 0xE7, 0x03, 0x00, 0x00, 0x12, 0x00
 
 ; F000:82D0 — original POST callback vector table.
