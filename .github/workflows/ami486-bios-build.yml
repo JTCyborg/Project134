@@ -1,0 +1,50 @@
+name: AMI486 BIOS build and compatibility check
+
+on:
+  push:
+    branches: [ main ]
+    paths:
+      - "ami486.bin"
+      - "bios/**"
+      - ".github/workflows/ami486-bios-build.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install NASM
+        shell: pwsh
+        run: |
+          choco install nasm -y --no-progress
+          $nasm = Get-Command nasm.exe -ErrorAction Stop
+          Write-Host "NASM: $($nasm.Source)"
+          & $nasm.Source -v
+
+      - name: Build native candidate and compatibility boot image
+        shell: pwsh
+        run: |
+          ./bios/tools/build_bios.ps1 -OutputDirectory "$PWD/out/Debug" -NasmExe "nasm.exe" -RomSize 65536
+
+      - name: Verify boot image is the known-good reference
+        shell: pwsh
+        run: |
+          $reference = (Get-FileHash ./ami486.bin -Algorithm SHA256).Hash
+          $output = (Get-FileHash ./out/Debug/Project134.bin -Algorithm SHA256).Hash
+          if ($reference -ne $output) { throw "Compatibility boot image differs from ami486.bin." }
+          Write-Host "Compatibility image SHA256: $output"
+
+      - name: Upload BIOS artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: project134-bios
+          path: |
+            out/Debug/Project134.bin
+            out/Debug/Project134.native-candidate.bin
+            out/Debug/Project134.native-candidate.lst
