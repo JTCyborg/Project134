@@ -3906,7 +3906,91 @@ bios_post_extended_memory_skip_high_probe:
     %error "POST extended-memory entry block must end at 5190h"
 %endif
 
-incbin  "ami486.bin", ($ - rom_start), (0x8280 - ($ - rom_start)) ; inherited reference bytes from 5190h to 827Fh
+incbin  "ami486.bin", ($ - rom_start), (0x5520 - ($ - rom_start)) ; inherited POST memory/controller helpers from 5190h to 551Fh
+
+; F000:5520 — clear all 64 KiB at ES:0000h.
+bios_post_clear_64k:
+    db      0x33, 0xC0                 ; xor ax, ax
+    db      0x33, 0xFF                 ; xor di, di
+    mov     cx, 0x8000
+    rep     stosw
+    ret
+
+; F000:552A — fill and verify 64 KiB with diagnostic patterns.
+bios_post_memory_pattern_test:
+    mov     bx, 0x8000
+bios_post_memory_pattern_8080:
+    mov     ax, 0x8080
+    db      0x8B, 0xCB                 ; mov cx, bx
+    db      0x33, 0xFF                 ; xor di, di
+    rep     stosw
+    db      0x8B, 0xCB                 ; mov cx, bx
+    db      0x33, 0xFF                 ; xor di, di
+    repz    scasw
+    jne     short bios_post_memory_pattern_failed
+    mov     ax, 0x5555
+    db      0x8B, 0xCB                 ; mov cx, bx
+    db      0x33, 0xFF                 ; xor di, di
+    rep     stosw
+    db      0x8B, 0xCB                 ; mov cx, bx
+    db      0x33, 0xFF                 ; xor di, di
+    repz    scasw
+    jne     short bios_post_memory_pattern_failed
+    mov     ax, 0x3333
+    db      0x8B, 0xCB                 ; mov cx, bx
+    db      0x33, 0xFF                 ; xor di, di
+    rep     stosw
+    db      0x8B, 0xCB                 ; mov cx, bx
+    db      0x33, 0xFF                 ; xor di, di
+    repz    scasw
+    jne     short bios_post_memory_pattern_failed
+    db      0x33, 0xC0                 ; xor ax, ax
+    db      0x8B, 0xCB                 ; mov cx, bx
+    db      0x33, 0xFF                 ; xor di, di
+    rep     stosw
+    db      0x8B, 0xCB                 ; mov cx, bx
+    db      0x33, 0xFF                 ; xor di, di
+    repz    scasw
+    jne     short bios_post_memory_pattern_failed
+bios_post_memory_pattern_failed:
+    ret
+
+; F000:5572 — optional PIT channel-2 speaker/timing signal.
+bios_post_pit_signal:
+    mov     al, [cs:0xB50D]
+    call    near 0x8300
+    jne     short bios_post_pit_signal_program
+    mov     cx, 0x003F
+bios_post_pit_signal_delay:
+    loop    bios_post_pit_signal_delay
+    ret
+bios_post_pit_signal_program:
+    mov     al, 0xB6
+    out     0x43, al
+    db      0x32, 0xC0                 ; xor al, al
+    db      0xE3, 0x00                 ; jcxz $+2
+    db      0xE3, 0x00                 ; jcxz $+2
+    out     0x42, al
+    db      0xE3, 0x00                 ; jcxz $+2
+    db      0xE3, 0x00                 ; jcxz $+2
+    out     0x42, al
+    in      al, 0x61
+    or      al, 0x03
+    db      0xE3, 0x00                 ; jcxz $+2
+    db      0xE3, 0x00                 ; jcxz $+2
+    out     0x61, al
+    mov     cx, 0x003F
+bios_post_pit_signal_hold:
+    loop    bios_post_pit_signal_hold
+    and     al, 0xFC
+    out     0x61, al
+    ret
+
+%if ($ - rom_start) != 0x55A7
+    %error "POST memory pattern and PIT helpers must end at 55A7h"
+%endif
+
+incbin  "ami486.bin", ($ - rom_start), (0x8280 - ($ - rom_start)) ; inherited byte 55A7h and CP437 glyph/data tables through 827Fh
     db      0x2F, 0x00, 0xE7, 0x03, 0x00, 0x00, 0x12, 0x00
 
 ; F000:82D0 — original POST callback vector table.
