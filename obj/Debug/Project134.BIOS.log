@@ -4,32 +4,33 @@
   Source: C:\Temp\trdos\134\bios\src\reset.asm
   Output: C:\Temp\trdos\134\out\Debug\Project134.bin
   Size:   65536 bytes
-  C:\Temp\trdos\134\bios\src\reset.asm:377: error: Protected-mode memory alias probe region must end at 240Ah
-  C:\Temp\trdos\134\bios\src\reset.asm:524: error: Shadow-copy and CMOS weighted ALi helpers must end at 2537h
-  C:\Temp\trdos\134\bios\src\reset.asm:649: error: AUTO Config row consumers and selector must end at 2629h
-  C:\Temp\trdos\134\bios\src\reset.asm:735: error: Segment sweeps and temporary GDT must end at 26F9h
-  C:\Temp\trdos\134\bios\src\reset.asm:873: error: Extended memory probe and chipset restoration must end at 2850h
-  C:\Temp\trdos\134\bios\src\reset.asm:1101: error: Memory measurement, PIT and RAM test helpers must end at 29F6h
-  C:\Temp\trdos\134\bios\src\reset.asm:1190: error: Chipset CMOS merge routine and handler table must end at 2AC2h
-  C:\Temp\trdos\134\bios\src\reset.asm:1231: error: CMOS-selected far-handler lookup must end at 2B13h
-  C:\Temp\trdos\134\bios\src\reset.asm:1395: error: CMOS E046/E049/E047 selector handlers must end at 2C69h
-  C:\Temp\trdos\134\bios\src\reset.asm:1468: error: CMOS E042/E052 selectors must end at 2D11h
-  C:\Temp\trdos\134\bios\src\reset.asm:1639: error: PIT channel-2 measurement helpers must end at 2E73h
-  C:\Temp\trdos\134\bios\src\reset.asm:1644: error: B513 selector handler must begin at 2E74h
-  C:\Temp\trdos\134\bios\src\reset.asm:1683: error: B513 selector handler must end at 2EB4h
-  C:\Temp\trdos\134\bios\src\reset.asm:1720: error: B519 selector handler must end at 2EF1h
-  C:\Temp\trdos\134\bios\src\reset.asm:1749: error: Setup relocation handoff must end at 2F24h
-  C:\Temp\trdos\134\bios\src\reset.asm:1758: error: Setup exit prompt strings must end at 2F67h
-  C:\Temp\trdos\134\bios\src\reset.asm:1785: error: Setup exit handler must end at 2F8Fh
-  C:\Temp\trdos\134\bios\src\reset.asm:1805: error: BDA clear helper must end at 2FA3h
-  C:\Temp\trdos\134\bios\src\reset.asm:1903: error: Temporary INT 13h path must end at 3044h
   Native candidate: C:\Temp\trdos\134\out\Debug\Project134.native-candidate.bin
   Listing:          C:\Temp\trdos\134\out\Debug\Project134.native-candidate.lst
-  NASM failed with exit code 1
-  At C:\Temp\trdos\134\bios\tools\build_bios.ps1:152 char:5
-  +     throw "NASM failed with exit code $LASTEXITCODE"
-  +     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-      + CategoryInfo          : OperationStopped: (NASM failed with exit code 1:String) [], RuntimeException
-      + FullyQualifiedErrorId : NASM failed with exit code 1
+  C:\Temp\trdos\134\bios\tools\build_bios.ps1 : At C:\Temp\trdos\134\bios\tools\validate_rom.ps1:117 char:50
+  +     Write-Host "BIOS POST06 ROM checksum PASS (16-bit sum = 0000h)."  ...
+  +                                                  ~~~~
+  Unexpected token '-bit' in expression or statement.
+  At C:\Temp\trdos\134\bios\tools\validate_rom.ps1:117 char:55
+  +     Write-Host "BIOS POST06 ROM checksum PASS (16-bit sum = 0000h)."  ...
+  +                                                       ~~~
+  Unexpected token 'sum' in expression or statement.
+  At C:\Temp\trdos\134\bios\tools\validate_rom.ps1:117 char:54
+  +     Write-Host "BIOS POST06 ROM checksum PASS (16-bit sum = 0000h)."  ...
+  +                                                      ~
+  Missing closing ')' in expression.
+  At C:\Temp\trdos\134\bios\tools\validate_rom.ps1:32 char:87
+  + ... ath -and (Test-Path -LiteralPath $ReferenceRomPath -PathType Leaf)) {
+  +                                                                         ~
+  Missing closing '}' in statement block or type definition.
+  At C:\Temp\trdos\134\bios\tools\validate_rom.ps1:117 char:66
+  + ... rite-Host "BIOS POST06 ROM checksum PASS (16-bit sum = 0000h)." -Fore ...
+  +                                                                 ~
+  Unexpected token ')' in expression or statement.
+  At C:\Temp\trdos\134\bios\tools\validate_rom.ps1:126 char:153
+  + ... ot validate PCem execution." -f $bytes.Length) -ForegroundColor Green
+  +                                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  The string is missing the terminator: ".
+      + CategoryInfo          : ParserError: (:) [build_bios.ps1], ParseException
+      + FullyQualifiedErrorId : UnexpectedToken,build_bios.ps1
    
 C:\Program Files\Microsoft Visual Studio\18\Community\MSBuild\Microsoft\VC\v180\Microsoft.MakeFile.Targets(45,5): error MSB3073: выход из команды "powershell.exe -NoLogo -NoProfile -ExecutionPolicy Bypass -File "C:\Temp\trdos\134\bios\tools\build_bios.ps1" -OutputDirectory "C:\Temp\trdos\134\bios\..\out\Debug" -NasmExe "nasm.exe" -RomSize 65536" с кодом 1.
