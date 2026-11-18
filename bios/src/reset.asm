@@ -1634,38 +1634,6 @@ times 0xE00E - ($ - rom_start) db 0x00
 bios_ibm_compatibility_notice:
     db "IBM COMPATIBLE IBM IS A TRADEMARK OF INTERNATIONAL BUSINESS MACHINES CORP."
 times 0xE05B - ($ - rom_start) db 0x00
-    mov     al, 0x12
-    out     0x80, al
-    xor     ax, ax
-    mov     dx, 0x03D8
-    out     dx, al
-    jcxz    $+2
-    jcxz    $+2
-    inc     ax
-    mov     dl, 0xB8
-    out     dx, al
-    jcxz    $+2
-    jcxz    $+2
-    mov     dl, 0xBA
-    in      al, dx
-    jcxz    $+2
-    jcxz    $+2
-    mov     dl, 0xDA
-    in      al, dx
-    jcxz    $+2
-    jcxz    $+2
-    mov     dl, 0xC0
-    mov     al, 0
-    out     dx, al
-    jcxz    $+2
-    jcxz    $+2
-    xor     ax, ax
-    mov     es, ax
-    mov     ds, ax
-    mov     al, 0x13
-    out     0x80, al
-    JMP_ABS 0x1AFB
-
 ; F000:E05B — reset gateway.
 times 0xE05B - ($ - rom_start) db 0xFF
 reset_gateway:
