@@ -75,7 +75,7 @@ Do not implement the disk service as complete until read, write, verify, format,
 
 ## Current status
 
-The native NASM reconstruction is still incomplete and is not qualified to boot. The source contains verified routines, including the CPU/cache profile selector and CMOS 8Eh path at 8300h–83FFh, but other ROM regions remain unimplemented or differ from the reference.
+The native NASM reconstruction is still incomplete and is not qualified to boot. The source now contains an instruction-level transcription of the CPU/cache profile selector and CMOS 8Eh path at 8300h–83FFh. The validator requires this interval to match the reference ROM byte-for-byte, but a fresh NASM/Visual Studio build has not yet been run to confirm that check. Other ROM regions remain unimplemented or differ from the reference.
 
 The Visual Studio build now produces two distinct artifacts:
 
