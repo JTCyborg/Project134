@@ -2180,13 +2180,13 @@ times 0xF622 - ($ - rom_start) db 0xFF
 bios_post_8042_write_command:
     call    bios_post_8042_write_command_byte
     jnz     short bios_post_8042_write_command_done
-    mov     al, ah
+    db      0x8A, 0xC4                 ; mov al, ah
     call    bios_post_8042_write_data
 bios_post_8042_write_command_done:
     ret
 
 bios_post_8042_write_output_port:
-    mov     ah, al
+    db      0x8A, 0xE0                 ; mov ah, al
     mov     al, 0xD1
     call    bios_post_8042_write_command
     ret
