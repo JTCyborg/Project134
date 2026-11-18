@@ -1,7 +1,7 @@
 ; Project134 — AMI486 BIOS reconstruction
-; Source policy: executable code is written as NASM instructions.
-; No reference-ROM machine-code byte blocks are permitted here.
-; Unimplemented ROM areas use FFh erased-state fill only.
+; All executable code is authored as NASM instructions.
+; The reference ROM is an analysis/behavior oracle only: never copy its bytes.
+; Unimplemented ROM space is filled with FFh.
 
 BITS 16
 ORG 0
@@ -15,25 +15,35 @@ ORG 0
 
 rom_start:
 
-; ---------------------------------------------------------------------------
-; F000:88CE — first 8042-clear POST branch.
-; Disassembly: analysis/disasm/ami486_branches.disasm.txt
-; ---------------------------------------------------------------------------
+; F000:88CE — first POST branch. Not yet reconstructed.
 times 0x88CE - ($ - rom_start) db 0xFF
 bios_8042_clear_entry:
-    ; TODO: translate the verified disassembly into NASM instructions.
+    ; Pending full translation of ami486_branches.disasm.txt.
+    ; This path calls shared helpers at EE94h/EE9Dh and 8DC Fh/8DDCh.
 
-; ---------------------------------------------------------------------------
-; F000:8A04 — reset continuation / CMOS[8Fh] path.
-; ---------------------------------------------------------------------------
+; F000:8A04 — reset continuation.
 times 0x8A04 - ($ - rom_start) db 0xFF
 bios_reset_cmos_path:
-    ; TODO: translate the verified disassembly into NASM instructions.
+    smsw    ax
+    test    al, 0x01
+    jz      bios_reset_direct_post
+    mov     al, 0x8F
+    out     0x70, al
+    jcxz    $
+    jcxz    $
+    mov     al, 0x00
+    out     0x71, al
+    jmp     bios_reset_cmos_cleared
+bios_reset_direct_post:
+    jmp     bios_cmos_resume
+    jmp     bios_post_delay_done
 
-; ---------------------------------------------------------------------------
-; F000:D604 — initial POST entry.
-; Disassembly: analysis/disasm/ami486_post_entry.disasm.txt
-; ---------------------------------------------------------------------------
+; F000:8A20 — CMOS dispatch helper. Pending complete translation.
+times 0x8A20 - ($ - rom_start) db 0xFF
+bios_cmos_dispatch:
+    ; TODO: translate the disassembly and resolve all shared helper targets.
+
+; F000:D604 — reset-time POST entry.
 times 0xD604 - ($ - rom_start) db 0xFF
 bios_post_entry:
     cli
@@ -43,36 +53,86 @@ bios_post_entry:
     jnz     bios_reset_continuation
     jmp     bios_8042_clear_entry
 
-; F000:D60F — common continuation.
-bios_post_common:
+; F000:D60F — fall-through destination after the 8042 path returns.
+bios_post_after_8042:
     jmp     bios_ram_test_entry
 
-; F000:D612 — alternate reset continuation.
+; F000:D612 — alternate reset path.
 bios_reset_continuation:
     jmp     bios_reset_cmos_path
 
-; F000:D6DE — subsequent POST/RAM-test path.
+; F000:D615 — CMOS marker read and dispatch.
+bios_cmos_resume:
+    mov     al, 0x8F
+    out     0x70, al
+    jcxz    $
+    in      al, 0x71
+    xor     ah, ah
+    mov     si, ax
+    mov     al, 0x8F
+    jcxz    $
+    out     0x70, al
+    xor     al, al
+    jcxz    $
+    jcxz    $
+    out     0x71, al
+    mov     ax, cs
+    mov     ss, ax
+    mov     ax, si
+    cmp     al, 0x04
+    je      bios_cmos_pic_init
+    cmp     al, 0x05
+    je      bios_cmos_pic_init
+    cmp     al, 0x0A
+    jbe     bios_cmos_dispatch
+    jmp     bios_post_delay_done
+
+bios_cmos_pic_init:
+    mov     bx, 0x0870
+    nop
+    mov     sp, 0xD650
+    jmp     0xF000:0xEEE7
+
+; The original code resumes here from its stack-threaded PIC helper.
+times 0xD650 - ($ - rom_start) db 0xFF
+bios_cmos_pic_return:
+    push    dx
+    ; Original continuation uses SI marker to select the CMOS dispatch.
+    jmp     bios_cmos_dispatch
+
+; F000:D6DE — stack/register and RAM test continuation.
 times 0xD6DE - ($ - rom_start) db 0xFF
 bios_ram_test_entry:
-    ; TODO: reconstruct from disassembly; no copied opcodes.
+    ; TODO: translate D6DEh onward from ami486_post_entry.disasm.txt.
+    ; This includes the stack-threaded segment-register test and RAM test.
 
-; ---------------------------------------------------------------------------
+; F000:D724 — end of the reset delay.
+times 0xD724 - ($ - rom_start) db 0xFF
+bios_post_delay_done:
+    test    byte [cs:0x8281], 0x40
+    jnz     bios_post_after_delay
+    smsw    ax
+    or      ah, ah
+    jz      bios_post_after_delay
+    mov     eax, cr0
+    or      al, 0x10
+    mov     cr0, eax
+bios_post_after_delay:
+    ; Further POST continuation is not yet reconstructed.
+
 ; F000:E05B — reset gateway.
-; ---------------------------------------------------------------------------
 times 0xE05B - ($ - rom_start) db 0xFF
 reset_gateway:
-    jmp near bios_post_entry
+    jmp     near bios_post_entry
 reset_gateway_end:
 %if (reset_gateway_end - reset_gateway) != 3
     %error "Unexpected reset gateway size"
 %endif
 
-; ---------------------------------------------------------------------------
 ; FFFF:0000 reset vector -> F000:E05B.
-; ---------------------------------------------------------------------------
 times 0xFFF0 - ($ - rom_start) db 0xFF
 bios_reset_vector:
-    jmp 0xF000:reset_gateway
+    jmp     0xF000:reset_gateway
 
 times ROM_SIZE - ($ - rom_start) db 0xFF
 
