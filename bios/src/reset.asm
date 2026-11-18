@@ -512,9 +512,9 @@ bios_ali_c3_fourth_no_bit1:
     jmp     0x8DDC
 
 times 0x89D4 - ($ - rom_start) db 0xFF
-bios_ali_write_c3_second_return:
+bios_ali_write_c3_third_return:
     dw      0x89D6
-bios_ali_write_c3_second_continue:
+bios_ali_write_c3_third_continue:
     mov     ah, 0x08
     cmp     cl, 0x01
     jz      short bios_ali_dispatch_di
