@@ -969,14 +969,14 @@ bios_memory_segment_measure_loop:
     jae     short bios_memory_segment_measure_loop
     mov     ds, ax
     mov     di, 0x2911
-    jmp     short bios_memory_segment_timer
+    jmp     short bios_pit_measure_elapsed
     nop
 bios_memory_segment_timer:
     db      0x8B, 0xD3                 ; mov dx, bx
     db      0x33, 0xED                 ; xor bp, bp
 bios_memory_segment_timer_loop:
     mov     di, 0x291B
-    jmp     short bios_memory_segment_pit
+    jmp     short bios_pit_measure_elapsed
     nop
 bios_memory_segment_pit:
     db      0x2B, 0xDA                 ; sub bx, dx
@@ -1070,8 +1070,8 @@ bios_ram_pattern_test:
     db      0x33, 0xF6                 ; xor si, si
     mov     cx, 0x2000
     db      0xF3,0x66,0xAD             ; rep o32 lodsd
-bios_ram_pattern_test_repeat:
     mov     ax, 0x55AA
+bios_ram_pattern_test_repeat:
     mov     cx, 0x2000
     db      0x33, 0xFF                 ; xor di, di
     rep     stosw
