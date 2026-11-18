@@ -39,9 +39,6 @@ The translations above follow the available instruction listing. The following
 regions are still incomplete and prevent a meaningful PCem boot test:
 - `8A78h–8AD4h`: dynamic hook and secondary CMOS/POST routines reached after
   checkpoint 05h.
-- `8A78h–8AD4h`: dynamic hook and secondary CMOS/POST routines reached after
-  checkpoint 05h.
-- `8A78h–8AD4h`: secondary CMOS/POST routines reached after checkpoint 05h.
 - Additional POST/error handlers and the remainder of the startup/boot path.
 - Remaining RAM test, chipset initialization, interrupt services, BIOS vectors
   and data.
@@ -51,8 +48,9 @@ regions are still incomplete and prevent a meaningful PCem boot test:
 **Not ready for a PCem boot test.** The `88CEh–8A03h` primary branch and its
 stack-threaded ALi/CMOS helpers are now translated, but the secondary
 `8A78h–8AD4h` path and POST stages after checkpoint 05h remain incomplete.
-The complete control-flow closure and later POST/boot path are not yet established. A run now would stop in unimplemented ROM space
-or execute incomplete dispatch behavior.
+The complete control-flow closure and later POST/boot path are not yet
+established. A run now would stop in unimplemented ROM space or execute
+incomplete dispatch behavior.
 
 The first PCem test will be announced only after:
 1. both initial reset branches and their called helpers are translated;
@@ -67,5 +65,5 @@ milestones will cover memory sizing, chipset setup, interrupt vectors and boot.
 ## Build
 
 Use the existing Visual Studio 2026 solution and `bios/tools/build_bios.ps1`.
-NASM must be available to the build. Do not infer a successful build from source
-edits or Git commits; record actual build output separately.
+NASM must be available to the build. The build and PCem have not been run in
+this editing session; do not infer success from source edits or Git commits.
