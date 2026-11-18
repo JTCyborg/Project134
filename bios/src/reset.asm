@@ -104,6 +104,194 @@ bios_keyboard_reset_halt:
     jmp     bios_keyboard_reset_halt
 
 ; ---------------------------------------------------------------------------
+; F000:8CCDh — CR0 cache-disable helper and 8042 command/response helper.
+times 0x8CCD - ($ - rom_start) db 0xFF
+bios_cr0_disable_cache_if_real_mode:
+    smsw    ax
+    test    al, 0x01
+    jnz     bios_indexed_jump_di
+    or      ah, ah
+    jnz     bios_indexed_jump_di
+    mov     eax, cr0
+    or      eax, 0x60000000
+    mov     cr0, eax
+    wbinvd
+    xor     ax, ax
+bios_indexed_jump_di:
+    jmp     di
+
+; The byte at 8CEAh is an alternate/overlapping decode byte; the reachable
+; helper entry below is the verified 8CEBh stream.
+times 0x8CEB - ($ - rom_start) db 0xFF
+bios_8042_wait_and_read:
+    loopne  0x8D20
+    leave
+    jcxz    $+2
+bios_8042_wait_input_empty:
+    in      al, 0x64
+    test    al, 0x02
+    loopne  bios_8042_wait_input_empty
+    jnz     bios_8042_command_done
+    mov     al, ah
+    out     0x64, al
+    xor     cx, cx
+    jcxz    $+2
+bios_8042_wait_output_full:
+    in      al, 0x64
+    test    al, 0x01
+    loope   bios_8042_wait_output_full
+    in      al, 0x60
+bios_8042_command_done:
+    ret
+
+; F000:8D09 — ALi indexed-register mode helpers.
+times 0x8D09 - ($ - rom_start) db 0xFF
+bios_ali_mode_enable:
+    mov     ax, 0xC503
+    call    0x8DDC
+    mov     ax, 0x1818
+    call    0x8DCF
+    or      al, 0x04
+    xchg    ah, al
+    call    0x8DDC
+    and     ah, 0xFB
+    call    0x8DDC
+    mov     ax, 0x2323
+    call    0x8DCF
+    or      al, 0x02
+    xchg    ah, al
+    call    0x8DDC
+    mov     ax, 0x5503
+    call    0x8DDC
+    mov     cx, 0
+    ret
+
+times 0x8D39 - ($ - rom_start) db 0xFF
+bios_ali_mode_disable:
+    mov     ax, 0xC503
+    call    0x8DDC
+    mov     ax, 0x2323
+    call    0x8DCF
+    and     al, 0xFD
+    xchg    ah, al
+    call    0x8DDC
+    mov     ax, 0x5503
+    call    0x8DDC
+    mov     cx, 0
+    ret
+
+times 0x8D56 - ($ - rom_start) db 0xFF
+bios_ali_memory_mode:
+    mov     ax, 0xC503
+    call    0x8DDC
+    mov     ax, 0x1818
+    call    0x8DCF
+    test    al, 0x02
+    jnz     bios_ali_memory_mode_done
+    mov     di, 0x8D6C
+    jmp     0x2686
+bios_ali_memory_mode_done:
+    mov     di, 0x8D72
+    jmp     0x2629
+    mov     ax, 0x1818
+    call    0x8DCF
+    or      al, 0x02
+    xchg    ah, al
+    call    0x8DDC
+    mov     cx, 0xFFFF
+    ret
+
+times 0x8D83 - ($ - rom_start) db 0xFF
+bios_ali_shadow_mode:
+    mov     ax, 0xC503
+    mov     di, 0x8D8C
+    jmp     0x8DFB
+    nop
+bios_ali_shadow_step_1:
+    mov     ax, 0x1919
+    mov     di, 0x8D95
+    jmp     0x8DED
+    nop
+bios_ali_shadow_step_2:
+    or      al, 0x03
+    xchg    ah, al
+    mov     di, 0x8D9F
+    jmp     0x8DFB
+    nop
+bios_ali_shadow_step_3:
+    mov     di, 0x8DA5
+    jmp     0x2686
+bios_ali_shadow_step_4:
+    mov     ax, 0x1919
+    mov     di, 0x8DAE
+    jmp     0x8DED
+    nop
+bios_ali_shadow_step_5:
+    and     al, 0xFC
+    xchg    ah, al
+    mov     di, 0x8DB8
+    jmp     0x8DFB
+    nop
+bios_ali_shadow_step_6:
+    mov     ax, 0x1818
+    mov     di, 0x8DC1
+    jmp     0x8DED
+    nop
+bios_ali_shadow_step_7:
+    and     al, 0xFD
+    xchg    ah, al
+    mov     di, 0x8DCB
+    jmp     0x8DFB
+    nop
+bios_ali_shadow_return:
+    mov     cx, 0xFFFF
+    ret
+
+; F000:8DCF / 8DDC — ALi1429 indexed read/write primitives.
+times 0x8DCF - ($ - rom_start) db 0xFF
+bios_ali_read_index:
+    out     0x22, al
+    jcxz    $+2
+    jcxz    $+2
+    in      al, 0x23
+    jcxz    $+2
+    jcxz    $+2
+    ret
+
+bios_ali_write_index:
+    out     0x22, al
+    jcxz    $+2
+    jcxz    $+2
+    xchg    al, ah
+    out     0x23, al
+    jcxz    $+2
+    jcxz    $+2
+    xchg    al, ah
+    ret
+
+; F000:8DED — indexed read followed by stack-threaded DI continuation.
+bios_ali_read_then_jump:
+    out     0x22, al
+    jcxz    $+2
+    jcxz    $+2
+    in      al, 0x23
+    jcxz    $+2
+    jcxz    $+2
+    jmp     di
+
+; F000:8DFB — indexed write primitive with register restoration.
+bios_ali_write_then_return:
+    out     0x22, al
+    jcxz    $+2
+    jcxz    $+2
+    xchg    al, ah
+    out     0x23, al
+    jcxz    $+2
+    jcxz    $+2
+    xchg    al, ah
+    ret
+
+; ---------------------------------------------------------------------------
 ; F000:D604 — reset-time POST entry and CMOS marker dispatch.
 times 0xD604 - ($ - rom_start) db 0xFF
 bios_post_entry:
