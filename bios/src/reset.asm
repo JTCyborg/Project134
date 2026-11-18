@@ -699,11 +699,11 @@ bios_protected_mode_copy:
 
 bios_segment_sweep_4000:
     mov     ax, 0x4000
+bios_segment_sweep_4000_next:
     mov     ds, ax
     db      0x33, 0xF6                 ; xor si, si
     mov     cx, 0x8000
     rep     lodsw
-bios_segment_sweep_4000_next:
     mov     ax, ds
     add     ah, 0x08
     cmp     ah, 0xA0
