@@ -1664,7 +1664,7 @@ bios_post_pit_transition_wait:
     push    ax
     mov     al, [cs:0x8285]
     or      al, al
-    jz      short bios_post_pit_wait_high
+    jz      short bios_post_pit_transition_wait_high
 bios_post_pit_delay_outer:
     mov     al, [cs:0x8285]
 bios_post_pit_delay_inner:
@@ -1672,20 +1672,20 @@ bios_post_pit_delay_inner:
     jnz     short bios_post_pit_delay_inner
     dec     cx
     jnz     short bios_post_pit_delay_outer
-    jmp     short bios_post_pit_wait_done
-bios_post_pit_wait_high:
+    jmp     short bios_post_pit_transition_wait_done
+bios_post_pit_transition_wait_high:
     in      al, 0x61
     test    al, 0x10
-    jz      short bios_post_pit_wait_high
+    jz      short bios_post_pit_transition_wait_high
     dec     cx
-    jz      short bios_post_pit_wait_done
-bios_post_pit_wait_low:
+    jz      short bios_post_pit_transition_wait_done
+bios_post_pit_transition_wait_low:
     in      al, 0x61
     test    al, 0x10
-    jnz     short bios_post_pit_wait_low
+    jnz     short bios_post_pit_transition_wait_low
     dec     cx
-    jnz     short bios_post_pit_wait_high
-bios_post_pit_wait_done:
+    jnz     short bios_post_pit_transition_wait_high
+bios_post_pit_transition_wait_done:
     pop     ax
     ret
 
