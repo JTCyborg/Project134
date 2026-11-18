@@ -648,7 +648,91 @@ bios_autoconfig_row_return:
 %if ($ - rom_start) != 0x2629
     %error "AUTO Config row consumers and selector must end at 2629h"
 %endif
-incbin  "ami486.bin", ($ - rom_start), (0x8280 - ($ - rom_start)) ; inherited reference bytes from 2629h to 8280h
+; F000:2629h–26F8h — 16-bit segment sweep, temporary GDT and protected-mode copy.
+bios_segment_sweep_7000:
+    mov     dx, ds
+    db      0x33, 0xDB                 ; xor bx, bx
+    db      0x2B, 0xF6                 ; sub si, si
+    mov     ds, bx
+    mov     cx, 0x8000
+    rep     lodsw
+    db      0x2B, 0xF6                 ; sub si, si
+bios_segment_sweep_loop:
+    cmp     bx, 0x8000
+    add     bx, 0x1000
+    jne     short bios_segment_sweep_loop
+    mov     ds, dx
+    jmp     di
+
+; GDT and pseudo-descriptor at F000:2646h. These are data, not linear code.
+bios_temp_gdt:
+    db      0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00
+bios_temp_gdtr:
+    db      0x40,0x00,0x46,0x26,0x0F,0x00
+    db      0xFF,0xFF,0x00,0x00,0x00,0x93,0x00,0x00
+    db      0xFF,0xFF,0x00,0x80,0x83,0x93,0x00,0x03
+    db      0xFF,0xFF,0x00,0x00,0xA3,0x93,0x00,0x03
+    db      0xFF,0xFF,0x00,0x00,0x82,0x93,0x00,0x03
+    db      0xFF,0xFF,0x00,0x00,0x84,0x93,0x00,0x03
+    db      0xFF,0xFF,0x00,0x00,0x00,0x93,0x8F,0x00
+
+bios_protected_mode_copy:
+    mov     ecx, 0x00040000
+    mov     esi, 0x00100000
+    lgdt    [cs:0x264E]
+    mov     eax, cr0
+    or      al, 0x01
+    mov     cr0, eax
+    jmp     short $+2
+    mov     ax, 0x0038
+    mov     es, ax
+    cld
+    db      0xF3,0x67,0x66,0x26,0xAD  ; rep a32 es: lodsd
+    mov     ax, 0x0010
+    mov     es, ax
+    mov     eax, cr0
+    and     al, 0xFE
+    mov     cr0, eax
+    jmp     short $+2
+    jmp     di
+
+bios_segment_sweep_4000:
+    mov     ax, 0x4000
+    mov     ds, ax
+    db      0x33, 0xF6                 ; xor si, si
+    mov     cx, 0x8000
+    rep     lodsw
+    mov     ax, ds
+    add     ah, 0x08
+    cmp     ah, 0xA0
+    jne     short bios_segment_sweep_4000
+    jmp     di
+
+bios_segment_sweep_0700:
+    push    ds
+    push    si
+    db      0x33, 0xC0                 ; xor ax, ax
+    mov     ax, 0x0700
+    mov     ds, ax
+    mov     bx, 0x0002
+bios_segment_sweep_0700_loop:
+    db      0x33, 0xF6                 ; xor si, si
+    mov     cx, 0x8000
+    rep     lodsw
+    mov     ax, ds
+    add     ax, 0x1000
+    mov     ds, ax
+    dec     bx
+    cmp     bl, 0x00
+    jne     short bios_segment_sweep_0700_loop
+    pop     si
+    pop     ds
+    ret
+
+%if ($ - rom_start) != 0x26F9
+    %error "Segment sweeps and temporary GDT must end at 26F9h"
+%endif
+incbin  "ami486.bin", ($ - rom_start), (0x8280 - ($ - rom_start)) ; inherited reference bytes from 26F9h to 8280h
     db      0x2F, 0x00, 0xE7, 0x03, 0x00, 0x00, 0x12, 0x00
 
 ; F000:82D0 — original POST callback vector table.
