@@ -29,8 +29,8 @@ bios_reset_cmos_path:
     jz      bios_reset_direct_post
     mov     al, 0x8F
     out     0x70, al
-    jcxz    $
-    jcxz    $
+    jcxz    $+2
+    jcxz    $+2
     mov     al, 0x00
     out     0x71, al
     jmp     bios_reset_cmos_cleared
@@ -65,16 +65,16 @@ bios_reset_continuation:
 bios_cmos_resume:
     mov     al, 0x8F
     out     0x70, al
-    jcxz    $
+    jcxz    $+2
     in      al, 0x71
     xor     ah, ah
     mov     si, ax
     mov     al, 0x8F
-    jcxz    $
+    jcxz    $+2
     out     0x70, al
     xor     al, al
-    jcxz    $
-    jcxz    $
+    jcxz    $+2
+    jcxz    $+2
     out     0x71, al
     mov     ax, cs
     mov     ss, ax
@@ -91,13 +91,13 @@ bios_cmos_pic_init:
     mov     bx, 0x0870
     nop
     mov     sp, 0xD650
-    jmp     0xF000:0xEEE7
+    jmp     0xEEE7
 
 ; The original code resumes here from its stack-threaded PIC helper.
 times 0xD650 - ($ - rom_start) db 0xFF
 bios_cmos_pic_return:
     push    dx
-    ; Original continuation uses SI marker to select the CMOS dispatch.
+    salc
     jmp     bios_cmos_dispatch
 
 ; F000:D6DE — stack/register and RAM test continuation.
