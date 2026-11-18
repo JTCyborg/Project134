@@ -24,6 +24,7 @@ Translated into NASM in `bios/src/reset.asm`:
 - Reset-mode branch at `8A04h–8A1Fh`.
 - CMOS marker read/clear and dispatch at `D615h–D654h`.
 - CMOS marker dispatcher instruction stream at `8A20h–8A75h`.
+- Dynamic POST hook and stack-threaded ALi continuation at `8A78h–8AD4h`.
 - Keyboard-controller reset wait at `8AD5h–8AE6h`.
 - CMOS read/write helpers at `EE94h` and `EE9Dh`.
 - 8259 PIC initialization at `EEE7h–EF35h`.
@@ -37,20 +38,17 @@ Translated into NASM in `bios/src/reset.asm`:
 
 The translations above follow the available instruction listing. The following
 regions are still incomplete and prevent a meaningful PCem boot test:
-- `8A78h–8AD4h`: dynamic hook and secondary CMOS/POST routines reached after
-  checkpoint 05h.
 - Additional POST/error handlers and the remainder of the startup/boot path.
 - Remaining RAM test, chipset initialization, interrupt services, BIOS vectors
   and data.
 
 ## Test readiness
 
-**Not ready for a PCem boot test.** The `88CEh–8A03h` primary branch and its
-stack-threaded ALi/CMOS helpers are now translated, but the secondary
-`8A78h–8AD4h` path and POST stages after checkpoint 05h remain incomplete.
-The complete control-flow closure and later POST/boot path are not yet
-established. A run now would stop in unimplemented ROM space or execute
-incomplete dispatch behavior.
+**Not ready for a PCem boot test.** The reset path now reaches the POST 05h
+hook and its stack-threaded ALi continuation is translated through the jump
+into `D777h`. The following memory checksum, 8042/PIT/CMOS stages and their
+helper dependencies are still incomplete. A run now would stop in unimplemented
+ROM space or execute incomplete dispatch behavior.
 
 The first PCem test will be announced only after:
 1. both initial reset branches and their called helpers are translated;
