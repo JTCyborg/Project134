@@ -62,6 +62,13 @@ for ($offset = 0x8A04; $offset -lt 0x8A20; $offset++) {
     }
 }
 
+# Verify the POST continuation cluster at 8A75h-8CCCh byte-for-byte.
+for ($offset = 0x8A75; $offset -lt 0x8CCD; $offset++) {
+    if ($bytes[$offset] -ne $referenceBytes[$offset]) {
+        throw ("POST continuation byte mismatch at 0x{0:X4}: output 0x{1:X2}, reference 0x{2:X2}" -f $offset, $bytes[$offset], $referenceBytes[$offset])
+    }
+}
+
 # Verify additional early reset/POST dispatch and hardware helper windows.
 for ($offset = 0x8A20; $offset -lt 0x8A75; $offset++) {
     if ($bytes[$offset] -ne $referenceBytes[$offset]) {
