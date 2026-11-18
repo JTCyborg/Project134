@@ -1,41 +1,46 @@
 # BIOS workspace
 
-The BIOS is developed independently for Project134. The original AMI486 ROM is a reference binary only; it is not source code and must not be modified or treated as an implementation source.
+The BIOS is developed independently for Project134. The original AMI486 ROM is an immutable behavioral reference; it is not modified by the build.
 
 ## Visual Studio build
 
-Open `Project134.sln` in Microsoft Visual Studio and build the `Project134.BIOS` project.
+Open `Project134.sln` in Microsoft Visual Studio 2026 and build `Project134.BIOS`.
 
-The project uses NASM to emit a flat 16-bit x86 ROM image. Visual Studio/MSBuild orchestrates the build; MSVC MASM is not used because the BIOS output is a raw 16-bit real-mode binary.
+Visual Studio/MSBuild orchestrates NASM to emit a flat 16-bit x86 ROM image. MSVC does not compile or link the BIOS code.
 
-Prerequisite:
-- NASM installed and available as `nasm.exe` on `PATH`.
-
-If NASM is installed elsewhere, set the MSBuild property `NasmExe` to its full executable path (Project Properties → NMake → Build Command Line is not required; pass `/p:NasmExe="C:\path\to\nasm.exe"` to MSBuild).
+Prerequisite: NASM available as `nasm.exe` on `PATH`. If installed elsewhere, pass `/p:NasmExe="C:\\path\\to\\nasm.exe"` to MSBuild.
 
 Build output:
-- `out\Debug\Project134.bin`
-- `out\Release\Project134.bin`
+- `out\\Debug\\Project134.bin`
+- `out\\Release\\Project134.bin`
 
-## Bootstrap status
+## Reconstruction status — Stage 0
 
-`src/reset.asm` is a deliberately minimal bootstrap image used to validate the Visual Studio build pipeline and reset-vector placement. It initializes a safe real-mode stack and halts. It is **not** a functional PC BIOS and is not yet approved for use as the AMI486 machine ROM.
+The source now uses the reset-vector and first-stage entry addresses observed in the target ROM:
 
-The current 64 KiB layout and F0000h..FFFFFh mapping are provisional assumptions. Before using the image in PCem, verify the exact ROM size, ROM-set loading path, mapping and reset-vector behaviour against the Project133 reference configuration.
+- ROM size: 65,536 bytes.
+- Reset vector at ROM offset `FFF0h`: far jump to `F000:E05B`.
+- Reset gateway at ROM offset `E05Bh`: near jump to `F000:D604`.
+- Early POST entry at ROM offset `D604h`: reconstructed instruction stream through the dispatch at `D6A2h`, including the 8042 status probe, CMOS/NMI accesses, stack setup and indirect dispatch.
+
+The reset-vector and entry bytes are checked by `validate_rom.ps1`.
+
+**This is not yet a functional or PCem-bootable BIOS.** The early POST code branches to additional routines at `88CEh`, `8A04h`, `D6DEh`, `D724h`, `EEE7h`, `8A20h` and other destinations that have not yet been reconstructed into source. The remaining ROM is currently filled with `FFh`. Do not select this image as the AMI486 machine BIOS yet.
+
+## Next implementation boundary
+
+Continue reconstructing the reset/POST call graph from the exact disassembly, starting with all direct destinations reached from `D604h`. Preserve alternate entries, stack-crafted returns, register/flag contracts and POST port-80h writes. Only mark a routine complete when its bytes, incoming references and outgoing control flow are reconciled.
+
+## Reference ROM
+
+The original `ami486.bin` remains unchanged. Keep it separate from generated output and do not overwrite it. Any binary compatibility payload must be explicitly identified as inherited rather than native reconstruction.
 
 ## Validation
 
 The post-build PowerShell validator checks:
-- exact output size (currently 65536 bytes);
-- reset-vector bytes at ROM offset FFF0h;
-- far-jump target F000:E000.
+- exact output size (currently 65,536 bytes);
+- the reference reset-vector bytes at `FFF0h`;
+- the reset gateway at `E05Bh`;
+- the first verified POST instructions at `D604h`.
 
-Generated images are build artifacts and should not be hand-edited.
-
-## Reference ROM
-
-After the user reattaches and confirms the exact reference file, store it byte-for-byte as:
-- `reference/ami486.bin`
-- `reference/ami486.sha256`
-
-Do not commit a reference ROM until its provenance and redistribution rights are confirmed.
+A successful assembly/layout check is not evidence of a successful BIOS boot. PCem differential testing remains required.
