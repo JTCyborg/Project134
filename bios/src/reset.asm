@@ -1,6 +1,6 @@
 ; Project134 — AMI486 BIOS reconstruction
 ; NASM-only executable implementation. Reference ROM is analysis-only.
-; FFh fill is reserved for regions not yet reconstructed.
+; Unimplemented gaps are inherited byte-for-byte from ami486.bin until replaced by verified native code.
 
 BITS 16
 ORG 0
