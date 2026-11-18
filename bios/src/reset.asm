@@ -734,7 +734,147 @@ bios_segment_sweep_0700_loop:
 %if ($ - rom_start) != 0x26F9
     %error "Segment sweeps and temporary GDT must end at 26F9h"
 %endif
-incbin  "ami486.bin", ($ - rom_start), (0x8280 - ($ - rom_start)) ; inherited reference bytes from 26F9h to 8280h
+; F000:26F9h–284Fh — chipset memory-window test and extended-address RAM probe.
+bios_post_memory_window_test:
+    cli
+    db      0x2E,0xA0,0x18,0xB5        ; mov al,[cs:B518h]
+    call    near 0x8300
+    jne     short bios_post_memory_window_restore
+    JMP_ABS 0x284F
+bios_post_memory_window_restore:
+    push    ds
+    push    es
+    push    word [0x0067]
+    push    word [0x0069]
+    mov     [0x0067], sp
+    db      0x8C,0x16,0x69,0x00       ; mov [0069h], ss
+    mov     ax, cs
+    mov     ss, ax
+    mov     di, 0x2722
+    JMP_ABS 0x8CB2
+bios_post_memreg_19:
+    mov     ax, 0x1919
+    mov     di, 0x272B
+    JMP_ABS 0x8DED
+    or      al, 0x03
+    db      0x86, 0xE0                 ; xchg al, ah
+    mov     di, 0x2735
+    JMP_ABS 0x8DFB
+bios_post_memreg_18:
+    mov     ax, 0x1818
+    mov     di, 0x273E
+    JMP_ABS 0x8DED
+    or      al, 0x02
+    db      0x86, 0xE0                 ; xchg al, ah
+    mov     di, 0x2748
+    JMP_ABS 0x8DFB
+bios_post_memreg_enter_pm:
+    mov     di, 0x274E
+    JMP_ABS 0x2686
+bios_post_memreg_19_second:
+    mov     ax, 0x1919
+    mov     di, 0x2757
+    JMP_ABS 0x8DED
+    and     al, 0xFC
+    db      0x86, 0xE0                 ; xchg al, ah
+    mov     di, 0x2761
+    JMP_ABS 0x8DFB
+
+bios_extended_memory_probe:
+    mov     ax, 0x1000
+    mov     ds, ax
+    mov     cx, 0x0002
+    db      0x66,0x33,0xF6            ; xor esi, esi
+    db      0x66,0xB8,0xAA,0x55,0xAA,0x55 ; mov eax,55AA55AAh
+bios_extended_memory_probe_loop:
+    db      0x67,0x66,0x8B,0x1E       ; mov ebx,[esi]
+    db      0x67,0x66,0x89,0x06       ; mov [esi],eax
+    jmp     short $+2
+    db      0x67,0x66,0x8B,0x5E,0x04 ; mov ebx,[esi+4]
+    db      0x67,0x66,0x89,0x46,0x04 ; mov [esi+4],eax
+    jmp     short $+2
+    db      0x67,0x66,0x8B,0x9E,0x00,0x08,0x00,0x00 ; mov ebx,[esi+0800h]
+    db      0x67,0x66,0x8B,0x9E,0x00,0x10,0x00,0x00 ; mov ebx,[esi+1000h]
+    db      0x67,0x66,0x8B,0x9E,0x00,0x18,0x00,0x00 ; mov ebx,[esi+1800h]
+    db      0x67,0x66,0x8B,0x9E,0x00,0x20,0x00,0x00 ; mov ebx,[esi+2000h]
+    db      0x67,0x66,0x3B,0x06       ; cmp eax,[esi]
+    jne     near bios_extended_memory_probe_failed
+    db      0x66,0x83,0xC6,0x04       ; add esi,4
+    loop    bios_extended_memory_probe_loop
+bios_extended_memory_probe_failed:
+    db      0x0B,0xC9                 ; or cx,cx
+    jne     near bios_extended_memory_probe_bad
+    mov     ax, 0x1000
+    mov     ds, ax
+    mov     es, ax
+    nop
+    mov     sp, 0x27CA
+    JMP_ABS 0x29BB
+    dw      0x27CC
+bios_extended_memory_probe_bad:
+    je      near bios_extended_memory_probe_next_segment
+    or      bp, 0x4000
+    mov     sp, 0x27DA
+    JMP_ABS 0x8D83
+    dw      0x27DC
+    jmp     short bios_extended_memory_probe_restore
+bios_extended_memory_probe_next_segment:
+    mov     ax, ds
+    add     ax, 0x0400
+    cmp     ax, 0x9000
+    jne     short bios_extended_memory_probe_load_segment
+bios_extended_memory_probe_load_segment:
+    mov     ds, ax
+    mov     ax, 0xB3B3
+    nop
+    mov     sp, 0x27F2
+    JMP_ABS 0xEE94
+    dw      0x27F4
+    or      al, 0x01
+    db      0x86, 0xC4                 ; xchg ah, al
+    mov     sp, 0x27FE
+    JMP_ABS 0xEE9D
+    dw      0x2800
+bios_extended_memory_probe_restore:
+    mov     ax, 0x1919
+    nop
+    mov     sp, 0x280A
+    JMP_ABS 0x8DCF
+    dw      0x280C
+    or      al, 0x28
+    or      al, 0x03
+    db      0x86, 0xE0                 ; xchg al, ah
+    mov     sp, 0x2816
+    JMP_ABS 0x8DDC
+    dw      0x2818
+    mov     di, 0x281E
+    JMP_ABS 0x2686
+bios_extended_memory_probe_finish:
+    mov     ax, 0x1919
+    nop
+    mov     sp, 0x2828
+    JMP_ABS 0x8DCF
+    dw      0x282A
+    and     al, 0xFC
+    db      0x86, 0xE0                 ; xchg al, ah
+    mov     sp, 0x2834
+    JMP_ABS 0x8DDC
+    dw      0x2836
+    mov     ax, 0x0040
+    mov     ds, ax
+    out     0x80, al
+    db      0x8E,0x16,0x69,0x00       ; mov ss,[0069h]
+    db      0x8B,0x26,0x67,0x00       ; mov sp,[0067h]
+    db      0x8F,0x06,0x69,0x00       ; pop word [0069h]
+    db      0x8F,0x06,0x67,0x00       ; pop word [0067h]
+    pop     es
+    pop     ds
+    ret
+
+%if ($ - rom_start) != 0x2850
+    %error "Extended memory probe and chipset restoration must end at 2850h"
+%endif
+incbin  "ami486.bin", ($ - rom_start), (0x8280 - ($ - rom_start)) ; inherited reference bytes from 2850h to 8280h
     db      0x2F, 0x00, 0xE7, 0x03, 0x00, 0x00, 0x12, 0x00
 
 ; F000:82D0 — original POST callback vector table.
