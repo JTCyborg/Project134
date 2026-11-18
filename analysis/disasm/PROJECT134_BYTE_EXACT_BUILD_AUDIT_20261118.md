@@ -2,7 +2,7 @@
 
 Date: 2026-11-18  
 Branch: `main`  
-Build workflow: [run 44375480780](https://github.com/JTCyborg/Project134/actions/runs/44375480780)
+Build workflow: [run 44378354650](https://github.com/JTCyborg/Project134/actions/runs/44375480780)
 
 ## Verified build result
 
@@ -28,15 +28,15 @@ The committed `out/Debug/Project134.bin` is also byte-identical to `ami486.bin`.
 
 ## Native versus inherited coverage
 
-The NASM listing `Project134.native-candidate.lst` was parsed for all `<bin NNh>` records emitted by `incbin`.
+The NASM listing `Project134.native-candidate.lst` from run `44378354650` was parsed for all `<bin NNh>` records emitted by `incbin`.
 
 | Output origin | Bytes | Share |
 |---|---:|---:|
-| Explicit inherited `incbin` slices from `ami486.bin` | 60,623 | 92.50% |
-| Bytes emitted directly by NASM source (instructions, explicit data, and fill) | 4,913 | 7.50% |
+| Explicit inherited `incbin` slices from `ami486.bin` | 58,325 | 89.00% |
+| Bytes emitted directly by NASM source (instructions, explicit data, and fill) | 7,211 | 11.00% |
 | Total | 65,536 | 100% |
 
-There are 102 `incbin` directives in the listing, 17 of which contribute non-zero bytes. Zero-length slices are retained as explicit layout boundaries.
+There are 102 `incbin` directives in the listing, 17 of which contribute non-zero bytes. The newly reconstructed NASM interval `20FCh–29F5h` adds 2,303 bytes of source-emitted instructions/data compared with the earlier audited build. Zero-length slices are retained as explicit layout boundaries.
 
 **Interpretation:** the result is a byte-exact, behavior-preserving compatibility image. It is not accurate to call 100% of the ROM independently reconstructed: 92.5% is inherited from the original reference. The byte comparison proves the assembled image matches the reference, not that every inherited routine has been semantically reconstructed.
 
@@ -46,4 +46,4 @@ The GitHub Actions job installed NASM, assembled the candidate, ran the full byt
 
 ## Next reconstruction work
 
-Replace inherited ranges with instruction-level NASM only when entry points, instruction boundaries, data tables, alternate entries, stack-threaded continuations, and side effects are supported by the existing disassembly evidence. Keep the full 65,536-byte comparison and POST checksum as regression gates. Never use a checksum-adjustment word to conceal missing or incorrect code.
+The current source has instruction-level NASM coverage for `20FCh–29F5h` and `8300h–83FFh`, plus previously reconstructed helpers. The next inherited region begins at `29F6h`; its setup/configuration handlers and inline pointer tables need to be mapped before conversion. Replace inherited ranges with instruction-level NASM only when entry points, instruction boundaries, data tables, alternate entries, stack-threaded continuations, and side effects are supported by the existing disassembly evidence. Keep the full 65,536-byte comparison and POST checksum as regression gates. Never use a checksum-adjustment word to conceal missing or incorrect code.
