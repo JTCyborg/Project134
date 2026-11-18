@@ -3705,7 +3705,56 @@ bios_hd_size_edit_record_return:
     %error "Geometry-record editor must end at 4FCFh"
 %endif
 
-incbin  "ami486.bin", ($ - rom_start), (0x8280 - ($ - rom_start)) ; inherited reference bytes from 4FCFh to 8280h
+; F000:4FCF — Setup drive-type selection callback.
+bios_hd_utility_drive_type_select:
+    push    bp
+    db      0x8B, 0xEC                 ; mov bp, sp
+    push    ax
+    mov     al, [0xE1A6]
+    mov     [0xE19F], al
+    mov     ax, 0x1102
+    mov     dx, 0x1629
+    mov     bx, 0x0003
+    call    near 0x578D
+    lea     bx, [0x3AA0]
+    mov     ax, 0x1215
+    call    near 0x58A1
+    mov     bl, [bp-0x02]
+    db      0x2A, 0xFF                 ; sub bh, bh
+    shl     bx, 1
+    mov     bx, [bx+0x3BEC]
+    mov     ax, 0x1315
+    call    near 0x58A1
+    lea     bx, [0x3C08]
+    mov     ax, 0x1515
+    call    near 0x58BE
+    call    near 0xF571
+bios_hd_utility_drive_type_wait:
+    call    near 0x591A
+    mov     [0xE182], ax
+    db      0x3D, 0x52, 0x00           ; cmp ax, 0052h
+    je      short bios_hd_utility_drive_type_finish
+    ja      short bios_hd_utility_drive_type_wait
+    sub     al, 0x41
+    je      short bios_hd_utility_drive_type_finish
+    sub     al, 0x08
+    jne     short bios_hd_utility_drive_type_wait
+bios_hd_utility_drive_type_finish:
+    mov     al, [0xE1A2]
+    mov     [0xE19F], al
+    mov     ax, 0x1102
+    mov     dx, 0x1629
+    call    near 0x5802
+    mov     al, [0xE182]
+    db      0x8B, 0xE5                 ; mov sp, bp
+    pop     bp
+    ret
+
+%if ($ - rom_start) != 0x5038
+    %error "Drive-type selection callback must end at 5038h"
+%endif
+
+incbin  "ami486.bin", ($ - rom_start), (0x8280 - ($ - rom_start)) ; inherited reference bytes from 5038h to 8280h
     db      0x2F, 0x00, 0xE7, 0x03, 0x00, 0x00, 0x12, 0x00
 
 ; F000:82D0 — original POST callback vector table.
