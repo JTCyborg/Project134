@@ -22,8 +22,9 @@ The original `ami486.bin` remains immutable reference input. This reconstruction
 
 - Source: repository-root `ami486.bin`
 - Git blob: `480c7520c93e6c7ed437cf3ad214da7503f82ec6`
-- The binary endpoint returned a Base64 payload of 88,841 characters in this session. Its length is not valid Base64 (not divisible by four), so the payload is treated as incomplete and no decoded file size or checksum is claimed here.
-- Before generating a clone, verify the exact byte length and cryptographic hash from a complete binary download. Then map the file against the chipset's ROM decode and reset-vector alias before choosing a final linker origin.
+- Verified image length: 65,536 bytes.
+- Verified SHA-256: `91fd62ce3ccb0b79b42f5fd6c6a7262ed52824b8ade917181b8a12267fec003b`.
+- The complete reference image is included in the reproducible Windows CI artifact and remains immutable. The source is assembled as a flat 16-bit ROM image with its original F000h-relative offsets.
 - Existing disassembly notes: `analysis/disasm/`
 
 ## Reconstruction strategy
@@ -75,13 +76,28 @@ Do not implement the disk service as complete until read, write, verify, format,
 
 ## Current status
 
-The current NASM build is now **byte-identical to the original 64-KiB ROM**. GitHub Actions run `44378354650` completed successfully: full comparison reports 65,536/65,536 bytes equal, the 16-bit POST checksum is `0000h`, and the candidate SHA-256 is `91fd62ce3ccb0b79b42f5fd6c6a7262ed52824b8ade917181b8a12267fec003b`, identical to the reference. This establishes a boot-compatible image at the binary level; PCem was not launched by this CI job.
+The current NASM candidate is **byte-identical to the original 64-KiB ROM**. GitHub Actions run [`44382969490`](https://github.com/JTCyborg/Project134/actions/runs/44382969490) completed successfully:
 
-This is **not yet an independent native reconstruction**. The NASM listing shows 58,325 bytes (89.0%) inherited from explicit `incbin "ami486.bin"` slices and 7,211 bytes (11.0%) emitted by the source as instructions/data/fill. The latter are byte-verified; inherited regions are preserved, not reimplemented. The next work is to replace inherited ranges with verified NASM routines while keeping the full-image byte comparison and POST checksum passing. The source now reconstructs the additional executable region `20FCh–29F5h` (memory alias checks, shadow-copy/ALi handlers, CMOS AUTO Config selection, segment/GDT sweeps, extended-memory probe, PIT measurement and RAM test). See `analysis/disasm/PROJECT134_BYTE_EXACT_BUILD_AUDIT_20261118.md` for the reproducible measurements.
+- Full comparison: 65,536/65,536 bytes equal.
+- POST06 16-bit word checksum: `0000h`.
+- Candidate and reference SHA-256: `91fd62ce3ccb0b79b42f5fd6c6a7262ed52824b8ade917181b8a12267fec003b`.
+- NASM structural validation: 65,536 bytes.
+- PCem was not launched by this CI job; runtime boot confirmation remains a separate test.
+
+This is **not yet a fully independent native reconstruction**. The verified NASM listing contains 55,961 bytes (85.39%) inherited from explicit `incbin "ami486.bin"` slices and 9,575 bytes (14.61%) emitted directly by source as instructions, explicit data, and fill. The source-emitted bytes have been compared against the reference. Inherited code is preserved, not reimplemented.
+
+The current source now contains these newly verified regions:
+
+- `2065h–2F23h`: POST memory/CMOS/selector paths, including the previously transcribed `29F6h–2D10h` handlers, memory benchmark/PIT measurement routines at `2D11h–2E72h`, B513/B519 Setup selector handlers at `2E74h–2EF0h`, and the existing PIT helpers and Setup relocation handoff.
+- `2F24h–3043h`: Setup exit prompts, saved-stack restoration, BDA clear helper, and temporary IVT/INT 13h AH=14h path.
+- `3C5Ch–3F49h`: Setup main menu, shared header renderer, value parser, and metric formatter.
+- `8300h–83FFh`: CPU/cache profile selector and CMOS 8Eh update path.
+
+See `analysis/disasm/PROJECT134_BYTE_EXACT_BUILD_AUDIT_20261118.md` for the exact build and inherited-range inventory. The next selected code interval is `3F4Ah–4230h`, the POST system-configuration display path called from `164Ch`.
 
 The Visual Studio build produces two artifacts:
 
-- `Project134.native-candidate.bin` — assembled from `bios/src/reset.asm`. In the current verified build it is byte-identical to the original ROM, but 89.0% of its bytes are still inherited through explicit reference slices.
-- `Project134.bin` — the default boot image, copied from the known-working `ami486.bin` reference before native assembly. It has the same SHA-256 as the assembled candidate in the current verified build.
+- `Project134.native-candidate.bin` — assembled from `bios/src/reset.asm`. At the verified revision it is byte-identical to the original ROM; 85.39% of its bytes are still inherited through explicit reference slices.
+- `Project134.bin` — the default boot image, copied from the known-working `ami486.bin` reference before native assembly. It has the same SHA-256 as the assembled candidate at this revision.
 
-Both files therefore contain the same known-working ROM bytes at this revision. The build does not launch PCem; runtime confirmation remains separate. Use `-NativeOnly` only when deliberately testing the assembled candidate as the primary output.
+Both files contain the same ROM bytes at this revision. Use `-NativeOnly` only when deliberately testing the assembled candidate as the primary output.
