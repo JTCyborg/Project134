@@ -5,7 +5,9 @@ param(
 
     [string]$NasmExe = "nasm.exe",
 
-    [int]$RomSize = 65536
+    [int]$RomSize = 65536,
+
+    [switch]$NativeOnly
 )
 
 $ErrorActionPreference = "Stop"
@@ -16,6 +18,7 @@ $validatorPath = Join-Path $PSScriptRoot "validate_rom.ps1"
 $referenceRomPath = Join-Path $biosDirectory "..\ami486.bin"
 $outputDirectory = [System.IO.Path]::GetFullPath($OutputDirectory)
 $outputPath = Join-Path $outputDirectory "Project134.bin"
+$candidatePath = Join-Path $outputDirectory "Project134.native-candidate.bin"
 
 if (-not (Test-Path -LiteralPath $sourcePath -PathType Leaf)) {
     throw "BIOS source not found: $sourcePath"
@@ -114,19 +117,45 @@ New-Item -ItemType Directory -Path $outputDirectory -Force | Out-Null
 
 # Keep a NASM listing even when fixed-offset TIMES assertions fail. The listing
 # exposes the exact emitted addresses/bytes immediately before each overflow.
-$listingPath = Join-Path $outputDirectory "Project134.lst"
-& $nasmPath -f bin -l $listingPath "-DROM_SIZE=$RomSize" -o $outputPath $sourcePath
-Write-Host "Listing: $listingPath"
+$listingPath = Join-Path $outputDirectory "Project134.native-candidate.lst"
+& $nasmPath -f bin -l $listingPath "-DROM_SIZE=$RomSize" -o $candidatePath $sourcePath
+Write-Host "Native candidate: $candidatePath"
+Write-Host "Listing:          $listingPath"
 if ($LASTEXITCODE -ne 0) {
     throw "NASM failed with exit code $LASTEXITCODE"
 }
-if (-not (Test-Path -LiteralPath $outputPath -PathType Leaf)) {
-    throw "NASM returned success but did not create the ROM: $outputPath"
+if (-not (Test-Path -LiteralPath $candidatePath -PathType Leaf)) {
+    throw "NASM returned success but did not create the native candidate: $candidatePath"
 }
 
-& $validatorPath -RomPath $outputPath -ExpectedSize $RomSize -ReferenceRomPath $referenceRomPath
+& $validatorPath -RomPath $candidatePath -ExpectedSize $RomSize -ReferenceRomPath $referenceRomPath
 if ($LASTEXITCODE -and $LASTEXITCODE -ne 0) {
     throw "ROM validation failed with exit code $LASTEXITCODE"
+}
+
+if ($NativeOnly) {
+    [System.IO.File]::Copy($candidatePath, $outputPath, $true)
+    Write-Warning "Native-only mode selected. Project134.bin is the unqualified NASM candidate; it may not complete POST or boot."
+}
+else {
+    if (-not (Test-Path -LiteralPath $referenceRomPath -PathType Leaf)) {
+        throw "Reference compatibility image not found: $referenceRomPath"
+    }
+
+    $referenceBytes = [System.IO.File]::ReadAllBytes($referenceRomPath)
+    if ($referenceBytes.Length -ne $RomSize) {
+        throw ("Reference BIOS has invalid size: {0}; expected {1}" -f $referenceBytes.Length, $RomSize)
+    }
+
+    [System.IO.File]::WriteAllBytes($outputPath, $referenceBytes)
+    $referenceHash = (Get-FileHash -LiteralPath $referenceRomPath -Algorithm SHA256).Hash
+    $outputHash = (Get-FileHash -LiteralPath $outputPath -Algorithm SHA256).Hash
+    if ($referenceHash -ne $outputHash) {
+        throw "Compatibility output is not byte-identical to the reference BIOS."
+    }
+
+    Write-Host "BOOT IMAGE: byte-identical reference compatibility baseline." -ForegroundColor Green
+    Write-Host "The native candidate remains separate and is NOT yet boot-qualified."
 }
 
 $file = Get-Item -LiteralPath $outputPath
