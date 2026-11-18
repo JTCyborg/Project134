@@ -2647,7 +2647,259 @@ bios_post_equipment_suffix_done:
     %error "POST system-configuration display code must end at 4231h"
 %endif
 
-incbin  "ami486.bin", ($ - rom_start), (0x8280 - ($ - rom_start)) ; inherited strings/data from 4231h to 8280h
+incbin  "ami486.bin", ($ - rom_start), (0x4628 - ($ - rom_start)) ; inherited strings/data from 4231h to 4627h
+
+; F000:4628 — Setup hard-disk utility main handler.
+bios_hd_utility_entry:
+    push    bp
+    db      0x8B, 0xEC                 ; mov bp, sp
+    mov     byte [0xE422], 0x03
+    JMP_ABS 0x4701
+
+; 4633h is an alternate loop entry reached from the back-edge at 4744h.
+bios_hd_utility_alternate_loop:
+    mov     al, [0xE1A4]
+    mov     [0xE19F], al
+    mov     ax, 0x0E01
+    mov     dx, 0x174E
+    call    near 0x5821
+    mov     al, [0xE1AC]
+    mov     [0xE189], al
+    mov     byte [0xE1AC], 0x00
+bios_hd_utility_option_loop:
+    call    near bios_hd_utility_coordinate
+    db      0x8B, 0xC8                 ; mov cx, ax
+    mov     al, [0xE1AC]
+    cbw
+    db      0x8B, 0xD8                 ; mov bx, ax
+    shl     bx, 1
+    shl     bx, 1
+    mov     bx, [bx+0x38AD]
+    db      0x8B, 0xC1                 ; mov ax, cx
+    call    near 0x58D3
+    inc     byte [0xE1AC]
+    cmp     byte [0xE1AC], 0x03
+    jl      short bios_hd_utility_option_loop
+    mov     al, [0xE189]
+    mov     [0xE1AC], al
+    mov     al, [0xE1A5]
+    mov     [0xE19F], al
+    call    near bios_hd_utility_coordinate
+    dec     ax
+    mov     [0xE180], ax
+    mov     dl, 0x12
+    call    near 0x581C
+    mov     al, [0xE1A4]
+    mov     [0xE19F], al
+    call    near 0x5902
+    mov     [0xE182], ax
+    cmp     ax, 0x000D
+    je      short bios_hd_utility_exit_dialog
+    mov     ax, [0xE180]
+    mov     dl, 0x12
+    call    near 0x581C
+    mov     ax, [0xE182]
+    db      0x2D, 0x1B, 0x00           ; sub ax, 001Bh
+    jne     short bios_hd_utility_key_dispatch
+    JMP_ABS 0x474E
+bios_hd_utility_key_dispatch:
+    db      0x2D, 0x21, 0x01           ; sub ax, 0121h
+    jb      short bios_hd_utility_refresh
+    db      0x2D, 0x01, 0x00           ; sub ax, 0001h
+    jbe     short bios_hd_utility_palette
+    db      0x2D, 0x0B, 0x00           ; sub ax, 000Bh
+    je      short bios_hd_utility_previous
+    db      0x2D, 0x03, 0x00           ; sub ax, 0003h
+    je      short bios_hd_utility_previous
+    dec     ax
+    dec     ax
+    je      short bios_hd_utility_next
+    db      0x2D, 0x03, 0x00           ; sub ax, 0003h
+    je      short bios_hd_utility_next
+    jmp     short bios_hd_utility_refresh
+bios_hd_utility_previous:
+    dec     byte [0xE1AC]
+    jns     short bios_hd_utility_refresh
+    mov     byte [0xE1AC], 0x02
+    jmp     short bios_hd_utility_refresh
+bios_hd_utility_next:
+    inc     byte [0xE1AC]
+    cmp     byte [0xE1AC], 0x03
+    jne     short bios_hd_utility_refresh
+    mov     byte [0xE1AC], 0x00
+    jmp     short bios_hd_utility_refresh
+bios_hd_utility_palette:
+    call    near 0x56AE
+    jmp     short bios_hd_utility_common_screen
+bios_hd_utility_exit_dialog:
+    mov     al, [0xE1A2]
+    mov     [0xE19F], al
+    mov     ax, 0x0801
+    mov     dx, 0x174E
+    call    near 0x5802
+    call    near 0x4891
+
+; Common display setup and utility screen.
+bios_hd_utility_common_screen:
+    call    near 0x0995
+    lea     bx, [0x3140]
+    lea     ax, [0x37C3]
+    call    near bios_setup_menu_header
+    mov     ax, 0x0D01
+    mov     dl, 0x4E
+    mov     bx, 0x9000
+    call    near 0x5862
+    lea     bx, [0x36F5]
+    mov     ax, 0x0426
+    call    near 0x58D3
+    mov     byte [0xE189], 0x00
+    call    near bios_hd_utility_drive_status
+    inc     byte [0xE189]
+    call    near bios_hd_utility_drive_status
+    lea     bx, [0x376E]
+    mov     ax, 0x0828
+    call    near 0x58BE
+    cmp     byte [0xE012], 0x00
+    je      short bios_hd_utility_no_drive
+    JMP_ABS 0x4633
+bios_hd_utility_no_drive:
+    lea     bx, [0x3757]
+    call    near bios_setup_menu_metric_formatter
+bios_hd_utility_exit:
+    db      0x8B, 0xE5                 ; mov sp, bp
+    pop     bp
+    ret
+
+; 4752h returns AX = 101Fh + selected utility index in AH.
+bios_hd_utility_coordinate:
+    mov     ah, [0xE1AC]
+    db      0x2A, 0xC0                 ; sub al, al
+    add     ax, 0x101F
+    ret
+
+; 475Ch selected-drive/status renderer.
+bios_hd_utility_drive_status:
+    push    bp
+    db      0x8B, 0xEC                 ; mov bp, sp
+    sub     sp, 0x0002
+    push    si
+    mov     al, [0xE012]
+    mov     [bp-0x01], al
+    cmp     byte [0xE189], 0x00
+    jne     short bios_hd_utility_drive_nibble_ready
+    mov     cl, 0x04
+    shr     byte [bp-0x01], cl
+bios_hd_utility_drive_nibble_ready:
+    and     byte [bp-0x01], 0x0F
+    je      short bios_hd_utility_drive_status_done
+    cmp     byte [bp-0x01], 0x0F
+    jne     short bios_hd_utility_drive_type_resolved
+    mov     al, [0xE189]
+    cbw
+    db      0x8B, 0xD8                 ; mov bx, ax
+    mov     al, [bx+0xE019]
+    mov     [bp-0x01], al
+bios_hd_utility_drive_type_resolved:
+    mov     al, [0xE189]
+    cbw
+    db      0x8B, 0xD0                 ; mov dx, ax
+    mov     al, [bp-0x01]
+    call    near 0x5AB5
+bios_hd_utility_drive_status_done:
+    mov     al, [0xE189]
+    cbw
+    db      0x8B, 0xD8                 ; mov bx, ax
+    mov     al, [bp-0x01]
+    mov     [bx+0xE1AD], al
+    db      0x8A, 0xFB                 ; mov bh, bl
+    add     bh, 0x05
+    db      0x2A, 0xDB                 ; sub bl, bl
+    mov     [0xE180], bx
+    mov     cl, [0xE189]
+    add     cl, 0x43
+    mov     [0x3727], cl
+    lea     ax, [bx+0x04]
+    lea     bx, [0x371D]
+    call    near 0x58D3
+    cmp     byte [bp-0x01], 0x00
+    jne     short bios_hd_utility_drive_present
+    cmp     byte [0xE187], 0x09
+    jne     short bios_hd_utility_drive_absent_default
+    mov     ax, [0xE180]
+    add     ax, 0x0018
+    lea     bx, [0x3731]
+    call    near 0x58D3
+    JMP_ABS 0x488C
+bios_hd_utility_drive_absent_default:
+    mov     ax, [0xE180]
+    add     ax, 0x0018
+    lea     bx, [0x373F]
+    jmp     short bios_hd_utility_drive_render
+bios_hd_utility_drive_present:
+    cmp     byte [bp-0x01], 0x2F
+    jne     short bios_hd_utility_drive_fields
+    mov     ax, [0xE180]
+    add     ax, 0x001A
+    lea     bx, [0x374C]
+    call    near 0x58D3
+bios_hd_utility_drive_fields:
+    mov     ax, [0xE180]
+    add     ax, 0x0018
+    mov     bl, [bp-0x01]
+    db      0x2A, 0xFF                 ; sub bh, bh
+    mov     dx, 0x0002
+    call    near 0x09EB
+    mov     ax, [0xE180]
+    add     ax, 0x0026
+    mov     dx, 0x0005
+    mov     bx, [0xE411]
+    call    near 0x09EB
+    mov     ax, [0xE180]
+    add     ax, 0x002C
+    mov     bl, [0xE413]
+    db      0x2A, 0xFF                 ; sub bh, bh
+    mov     dx, 0x0003
+    call    near 0x09EB
+    mov     ax, [0xE180]
+    add     ax, 0x0032
+    mov     dx, 0x0005
+    mov     bx, [0xE416]
+    call    near 0x09EB
+    mov     ax, [0xE180]
+    add     ax, 0x0038
+    mov     dx, 0x0005
+    mov     bx, [0xE41D]
+    call    near 0x09EB
+    mov     ax, [0xE180]
+    add     ax, 0x003E
+    mov     bl, [0xE41F]
+    db      0x2A, 0xFF                 ; sub bh, bh
+    mov     dx, 0x0003
+    call    near 0x09EB
+    add     word [0xE180], 0x44
+    call    near 0x5BD5
+    db      0x8B, 0xF0                 ; mov si, ax
+    cmp     si, 0xFFFF
+    jne     short bios_hd_utility_drive_resolved
+    lea     bx, [0x37BD]
+    mov     ax, [0xE180]
+    jmp     short bios_hd_utility_drive_render
+bios_hd_utility_drive_resolved:
+    db      0x8B, 0xD8                 ; mov bx, ax
+    mov     ax, [0xE180]
+    mov     dx, 0x0005
+    call    near 0x09EB
+bios_hd_utility_drive_render:
+    pop     si
+    db      0x8B, 0xE5                 ; mov sp, bp
+    pop     bp
+    ret
+
+%if ($ - rom_start) != 0x4891
+    %error "Setup hard-disk utility handler block must end at 4891h"
+%endif
+
+incbin  "ami486.bin", ($ - rom_start), (0x8280 - ($ - rom_start)) ; inherited reference bytes from 4891h to 8280h
     db      0x2F, 0x00, 0xE7, 0x03, 0x00, 0x00, 0x12, 0x00
 
 ; F000:82D0 — original POST callback vector table.
