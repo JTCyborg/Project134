@@ -3188,7 +3188,184 @@ bios_hd_utility_drive_type_render:
     %error "Drive-type callback block must end at 4B68h"
 %endif
 
-incbin  "ami486.bin", ($ - rom_start), (0x8280 - ($ - rom_start)) ; inherited reference bytes from 4B68h to 8280h
+; F000:4B68 — selected drive type renderer.
+bios_hd_utility_selected_drive:
+    push    bp
+    db      0x8B, 0xEC                 ; mov bp, sp
+    sub     sp, 0x0002
+    mov     bl, [0xE421]
+    db      0x2A, 0xFF                 ; sub bh, bh
+    mov     bl, [bx+0xE1AD]
+    mov     [bp-0x01], bl
+    mov     ax, [0xE180]
+    mov     dx, 0x0002
+    call    near 0x09EB
+    mov     dl, [0xE421]
+    db      0x2A, 0xF6                 ; sub dh, dh
+    mov     al, [bp-0x01]
+    call    near 0x5AB5
+    mov     al, 0x0D
+    db      0x8B, 0xE5                 ; mov sp, bp
+    pop     bp
+    ret
+
+; 4B96h repeats the extended-disk command until the controller status clears.
+bios_hd_utility_extended_disk_command:
+    mov     al, 0x03
+    push    ax
+bios_hd_utility_extended_disk_retry:
+    mov     ax, [0xE180]
+    mov     dx, 0x0010
+    lea     bx, [0xE422]
+    call    near 0x06C9
+    mov     [0xE184], al
+    cmp     byte [0xE422], 0x00
+    je      short bios_hd_utility_extended_disk_retry
+    ret
+
+; 4BB1h confirms and commits the utility operation.
+bios_hd_utility_commit_operation:
+    call    near bios_hd_utility_draw_confirmation
+    call    near 0x5985
+    mov     [0xE184], al
+    cmp     al, 0x59
+    jne     short bios_hd_utility_commit_display
+    call    near 0x4CEE
+bios_hd_utility_commit_display:
+    mov     al, [0xE1A2]
+    mov     [0xE19F], al
+    mov     ax, 0x0823
+    mov     dx, 0x174E
+    call    near 0x5802
+    mov     al, [0xE1A4]
+    mov     [0xE19F], al
+    mov     al, [0xE184]
+    ret
+
+; 4BDAh draws the confirmation panel and iterates the selected geometry rows.
+bios_hd_utility_draw_confirmation:
+    push    bp
+    db      0x8B, 0xEC                 ; mov bp, sp
+    sub     sp, 0x0006
+    push    si
+    mov     al, [0xE1A4]
+    mov     [0xE19F], al
+    mov     ax, 0x0839
+    mov     dx, 0x164D
+    mov     bx, 0x0003
+    call    near 0x578D
+    lea     bx, [0x38C3]
+    mov     ax, 0x093C
+    call    near 0x58D3
+    mov     ax, 0x0948
+    mov     dx, 0x0005
+    mov     bx, [0xE423]
+    call    near 0x09EB
+    call    near 0x5891
+    mov     ax, 0x093A
+    mov     dl, 0x13
+    call    near 0x581C
+    call    near 0x58B5
+    mov     ax, 0x0A3A
+    mov     dl, 0x13
+    mov     bx, 0x9000
+    call    near 0x5862
+    lea     bx, [0x38CF]
+    mov     ax, 0x0B3B
+    call    near 0x58D3
+    mov     si, 0x000A
+    cmp     [0xE423], si
+    jae     short bios_hd_utility_geometry_limit_ready
+    mov     si, [0xE423]
+bios_hd_utility_geometry_limit_ready:
+    cmp     word [0xE425], 0x0000
+    jge     short bios_hd_utility_start_cylinder_nonnegative
+    mov     word [0xE425], 0x0000
+bios_hd_utility_start_cylinder_nonnegative:
+    cmp     [0xE425], si
+    jb      short bios_hd_utility_start_cylinder_ready
+    lea     ax, [si-0x01]
+    mov     [0xE425], ax
+bios_hd_utility_start_cylinder_ready:
+    mov     [bp-0x06], si
+    mov     ax, [0xE423]
+    cmp     [0xE427], ax
+    jbe     short bios_hd_utility_end_cylinder_ready
+    mov     [0xE427], ax
+bios_hd_utility_end_cylinder_ready:
+    cmp     word [0xE427], 0x0000
+    jne     short bios_hd_utility_end_cylinder_nonzero
+    inc     word [0xE427]
+bios_hd_utility_end_cylinder_nonzero:
+    mov     word [bp-0x02], 0x0000
+    mov     ax, [0xE427]
+    sub     ax, [0xE425]
+    mov     [bp-0x04], ax
+    jmp     short bios_hd_utility_geometry_loop_test
+bios_hd_utility_geometry_loop:
+    mov     ax, [0xE423]
+    cmp     [bp-0x04], ax
+    ja      short bios_hd_utility_geometry_loop_done
+    mov     ax, [bp-0x02]
+    mov     dx, [bp-0x04]
+    call    near bios_hd_utility_draw_geometry_row
+    inc     word [bp-0x02]
+    inc     word [bp-0x04]
+bios_hd_utility_geometry_loop_test:
+    mov     ax, [bp-0x06]
+    cmp     [bp-0x02], ax
+    jb      short bios_hd_utility_geometry_loop
+bios_hd_utility_geometry_loop_done:
+    pop     si
+    db      0x8B, 0xE5                 ; mov sp, bp
+    pop     bp
+    ret
+
+; 4CA2h draws one geometry row from the selected row/column indices.
+bios_hd_utility_draw_geometry_row:
+    push    bp
+    db      0x8B, 0xEC                 ; mov bp, sp
+    push    dx
+    push    di
+    push    si
+    call    near bios_hd_utility_geometry_coordinate
+    mov     dx, 0x0005
+    mov     bx, [bp-0x02]
+    db      0x8B, 0xF0                 ; mov si, ax
+    call    near 0x09EB
+    lea     ax, [si+0x06]
+    mov     bx, [bp-0x02]
+    db      0x8B, 0xCB                 ; mov cx, bx
+    shl     bx, 1
+    db      0x03, 0xD9                 ; add bx, cx
+    lea     cx, [bx+0xE436]
+    mov     bx, [bx+0xE436]
+    mov     dx, 0x0005
+    db      0x8B, 0xF9                 ; mov di, cx
+    call    near 0x09EB
+    lea     ax, [si+0x0D]
+    mov     bl, [di+0x02]
+    db      0x2A, 0xFF                 ; sub bh, bh
+    mov     dx, 0x0003
+    call    near 0x09EB
+    pop     si
+    pop     di
+    db      0x8B, 0xE5                 ; mov sp, bp
+    pop     bp
+    ret
+
+; 4CE6h converts a one-byte value to the BIOS utility coordinate.
+bios_hd_utility_geometry_coordinate:
+    db      0x8A, 0xE0                 ; mov ah, al
+    db      0x2A, 0xC0                 ; sub al, al
+    add     ax, 0x0C3B
+    ret
+
+%if ($ - rom_start) != 0x4CEE
+    %error "Drive renderer/geometry helper block must end at 4CEEh"
+%endif
+
+incbin  "ami486.bin", ($ - rom_start), (0x8280 - ($ - rom_start)) ; inherited reference bytes from 4CEEh to 8280h
     db      0x2F, 0x00, 0xE7, 0x03, 0x00, 0x00, 0x12, 0x00
 
 ; F000:82D0 — original POST callback vector table.
