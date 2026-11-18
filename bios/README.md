@@ -1,49 +1,55 @@
-# BIOS workspace
+# Project134 — AMI486 BIOS reconstruction
 
-Project134 reconstructs the AMI486 BIOS as original NASM source. The immutable
-`ami486.bin` and the disassembly archive are analysis references only.
+## Mandatory source policy
 
-## Source policy
+The reconstructed BIOS is authored only in NASM assembly.
 
-- All executable BIOS code must be written as NASM instructions and labels.
-- Do not insert machine-code byte sequences copied from the reference ROM.
-- Do not use `db` to reproduce executable instructions from the original ROM.
-- `db 0xFF` is permitted only for unimplemented/erased ROM space and alignment.
-- Reference disassembly is used to recover control flow, operands, call targets,
-  register effects and data boundaries.
-- The original ROM may be used for behavioral comparison and validation, never
-  as a source of bytes for the reconstructed image.
+- No machine-code blocks copied from `ami486.bin`.
+- No `db` instruction streams copied from the reference ROM.
+- `ami486.bin` and disassembly outputs are analysis/behavior references only.
+- `db 0xFF` is used solely to reserve unimplemented/erased ROM space.
+- Keep the flat ROM image exactly 65,536 bytes and preserve original entry offsets.
+- Translate control flow, stack-threaded continuations, data tables and helper
+  routines explicitly; do not replace unknown routines with guessed behavior.
 
-## Visual Studio build
+## Current reconstruction status
 
-Open `Project134.sln` in Microsoft Visual Studio 2026 and build
-`Project134.BIOS`. MSBuild invokes NASM to produce a flat 16-bit, 64-KiB ROM.
+The clean NASM-only restart is in progress.
 
-Expected output:
-- `out\\Debug\\Project134.bin`
-- `out\\Release\\Project134.bin`
-
-Prerequisite: `nasm.exe` on `PATH`.
-
-## Reconstruction restart — NASM-only baseline
-
-The previous byte-block implementation has been replaced by a clean source
-baseline in `bios/src/reset.asm`.
-
-Implemented in assembly:
+Implemented as assembly in `bios/src/reset.asm`:
 - Reset vector at ROM offset `FFF0h`: far jump to `F000:E05B`.
 - Reset gateway at `E05Bh`: near jump to `F000:D604`.
-- Initial POST instructions at `D604h`: `CLI`, `CLD`, 8042 status read,
-  bit-2 test and dispatch.
-- Address labels for the next POST entries.
+- Initial POST dispatch at `D604h` with the original 8042 status-bit branch.
+- Reset/CMOS marker path at `8A04h` through `8A1Fh`.
+- CMOS marker read and initial dispatch at `D615h` through `D64Fh`.
+- PIC helper handoff at `D646h`–`D654h`.
 
-Not yet implemented:
-- 8042-clear branch at `88CEh`.
-- CMOS/reset continuation at `8A04h`.
-- POST/RAM-test continuation from `D6DEh).
-- Remaining BIOS services, data tables, vectors and option-ROM support.
+Still missing critical executable regions:
+- `88CEh` 8042-clear branch and its shared helper dependencies.
+- `8A20h` CMOS dispatch helper and its dependencies.
+- `D6DEh` stack/register test, delay loop and subsequent POST.
+- RAM test, chipset initialization, interrupt services, BIOS vectors and data.
+- Remaining POST continuation after `D724h`.
 
-All unimplemented areas are filled with `FFh`; this baseline is not bootable.
-No NASM build, ROM validation or PCem run has been claimed for this restart.
-The next work item is to translate the reset/POST disassembly into NASM,
-starting at `D604h`, preserving the documented ROM offsets and control flow.
+## Test readiness
+
+**Not ready for a PCem boot test yet.** The current image is an incomplete
+reconstruction and reaches erased `FFh` regions on either primary reset path.
+A PCem run now would only confirm the known missing-code stop, not validate BIOS
+functionality.
+
+The first meaningful PCem test checkpoint will be announced only after:
+1. both initial POST branches (`88CEh` and `8A04h`) are implemented;
+2. the full path through `D724h` and its called helpers is present;
+3. NASM build and structural validation pass;
+4. a static control-flow audit confirms no reachable placeholder holes before
+   the first stable POST checkpoint.
+
+After that checkpoint, PCem can be used to compare POST80 progress and CPU state
+against the reference BIOS. A later milestone will be required for boot testing.
+
+## Build
+
+Use the existing Visual Studio 2026 solution and the `bios/tools/build_bios.ps1`
+script. NASM must be available to the build. Do not infer a successful build
+from source edits or Git commits; record the actual build output separately.
