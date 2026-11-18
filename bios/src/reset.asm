@@ -3211,9 +3211,9 @@ bios_hd_utility_selected_drive:
 
 ; 4B96h repeats the extended-disk command until the controller status clears.
 bios_hd_utility_extended_disk_command:
+bios_hd_utility_extended_disk_retry:
     mov     al, 0x03
     push    ax
-bios_hd_utility_extended_disk_retry:
     mov     ax, [0xE180]
     mov     dx, 0x0010
     lea     bx, [0xE422]
