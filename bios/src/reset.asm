@@ -375,7 +375,154 @@ bios_memory_config_skip:
 %if ($ - rom_start) != 0x240A
     %error "Protected-mode memory alias probe region must end at 240Ah"
 %endif
-incbin  "ami486.bin", ($ - rom_start), (0x8280 - ($ - rom_start)) ; inherited reference bytes from 240Ah to 8280h
+; F000:240Ah–2536h — shadow-window workers and CMOS-gated ALi register conversion.
+bios_shadow_copy_f000:
+    mov     bx, 0xF000
+    mov     dl, 0xC0
+    mov     cx, 0x8000
+    jmp     short bios_shadow_copy_common
+    nop
+bios_shadow_copy_c000:
+    mov     bx, 0xC000
+    mov     cx, 0x4000
+    mov     dl, 0x01
+    jmp     short bios_shadow_copy_common
+    nop
+bios_shadow_copy_c800:
+    mov     bx, 0xC800
+    mov     cx, 0x4000
+    mov     dl, 0x02
+    jmp     short bios_shadow_copy_common
+    nop
+bios_shadow_copy_d000:
+    mov     bx, 0xD000
+    mov     cx, 0x4000
+    mov     dl, 0x04
+    jmp     short bios_shadow_copy_common
+    nop
+bios_shadow_copy_d800:
+    mov     bx, 0xD800
+    mov     cx, 0x4000
+    mov     dl, 0x08
+    jmp     short bios_shadow_copy_common
+    nop
+bios_shadow_copy_e000:
+    mov     bx, 0xE000
+    mov     cx, 0x4000
+    mov     dl, 0x10
+    jmp     short bios_shadow_copy_common
+    nop
+bios_shadow_copy_c800_alt:
+    mov     bx, 0xC800
+    mov     cx, 0x4000
+    mov     dl, 0x20
+    jmp     short bios_shadow_copy_common
+    nop
+bios_shadow_copy_common:
+    push    es
+    push    ds
+    mov     ax, 0x1313
+    call    near 0x8DCF
+    db      0x0A, 0xC2                 ; or al, dl
+    xchg    al, ah
+    call    near 0x8DDC
+    mov     ax, 0x1414
+    call    near 0x8DCF
+    and     al, 0xFC
+    or      al, 0x02
+    xchg    al, ah
+    call    near 0x8DDC
+    db      0x8B, 0xC3                 ; mov ax, bx
+    mov     ds, ax
+    mov     es, ax
+    db      0x33, 0xF6                 ; xor si, si
+    db      0x33, 0xFF                 ; xor di, di
+    rep     movsw
+    mov     ax, 0x1414
+    call    near 0x8DCF
+    db      0x86, 0xC4                 ; xchg ah, al
+    and     ah, 0xFD
+    or      ah, 0x01
+    call    near 0x8DDC
+    pop     ds
+    pop     es
+    ret
+
+bios_ali_register_12_prepare:
+    mov     ax, 0x1212
+    call    near 0x8DCF
+    and     al, 0xFB
+    xchg    al, ah
+    call    near 0x8DDC
+    mov     al, 0x42
+    call    near 0xEE94
+    test    al, 0x04
+    jnz     short bios_ali_register_12_weighted
+    JMP_ABS 0x2536
+bios_ali_register_12_weighted:
+    lea     si, [0x2088]
+    db      0x8B, 0xFE                 ; mov di, si
+    db      0x33, 0xD2                 ; xor dx, dx
+    mov     ax, 0x1110
+    call    near 0x8DCF
+    xchg    al, ah
+    call    near 0x8DCF
+    db      0x8B, 0xD8                 ; mov bx, ax
+    and     ax, 0x0F0F
+    and     bx, 0xF0F0
+    db      0x8B, 0xD0                 ; mov dx, ax
+    cmp     ah, 0x0F
+    mov     ah, 0x00
+    je      near bios_ali_weight_bh
+    shr     dx, 8
+    db      0x03, 0xF2                 ; add si, dx
+    mov     ah, [cs:si]
+    db      0x33, 0xD2                 ; xor dx, dx
+    db      0x8B, 0xF7                 ; mov si, di
+bios_ali_weight_bh:
+    db      0x8B, 0xD3                 ; mov dx, bx
+    cmp     bh, 0xF0
+    mov     bh, 0x00
+    je      near bios_ali_weight_al
+    shr     dx, 12
+    db      0x03, 0xF2                 ; add si, dx
+    mov     bh, [cs:si]
+    db      0x33, 0xD2                 ; xor dx, dx
+    db      0x8B, 0xF7                 ; mov si, di
+bios_ali_weight_al:
+    db      0x02, 0xE7                 ; add ah, bh
+    db      0x8A, 0xD0                 ; mov dl, al
+    cmp     al, 0x0F
+    mov     al, 0x00
+    je      near bios_ali_weight_bl
+    db      0x03, 0xF2                 ; add si, dx
+    mov     al, [cs:si]
+    db      0x33, 0xD2                 ; xor dx, dx
+    db      0x8B, 0xF7                 ; mov si, di
+bios_ali_weight_bl:
+    db      0x8A, 0xD3                 ; mov dl, bl
+    cmp     bl, 0xF0
+    mov     bl, 0x00
+    je      near bios_ali_weight_sum
+    shr     dl, 4
+    db      0x03, 0xF2                 ; add si, dx
+    mov     bl, [cs:si]
+bios_ali_weight_sum:
+    db      0x02, 0xC3                 ; add al, bl
+    db      0x02, 0xE0                 ; add ah, al
+    mov     al, 0x15
+    call    near 0x8DDC
+    mov     ax, 0x1212
+    call    near 0x8DCF
+    or      al, 0x04
+    xchg    al, ah
+    call    near 0x8DDC
+    ret
+
+%if ($ - rom_start) != 0x2537
+    %error "Shadow-copy and CMOS weighted ALi helpers must end at 2537h"
+%endif
+incbin  "ami486.bin", ($ - rom_start), (0x8280 - ($ - rom_start)) ; inherited reference bytes from 2537h to 8280h
     db      0x2F, 0x00, 0xE7, 0x03, 0x00, 0x00, 0x12, 0x00
 
 ; F000:82D0 — original POST callback vector table.
