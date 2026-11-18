@@ -2009,7 +2009,7 @@ bios_8042_read_output_data:
 ; F000:F622-F658 — 8042 command/data transactions.
 times 0xF622 - ($ - rom_start) db 0xFF
 bios_post_8042_write_command:
-    call    bios_8042_wait_input_empty
+    call    bios_post_8042_write_command_byte
     jnz     short bios_post_8042_write_command_done
     mov     al, ah
     call    bios_post_8042_write_data
