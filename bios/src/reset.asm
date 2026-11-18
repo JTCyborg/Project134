@@ -2279,7 +2279,6 @@ bios_print_hex_byte:
     shr     al, 4
     call    near bios_print_hex_nibble
     pop     ax
-    ret
 
 bios_print_hex_nibble:
     and     al, 0x0F
