@@ -3754,7 +3754,47 @@ bios_hd_utility_drive_type_finish:
     %error "Drive-type selection callback must end at 5038h"
 %endif
 
-incbin  "ami486.bin", ($ - rom_start), (0x8280 - ($ - rom_start)) ; inherited reference bytes from 5038h to 8280h
+; F000:5038 — Setup hard-disk geometry/drive status display.
+bios_hd_utility_geometry_screen:
+    lea     bx, [0x3128]
+    lea     ax, [0x380F]
+    call    near bios_setup_menu_header
+    mov     byte [0xE189], 0x00
+bios_hd_utility_geometry_screen_loop:
+    mov     al, [0xE1A2]
+    mov     [0xE19F], al
+    mov     ax, 0x0A02
+    mov     dx, 0x0E4D
+    call    near 0x5802
+    mov     al, [0xE1A4]
+    mov     [0xE19F], al
+    mov     ax, 0x0A18
+    mov     dx, 0x0E36
+    mov     bx, 0x0003
+    call    near 0x578D
+    lea     bx, [0x3C1F]
+    mov     ax, 0x0C28
+    call    near 0x58A1
+    mov     al, [0xE189]
+    call    near 0x5AEC
+    mov     al, [0xE1A2]
+    mov     [0xE19F], al
+    lea     bx, [0x36F5]
+    mov     ax, 0x0426
+    call    near 0x58D3
+    call    near bios_hd_utility_drive_status
+    mov     al, [0xE189]
+    call    near 0x5B7C
+    inc     byte [0xE189]
+    cmp     byte [0xE189], 0x02
+    jl      short bios_hd_utility_geometry_screen_loop
+    ret
+
+%if ($ - rom_start) != 0x509E
+    %error "HD utility geometry screen must end at 509Eh"
+%endif
+
+incbin  "ami486.bin", ($ - rom_start), (0x8280 - ($ - rom_start)) ; inherited reference bytes from 509Eh to 8280h
     db      0x2F, 0x00, 0xE7, 0x03, 0x00, 0x00, 0x12, 0x00
 
 ; F000:82D0 — original POST callback vector table.
