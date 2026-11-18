@@ -19,6 +19,17 @@ rom_start:
 ; PCem maps this 64 KiB image into the F0000h..FFFFFh BIOS window.
 
 ; ---------------------------------------------------------------------------
+; Exact pointer-dispatch trampoline at ROM offset 19ABh-19ACh.
+; The POST path reads CS:82DAh = 19ABh, jumps through this FF E7
+; (JMP DI), and resumes at 8A81h. The following RET stubs are retained
+; from the same original dispatch cluster.
+; ---------------------------------------------------------------------------
+times 0x19AB - ($ - rom_start) db 0xFF
+bios_post_dispatch_trampoline:
+    db 0xFF, 0xE7, 0xC3, 0xC3, 0xC3
+
+; ---------------------------------------------------------------------------
+; ---------------------------------------------------------------------------
 ; Exact reference bytes at ROM offset 2646h-26BDh.
 ; GDT descriptors and protected-mode memory-read helper, entered from 8DA2h.
 ; ---------------------------------------------------------------------------
@@ -32,17 +43,6 @@ times 0x2646 - ($ - rom_start) db 0xFF
     db 0xc0, 0xfc, 0xf3, 0x67, 0x66, 0x26, 0xad, 0xb8, 0x10, 0x00, 0x8e, 0xc0, 0x0f, 0x20, 0xc0, 0x24
     db 0xfe, 0x0f, 0x22, 0xc0, 0xeb, 0x00, 0xff, 0xe7
 
-; ---------------------------------------------------------------------------
-; Exact pointer-dispatch trampoline at ROM offset 19ABh-19ACh.
-; The POST path reads CS:82DAh = 19ABh, jumps through this FF E7
-; (JMP DI), and resumes at 8A81h. The following RET stubs are retained
-; from the same original dispatch cluster.
-; ---------------------------------------------------------------------------
-times 0x19AB - ($ - rom_start) db 0xFF
-bios_post_dispatch_trampoline:
-    db 0xFF, 0xE7, 0xC3, 0xC3, 0xC3
-
-; ---------------------------------------------------------------------------
 ; Exact POST dispatch pointer at ROM offset 82DAh-82DBh.
 ; D774h -> 8A78h reads this word, which selects the 19ABh trampoline.
 ; ---------------------------------------------------------------------------
@@ -184,6 +184,14 @@ times 0x8CCD - ($ - rom_start) db 0xFF
 ; ---------------------------------------------------------------------------
     db 0xC3                         ; 8DECh: RET (end of indexed-I/O helper)
 
+; ---------------------------------------------------------------------------
+; Exact reference bytes at ROM offset 8DEDh-8E0Ch.
+; ALi indexed-register read/write tail helpers and JMP DI trampoline used by the 8D83h POST sequence.
+; ---------------------------------------------------------------------------
+times 0x8DED - ($ - rom_start) db 0xFF
+    db 0xe6, 0x22, 0xe3, 0x00, 0xe3, 0x00, 0xe4, 0x23, 0xe3, 0x00, 0xe3, 0x00, 0xff, 0xe7, 0xe6, 0x22
+    db 0xe3, 0x00, 0xe3, 0x00, 0x86, 0xc4, 0xe6, 0x23, 0xe3, 0x00, 0xe3, 0x00, 0x86, 0xc4, 0xff, 0xe7
+
 times 0xD604 - ($ - rom_start) db 0xFF
 bios_post_entry:
     db 0xFA                         ; CLI
@@ -299,14 +307,6 @@ times 0xEE94 - ($ - rom_start) db 0xFF
     db 0x00, 0xB0, 0x04, 0xE6, 0x21, 0xE3, 0x00, 0xE3, 0x00, 0xB0, 0x01, 0xE6, 0xA1, 0xE3, 0x00, 0xE3
     db 0x00, 0xE6, 0x21, 0xE3, 0x00, 0xE3, 0x00, 0xB0, 0xFF, 0xE6, 0xA1, 0xE3, 0x00, 0xE3, 0x00, 0xE6
     db 0x21, 0xC3
-
-; ---------------------------------------------------------------------------
-; Exact reference bytes at ROM offset 8DEDh-8E0Ch.
-; ALi indexed-register read/write tail helpers and JMP DI trampoline used by the 8D83h POST sequence.
-; ---------------------------------------------------------------------------
-times 0x8DED - ($ - rom_start) db 0xFF
-    db 0xe6, 0x22, 0xe3, 0x00, 0xe3, 0x00, 0xe4, 0x23, 0xe3, 0x00, 0xe3, 0x00, 0xff, 0xe7, 0xe6, 0x22
-    db 0xe3, 0x00, 0xe3, 0x00, 0x86, 0xc4, 0xe6, 0x23, 0xe3, 0x00, 0xe3, 0x00, 0x86, 0xc4, 0xff, 0xe7
 
 ; x86 reset vector at physical FFFF0h: far jump to F000:E05B.
 times 0xFFF0 - ($ - rom_start) db 0xFF
