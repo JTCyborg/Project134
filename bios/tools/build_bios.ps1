@@ -165,7 +165,7 @@ if ($NativeOnly) {
     Write-Warning "Native-only mode selected. Project134.bin is the unqualified NASM candidate; it may not complete POST or boot."
 }
 else {
-    Write-Host "The native candidate remains separate and is NOT yet boot-qualified."
+    Write-Host "NATIVE CANDIDATE: byte-identical to ami486.bin; PCem runtime execution is not performed by this build." -ForegroundColor Green
 }
 
 $file = Get-Item -LiteralPath $outputPath
