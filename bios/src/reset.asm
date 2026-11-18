@@ -173,14 +173,11 @@ bios_ali_read_c3_third_return:
     dw      0x89A6
 bios_ali_read_c3_third_continue:
     test    al, 0x02
-    jz      short bios_ali_c3_no_bit1
+    jz      short 0x89C6
     mov     ah, bl
     and     ah, 0xFB
     mov     al, 0xC3
     nop
-    mov     sp, 0x89B8
-    jmp     0x8DDC
-bios_ali_c3_no_bit1:
     mov     sp, 0x89B8
     jmp     0x8DDC
 
