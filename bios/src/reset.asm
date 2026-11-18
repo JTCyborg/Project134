@@ -86,6 +86,24 @@ bios_cmos_post_55:
     jmp     0xD74C
 
 ; ---------------------------------------------------------------------------
+; F000:8AD5 — reset keyboard-controller wait and CPU reset request.
+times 0x8AD5 - ($ - rom_start) db 0xFF
+bios_reset_keyboard_wait:
+    cli
+    cli
+    xor     cx, cx
+    jcxz    $+2
+bios_keyboard_wait_busy:
+    in      al, 0x64
+    test    al, 0x02
+    loopne  bios_keyboard_wait_busy
+    mov     al, 0xFE
+    out     0x64, al
+bios_keyboard_reset_halt:
+    hlt
+    jmp     bios_keyboard_reset_halt
+
+; ---------------------------------------------------------------------------
 ; F000:D604 — reset-time POST entry and CMOS marker dispatch.
 times 0xD604 - ($ - rom_start) db 0xFF
 bios_post_entry:
@@ -125,7 +143,7 @@ bios_cmos_read:
     je      bios_pic_init
     cmp     al, 0x0A
     jna     bios_cmos_dispatch_entry
-    jmp     bios_post_delay
+    jmp     bios_post_delay_complete
 
 bios_pic_init:
     mov     bx, 0x0870
@@ -140,16 +158,16 @@ bios_cmos_dispatch_entry:
 
 ; F000:D655 — CMOS marker-dependent CR0 setup and dispatch.
 bios_cmos_post:
-    jz      bios_post_delay
+    jz      bios_post_delay_setup
     test    byte [cs:0x8281], 0x40
-    jnz     bios_post_delay
+    jnz     bios_post_delay_setup
     mov     ax, si
     cmp     al, 0x05
     je      bios_cr0_adjust
     cmp     al, 0x09
     je      bios_cr0_adjust
     cmp     al, 0x0A
-    jnz     bios_post_delay
+    jnz     bios_post_delay_setup
 bios_cr0_adjust:
     ror     eax, 16
     mov     cx, ax
@@ -165,7 +183,7 @@ bios_cr0_write:
     mov     cr0, eax
     mov     ax, cx
     ror     eax, 16
-bios_post_delay:
+bios_post_delay_setup:
     mov     ax, 0x0040
     mov     ds, ax
     mov     al, 0
