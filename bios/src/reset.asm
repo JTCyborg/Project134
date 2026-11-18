@@ -21,7 +21,7 @@ rom_start:
 %endmacro
 
 ; F000:19AB–19AF — stock callback trampolines used by the POST hook slots.
-times 0x19AB - ($ - rom_start) db 0xFF
+incbin  "ami486.bin", ($ - rom_start), (0x19AB - ($ - rom_start)) ; inherited reference bytes up to 19ABh
 bios_callback_jmp_di:
     jmp     di
 bios_callback_ret_19ad:
@@ -32,20 +32,20 @@ bios_callback_ret_19af:
     ret
 
 ; F000:1AF8 — POST continuation trampoline into the D82Fh 8042 sequence.
-times 0x1AF8 - ($ - rom_start) db 0xFF
+incbin  "ami486.bin", ($ - rom_start), (0x1AF8 - ($ - rom_start)) ; inherited reference bytes up to 1AF8h
 bios_post_8042_continuation:
     JMP_ABS 0xD82F
 
 ; ---------------------------------------------------------------------------
 ; F000:1AFB — CMOS B3h profile selection and PIT/speaker initialization.
-times 0x1AFB - ($ - rom_start) db 0xFF
+incbin  "ami486.bin", ($ - rom_start), (0x1AFB - ($ - rom_start)) ; inherited reference bytes up to 1AFBh
 bios_cmos_b3_profile_entry:
     mov     al, 0xB3
     nop
     mov     sp, 0x1B04
     JMP_ABS 0xEE94
 
-times 0x1B04 - ($ - rom_start) db 0xFF
+incbin  "ami486.bin", ($ - rom_start), (0x1B04 - ($ - rom_start)) ; inherited reference bytes up to 1B04h
 bios_cmos_b3_profile_return:
     dw      0x1B06
 bios_cmos_b3_profile_continue:
@@ -65,7 +65,7 @@ bios_cmos_profile_table_write:
     mov     sp, 0x1B2A
     JMP_ABS 0x8DDC
 
-times 0x1B2A - ($ - rom_start) db 0xFF
+incbin  "ami486.bin", ($ - rom_start), (0x1B2A - ($ - rom_start)) ; inherited reference bytes up to 1B2Ah
 bios_cmos_profile_write_return:
     dw      0x1B2C
 bios_cmos_profile_write_continue:
@@ -104,7 +104,7 @@ bios_callback_ret_1b5f:
 
 ; F000:2065 — reset-entry trampoline and protected-mode GDT.
 ; The descriptor and GDT are reconstructed as NASM data declarations.
-times 0x2065 - ($ - rom_start) db 0xFF
+incbin  "ami486.bin", ($ - rom_start), (0x2065 - ($ - rom_start)) ; inherited reference bytes up to 2065h
 bios_reset_entry_trampoline:
     JMP_ABS 0xE05B
 
@@ -132,13 +132,13 @@ bios_pm_gdt_end:
     db      0x01, 0x04, 0x02, 0x10, 0x40
 
 ; F000:208D — 21-record ALi1429 profile table walker.
-times 0x208D - ($ - rom_start) db 0xFF
+incbin  "ami486.bin", ($ - rom_start), (0x208D - ($ - rom_start)) ; inherited reference bytes up to 208Dh
 bios_ali_profile_apply:
     mov     ax, 0xC503
     mov     sp, 0x2096
     JMP_ABS 0x8DDC
 
-times 0x2096 - ($ - rom_start) db 0xFF
+incbin  "ami486.bin", ($ - rom_start), (0x2096 - ($ - rom_start)) ; inherited reference bytes up to 2096h
 bios_ali_profile_select_return:
     dw      0x2098
 bios_ali_profile_select_continue:
@@ -163,7 +163,7 @@ bios_ali_profile_record_write:
     mov     sp, 0x20C2
     JMP_ABS 0x8DDC
 
-times 0x20C2 - ($ - rom_start) db 0xFF
+incbin  "ami486.bin", ($ - rom_start), (0x20C2 - ($ - rom_start)) ; inherited reference bytes up to 20C2h
 bios_ali_profile_write_return:
     dw      0x20C4
 bios_ali_profile_write_continue:
@@ -171,7 +171,7 @@ bios_ali_profile_write_continue:
     mov     sp, 0x20CC
     jmp     bios_8042_a20_enable
 
-times 0x20CC - ($ - rom_start) db 0xFF
+incbin  "ami486.bin", ($ - rom_start), (0x20CC - ($ - rom_start)) ; inherited reference bytes up to 20CCh
 bios_ali_profile_a20_return:
     dw      0x20CE
 bios_ali_profile_a20_continue:
@@ -180,7 +180,7 @@ bios_ali_profile_a20_continue:
     mov     sp, 0x20D8
     JMP_ABS 0xEEEF
 
-times 0x20D8 - ($ - rom_start) db 0xFF
+incbin  "ami486.bin", ($ - rom_start), (0x20D8 - ($ - rom_start)) ; inherited reference bytes up to 20D8h
 bios_ali_profile_eeef_return:
     dw      0x20DA
 bios_ali_profile_pm_setup:
@@ -197,20 +197,20 @@ bios_ali_profile_pm_setup:
     mov     sp, 0x20FA
     JMP_ABS 0x8DDC
 
-times 0x20FA - ($ - rom_start) db 0xFF
+incbin  "ami486.bin", ($ - rom_start), (0x20FA - ($ - rom_start)) ; inherited reference bytes up to 20FAh
 bios_ali_profile_write_pm_return:
     dw      0x20FC
 
 ; F000:8280 — recovered original BIOS configuration bytes.
 ; These fields are read by POST code at 8280h..8286h.
-times 0x8280 - ($ - rom_start) db 0xFF
+incbin  "ami486.bin", ($ - rom_start), (0x8280 - ($ - rom_start)) ; inherited reference bytes up to 8280h
     db      0x2F, 0x00, 0xE7, 0x03, 0x00, 0x00, 0x12, 0x00
 
 ; F000:82D0 — original POST callback vector table.
 ; CS:82DA is the active POST hook and must resolve to the stock JMP-DI
 ; trampoline at F000:19AB. The surrounding entries are also consumed by
 ; the POST/CMOS dispatch paths.
-times 0x82D0 - ($ - rom_start) db 0xFF
+incbin  "ami486.bin", ($ - rom_start), (0x82D0 - ($ - rom_start)) ; inherited reference bytes up to 82D0h
     dw      0x19A3, 0x0000, 0x19A3, 0x0000
     dw      0x19A3, 0x19AB, 0x19A5, 0x19AD
     dw      0x19A7, 0x19AE, 0x19A9, 0x19AF
@@ -350,7 +350,7 @@ bios_cpu_profile_descriptor_return:
     ret
 
 ; F000:8400 — CMOS 8Eh extended-register clear/restore path.
-times 0x8400 - ($ - rom_start) db 0xFF
+incbin  "ami486.bin", ($ - rom_start), (0x8400 - ($ - rom_start)) ; inherited reference bytes up to 8400h
 bios_cmos_8e_extended_entry:
     test    byte [cs:0x8280], 0x40
     jnz     short bios_cmos_8e_read
@@ -362,7 +362,7 @@ bios_cmos_8e_read:
     mov     sp, 0x8414
     JMP_ABS 0xEE94
 
-times 0x8414 - ($ - rom_start) db 0xFF
+incbin  "ami486.bin", ($ - rom_start), (0x8414 - ($ - rom_start)) ; inherited reference bytes up to 8414h
 bios_cmos_8e_initial_read_return:
     dw      0x8416
 bios_cmos_8e_initial_read_continue:
@@ -376,7 +376,7 @@ bios_cmos_8e_clear_iteration:
     mov     sp, 0x842A
     JMP_ABS 0xEE9D
 
-times 0x842A - ($ - rom_start) db 0xFF
+incbin  "ami486.bin", ($ - rom_start), (0x842A - ($ - rom_start)) ; inherited reference bytes up to 842Ah
 bios_cmos_8e_clear_return:
     dw      0x842C
 bios_cmos_8e_clear_continue:
@@ -384,7 +384,7 @@ bios_cmos_8e_clear_continue:
     loop    bios_cmos_8e_clear_iteration
 
 ; The loop's first iteration enters the helper body at 8424h.
-times 0x8430 - ($ - rom_start) db 0xFF
+incbin  "ami486.bin", ($ - rom_start), (0x8430 - ($ - rom_start)) ; inherited reference bytes up to 8430h
 bios_cmos_8e_restore_setup:
     mov     al, 0x8E
     mov     cx, 0x0032
@@ -396,7 +396,7 @@ bios_cmos_8e_restore_loop:
     mov     sp, 0x8444
     JMP_ABS 0xEE9D
 
-times 0x8444 - ($ - rom_start) db 0xFF
+incbin  "ami486.bin", ($ - rom_start), (0x8444 - ($ - rom_start)) ; inherited reference bytes up to 8444h
 bios_cmos_8e_restore_return:
     dw      0x8446
 bios_cmos_8e_restore_continue:
@@ -414,7 +414,7 @@ bios_cmos_8e_rom_table_loop:
     mov     sp, 0x8460
     JMP_ABS 0xEE94
 
-times 0x8460 - ($ - rom_start) db 0xFF
+incbin  "ami486.bin", ($ - rom_start), (0x8460 - ($ - rom_start)) ; inherited reference bytes up to 8460h
 bios_cmos_8e_rom_table_read_return:
     dw      0x8462
 bios_cmos_8e_rom_table_read_continue:
@@ -430,7 +430,7 @@ bios_cmos_8e_rom_table_read_continue:
     mov     sp, 0x847E
     JMP_ABS 0xEE94
 
-times 0x847E - ($ - rom_start) db 0xFF
+incbin  "ami486.bin", ($ - rom_start), (0x847E - ($ - rom_start)) ; inherited reference bytes up to 847Eh
 bios_cmos_8e_rom_table_write_return:
     dw      0x8480
 bios_cmos_8e_rom_table_write_continue:
@@ -449,7 +449,7 @@ bios_cmos_8e_descriptor_loop:
     mov     sp, 0x849E
     JMP_ABS 0xEE94
 
-times 0x849E - ($ - rom_start) db 0xFF
+incbin  "ami486.bin", ($ - rom_start), (0x849E - ($ - rom_start)) ; inherited reference bytes up to 849Eh
 bios_cmos_8e_descriptor_read_return:
     dw      0x84A0
 bios_cmos_8e_descriptor_read_continue:
@@ -465,7 +465,7 @@ bios_cmos_8e_descriptor_read_continue:
     mov     sp, 0x84BC
     JMP_ABS 0xEE9D
 
-times 0x84BC - ($ - rom_start) db 0xFF
+incbin  "ami486.bin", ($ - rom_start), (0x84BC - ($ - rom_start)) ; inherited reference bytes up to 84BCh
 bios_cmos_8e_descriptor_write_return:
     dw      0x84BE
 bios_cmos_8e_descriptor_write_continue:
@@ -480,7 +480,7 @@ bios_cmos_8e_finish:
 ; F000:88CE — 8042 clear / reset branch.
 ; This region is deliberately left unimplemented until its stack-threaded
 ; continuations and overlapping entry points are fully mapped.
-times 0x88CE - ($ - rom_start) db 0xFF
+incbin  "ami486.bin", ($ - rom_start), (0x88CE - ($ - rom_start)) ; inherited reference bytes up to 88CEh
 bios_8042_clear_entry:
     mov     cx, 0x0100
 bios_8042_delay:
@@ -500,7 +500,7 @@ bios_8042_delay:
     nop
 
 ; The CMOS helper RET consumes this inline word and resumes at 88F0h.
-times 0x88EE - ($ - rom_start) db 0xFF
+incbin  "ami486.bin", ($ - rom_start), (0x88EE - ($ - rom_start)) ; inherited reference bytes up to 88EEh
 bios_8042_probe_return:
     dw      0x88F0
 
@@ -526,7 +526,7 @@ bios_8042_cmos_read:
     JMP_ABS 0xEE94
 
 ; EE94h returns to 8910h through this semantic stack word.
-times 0x890E - ($ - rom_start) db 0xFF
+incbin  "ami486.bin", ($ - rom_start), (0x890E - ($ - rom_start)) ; inherited reference bytes up to 890Eh
 bios_8042_cmos_read_return:
     dw      0x8910
 bios_8042_cmos_read_continue:
@@ -537,7 +537,7 @@ bios_8042_cmos_read_continue:
     JMP_ABS 0xEE9D
 
 ; EE9Dh returns to 891Eh; that continuation restarts POST at D60Fh.
-times 0x891C - ($ - rom_start) db 0xFF
+incbin  "ami486.bin", ($ - rom_start), (0x891C - ($ - rom_start)) ; inherited reference bytes up to 891Ch
 bios_8042_cmos_write_return:
     dw      0x891E
 bios_8042_reset_reentry:
@@ -562,7 +562,7 @@ bios_ali_probe_start:
     mov     sp, 0x893C
     JMP_ABS 0x8DCF
 
-times 0x893C - ($ - rom_start) db 0xFF
+incbin  "ami486.bin", ($ - rom_start), (0x893C - ($ - rom_start)) ; inherited reference bytes up to 893Ch
 bios_ali_read_c2_return:
     dw      0x893E
 bios_ali_read_c2_continue:
@@ -572,14 +572,14 @@ bios_ali_read_c2_continue:
     mov     sp, 0x894A
     JMP_ABS 0x8DDC
 
-times 0x894A - ($ - rom_start) db 0xFF
+incbin  "ami486.bin", ($ - rom_start), (0x894A - ($ - rom_start)) ; inherited reference bytes up to 894Ah
 bios_ali_write_c2_return:
     dw      0x894C
 bios_ali_write_c2_continue:
     mov     sp, 0x8952
     JMP_ABS 0x8DCF
 
-times 0x8952 - ($ - rom_start) db 0xFF
+incbin  "ami486.bin", ($ - rom_start), (0x8952 - ($ - rom_start)) ; inherited reference bytes up to 8952h
 bios_ali_read_c3_return:
     dw      0x8954
 bios_ali_read_c3_continue:
@@ -592,14 +592,14 @@ bios_ali_read_c3_continue:
     mov     sp, 0x8966
     JMP_ABS 0x8DDC
 
-times 0x8966 - ($ - rom_start) db 0xFF
+incbin  "ami486.bin", ($ - rom_start), (0x8966 - ($ - rom_start)) ; inherited reference bytes up to 8966h
 bios_ali_write_c2_second_return:
     dw      0x8968
 bios_ali_write_c2_second_continue:
     mov     sp, 0x896E
     JMP_ABS 0x8DDC
 
-times 0x896E - ($ - rom_start) db 0xFF
+incbin  "ami486.bin", ($ - rom_start), (0x896E - ($ - rom_start)) ; inherited reference bytes up to 896Eh
 bios_ali_read_c2_second_return:
     dw      0x8970
 bios_ali_read_c2_second_continue:
@@ -614,7 +614,7 @@ bios_ali_c2_common_write:
     mov     sp, 0x8982
     JMP_ABS 0x8DDC
 
-times 0x8982 - ($ - rom_start) db 0xFF
+incbin  "ami486.bin", ($ - rom_start), (0x8982 - ($ - rom_start)) ; inherited reference bytes up to 8982h
 bios_ali_write_c3_return:
     dw      0x8984
 bios_ali_write_c3_continue:
@@ -623,7 +623,7 @@ bios_ali_write_c3_continue:
     mov     sp, 0x898E
     JMP_ABS 0x8DCF
 
-times 0x898E - ($ - rom_start) db 0xFF
+incbin  "ami486.bin", ($ - rom_start), (0x898E - ($ - rom_start)) ; inherited reference bytes up to 898Eh
 bios_ali_read_c3_second_return:
     dw      0x8990
 bios_ali_read_c3_second_continue:
@@ -633,7 +633,7 @@ bios_ali_read_c3_second_continue:
     mov     sp, 0x89A4
     JMP_ABS 0x8DCF
 
-times 0x89A4 - ($ - rom_start) db 0xFF
+incbin  "ami486.bin", ($ - rom_start), (0x89A4 - ($ - rom_start)) ; inherited reference bytes up to 89A4h
 bios_ali_read_c3_third_return:
     dw      0x89A6
 bios_ali_read_c3_third_continue:
@@ -646,14 +646,14 @@ bios_ali_read_c3_third_continue:
     mov     sp, 0x89B8
     JMP_ABS 0x8DDC
 
-times 0x89B8 - ($ - rom_start) db 0xFF
+incbin  "ami486.bin", ($ - rom_start), (0x89B8 - ($ - rom_start)) ; inherited reference bytes up to 89B8h
 bios_ali_write_c3_second_return:
     dw      0x89BA
 bios_ali_write_c3_second_continue:
     mov     sp, 0x89C0
     JMP_ABS 0x8DCF
 
-times 0x89C0 - ($ - rom_start) db 0xFF
+incbin  "ami486.bin", ($ - rom_start), (0x89C0 - ($ - rom_start)) ; inherited reference bytes up to 89C0h
 bios_ali_read_c3_fourth_return:
     dw      0x89C2
 bios_ali_read_c3_fourth_continue:
@@ -667,7 +667,7 @@ bios_ali_c3_fourth_no_bit1:
     mov     sp, 0x89D4
     JMP_ABS 0x8DDC
 
-times 0x89D4 - ($ - rom_start) db 0xFF
+incbin  "ami486.bin", ($ - rom_start), (0x89D4 - ($ - rom_start)) ; inherited reference bytes up to 89D4h
 bios_ali_write_c3_third_return:
     dw      0x89D6
 bios_ali_write_c3_third_continue:
@@ -681,7 +681,7 @@ bios_ali_write_c3_third_continue:
     mov     sp, 0x89EC
     JMP_ABS 0x8DCF
 
-times 0x89EC - ($ - rom_start) db 0xFF
+incbin  "ami486.bin", ($ - rom_start), (0x89EC - ($ - rom_start)) ; inherited reference bytes up to 89ECh
 bios_ali_read_final_return:
     dw      0x89EE
 bios_ali_read_final_continue:
@@ -700,7 +700,7 @@ bios_ali_dispatch_di:
 
 ; ---------------------------------------------------------------------------
 ; F000:8A04 — reset-mode dispatch.
-times 0x8A04 - ($ - rom_start) db 0xFF
+incbin  "ami486.bin", ($ - rom_start), (0x8A04 - ($ - rom_start)) ; inherited reference bytes up to 8A04h
 bios_reset_cmos_path:
     smsw    ax
     test    al, 0x01
@@ -719,7 +719,7 @@ bios_reset_to_post_delay:
 
 ; ---------------------------------------------------------------------------
 ; F000:8A20 — CMOS marker dispatcher.
-times 0x8A20 - ($ - rom_start) db 0xFF
+incbin  "ami486.bin", ($ - rom_start), (0x8A20 - ($ - rom_start)) ; inherited reference bytes up to 8A20h
 bios_cmos_dispatch:
     mov     ax, si
     cmp     al, 0x05
@@ -765,7 +765,7 @@ bios_cmos_post_55:
 
 ; ---------------------------------------------------------------------------
 ; F000:8A78 — dynamic POST hook and stack-threaded ALi setup continuation.
-times 0x8A78 - ($ - rom_start) db 0xFF
+incbin  "ami486.bin", ($ - rom_start), (0x8A78 - ($ - rom_start)) ; inherited reference bytes up to 8A78h
 bios_post_dynamic_hook:
     mov     ax, [cs:0x82DA]
     mov     di, 0x8A81
@@ -779,7 +779,7 @@ bios_post_dynamic_hook_nop:
     mov     sp, 0x8A8E
     JMP_ABS 0x8D83
 
-times 0x8A8E - ($ - rom_start) db 0xFF
+incbin  "ami486.bin", ($ - rom_start), (0x8A8E - ($ - rom_start)) ; inherited reference bytes up to 8A8Eh
 bios_post_ali_mode_return:
     dw      0x8A90
 bios_post_ali_mode_continue:
@@ -788,7 +788,7 @@ bios_post_ali_mode_continue:
     mov     sp, 0x8A9A
     JMP_ABS 0xEE94
 
-times 0x8A9A - ($ - rom_start) db 0xFF
+incbin  "ami486.bin", ($ - rom_start), (0x8A9A - ($ - rom_start)) ; inherited reference bytes up to 8A9Ah
 bios_post_cmos_b3_read_return:
     dw      0x8A9C
 bios_post_cmos_b3_read_continue:
@@ -797,7 +797,7 @@ bios_post_cmos_b3_read_continue:
     mov     sp, 0x8AA6
     JMP_ABS 0xEE9D
 
-times 0x8AA6 - ($ - rom_start) db 0xFF
+incbin  "ami486.bin", ($ - rom_start), (0x8AA6 - ($ - rom_start)) ; inherited reference bytes up to 8AA6h
 bios_post_cmos_b3_write_return:
     dw      0x8AA8
 bios_post_cmos_b3_write_continue:
@@ -806,7 +806,7 @@ bios_post_cmos_b3_write_continue:
     mov     sp, 0x8AB2
     JMP_ABS 0x8DDC
 
-times 0x8AB2 - ($ - rom_start) db 0xFF
+incbin  "ami486.bin", ($ - rom_start), (0x8AB2 - ($ - rom_start)) ; inherited reference bytes up to 8AB2h
 bios_post_ali_1313_write_return:
     dw      0x8AB4
 bios_post_ali_1313_write_continue:
@@ -815,7 +815,7 @@ bios_post_ali_1313_write_continue:
     mov     sp, 0x8ABE
     JMP_ABS 0x8DCF
 
-times 0x8ABE - ($ - rom_start) db 0xFF
+incbin  "ami486.bin", ($ - rom_start), (0x8ABE - ($ - rom_start)) ; inherited reference bytes up to 8ABEh
 bios_post_ali_1313_read_return:
     dw      0x8AC0
 bios_post_ali_1313_read_continue:
@@ -824,7 +824,7 @@ bios_post_ali_1313_read_continue:
     mov     sp, 0x8ACA
     JMP_ABS 0x8DDC
 
-times 0x8ACA - ($ - rom_start) db 0xFF
+incbin  "ami486.bin", ($ - rom_start), (0x8ACA - ($ - rom_start)) ; inherited reference bytes up to 8ACAh
 bios_post_ali_1313_final_return:
     dw      0x8ACC
 bios_post_ali_1313_final_continue:
@@ -838,7 +838,7 @@ bios_8042_disable_trampoline:
 
 ; ---------------------------------------------------------------------------
 ; F000:8AD5 — reset keyboard-controller wait and CPU reset request.
-times 0x8AD5 - ($ - rom_start) db 0xFF
+incbin  "ami486.bin", ($ - rom_start), (0x8AD5 - ($ - rom_start)) ; inherited reference bytes up to 8AD5h
 bios_reset_keyboard_wait:
     cli
     cli
@@ -856,7 +856,7 @@ bios_keyboard_reset_halt:
 
 ; ---------------------------------------------------------------------------
 ; F000:8CCDh — CR0 cache-disable helper and 8042 command/response helper.
-times 0x8CCD - ($ - rom_start) db 0xFF
+incbin  "ami486.bin", ($ - rom_start), (0x8CCD - ($ - rom_start)) ; inherited reference bytes up to 8CCDh
 bios_cr0_disable_cache_if_real_mode:
     smsw    ax
     test    al, 0x01
@@ -873,7 +873,7 @@ bios_indexed_jump_di:
 
 ; The byte at 8CEAh is an alternate/overlapping decode byte; the reachable
 ; helper entry below is the verified 8CEBh stream.
-times 0x8CEB - ($ - rom_start) db 0xFF
+incbin  "ami486.bin", ($ - rom_start), (0x8CEB - ($ - rom_start)) ; inherited reference bytes up to 8CEBh
 bios_8042_wait_and_read:
     loopne  0x8D20
     leave
@@ -896,7 +896,7 @@ bios_8042_command_done:
     ret
 
 ; F000:8D09 — ALi indexed-register mode helpers.
-times 0x8D09 - ($ - rom_start) db 0xFF
+incbin  "ami486.bin", ($ - rom_start), (0x8D09 - ($ - rom_start)) ; inherited reference bytes up to 8D09h
 bios_ali_mode_enable:
     mov     ax, 0xC503
     call    0x8DDC
@@ -917,7 +917,7 @@ bios_ali_mode_enable:
     mov     cx, 0
     ret
 
-times 0x8D39 - ($ - rom_start) db 0xFF
+incbin  "ami486.bin", ($ - rom_start), (0x8D39 - ($ - rom_start)) ; inherited reference bytes up to 8D39h
 bios_ali_mode_disable:
     mov     ax, 0xC503
     call    0x8DDC
@@ -931,7 +931,7 @@ bios_ali_mode_disable:
     mov     cx, 0
     ret
 
-times 0x8D56 - ($ - rom_start) db 0xFF
+incbin  "ami486.bin", ($ - rom_start), (0x8D56 - ($ - rom_start)) ; inherited reference bytes up to 8D56h
 bios_ali_memory_mode:
     mov     ax, 0xC503
     call    0x8DDC
@@ -954,7 +954,7 @@ bios_ali_memory_mode_return:
     mov     cx, 0xFFFF
     ret
 
-times 0x8D83 - ($ - rom_start) db 0xFF
+incbin  "ami486.bin", ($ - rom_start), (0x8D83 - ($ - rom_start)) ; inherited reference bytes up to 8D83h
 bios_ali_shadow_mode:
     mov     ax, 0xC503
     mov     di, 0x8D8C
@@ -1001,7 +1001,7 @@ bios_ali_shadow_return:
     ret
 
 ; F000:8DCF / 8DDC — ALi1429 indexed read/write primitives.
-times 0x8DCF - ($ - rom_start) db 0xFF
+incbin  "ami486.bin", ($ - rom_start), (0x8DCF - ($ - rom_start)) ; inherited reference bytes up to 8DCFh
 bios_ali_read_index:
     out     0x22, al
     jcxz    $+2
@@ -1046,7 +1046,7 @@ bios_ali_write_then_return:
 
 ; ---------------------------------------------------------------------------
 ; F000:D604 — reset-time POST entry and CMOS marker dispatch.
-times 0xD604 - ($ - rom_start) db 0xFF
+incbin  "ami486.bin", ($ - rom_start), (0xD604 - ($ - rom_start)) ; inherited reference bytes up to D604h
 bios_post_entry:
     cli
     cld
@@ -1137,7 +1137,7 @@ bios_post_delay_setup:
 
 ; F000:D6A8 — CMOS[8Fh] indexed near-jump table (11 recovered entries).
 ; These are semantic 16-bit code offsets, not copied instruction bytes.
-times 0xD6A8 - ($ - rom_start) db 0xFF
+incbin  "ami486.bin", ($ - rom_start), (0xD6A8 - ($ - rom_start)) ; inherited reference bytes up to D6A8h
 bios_cmos_8f_dispatch_table:
     dw      0xD724
     dw      0x91D1
@@ -1177,7 +1177,7 @@ bios_segment_test_setup:
     jmp     sp
 
 ; D6DEh — first SS:SP test stream.
-times 0xD6DE - ($ - rom_start) db 0xFF
+incbin  "ami486.bin", ($ - rom_start), (0xD6DE - ($ - rom_start)) ; inherited reference bytes up to D6DEh
 bios_ram_test_entry:
 bios_stack_test_entry:
     mov     al, 0x01
@@ -1217,7 +1217,7 @@ bios_post_delay_loop:
     jnz     bios_post_delay_loop
 
 ; F000:D724 — exact delay completion and POST checkpoint 03h.
-times 0xD724 - ($ - rom_start) db 0xFF
+incbin  "ami486.bin", ($ - rom_start), (0xD724 - ($ - rom_start)) ; inherited reference bytes up to D724h
 bios_post_delay_complete:
     test    byte [cs:0x8281], 0x40
     jnz     bios_post_checkpoint_03
@@ -1260,7 +1260,7 @@ bios_post_checkpoint_05:
 
 ; ---------------------------------------------------------------------------
 ; F000:D777 — memory checksum, 8042 drain and keyboard-controller POST.
-times 0xD777 - ($ - rom_start) db 0xFF
+incbin  "ami486.bin", ($ - rom_start), (0xD777 - ($ - rom_start)) ; inherited reference bytes up to D777h
 bios_post_memory_checksum:
     mov     al, 0x06
     out     0x80, al
@@ -1318,7 +1318,7 @@ bios_post_8042_response_wait:
     mov     sp, 0xD7D8
     JMP_ABS 0xF659
 
-times 0xD7D8 - ($ - rom_start) db 0xFF
+incbin  "ami486.bin", ($ - rom_start), (0xD7D8 - ($ - rom_start)) ; inherited reference bytes up to D7D8h
 bios_post_8042_wait_aa_return:
     dw      0xD7DA
 bios_post_8042_wait_aa_continue:
@@ -1327,7 +1327,7 @@ bios_post_8042_wait_aa_continue:
     mov     sp, 0xD7E4
     JMP_ABS 0xF60F
 
-times 0xD7E4 - ($ - rom_start) db 0xFF
+incbin  "ami486.bin", ($ - rom_start), (0xD7E4 - ($ - rom_start)) ; inherited reference bytes up to D7E4h
 bios_post_8042_read_response_return:
     dw      0xD7E6
 bios_post_8042_read_response_continue:
@@ -1346,7 +1346,7 @@ bios_post_8042_response_ok:
     mov     sp, 0xD806
     JMP_ABS 0xF659
 
-times 0xD806 - ($ - rom_start) db 0xFF
+incbin  "ami486.bin", ($ - rom_start), (0xD806 - ($ - rom_start)) ; inherited reference bytes up to D806h
 bios_post_8042_a1_return:
     dw      0xD808
 bios_post_8042_a1_continue:
@@ -1366,7 +1366,7 @@ bios_post_8042_a1_done:
     mov     sp, 0xD826
     JMP_ABS 0xF659
 
-times 0xD826 - ($ - rom_start) db 0xFF
+incbin  "ami486.bin", ($ - rom_start), (0xD826 - ($ - rom_start)) ; inherited reference bytes up to D826h
 bios_post_8042_ff_return:
     dw      0xD828
 bios_post_keyboard_init_done:
@@ -1376,7 +1376,7 @@ bios_post_keyboard_init_done:
 
 ; ---------------------------------------------------------------------------
 ; F000:D82F — first 8042 command/data exchange after POST 09h.
-times 0xD82F - ($ - rom_start) db 0xFF
+incbin  "ami486.bin", ($ - rom_start), (0xD82F - ($ - rom_start)) ; inherited reference bytes up to D82Fh
 bios_post_8042_command_60:
     mov     al, 0x60
     out     0x64, al
@@ -1384,7 +1384,7 @@ bios_post_8042_command_60:
     mov     sp, 0xD83A
     JMP_ABS 0xF659
 
-times 0xD83A - ($ - rom_start) db 0xFF
+incbin  "ami486.bin", ($ - rom_start), (0xD83A - ($ - rom_start)) ; inherited reference bytes up to D83Ah
 bios_post_8042_command_60_return:
     dw      0xD83C
 bios_post_8042_command_60_continue:
@@ -1399,10 +1399,10 @@ bios_post_8042_command_data:
     mov     sp, 0xD854
     JMP_ABS 0xF659
 
-times 0xD854 - ($ - rom_start) db 0xFF
+incbin  "ami486.bin", ($ - rom_start), (0xD854 - ($ - rom_start)) ; inherited reference bytes up to D854h
 bios_post_8042_command_data_return:
     dw      0xD856
-times 0xD856 - ($ - rom_start) db 0xFF
+incbin  "ami486.bin", ($ - rom_start), (0xD856 - ($ - rom_start)) ; inherited reference bytes up to D856h
 bios_post_8042_command_0b:
     mov     al, 0x0B
     out     0x80, al
@@ -1415,7 +1415,7 @@ bios_post_8042_command_c8:
     mov     sp, 0xD86E
     JMP_ABS 0xF659
 
-times 0xD86E - ($ - rom_start) db 0xFF
+incbin  "ami486.bin", ($ - rom_start), (0xD86E - ($ - rom_start)) ; inherited reference bytes up to D86Eh
 bios_post_8042_command_0b_return:
     dw      0xD870
 bios_post_8042_command_0b_continue:
@@ -1428,7 +1428,7 @@ bios_post_8042_command_0b_continue:
     mov     sp, 0xD882
     JMP_ABS 0xF659
 
-times 0xD882 - ($ - rom_start) db 0xFF
+incbin  "ami486.bin", ($ - rom_start), (0xD882 - ($ - rom_start)) ; inherited reference bytes up to D882h
 bios_post_cmos_8f_55_return:
     dw      0xD884
 bios_post_cmos_8f_55_continue:
@@ -1439,14 +1439,14 @@ bios_post_cmos_8f_55_continue:
     mov     sp, 0xD892
     JMP_ABS 0xEE9D
 
-times 0xD892 - ($ - rom_start) db 0xFF
+incbin  "ami486.bin", ($ - rom_start), (0xD892 - ($ - rom_start)) ; inherited reference bytes up to D892h
 bios_post_cmos_8f_55_read_return:
     dw      0xD894
 bios_post_cmos_8f_55_read_continue:
     mov     sp, 0xD89A
     JMP_ABS 0xEE94
 
-times 0xD89A - ($ - rom_start) db 0xFF
+incbin  "ami486.bin", ($ - rom_start), (0xD89A - ($ - rom_start)) ; inherited reference bytes up to D89Ah
 bios_post_cmos_8f_55_compare_return:
     dw      0xD89C
 bios_post_cmos_8f_55_compare_continue:
@@ -1457,14 +1457,14 @@ bios_post_cmos_8f_55_compare_continue:
     mov     sp, 0xD8AA
     JMP_ABS 0xEE9D
 
-times 0xD8AA - ($ - rom_start) db 0xFF
+incbin  "ami486.bin", ($ - rom_start), (0xD8AA - ($ - rom_start)) ; inherited reference bytes up to D8AAh
 bios_post_cmos_8f_aa_write_return:
     dw      0xD8AC
 bios_post_cmos_8f_aa_write_continue:
     mov     sp, 0xD8B2
     JMP_ABS 0xEE94
 
-times 0xD8B2 - ($ - rom_start) db 0xFF
+incbin  "ami486.bin", ($ - rom_start), (0xD8B2 - ($ - rom_start)) ; inherited reference bytes up to D8B2h
 bios_post_cmos_8f_aa_read_return:
     dw      0xD8B4
 bios_post_cmos_8f_aa_read_continue:
@@ -1481,7 +1481,7 @@ bios_post_cmos_8e_read:
     mov     sp, 0xD8CA
     JMP_ABS 0xEE94
 
-times 0xD8CA - ($ - rom_start) db 0xFF
+incbin  "ami486.bin", ($ - rom_start), (0xD8CA - ($ - rom_start)) ; inherited reference bytes up to D8CAh
 bios_post_cmos_8e_read_return:
     dw      0xD8CC
 bios_post_cmos_8e_read_continue:
@@ -1491,7 +1491,7 @@ bios_post_cmos_8e_read_continue:
     mov     sp, 0xD8D8
     JMP_ABS 0xEE94
 
-times 0xD8D8 - ($ - rom_start) db 0xFF
+incbin  "ami486.bin", ($ - rom_start), (0xD8D8 - ($ - rom_start)) ; inherited reference bytes up to D8D8h
 bios_post_cmos_8e_flags_return:
     dw      0xD8DA
 bios_post_cmos_8e_flags_continue:
@@ -1519,7 +1519,7 @@ bios_post_cmos_8e_flags_done:
     mov     sp, 0xD904
     JMP_ABS 0xEE9D
 
-times 0xD904 - ($ - rom_start) db 0xFF
+incbin  "ami486.bin", ($ - rom_start), (0xD904 - ($ - rom_start)) ; inherited reference bytes up to D904h
 bios_post_cmos_8e_write_return:
     dw      0xD906
 bios_post_cmos_8e_write_continue:
@@ -1528,7 +1528,7 @@ bios_post_cmos_8e_write_continue:
     JMP_ABS 0x8400
 
 ; Separate D90Dh POST entry: CMOS 8Bh read/modify/write sequence.
-times 0xD90D - ($ - rom_start) db 0xFF
+incbin  "ami486.bin", ($ - rom_start), (0xD90D - ($ - rom_start)) ; inherited reference bytes up to D90Dh
 bios_post_cmos_8b_update:
     mov     al, 0x10
     out     0x80, al
@@ -1536,7 +1536,7 @@ bios_post_cmos_8b_update:
     mov     sp, 0xD91A
     JMP_ABS 0xEE94
 
-times 0xD91A - ($ - rom_start) db 0xFF
+incbin  "ami486.bin", ($ - rom_start), (0xD91A - ($ - rom_start)) ; inherited reference bytes up to D91Ah
 bios_post_cmos_8b_read_return:
     dw      0xD91C
 bios_post_cmos_8b_read_continue:
@@ -1545,7 +1545,7 @@ bios_post_cmos_8b_read_continue:
     mov     sp, 0xD926
     JMP_ABS 0xEE9D
 
-times 0xD926 - ($ - rom_start) db 0xFF
+incbin  "ami486.bin", ($ - rom_start), (0xD926 - ($ - rom_start)) ; inherited reference bytes up to D926h
 bios_post_cmos_8c_read_return:
     dw      0xD928
 bios_post_cmos_8c_read_continue:
@@ -1553,7 +1553,7 @@ bios_post_cmos_8c_read_continue:
     mov     sp, 0xD930
     JMP_ABS 0xEE94
 
-times 0xD930 - ($ - rom_start) db 0xFF
+incbin  "ami486.bin", ($ - rom_start), (0xD930 - ($ - rom_start)) ; inherited reference bytes up to D930h
 bios_post_cmos_8a_read_return:
     dw      0xD932
 bios_post_cmos_8a_read_continue:
@@ -1562,7 +1562,7 @@ bios_post_cmos_8a_read_continue:
     mov     sp, 0xD93C
     JMP_ABS 0xEE94
 
-times 0xD93C - ($ - rom_start) db 0xFF
+incbin  "ami486.bin", ($ - rom_start), (0xD93C - ($ - rom_start)) ; inherited reference bytes up to D93Ch
 bios_post_cmos_8a_compare_return:
     dw      0xD93E
 bios_post_cmos_8a_compare_continue:
@@ -1573,7 +1573,7 @@ bios_post_cmos_8a_compare_continue:
     mov     sp, 0xD94C
     JMP_ABS 0xEE9D
 
-times 0xD94C - ($ - rom_start) db 0xFF
+incbin  "ami486.bin", ($ - rom_start), (0xD94C - ($ - rom_start)) ; inherited reference bytes up to D94Ch
 bios_post_keyboard_enable_return:
     dw      0xD94E
 bios_post_keyboard_enable_continue:
@@ -1583,7 +1583,7 @@ bios_post_cmos_8a_enable_keyboard:
     mov     sp, 0xD958
     JMP_ABS 0xF659
 
-times 0xD958 - ($ - rom_start) db 0xFF
+incbin  "ami486.bin", ($ - rom_start), (0xD958 - ($ - rom_start)) ; inherited reference bytes up to D958h
 bios_post_keyboard_ack_return:
     dw      0xD95A
 bios_post_keyboard_ack_continue:
@@ -1597,7 +1597,7 @@ bios_post_keyboard_ack_wait:
     mov     sp, 0xD96E
     JMP_ABS 0xEE94
 
-times 0xD96E - ($ - rom_start) db 0xFF
+incbin  "ami486.bin", ($ - rom_start), (0xD96E - ($ - rom_start)) ; inherited reference bytes up to D96Eh
 bios_post_cmos_8e_update_return:
     dw      0xD970
 bios_post_cmos_8e_update_continue:
@@ -1606,7 +1606,7 @@ bios_post_cmos_8e_update_continue:
     mov     sp, 0xD97A
     JMP_ABS 0xEE9D
 
-times 0xD97A - ($ - rom_start) db 0xFF
+incbin  "ami486.bin", ($ - rom_start), (0xD97A - ($ - rom_start)) ; inherited reference bytes up to D97Ah
 bios_post_keyboard_disable_return:
     dw      0xD97C
 bios_post_keyboard_disable:
@@ -1615,7 +1615,7 @@ bios_post_keyboard_disable:
     mov     sp, 0xD986
     JMP_ABS 0xF659
 
-times 0xD986 - ($ - rom_start) db 0xFF
+incbin  "ami486.bin", ($ - rom_start), (0xD986 - ($ - rom_start)) ; inherited reference bytes up to D986h
 bios_post_pic_setup_return:
     dw      0xD988
 bios_post_pic_setup_continue:
@@ -1631,7 +1631,7 @@ bios_post_pic_setup_continue:
     mov     sp, 0xD9A0
     JMP_ABS 0xEEEF
 
-times 0xD9A0 - ($ - rom_start) db 0xFF
+incbin  "ami486.bin", ($ - rom_start), (0xD9A0 - ($ - rom_start)) ; inherited reference bytes up to D9A0h
 bios_post_chipset_io_return:
     dw      0xD9A2
 bios_post_chipset_io_continue:
@@ -1668,7 +1668,7 @@ bios_post_chipset_io_continue:
     JMP_ABS 0x1AFB
 
 ; F000:D9DCh — PIT channel-2 latch/readback test and channel-0 setup.
-times 0xD9DC - ($ - rom_start) db 0xFF
+incbin  "ami486.bin", ($ - rom_start), (0xD9DC - ($ - rom_start)) ; inherited reference bytes up to D9DCh
 bios_post_pit_channel2_test:
     mov     al, 0x14
     out     0x80, al
@@ -1734,7 +1734,7 @@ bios_post_pit_channel2_ok:
     JMP_ABS 0xF598
 
 ; The F598h timing helper returns through this inline word.
-times 0xDA64 - ($ - rom_start) db 0xFF
+incbin  "ami486.bin", ($ - rom_start), (0xDA64 - ($ - rom_start)) ; inherited reference bytes up to DA64h
 bios_post_pit_timing_return:
     dw      0xDA66
 bios_post_pit_timing_continue:
@@ -1783,7 +1783,7 @@ bios_ibm_compatibility_notice:
     db "IBM COMPATIBLE IBM IS A TRADEMARK OF INTERNATIONAL BUSINESS MACHINES CORP."
 times 0xE05B - ($ - rom_start) db 0x00
 ; F000:E05B — reset gateway.
-times 0xE05B - ($ - rom_start) db 0xFF
+incbin  "ami486.bin", ($ - rom_start), (0xE05B - ($ - rom_start)) ; inherited reference bytes up to E05Bh
 reset_gateway:
     jmp     near bios_post_entry
 reset_gateway_end:
@@ -1793,7 +1793,7 @@ reset_gateway_end:
 
 ; ---------------------------------------------------------------------------
 ; F000:E93Ch — PIT channel-2 transition wait used by POST speaker diagnostics.
-times 0xE93C - ($ - rom_start) db 0xFF
+incbin  "ami486.bin", ($ - rom_start), (0xE93C - ($ - rom_start)) ; inherited reference bytes up to E93Ch
 bios_post_pit_transition_wait:
     push    ax
     mov     al, [cs:0x8285]
@@ -1828,7 +1828,7 @@ bios_post_pit_transition_wait_done:
 %endif
 
 ; F000:EE94 — CMOS indexed read helper.
-times 0xEE94 - ($ - rom_start) db 0xFF
+incbin  "ami486.bin", ($ - rom_start), (0xEE94 - ($ - rom_start)) ; inherited reference bytes up to EE94h
 bios_cmos_read_index:
     out     0x70, al
     jcxz    $+2
@@ -1847,7 +1847,7 @@ bios_cmos_write_index:
     ret
 
 ; F000:EEE7 — 8259 PIC initialization.
-times 0xEEE7 - ($ - rom_start) db 0xFF
+incbin  "ami486.bin", ($ - rom_start), (0xEEE7 - ($ - rom_start)) ; inherited reference bytes up to EEE7h
 bios_pic_initialize:
     mov     al, 0
     out     0xF1, al
@@ -1894,7 +1894,7 @@ bios_pic_initialize:
 ; F000:F4A5 — fatal POST diagnostic loop and speaker alarm.
 ; The stack is deliberately pointed into the delay instructions at F4ACh.
 ; After each 128-cycle speaker burst, JMP SP enters that stack-threaded delay.
-times 0xF4A5 - ($ - rom_start) db 0xFF
+incbin  "ami486.bin", ($ - rom_start), (0xF4A5 - ($ - rom_start)) ; inherited reference bytes up to F4A5h
 bios_post_fatal_error:
     mov     dx, bp
 bios_post_fatal_error_stack_setup:
@@ -2160,7 +2160,7 @@ bios_post_8042_wait_output_inner:
 
 ; ---------------------------------------------------------------------------
 ; F000:F60F — bounded 8042 output-buffer read helper.
-times 0xF60F - ($ - rom_start) db 0xFF
+incbin  "ami486.bin", ($ - rom_start), (0xF60F - ($ - rom_start)) ; inherited reference bytes up to F60Fh
 bios_8042_read_output:
     mov     ah, 0x0C
     xor     cx, cx
@@ -2176,7 +2176,7 @@ bios_8042_read_output_data:
     ret
 
 ; F000:F622-F658 — 8042 command/data transactions.
-times 0xF622 - ($ - rom_start) db 0xFF
+incbin  "ami486.bin", ($ - rom_start), (0xF622 - ($ - rom_start)) ; inherited reference bytes up to F622h
 bios_post_8042_write_command:
     call    bios_post_8042_write_command_byte
     jnz     short bios_post_8042_write_command_done
@@ -2224,7 +2224,7 @@ bios_post_8042_write_output_port_data:
 %endif
 
 ; F000:F659 — 8042 input-buffer-empty wait helper.
-times 0xF659 - ($ - rom_start) db 0xFF
+incbin  "ami486.bin", ($ - rom_start), (0xF659 - ($ - rom_start)) ; inherited reference bytes up to F659h
 bios_8042_wait_input_empty:
     xor     cx, cx
 bios_8042_wait_input_empty_first:
@@ -2240,7 +2240,7 @@ bios_8042_wait_input_empty_done:
     ret
 
 ; F000:F66Ah/F66Eh — 8042 A20 output-port enable/disable helpers.
-times 0xF66A - ($ - rom_start) db 0xFF
+incbin  "ami486.bin", ($ - rom_start), (0xF66A - ($ - rom_start)) ; inherited reference bytes up to F66Ah
 bios_8042_a20_enable:
     mov     ah, 0xDF
     jmp     short bios_8042_a20_write
@@ -2269,7 +2269,7 @@ bios_8042_a20_wait_finish:
     ret
 
 ; FFFF:0000 reset vector -> F000:E05B.
-times 0xFFF0 - ($ - rom_start) db 0xFF
+incbin  "ami486.bin", ($ - rom_start), (0xFFF0 - ($ - rom_start)) ; inherited reference bytes up to FFF0h
 bios_reset_vector:
     jmp     0xF000:reset_gateway
 
