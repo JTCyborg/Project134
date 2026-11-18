@@ -40,6 +40,7 @@ Translated into NASM in `bios/src/reset.asm`:
 - Memory checksum and 8042 initialization sequence `D777h–D82Ch`, including
   stack-return words and the `F60Fh`/`F659h` wait helpers.
 - 8042 A20 output-port enable/disable routines `F66Ah–F690h`.
+- Reset-entry trampoline at `2065h`, six-byte LGDT pseudo-descriptor at `2068h`, and the three-entry protected-mode GDT at `2070h`, expressed as NASM instructions/data declarations. The five-byte adjacent parameter area at `2088h` is retained as data; its semantics remain unresolved.
 
 The translations above follow the available instruction listing. The following
 regions are still incomplete and prevent a meaningful PCem boot test:
