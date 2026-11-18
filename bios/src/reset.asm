@@ -319,7 +319,7 @@ times 0x8A8E - ($ - rom_start) db 0xFF
 bios_post_ali_mode_return:
     dw      0x8A90
 bios_post_ali_mode_continue:
-    mov     bh, [bx+si-0x4C4D]
+    mov     ax, 0xB3B3
     nop
     mov     sp, 0x8A9A
     jmp     0xEE94
