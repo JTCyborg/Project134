@@ -112,7 +112,9 @@ Write-Host "Size:   $RomSize bytes"
 
 New-Item -ItemType Directory -Path $outputDirectory -Force | Out-Null
 
-& $nasmPath -f bin "-DROM_SIZE=$RomSize" -o $outputPath $sourcePath
+# -Ox enables NASM multi-pass optimization so forward conditional branches use
+# their shortest legal encodings before fixed ROM-offset TIMES reservations.
+& $nasmPath -Ox -f bin "-DROM_SIZE=$RomSize" -o $outputPath $sourcePath
 if ($LASTEXITCODE -ne 0) {
     throw "NASM failed with exit code $LASTEXITCODE"
 }
