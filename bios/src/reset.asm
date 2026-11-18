@@ -2464,7 +2464,6 @@ bios_post_cmos_option:
     dec     ax
     je      short bios_post_cmos_option_print
     mov     si, 0x456F
-    dec     ax
 bios_post_cmos_option_print:
     call    near bios_rom_print_si
     pop     ax
