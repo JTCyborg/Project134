@@ -70,3 +70,17 @@ The next selected inherited executable interval is `3F4Ah–4230h`, called direc
 Run `44384426423` assembled the newly added `3F4Ah–4230h` POST display routines and passed the full 65,536-byte comparison. The block includes the entry called from `164Ch`, shared ROM-string and hexadecimal output helpers, the POST system-configuration display, BDA/equipment display helpers, CPU-mode identification, and decimal conversion. The adjacent CP437 text/frame data begins at `4231h` and remains inherited.
 
 The current next target is the Setup hard-disk utility family beginning at `4628h`; its entry is referenced by the Setup handler table at `3446h–345Dh`. The string/pointer/descriptor tables around `3873h–3944h` must remain classified as data, not decoded as flat instructions.
+
+## Current-main follow-up: native layout regression after run 63
+
+This section supersedes any implication above that run 63 validates the current `main` source.
+
+- Run 63 (`44384426423`) built commit `8a28f64c14443070e0a1f7b73e3ef869b38ef2d9`, not the current `main` head.
+- At the time of this follow-up, `main` is `ff14ae74a82a0ae1e307630a26f3e54976249d79`; its `bios/src/reset.asm` blob is `a47f19fe4b5c7082369c3e6c0639abce2078ff59`. The source at run 63 was a different blob (`07ee23955e0bae0b19aa224b5733796137c15b41`).
+- The current-main build log committed in `ff14ae7` records NASM errors at fixed layout assertions beginning with `240Ah`, followed by `2537h`, `2629h`, `26F9h`, and subsequent boundaries through `3044h`.
+- The checked-in `out/Debug/Project134.native-candidate.lst` is a diagnostic artifact from the failing build, not a successful candidate. Its addresses must not be used as proof that the current source assembled or passed the byte comparison.
+- The compatibility output `Project134.bin` is copied from `ami486.bin` before NASM runs. A successful baseline-copy message therefore does not mean the native candidate succeeded.
+
+**Current status:** the historic run-63 byte-exact result remains valid for commit `8a28f64` only. The current-main native candidate is unverified and the recorded NASM assembly failed. No PCem runtime result is implied. Do not use the baseline `Project134.bin` as a test of the reconstructed candidate.
+
+**Next action:** rebuild the current `reset.asm` and use a listing generated in the same build invocation. Reconcile each fixed-address assertion against the ROM address ledger before changing code; do not add padding or alter control flow merely to silence the assertions.
