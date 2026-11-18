@@ -263,8 +263,8 @@ bios_cpu_profile_next:
 bios_cpu_profile_cmos_update:
     mov     al, 0x8E
     out     0x70, al
-    jcxz    short $
-    jcxz    short $
+    jcxz    short $+2
+    jcxz    short $+2
     in      al, 0x71
     db      0x8A, 0xE0                 ; mov ah, al
     mov     al, [cs:bx+0x1C]
@@ -273,10 +273,10 @@ bios_cpu_profile_cmos_update:
     jnz     short bios_cpu_profile_cmos_mask
     or      al, 0x80
     out     0x70, al
-    jcxz    short $
-    jcxz    short $
+    jcxz    short $+2
+    jcxz    short $+2
     in      al, 0x71
-    jmp     short bios_cpu_profile_cmos_resolve
+    jmp     short bios_cpu_profile_resolve_shift_setup
 
 bios_cpu_profile_cmos_mask:
     and     al, 0x7F
@@ -295,6 +295,7 @@ bios_cpu_profile_resolve_scan:
 bios_cpu_profile_resolve_found:
     mov     al, [cs:bx+3]
     db      0x8A, 0xDC                 ; mov bl, ah
+bios_cpu_profile_resolve_shift_setup:
     mov     bh, 0x08
     mov     ah, 0x00
 bios_cpu_profile_resolve_shift:
