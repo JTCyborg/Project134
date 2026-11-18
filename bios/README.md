@@ -35,6 +35,9 @@ Translated into NASM in `bios/src/reset.asm`:
 - CR0 cache-disable and 8042 wait/read helpers at `8CCDh–8D08h`.
 - ALi1429 indexed mode helpers and read/write primitives at `8D09h–8E0Bh`.
 - POST delay completion and checkpoints `D724h–D774h`.
+- Memory checksum and 8042 initialization sequence `D777h–D82Ch`, including
+  stack-return words and the `F60Fh`/`F659h` wait helpers.
+- 8042 A20 output-port enable/disable routines `F66Ah–F690h`.
 
 The translations above follow the available instruction listing. The following
 regions are still incomplete and prevent a meaningful PCem boot test:
@@ -44,10 +47,9 @@ regions are still incomplete and prevent a meaningful PCem boot test:
 
 ## Test readiness
 
-**Not ready for a PCem boot test.** The reset path now reaches the POST 05h
-hook and its stack-threaded ALi continuation is translated through the jump
-into `D777h`. The following memory checksum, 8042/PIT/CMOS stages and their
-helper dependencies are still incomplete. A run now would stop in unimplemented
+**Not ready for a PCem boot test.** The reset path now reaches the POST 09h checkpoint after the initial memory
+checksum and first 8042 exchanges. The later 8042 command sequence, CMOS/PIT
+checks, chipset setup, and the low-ROM continuation at `1AF8h` remain incomplete. A run now would stop in unimplemented
 ROM space or execute incomplete dispatch behavior.
 
 The first PCem test will be announced only after:
