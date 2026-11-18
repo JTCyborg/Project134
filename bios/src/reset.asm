@@ -12,6 +12,11 @@ ORG 0
 %endif
 rom_start:
 
+; F000:1AF8 — POST continuation trampoline into the D82Fh 8042 sequence.
+times 0x1AF8 - ($ - rom_start) db 0xFF
+bios_post_8042_continuation:
+    jmp     0xD82F
+
 ; F000:19AB–19AF — stock callback trampolines used by the POST hook slots.
 times 0x19AB - ($ - rom_start) db 0xFF
 bios_callback_jmp_di:
