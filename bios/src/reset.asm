@@ -4265,7 +4265,7 @@ bios_post_memory_controller_probe_error:
 bios_post_memory_controller_probe_error_wait:
     mov     al, [0x0012]
     test    al, 0x20
-    je      short bios_post_memory_controller_probe_error_wait
+    je      short bios_post_memory_controller_probe_error
     jmp     short bios_post_memory_controller_probe_finish
 %if ($ - rom_start) != 0x5434
     %error "POST memory-controller probe coordinator must end at 5434h"
