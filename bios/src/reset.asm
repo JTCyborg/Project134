@@ -401,17 +401,19 @@ bios_ali_memory_mode:
     mov     ax, 0x1818
     call    0x8DCF
     test    al, 0x02
-    jnz     bios_ali_memory_mode_done
+    jnz     short bios_ali_memory_mode_return
     mov     di, 0x8D6C
     jmp     0x2686
-bios_ali_memory_mode_done:
+bios_ali_memory_mode_retry:
     mov     di, 0x8D72
     jmp     0x2629
+bios_ali_memory_mode_apply:
     mov     ax, 0x1818
     call    0x8DCF
     or      al, 0x02
     xchg    ah, al
     call    0x8DDC
+bios_ali_memory_mode_return:
     mov     cx, 0xFFFF
     ret
 
