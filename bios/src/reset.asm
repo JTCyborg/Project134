@@ -1116,17 +1116,18 @@ bios_chipset_cmos_merge:
     or      byte [0xE066], 0x01
     jmp     short bios_chipset_cmos_read_flags
     nop
-bios_chipset_cmos_no_flag:
+bios_chipset_cmos_or_flag:
     or      byte [0xE036], 0x01
     mov     ax, 0xB571
     JMP_ABS 0x2AAF
-bios_chipset_cmos_nonzero:
+bios_chipset_cmos_no_flag:
     mov     ax, 0xB568
     JMP_ABS 0x2AAF
-bios_chipset_cmos_read_flags:
+bios_chipset_cmos_nonzero:
     db      0x02, 0xC3                 ; add al, bl
     and     al, 0x01
     db      0x08, 0x06, 0x36, 0xE0    ; or [E036h], al
+bios_chipset_cmos_read_flags:
     push    ds
     mov     ax, 0x0040
     mov     ds, ax
