@@ -24,6 +24,21 @@ if (-not (Test-Path -LiteralPath $validatorPath -PathType Leaf)) {
     throw "ROM validator not found: $validatorPath"
 }
 
+# NASM flat-binary ORG layout can only advance. A descending TIMES target
+# would produce a negative repeat count and stop the build before assembly.
+$lastRomOffset = -1
+$sourceLineNumber = 0
+foreach ($line in [System.IO.File]::ReadLines($sourcePath)) {
+    $sourceLineNumber++
+    if ($line -match '^\s*times\s+0x([0-9A-Fa-f]+)\s*-') {
+        $romOffset = [Convert]::ToInt32($Matches[1], 16)
+        if ($romOffset -lt $lastRomOffset) {
+            throw ("BIOS source ROM layout is not monotonic at line {0}: 0x{1:X4} follows 0x{2:X4}" -f $sourceLineNumber, $romOffset, $lastRomOffset)
+        }
+        $lastRomOffset = $romOffset
+    }
+}
+
 function Resolve-NasmExecutable {
     param([string]$RequestedPath)
 
