@@ -13,6 +13,7 @@ $ErrorActionPreference = "Stop"
 $biosDirectory = Split-Path -Parent $PSScriptRoot
 $sourcePath = Join-Path $biosDirectory "src\reset.asm"
 $validatorPath = Join-Path $PSScriptRoot "validate_rom.ps1"
+$referenceRomPath = Join-Path $biosDirectory "..\ami486.bin"
 $outputDirectory = [System.IO.Path]::GetFullPath($OutputDirectory)
 $outputPath = Join-Path $outputDirectory "Project134.bin"
 
@@ -104,7 +105,7 @@ if (-not (Test-Path -LiteralPath $outputPath -PathType Leaf)) {
     throw "NASM returned success but did not create the ROM: $outputPath"
 }
 
-& $validatorPath -RomPath $outputPath -ExpectedSize $RomSize
+& $validatorPath -RomPath $outputPath -ExpectedSize $RomSize -ReferenceRomPath $referenceRomPath
 if ($LASTEXITCODE -and $LASTEXITCODE -ne 0) {
     throw "ROM validation failed with exit code $LASTEXITCODE"
 }
