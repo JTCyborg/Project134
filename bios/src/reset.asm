@@ -1280,7 +1280,7 @@ bios_post_8042_drain:
     db      0x33, 0xC9                 ; xor cx, cx
 bios_post_8042_status:
     in      al, 0x64
-    mov     ah, al
+    db      0x8A, 0xE0                 ; mov ah, al
     test    al, 0x01
     jz      bios_post_8042_test_input
     in      al, 0x60
@@ -1633,7 +1633,7 @@ bios_post_chipset_io_return:
 bios_post_chipset_io_continue:
     mov     al, 0x12
     out     0x80, al
-    xor     ax, ax
+    db      0x33, 0xC0                 ; xor ax, ax
     mov     dx, 0x03D8
     out     dx, al
     jcxz    $+2
@@ -1656,7 +1656,7 @@ bios_post_chipset_io_continue:
     out     dx, al
     jcxz    $+2
     jcxz    $+2
-    xor     ax, ax
+    db      0x33, 0xC0                 ; xor ax, ax
     mov     es, ax
     mov     ds, ax
     mov     al, 0x13
@@ -1694,7 +1694,7 @@ bios_post_pit_channel2_test:
     jcxz    $+2
     jcxz    $+2
     in      al, 0x42
-    mov     ah, al
+    db      0x8A, 0xE0                 ; mov ah, al
     jcxz    $+2
     jcxz    $+2
     in      al, 0x42
@@ -1959,7 +1959,7 @@ bios_post_fatal_beep_off_delay:
 
 ; F000:F509 — overlapping video-reset entry (XOR AX,AX; INT 10h).
 bios_post_fatal_video_entry:
-    xor     ax, ax
+    db      0x33, 0xC0                 ; xor ax, ax
     int     0x10
 bios_post_fatal_text_entry:
     call    bios_post_print_cs_string
@@ -1988,11 +1988,11 @@ bios_post_fatal_halt:
 
 ; F000:F52E — NUL-terminated CS:SI string and teletype output helpers.
 bios_post_print_cs_string:
+bios_post_print_cs_string_loop:
     cli
     cld
-bios_post_print_cs_string_loop:
     cs lodsb
-    and     al, al
+    db      0x22, 0xC0                 ; and al, al
     jz      short bios_post_print_cs_string_done
     call    bios_post_print_char
     jmp     short bios_post_print_cs_string_loop
@@ -2064,7 +2064,7 @@ bios_post_wait_port_bits_clear:
     test    ah, al
     loope   bios_post_wait_port_bits_clear
     jz      short bios_post_wait_port_bits_done
-    xor     cx, cx
+    db      0x33, 0xC9                 ; xor cx, cx
 bios_post_wait_port_bits_set:
     in      al, dx
     test    ah, al
@@ -2105,7 +2105,7 @@ bios_post_8042_compare_data_done:
     ret
 
 bios_post_8042_compare_success:
-    or      sp, sp
+    db      0x0B, 0xE4                 ; or sp, sp
     ret
 
 ; F000:F5D9/F5E9 — read KBC status/data then compare command response.
