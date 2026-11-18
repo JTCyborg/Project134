@@ -382,13 +382,33 @@ bios_post_delay_setup:
     shl     si, 1
     jmp     word [cs:si-0x2958]
 
-; D6A8h–D6C0h is a CMOS-indexed near-jump table. Its entries are data and
-; remain pending semantic reconstruction; do not decode as linear code.
-times 0xD6C1 - ($ - rom_start) db 0xFF
-bios_post_table_continuation:
+; F000:D6A8 — CMOS[8Fh] indexed near-jump table (11 recovered entries).
+; These are semantic 16-bit code offsets, not copied instruction bytes.
+times 0xD6A8 - ($ - rom_start) db 0xFF
+bios_cmos_8f_dispatch_table:
+    dw      0xD724
+    dw      0x91D1
+    dw      0xF71E
+    dw      0x5280
+    dw      0xF724
+    dw      0xF731
+    dw      0x5486
+    dw      0x1B5B
+    dw      0x8A1D
+    dw      0x9206
+    dw      0xF737
+bios_cmos_8f_dispatch_table_end:
+%if (bios_cmos_8f_dispatch_table_end - bios_cmos_8f_dispatch_table) != 22
+    %error "CMOS 8Fh dispatch table must contain eleven words"
+%endif
+
+; D6BEh — common stack/register test failure path.
+bios_stack_test_failure:
+    mov     bp, 0x0005
     jmp     0xF4A5
 
-; Alternate register/segment test continuation at D6C4h.
+; D6C4h — copy register state through all segment registers, then execute
+; the code at SS:SP. This is an intentional JMP-SP trampoline.
 bios_segment_test_setup:
     mov     bx, ax
     mov     cx, bx
@@ -401,11 +421,46 @@ bios_segment_test_setup:
     mov     ds, ax
     mov     ax, ds
     mov     ss, ax
+    jmp     sp
 
-; F000:D6DE — destructive memory/register test is not yet translated.
+; D6DEh — first SS:SP test stream.
 times 0xD6DE - ($ - rom_start) db 0xFF
-bios_ram_test_entry:
-    ; TODO: reconstruct overlapping D6DEh–D723h entry streams.
+bios_stack_test_entry:
+    mov     al, 0x01
+    out     0x80, al
+    mov     sp, 0x5555
+    cmp     sp, 0x5555
+    jnz     bios_stack_test_failure
+    mov     sp, 0xAAAA
+    cmp     sp, 0xAAAA
+    jnz     bios_stack_test_failure
+    mov     ax, 0x5555
+    mov     sp, 0xD6FC
+    jmp     0xD6C4
+
+; D6FCh — continuation reached through the D6C4h JMP SP trampoline.
+bios_stack_test_pattern_5555:
+    xor     ax, 0x5555
+    jnz     bios_stack_test_failure
+    mov     ax, 0xAAAA
+    mov     sp, 0xD709
+    jmp     0xD6C4
+
+; D709h — second pattern check, then CMOS marker and delay.
+bios_stack_test_pattern_aaaa:
+    xor     ax, 0xAAAA
+    jnz     bios_stack_test_failure
+    mov     al, 0x8D
+    out     0x70, al
+    mov     al, 0x02
+    out     0x80, al
+    mov     al, [cs:0x8284]
+    or      al, al
+    jz      bios_post_delay_complete
+bios_post_delay_loop:
+    loop    bios_post_delay_loop
+    dec     al
+    jnz     bios_post_delay_loop
 
 ; F000:D724 — exact delay completion and POST checkpoint 03h.
 times 0xD724 - ($ - rom_start) db 0xFF
