@@ -1080,6 +1080,13 @@ bios_post_cmos_8e_write_return:
 bios_post_cmos_8e_write_continue:
     mov     al, 0x0F
     out     0x80, al
+    jmp     0x8400
+
+; Separate D90Dh POST entry: CMOS 8Bh read/modify/write sequence.
+times 0xD90D - ($ - rom_start) db 0xFF
+bios_post_cmos_8b_update:
+    mov     al, 0x10
+    out     0x80, al
     mov     ax, 0x8B8B
     mov     sp, 0xD91A
     jmp     0xEE94
