@@ -6,31 +6,9 @@
   Size:   65536 bytes
   Native candidate: C:\Temp\trdos\134\out\Debug\Project134.native-candidate.bin
   Listing:          C:\Temp\trdos\134\out\Debug\Project134.native-candidate.lst
-  C:\Temp\trdos\134\bios\tools\build_bios.ps1 : At C:\Temp\trdos\134\bios\tools\validate_rom.ps1:119 char:50
-  +     Write-Host "BIOS POST06 ROM checksum PASS (16-bit sum = 0000h)."  ...
-  +                                                  ~~~~
-  Unexpected token '-bit' in expression or statement.
-  At C:\Temp\trdos\134\bios\tools\validate_rom.ps1:119 char:55
-  +     Write-Host "BIOS POST06 ROM checksum PASS (16-bit sum = 0000h)."  ...
-  +                                                       ~~~
-  Unexpected token 'sum' in expression or statement.
-  At C:\Temp\trdos\134\bios\tools\validate_rom.ps1:119 char:54
-  +     Write-Host "BIOS POST06 ROM checksum PASS (16-bit sum = 0000h)."  ...
-  +                                                      ~
-  Missing closing ')' in expression.
-  At C:\Temp\trdos\134\bios\tools\validate_rom.ps1:32 char:87
-  + ... ath -and (Test-Path -LiteralPath $ReferenceRomPath -PathType Leaf)) {
-  +                                                                         ~
-  Missing closing '}' in statement block or type definition.
-  At C:\Temp\trdos\134\bios\tools\validate_rom.ps1:119 char:66
-  + ... rite-Host "BIOS POST06 ROM checksum PASS (16-bit sum = 0000h)." -Fore ...
-  +                                                                 ~
-  Unexpected token ')' in expression or statement.
-  At C:\Temp\trdos\134\bios\tools\validate_rom.ps1:128 char:153
-  + ... ot validate PCem execution." -f $bytes.Length) -ForegroundColor Green
-  +                                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  The string is missing the terminator: ".
-      + CategoryInfo          : ParserError: (:) [build_bios.ps1], ParseException
-      + FullyQualifiedErrorId : UnexpectedToken,build_bios.ps1
-   
-C:\Program Files\Microsoft Visual Studio\18\Community\MSBuild\Microsoft\VC\v180\Microsoft.MakeFile.Targets(45,5): error MSB3073: выход из команды "powershell.exe -NoLogo -NoProfile -ExecutionPolicy Bypass -File "C:\Temp\trdos\134\bios\tools\build_bios.ps1" -OutputDirectory "C:\Temp\trdos\134\bios\..\out\Debug" -NasmExe "nasm.exe" -RomSize 65536" с кодом 1.
+  FULL ROM BYTE COMPARISON PASS: 65536/65536 bytes match ami486.bin.
+  CPU/cache profile routines 8300h-83FFh match the reference byte-for-byte.
+  BIOS POST06 ROM checksum PASS (16-bit sum = 0000h).
+  NASM BIOS structural validation PASS: 65536 bytes. This does not validate PCem execution.
+  NATIVE CANDIDATE: byte-identical to ami486.bin; PCem runtime execution is not performed by this build.
+  BUILD SUCCESS: C:\Temp\trdos\134\out\Debug\Project134.bin (65536 bytes)
