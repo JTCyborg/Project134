@@ -2885,7 +2885,7 @@ bios_hd_utility_drive_fields:
     jne     short bios_hd_utility_drive_resolved
     lea     bx, [0x37BD]
     mov     ax, [0xE180]
-    jmp     short bios_hd_utility_drive_render
+    JMP_ABS 0x47DE
 bios_hd_utility_drive_resolved:
     db      0x8B, 0xD8                 ; mov bx, ax
     mov     ax, [0xE180]
