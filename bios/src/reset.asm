@@ -205,18 +205,18 @@ times 0x8D83 - ($ - rom_start) db 0xFF
 bios_ali_shadow_mode:
     mov     ax, 0xC503
     mov     di, 0x8D8C
-    jmp     0x8DFB
+    jmp     short 0x8DFB
     nop
 bios_ali_shadow_step_1:
     mov     ax, 0x1919
     mov     di, 0x8D95
-    jmp     0x8DED
+    jmp     short 0x8DED
     nop
 bios_ali_shadow_step_2:
     or      al, 0x03
     xchg    ah, al
     mov     di, 0x8D9F
-    jmp     0x8DFB
+    jmp     short 0x8DFB
     nop
 bios_ali_shadow_step_3:
     mov     di, 0x8DA5
@@ -224,24 +224,24 @@ bios_ali_shadow_step_3:
 bios_ali_shadow_step_4:
     mov     ax, 0x1919
     mov     di, 0x8DAE
-    jmp     0x8DED
+    jmp     short 0x8DED
     nop
 bios_ali_shadow_step_5:
     and     al, 0xFC
     xchg    ah, al
     mov     di, 0x8DB8
-    jmp     0x8DFB
+    jmp     short 0x8DFB
     nop
 bios_ali_shadow_step_6:
     mov     ax, 0x1818
     mov     di, 0x8DC1
-    jmp     0x8DED
+    jmp     short 0x8DED
     nop
 bios_ali_shadow_step_7:
     and     al, 0xFD
     xchg    ah, al
     mov     di, 0x8DCB
-    jmp     0x8DFB
+    jmp     short 0x8DFB
     nop
 bios_ali_shadow_return:
     mov     cx, 0xFFFF
