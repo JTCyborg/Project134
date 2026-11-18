@@ -12,6 +12,17 @@ ORG 0
 %endif
 rom_start:
 
+; F000:19AB–19AF — stock callback trampolines used by the POST hook slots.
+times 0x19AB - ($ - rom_start) db 0xFF
+bios_callback_jmp_di:
+    jmp     di
+bios_callback_ret_19ad:
+    ret
+bios_callback_ret_19ae:
+    ret
+bios_callback_ret_19af:
+    ret
+
 ; ---------------------------------------------------------------------------
 ; F000:88CE — 8042 clear / reset branch.
 ; This region is deliberately left unimplemented until its stack-threaded
