@@ -137,7 +137,15 @@ Write-Host "Size:   $RomSize bytes"
 # Keep a NASM listing even when fixed-offset TIMES assertions fail. The listing
 # exposes the exact emitted addresses/bytes immediately before each overflow.
 $listingPath = Join-Path $outputDirectory "Project134.native-candidate.lst"
-& $nasmPath -f bin -l $listingPath "-DROM_SIZE=$RomSize" -o $candidatePath $sourcePath
+$repositoryRoot = Split-Path -Parent $biosDirectory
+Push-Location $repositoryRoot
+try {
+    # All INCbin compatibility slices are resolved from the repository root.
+    & $nasmPath -f bin -l $listingPath "-DROM_SIZE=$RomSize" -o $candidatePath $sourcePath
+}
+finally {
+    Pop-Location
+}
 Write-Host "Native candidate: $candidatePath"
 Write-Host "Listing:          $listingPath"
 if ($LASTEXITCODE -ne 0) {
