@@ -3399,12 +3399,14 @@ bios_hd_size_option_loop:
     inc     byte [0xE185]
     cmp     byte [0xE185], 0x04
     jl      short bios_hd_size_option_loop
+bios_hd_size_auto_reset:
     mov     byte [0xE185], 0x00
 bios_hd_size_auto_loop:
     cmp     byte [0xE185], 0x00
     jne     short bios_hd_size_manual_check
     cmp     word [0xE423], 0x03E8
     jne     short bios_hd_size_input
+bios_hd_size_auto_next:
     inc     byte [0xE185]
     cmp     byte [0xE185], 0x04
     jne     short bios_hd_size_auto_loop
@@ -3459,13 +3461,6 @@ bios_hd_size_previous:
 bios_hd_size_previous_wrap:
     mov     byte [0xE185], 0x03
     JMP_ABS 0x4D48
-bios_hd_size_auto_next:
-    inc     byte [0xE185]
-    cmp     byte [0xE185], 0x04
-    jne     short bios_hd_size_auto_loop
-    mov     byte [0xE185], 0x00
-bios_hd_size_auto_reset:
-    jmp     short bios_hd_size_auto_loop
 bios_hd_size_exit:
     pop     si
     pop     di
