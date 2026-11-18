@@ -39,6 +39,8 @@ The original `ami486.bin` remains unchanged. Keep it separate from generated out
 
 The post-build PowerShell validator checks:
 - exact output size (currently 65,536 bytes);
+- immutable reference ROM identity (SHA-256 `91fd62ce3ccb0b79b42f5fd6c6a7262ed52824b8ade917181b8a12267fec003b`);
+- the complete implemented early POST byte window `D604h–D6A6h` against the reference ROM, not only its first instructions;
 - the reference reset-vector bytes at `FFF0h`;
 - the reset gateway at `E05Bh`;
 - the first verified POST instructions at `D604h`.
