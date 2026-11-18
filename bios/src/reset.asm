@@ -144,6 +144,73 @@ bios_cmos_8e_descriptor_write_continue:
 bios_cmos_8e_finish:
     jmp     0xD90D
 
+; ---------------------------------------------------------------------------
+; F000:1AFB — CMOS B3h profile selection and PIT/speaker initialization.
+times 0x1AFB - ($ - rom_start) db 0xFF
+bios_cmos_b3_profile_entry:
+    mov     al, 0xB3
+    nop
+    mov     sp, 0x1B04
+    jmp     0xEE94
+
+times 0x1B04 - ($ - rom_start) db 0xFF
+bios_cmos_b3_profile_return:
+    dw      0x1B06
+bios_cmos_b3_profile_continue:
+    test    al, 0x0C
+    jz      near bios_speaker_pit_init
+    mov     si, 0x8E4E
+    mov     cx, 0x8E62
+    test    al, 0x04
+    jnz     near bios_cmos_profile_table_loop
+    mov     si, 0x8E76
+    mov     cx, 0x8E7A
+bios_cmos_profile_table_loop:
+    sub     cx, si
+    shr     cx, 1
+bios_cmos_profile_table_write:
+    cs lodsw
+    mov     sp, 0x1B2A
+    jmp     0x8DDC
+
+times 0x1B2A - ($ - rom_start) db 0xFF
+bios_cmos_profile_write_return:
+    dw      0x1B2C
+bios_cmos_profile_write_continue:
+    sub     al, 0x1B
+    loop    bios_cmos_profile_table_write
+
+bios_speaker_pit_init:
+    mov     al, 0xFC
+    out     0x61, al
+    jcxz    $+2
+    jcxz    $+2
+    mov     al, 0x00
+    out     0x8F, al
+    jcxz    $+2
+    jcxz    $+2
+    mov     al, 0x54
+    out     0x43, al
+    jcxz    $+2
+    jcxz    $+2
+    mov     al, [cs:0x8286]
+    out     0x41, al
+    jcxz    $+2
+    jcxz    $+2
+    mov     cx, 0x0400
+    xor     di, di
+bios_speaker_buffer_clear:
+    stosb
+    loop    bios_speaker_buffer_clear
+    jmp     0x208D
+
+bios_post_early_reentry:
+    jmp     0xD724
+bios_callback_ret_1b5e:
+    ret
+bios_callback_ret_1b5f:
+    ret
+
 ; F000:19AB–19AF — stock callback trampolines used by the POST hook slots.
 times 0x19AB - ($ - rom_start) db 0xFF
 bios_callback_jmp_di:
