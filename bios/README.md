@@ -32,6 +32,7 @@ The reconstructed image is 65,536 bytes and preserves the original ROM address l
 | `D604h–D776h` | Early POST dispatcher, stack-threaded RAM test, CMOS/8042 checks and POST 80h writes |
 | `E05Bh–E05Dh` | Reset gateway: near jump to `D604h` |
 | `EE94h–EF35h` | CMOS/PIC helpers |
+| `F659h–F690h` | 8042 status-wait and command-byte helpers |
 | `FFF0h–FFF4h` | Reset vector: far jump to `F000:E05B` |
 
 `bios/tools/validate_rom.ps1` checks the immutable reference ROM SHA-256, output size, reset vector and every restored byte window listed above. It must be run against the built ROM and original `ami486.bin`.
@@ -45,7 +46,7 @@ The reconstructed image is 65,536 bytes and preserves the original ROM address l
 5. After the delay, `D724h` tests `CS:8281h`, emits POST `03h`, and jumps through `D749h` to `8A75h`.
 6. `8A75h` redirects to `D74Ch`; POST `04h` is emitted, then the path reaches `8A78h`.
 7. `8A78h` reads the pointer at `CS:82DAh` (`19ABh)); the trampoline at `19ABh` jumps through DI to `8A81h`, which enters the indexed-I/O helper path.
-8. The restored path uses the ALi indexed-I/O helpers and the protected-mode memory-read routine at `2686h`, then returns through the DI-threaded continuation.
+8. The restored path uses the ALi indexed-I/O helpers and the protected-mode memory-read routine at `2686h`, then returns through the DI-threaded continuation. The alternate 8042 command entries at `8ACFh/8AD2h` use the restored helpers at `F66Ah/F66Eh`.
 
 This establishes the next static control-flow segment; it does not establish successful runtime completion.
 
