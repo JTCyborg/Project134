@@ -1978,7 +1978,7 @@ bios_setup_menu_refresh:
     sub     ax, 0x000E
     je      short bios_setup_menu_exit_no_save
     sub     ax, 0x0121
-    jb      near bios_setup_menu_loop
+    jb      short bios_setup_menu_refresh
     sub     ax, 0x0001
     jbe     short bios_setup_menu_palette
     sub     ax, 0x0007
