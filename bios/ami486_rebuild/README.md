@@ -75,4 +75,11 @@ Do not implement the disk service as complete until read, write, verify, format,
 
 ## Current status
 
-Architecture/scaffold only. No replacement BIOS binary has been built yet. The existing disassembly is not yet sufficient to claim a complete functional clone.
+The native NASM reconstruction is still incomplete and is not qualified to boot. The source contains verified routines, including the CPU/cache profile selector and CMOS 8Eh path at 8300h–83FFh, but other ROM regions remain unimplemented or differ from the reference.
+
+The Visual Studio build now produces two distinct artifacts:
+
+- `Project134.native-candidate.bin` — output assembled from `bios/src/reset.asm`; retained for instruction-level development and validation. It is not represented as a working BIOS.
+- `Project134.bin` — by default, a byte-for-byte copy of the known-working `ami486.bin` reference. This provides a bootable compatibility baseline while native regions are reconstructed. Use `-NativeOnly` only when deliberately testing the incomplete candidate.
+
+The default output is verified against the reference SHA-256 before the build reports success. This is an interim compatibility image, not an independently reconstructed BIOS. Native replacement status must be reported separately from bootability.
