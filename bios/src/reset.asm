@@ -1590,7 +1590,7 @@ times 0xDA64 - ($ - rom_start) db 0xFF
 bios_post_pit_timing_return:
     dw      0xDA66
 bios_post_pit_timing_continue:
-    jcxz    $+2
+    jcxz    bios_post_pit_feature_check
     mov     al, 0x1A
     out     0x80, al
 bios_post_pit_wait_high:
@@ -1613,6 +1613,7 @@ bios_post_pit_wait_second_high:
 bios_post_pit_delta_ready:
     cmp     cx, 0x000A
     jc      short bios_post_pit_test_done
+bios_post_pit_feature_check:
     test    byte [cs:0x8280], 0x80
     jz      short bios_post_pit_test_done
     mov     bp, 0x0001
