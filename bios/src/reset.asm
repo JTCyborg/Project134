@@ -206,6 +206,15 @@ bios_ali_profile_write_pm_return:
 times 0x8280 - ($ - rom_start) db 0xFF
     db      0x2F, 0x00, 0xE7, 0x03, 0x00, 0x00, 0x12, 0x00
 
+; F000:82D0 — original POST callback vector table.
+; CS:82DA is the active POST hook and must resolve to the stock JMP-DI
+; trampoline at F000:19AB. The surrounding entries are also consumed by
+; the POST/CMOS dispatch paths.
+times 0x82D0 - ($ - rom_start) db 0xFF
+    dw      0x19A3, 0x0000, 0x19A3, 0x0000
+    dw      0x19A3, 0x19AB, 0x19A5, 0x19AD
+    dw      0x19A7, 0x19AE, 0x19A9, 0x19AF
+
 ; F000:8400 — CMOS 8Eh extended-register clear/restore path.
 times 0x8400 - ($ - rom_start) db 0xFF
 bios_cmos_8e_extended_entry:
