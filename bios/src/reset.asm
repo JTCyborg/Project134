@@ -3926,7 +3926,7 @@ bios_post_memory_controller_poll:
     call    near 0xE93C
     call    near 0x5448
     pop     cx
-    loopne  bios_post_memory_controller_poll
+    loopnz  bios_post_memory_controller_poll
     db      0x0B, 0xD2                 ; or dx, dx
     je      short bios_post_memory_controller_clear_low
     mov     byte [si], 0x00
@@ -4136,7 +4136,7 @@ bios_post_memory_pattern_8080:
     db      0x33, 0xFF                 ; xor di, di
     repz    scasw
     jne     short bios_post_memory_pattern_failed
-    db      0x33, 0xC0                 ; xor ax, ax
+    mov     ax, 0x0000
     db      0x8B, 0xCB                 ; mov cx, bx
     db      0x33, 0xFF                 ; xor di, di
     rep     stosw
