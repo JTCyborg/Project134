@@ -1722,6 +1722,274 @@ bios_pic_initialize:
     ret
 
 ; ---------------------------------------------------------------------------
+; F000:F4A5 — fatal POST diagnostic loop and speaker alarm.
+; The stack is deliberately pointed into the delay instructions at F4ACh.
+; After each 128-cycle speaker burst, JMP SP enters that stack-threaded delay.
+times 0xF4A5 - ($ - rom_start) db 0xFF
+bios_post_fatal_error:
+    mov     dx, bp
+bios_post_fatal_error_stack_setup:
+    mov     sp, 0xF4AC
+    jmp     short bios_post_fatal_beep
+
+bios_post_fatal_stack_delay_1:
+    loop    bios_post_fatal_stack_delay_1
+bios_post_fatal_stack_delay_2:
+    loop    bios_post_fatal_stack_delay_2
+bios_post_fatal_stack_delay_3:
+    loop    bios_post_fatal_stack_delay_3
+    dec     dx
+    jnz     short bios_post_fatal_error_stack_setup
+    mov     dx, 0x0006
+bios_post_fatal_stack_delay_4:
+    loop    bios_post_fatal_stack_delay_4
+    dec     dx
+    jnz     short bios_post_fatal_stack_delay_4
+    in      al, 0x80
+    jcxz    $+2
+    jcxz    $+2
+    out     0x80, al
+    jcxz    $+2
+    jcxz    $+2
+    mov     ax, si
+    out     0x81, al
+    jcxz    $+2
+    jcxz    $+2
+    mov     al, ah
+    out     0x82, al
+    jcxz    $+2
+    jcxz    $+2
+    mov     ax, di
+    out     0x83, al
+    jcxz    $+2
+    jcxz    $+2
+    mov     al, ah
+    out     0x84, al
+    jmp     short bios_post_fatal_error
+
+bios_post_fatal_beep:
+    mov     bx, 0x0080
+bios_post_fatal_beep_loop:
+    in      al, 0x61
+    and     al, 0xFE
+    jcxz    $+2
+    jcxz    $+2
+    or      al, 0x02
+    out     0x61, al
+    mov     cx, 0x00E0
+bios_post_fatal_beep_on_delay:
+    loop    bios_post_fatal_beep_on_delay
+    and     al, 0xFD
+    out     0x61, al
+    mov     cx, 0x00D0
+bios_post_fatal_beep_off_delay:
+    loop    bios_post_fatal_beep_off_delay
+    dec     bx
+    jnz     short bios_post_fatal_beep_loop
+    jmp     sp
+
+%if ($ - rom_start) != 0xF509
+    %error "Fatal POST handler / JMP SP trampoline must end at F509h"
+%endif
+
+; F000:F509 — overlapping video-reset entry (XOR AX,AX; INT 10h).
+bios_post_fatal_video_entry:
+    xor     ax, ax
+    int     0x10
+bios_post_fatal_text_entry:
+    call    bios_post_print_cs_string
+    mov     si, 0x737E
+    call    bios_post_print_cs_string
+    call    bios_post_read_8042_status
+    test    al, 0x20
+    jnz     short bios_post_fatal_keyboard_ready
+bios_post_fatal_keyboard_wait:
+    cli
+    call    bios_post_speaker_tone_5
+    loop    bios_post_fatal_keyboard_wait
+    jmp     short bios_post_fatal_keyboard_wait
+bios_post_fatal_keyboard_ready:
+    mov     sp, 0xF52A
+    jmp     short bios_post_fatal_beep
+bios_post_fatal_halt:
+    sti
+    hlt
+    jmp     short bios_post_fatal_halt
+
+%if ($ - rom_start) != 0xF52E
+    %error "Fatal POST text/halt continuation must end at F52Eh"
+%endif
+
+; F000:F52E — NUL-terminated CS:SI string and teletype output helpers.
+bios_post_print_cs_string:
+    cli
+    cld
+bios_post_print_cs_string_loop:
+    cs lodsb
+    and     al, al
+    jz      short bios_post_print_cs_string_done
+    call    bios_post_print_char
+    jmp     short bios_post_print_cs_string_loop
+bios_post_print_cs_string_done:
+    ret
+bios_post_print_char:
+    mov     ah, 0x0E
+    int     0x10
+
+; F000:F540 — restore CMOS index and speaker state.
+bios_post_restore_cmos_index:
+    cli
+    cld
+    mov     al, 0x8D
+    out     0x70, al
+    call    bios_post_speaker_off
+    ret
+
+; F000:F54A/F571 — PIT channel-2 speaker tone helpers.
+bios_post_speaker_tone_4:
+    mov     al, 0xB6
+    out     0x43, al
+    jcxz    $+2
+    jcxz    $+2
+    mov     al, 0x04
+    out     0x42, al
+    jcxz    $+2
+    jcxz    $+2
+    out     0x42, al
+    in      al, 0x61
+    push    ax
+    jcxz    $+2
+    jcxz    $+2
+    or      al, 0x03
+    out     0x61, al
+    mov     cx, 0x3000
+    call    0xE93C
+    pop     ax
+    out     0x61, al
+    ret
+
+bios_post_speaker_tone_5:
+    mov     al, 0xB6
+    out     0x43, al
+    jcxz    $+2
+    jcxz    $+2
+    mov     al, 0x05
+    out     0x42, al
+    jcxz    $+2
+    jcxz    $+2
+    out     0x42, al
+    in      al, 0x61
+    push    ax
+    jcxz    $+2
+    jcxz    $+2
+    or      al, 0x03
+    out     0x61, al
+    mov     cx, 0x2000
+    call    0xE93C
+    pop     ax
+    out     0x61, al
+    ret
+
+; F000:F598 — wait for selected port bits to clear/set.
+bios_post_wait_port_bits:
+    xor     cx, cx
+bios_post_wait_port_bits_clear:
+    in      al, dx
+    test    ah, al
+    loope   bios_post_wait_port_bits_clear
+    jz      short bios_post_wait_port_bits_done
+    xor     cx, cx
+bios_post_wait_port_bits_set:
+    in      al, dx
+    test    ah, al
+    loopne  bios_post_wait_port_bits_set
+bios_post_wait_port_bits_done:
+    ret
+
+; F000:F5A9 — force speaker data/gate bits off.
+bios_post_speaker_off:
+    in      al, 0x61
+    or      al, 0x0C
+    jcxz    $+2
+    jcxz    $+2
+    out     0x61, al
+    and     al, 0xF3
+    jcxz    $+2
+    jcxz    $+2
+    out     0x61, al
+    ret
+
+; F000:F5BC/F5C9 — 8042 command/data exchange and response compare.
+bios_post_8042_compare_command:
+    call    bios_post_8042_write_command
+    jnz     short bios_post_8042_compare_done
+    call    bios_post_8042_read_response
+    jz      short bios_post_8042_compare_success
+    cmp     al, ah
+bios_post_8042_compare_done:
+    ret
+
+bios_post_8042_compare_data:
+    call    bios_post_8042_write_data
+    jnz     short bios_post_8042_compare_data_done
+    call    bios_post_8042_read_response
+    jz      short bios_post_8042_compare_success
+    cmp     al, ah
+bios_post_8042_compare_data_done:
+    ret
+
+bios_post_8042_compare_success:
+    or      sp, sp
+    ret
+
+; F000:F5D9/F5E9 — read KBC status/data then compare command response.
+bios_post_read_8042_status:
+    in      al, 0x64
+    test    al, 0x01
+    jz      short bios_post_read_8042_status_command
+    jcxz    $+2
+    in      al, 0x60
+bios_post_read_8042_status_command:
+    mov     al, 0xC0
+    call    bios_post_8042_compare_command
+    ret
+
+bios_post_read_8042_output_port:
+    in      al, 0x64
+    test    al, 0x01
+    jz      short bios_post_read_8042_output_command
+    jcxz    $+2
+    in      al, 0x60
+bios_post_read_8042_output_command:
+    mov     al, 0xD0
+    call    bios_post_8042_compare_command
+    ret
+
+; F000:F5F9 — read the 8042 response byte.
+bios_post_8042_read_response:
+    call    bios_post_8042_wait_output_ready
+    in      al, 0x60
+    ret
+
+; F000:F5FF — bounded 8042 output-buffer wait with twelve retries.
+bios_post_8042_wait_output_ready:
+    mov     cx, 0x000C
+bios_post_8042_wait_output_retry:
+    push    cx
+    xor     cx, cx
+bios_post_8042_wait_output_inner:
+    in      al, 0x64
+    test    al, 0x01
+    loope   bios_post_8042_wait_output_inner
+    pop     cx
+    loope   bios_post_8042_wait_output_retry
+    ret
+
+%if ($ - rom_start) != 0xF60F
+    %error "Reconstructed POST error/KBC helper region must end at F60Fh"
+%endif
+
+; ---------------------------------------------------------------------------
 ; F000:F60F — bounded 8042 output-buffer read helper.
 times 0xF60F - ($ - rom_start) db 0xFF
 bios_8042_read_output:
