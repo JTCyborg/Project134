@@ -340,8 +340,8 @@ times 0x8CEB - ($ - rom_start) db 0xFF
 bios_8042_wait_and_read:
     loopne  0x8D20
     leave
-    jcxz    $+2
 bios_8042_wait_input_empty:
+    jcxz    $+2
     in      al, 0x64
     test    al, 0x02
     loopne  bios_8042_wait_input_empty
@@ -349,8 +349,8 @@ bios_8042_wait_input_empty:
     mov     al, ah
     out     0x64, al
     xor     cx, cx
-    jcxz    $+2
 bios_8042_wait_output_full:
+    jcxz    $+2
     in      al, 0x64
     test    al, 0x01
     loope   bios_8042_wait_output_full
