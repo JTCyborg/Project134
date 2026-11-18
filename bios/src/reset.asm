@@ -3053,8 +3053,8 @@ bios_hd_utility_drive_choice_ready:
     call    near 0x58BE
     mov     di, 0x0001
     mov     si, 0x1232
-    mov     [0xE180], si
 bios_hd_utility_cylinder_head_loop:
+    mov     [0xE180], si
     db      0x8B, 0xC6                 ; mov ax, si
     mov     dx, 0x0001
     db      0x8B, 0xDF                 ; mov bx, di
@@ -3146,15 +3146,15 @@ bios_hd_utility_drive_type_draw:
     call    near bios_hd_utility_drive_type_render
     mov     byte [0xE182], 0x0D
     jmp     short bios_hd_utility_drive_type_loop
-bios_hd_utility_drive_type_prompt:
     call    near 0x099D
+bios_hd_utility_drive_type_prompt:
     call    near bios_hd_utility_drive_type_render
     call    near 0x591A
     mov     [0xE182], ax
     db      0x2D, 0x0D, 0x00           ; sub ax, 000Dh
-    je      short bios_hd_utility_drive_type_done
+    je      short bios_hd_utility_drive_type_loop
     db      0x2D, 0x0E, 0x00           ; sub ax, 000Eh
-    je      short bios_hd_utility_drive_type_done
+    je      short bios_hd_utility_drive_type_loop
     db      0x2D, 0x28, 0x00           ; sub ax, 0028h
     jb      short bios_hd_utility_drive_type_prompt
     db      0x2D, 0x01, 0x00           ; sub ax, 0001h
