@@ -41,4 +41,11 @@ This is a byte-identity/build result, not a PCem runtime test. The source still 
 
 ## Next target
 
-The next inherited byte begins at `29F6h`. It contains setup/configuration handlers, CMOS-backed field selection, and inline pointer/offset tables. The table data and stack/indirect call conventions must be mapped before converting the block.
+This phase note is superseded by the 2026-11-18 follow-up: `29F6h–2D10h` has since been emitted as NASM source. Subsequent verified additions cover `2D11h–2EF0h`, `2F24h–3043h`, and `3C5Ch–3F49h`. The next selected inherited executable interval is `3F4Ah–4230h`, called from `164Ch`.
+
+
+## Follow-up verified on 2026-11-18
+
+The source was subsequently extended beyond the original 29F5h stopping point. The 29F6h–2D10h Setup/configuration handler interval is already emitted by NASM. The memory benchmark/PIT routine at 2D11h–2DF4h and the two table-confirmed selectors at 2E74h and 2EB4h were added, followed by the Setup exit/temporary INT 13h path at 2F24h–3043h and the Setup menu/parser/formatter at 3C5Ch–3F49h. All of these additions are covered by the successful full-image comparison in run 44382969490.
+
+The next inherited executable interval selected for reconstruction is 3F4Ah–4230h; its direct caller is 164Ch. The large inherited span 3044h–3C5Bh is retained pending a separate string/table boundary audit.
