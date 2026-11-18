@@ -34,7 +34,7 @@ This is a behavior-preserving reimplementation, not a patch of the reference ROM
 2. Establish the physical ROM map: image size, mirrored/aliased regions, reset-vector location, checksums, and writable flash/EPROM constraints.
 3. Build a complete address/function inventory from the disassembly. Each range is classified as verified, partially verified, or unknown.
 4. Reimplement verified routines in source, preserving calling conventions, register/flag outputs, memory side effects, port I/O order, delays, and error behavior.
-5. For not-yet-understood ranges, do not invent replacements. Preserve their bytes in a separately tracked compatibility payload until they can be reconstructed. Mark such regions as inherited, not native.
+5. For not-yet-understood ranges, do not invent replacements. Preserve their bytes directly from the immutable reference ROM with explicit `incbin` slices. These regions are inherited, not native; replace them with NASM only after instruction/data boundaries and behavior are verified.
 6. Link to the exact original image size and layout. Fail the build on size, vector, reset-entry, or map violations.
 7. Differential-test the new image against the original in the emulator: instruction-level traces, port writes, IVT/BDA/CMOS changes, POST milestones, and interrupt results.
 8. Only call the result a functional replacement after boot and subsystem tests pass on the target emulator/hardware.
@@ -75,7 +75,7 @@ Do not implement the disk service as complete until read, write, verify, format,
 
 ## Current status
 
-The native NASM reconstruction is still incomplete and is not qualified to boot. The source now contains an instruction-level transcription of the CPU/cache profile selector and CMOS 8Eh path at 8300h–83FFh. GitHub Actions build `44373125968` assembled the candidate and confirmed this full 256-byte interval matches the reference byte-for-byte. The candidate's current full-ROM checksum is `9879h`, so it still fails POST06 and is not boot-qualified. Other ROM regions remain unimplemented or differ from the reference.
+The native NASM reconstruction is still incomplete. Unknown ROM gaps are now emitted from explicit slices of the immutable `ami486.bin` reference instead of being filled with `FFh`; each such range is therefore inherited, not reconstructed. The CPU/cache profile selector and CMOS 8Eh path at 8300h–83FFh is transcribed in NASM and has passed a byte-for-byte reference check. The latest reference-backed candidate is being rebuilt and audited for residual differences; boot qualification is not claimed until the full image and PCem execution are verified.
 
 The Visual Studio build now produces two distinct artifacts:
 
