@@ -75,7 +75,9 @@ Do not implement the disk service as complete until read, write, verify, format,
 
 ## Current status
 
-The native NASM reconstruction is still incomplete. Unknown ROM gaps are now emitted from explicit slices of the immutable `ami486.bin` reference instead of being filled with `FFh`; each such range is therefore inherited, not reconstructed. The CPU/cache profile selector and CMOS 8Eh path at 8300h–83FFh is transcribed in NASM and has passed a byte-for-byte reference check. The latest reference-backed candidate is being rebuilt and audited for residual differences; boot qualification is not claimed until the full image and PCem execution are verified.
+The current NASM build is now **byte-identical to the original 64-KiB ROM**. GitHub Actions run `44375480780` completed successfully: full comparison reports 65,536/65,536 bytes equal, the 16-bit POST checksum is `0000h`, and the candidate SHA-256 is `91fd62ce3ccb0b79b42f5fd6c6a7262ed52824b8ade917181b8a12267fec003b`, identical to the reference. This establishes a boot-compatible image at the binary level; PCem was not launched by this CI job.
+
+This is **not yet an independent native reconstruction**. The NASM listing shows 60,623 bytes (92.5%) inherited from explicit `incbin "ami486.bin"` slices and 4,913 bytes (7.5%) emitted by the source as instructions/data/fill. The latter are byte-verified; inherited regions are preserved, not reimplemented. The next work is to replace inherited ranges with verified NASM routines while keeping the full-image byte comparison and POST checksum passing. See `analysis/disasm/PROJECT134_BYTE_EXACT_BUILD_AUDIT_20261118.md` for the reproducible measurements.
 
 The Visual Studio build now produces two distinct artifacts:
 
