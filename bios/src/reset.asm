@@ -37,7 +37,7 @@ bios_reset_cmos_path:
 bios_reset_to_cmos_read:
     jmp     bios_cmos_read
 bios_reset_to_post_delay:
-    jmp     bios_post_delay
+    jmp     bios_post_delay_complete
 
 ; ---------------------------------------------------------------------------
 ; F000:8A20 — CMOS marker dispatcher.
