@@ -4211,7 +4211,68 @@ bios_post_memory_readback:
     %error "POST address-alias probe helpers must end at 53C5h"
 %endif
 
-incbin  "ami486.bin", ($ - rom_start), (0x5520 - ($ - rom_start)) ; inherited POST controller helpers from 53C5h to 551Fh
+; F000:53C5 — memory-controller/8042-assisted RAM probe coordinator.
+bios_post_memory_controller_probe:
+    db      0x33, 0xDB                 ; xor bx, bx
+    db      0x0B, 0xD2                 ; or dx, dx
+    je      short bios_post_memory_controller_probe_done
+    cmp     word [0x0013], 0xFEDC
+    je      short bios_post_memory_controller_probe_retry
+    call    near 0x5434
+    cmp     word [0x0013], 0xBA98
+    je      short bios_post_memory_controller_probe_retry
+bios_post_memory_controller_probe_poll:
+    call    near 0x5448
+    je      short bios_post_memory_controller_probe_retry
+    call    near 0x5513
+    call    near 0xF5A9
+    push    bx
+    call    near 0x552A
+    pop     bx
+    jne     short bios_post_memory_controller_error
+    in      al, 0x61
+    test    al, 0xC0
+    je      short bios_post_memory_controller_clear
+    db      0x2E, 0xA0, 0x0E, 0xB5    ; mov al, [cs:0B50Eh]
+    call    near 0x8300
+    jne     short bios_post_memory_controller_error
+bios_post_memory_controller_clear:
+    call    near 0x5520
+    inc     bx
+    call    near 0x546C
+    dec     dx
+    jne     short bios_post_memory_controller_probe_poll
+    call    near 0xF5A9
+    call    near 0x543D
+bios_post_memory_controller_probe_done:
+    ret
+bios_post_memory_controller_probe_retry:
+    call    near 0x5448
+    call    near 0x5513
+    call    near 0x5520
+    inc     bx
+    call    near 0x546C
+    dec     dx
+    jne     short bios_post_memory_controller_probe_retry
+    jmp     short bios_post_memory_controller_probe_finish
+bios_post_memory_controller_error:
+    push    bx
+    mov     bx, 0x0003
+    call    near 0x5F8E
+    pop     bx
+    cli
+bios_post_memory_controller_error_wait:
+    mov     al, [0x0012]
+    test    al, 0x20
+    je      short bios_post_memory_controller_error_wait
+bios_post_memory_controller_probe_finish:
+    jmp     short bios_post_memory_controller_probe_done
+
+%if ($ - rom_start) != 0x5434
+    %error "POST memory-controller probe coordinator must end at 5434h"
+%endif
+
+incbin  "ami486.bin", ($ - rom_start), (0x5520 - ($ - rom_start)) ; inherited 8042/controller helpers from 5434h to 551Fh
 
 ; F000:5520 — clear all 64 KiB at ES:0000h.
 bios_post_clear_64k:
