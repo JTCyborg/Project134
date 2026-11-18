@@ -1394,7 +1394,80 @@ bios_cmos_e047_low_return:
 %if ($ - rom_start) != 0x2C69
     %error "CMOS E046/E049/E047 selector handlers must end at 2C69h"
 %endif
-incbin  "ami486.bin", ($ - rom_start), (0x8280 - ($ - rom_start)) ; inherited reference bytes from 2C69h to 8280h
+; F000:2C69h–2D10h — Enabled/Disabled field and sixteen-value timing selector.
+bios_cmos_e042_enable_selector:
+    push    si
+    push    di
+    mov     bl, [0xE042]
+    db      0x0A, 0xC0                 ; or al, al
+    jne     near bios_cmos_e042_enable_nonzero
+    or      byte [0xE042], 0x20
+    mov     si, 0xB571
+    test    bl, 0x20
+    jne     near bios_cmos_e042_enable_selected
+    and     byte [0xE042], 0x1F
+    mov     si, 0xB568
+bios_cmos_e042_enable_selected:
+    db      0x8B, 0xC6                 ; mov ax, si
+    jmp     short bios_cmos_e042_enable_return
+    nop
+bios_cmos_e042_enable_nonzero:
+    shr     bl, 5
+    db      0x02, 0xC3                 ; add al, bl
+    and     al, 0x01
+    je      near bios_cmos_e042_enable_clear
+    or      byte [0xE042], 0x20
+    jmp     short bios_cmos_e042_enable_return
+    nop
+bios_cmos_e042_enable_clear:
+    and     byte [0xE042], 0x1F
+    mov     ax, 0x0000
+bios_cmos_e042_enable_return:
+    pop     di
+    pop     si
+    retf
+
+; Sixteen timing-label offsets selected by the high nibble of BDA E052h.
+bios_cmos_e052_timing_table:
+    dw      0xB6FB, 0xB700, 0xB708, 0xB70F
+    dw      0xB717, 0xB71C, 0xB724, 0xB729
+    dw      0xB731, 0xB736, 0xB73E, 0xB745
+    dw      0xB74D, 0xB752, 0xB75A, 0xB761
+
+bios_cmos_e052_timing_selector:
+    push    si
+    push    di
+    db      0x33, 0xDB                 ; xor bx, bx
+    mov     si, 0x2CAF
+    mov     bl, [0xE052]
+    test    byte [0xE052], 0x01
+    jne     near bios_cmos_e052_timing_update
+    and     bl, 0xF0
+    shr     bl, 3
+    db      0x03, 0xF3                 ; add si, bx
+    mov     ax, [cs:si]
+    jmp     short bios_cmos_e052_timing_return
+    nop
+bios_cmos_e052_timing_update:
+    and     byte [0xE052], 0x0F
+    shr     bl, 4
+    db      0x02, 0xD8                 ; add bl, al
+    and     bl, 0x0F
+    db      0x8A, 0xC3                 ; mov al, bl
+    shl     al, 4
+    db      0x08, 0x06, 0x52, 0xE0    ; or [E052h], al
+    shl     bl, 1
+    db      0x03, 0xF3                 ; add si, bx
+    mov     ax, [cs:si]
+bios_cmos_e052_timing_return:
+    pop     di
+    pop     si
+    retf
+
+%if ($ - rom_start) != 0x2D11
+    %error "CMOS E042/E052 selectors must end at 2D11h"
+%endif
+incbin  "ami486.bin", ($ - rom_start), (0x8280 - ($ - rom_start)) ; inherited reference bytes from 2D11h to 8280h
     db      0x2F, 0x00, 0xE7, 0x03, 0x00, 0x00, 0x12, 0x00
 
 ; F000:82D0 — original POST callback vector table.
