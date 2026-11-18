@@ -2682,6 +2682,7 @@ bios_hd_utility_option_loop:
     jl      short bios_hd_utility_option_loop
     mov     al, [0xE189]
     mov     [0xE1AC], al
+bios_hd_utility_refresh:
     mov     al, [0xE1A5]
     mov     [0xE19F], al
     call    near bios_hd_utility_coordinate
@@ -2828,6 +2829,7 @@ bios_hd_utility_drive_status_done:
     mov     ax, [0xE180]
     add     ax, 0x0018
     lea     bx, [0x3731]
+bios_hd_utility_drive_render:
     call    near 0x58D3
     JMP_ABS 0x488C
 bios_hd_utility_drive_absent_default:
@@ -2889,7 +2891,7 @@ bios_hd_utility_drive_resolved:
     mov     ax, [0xE180]
     mov     dx, 0x0005
     call    near 0x09EB
-bios_hd_utility_drive_render:
+bios_hd_utility_drive_status_epilogue:
     pop     si
     db      0x8B, 0xE5                 ; mov sp, bp
     pop     bp
