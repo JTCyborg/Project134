@@ -6,15 +6,15 @@
   Size:   65536 bytes
   Native candidate: C:\Temp\trdos\134\out\Debug\Project134.native-candidate.bin
   Listing:          C:\Temp\trdos\134\out\Debug\Project134.native-candidate.lst
-  C:\Temp\trdos\134\bios\tools\build_bios.ps1 : At C:\Temp\trdos\134\bios\tools\validate_rom.ps1:117 char:50
+  C:\Temp\trdos\134\bios\tools\build_bios.ps1 : At C:\Temp\trdos\134\bios\tools\validate_rom.ps1:119 char:50
   +     Write-Host "BIOS POST06 ROM checksum PASS (16-bit sum = 0000h)."  ...
   +                                                  ~~~~
   Unexpected token '-bit' in expression or statement.
-  At C:\Temp\trdos\134\bios\tools\validate_rom.ps1:117 char:55
+  At C:\Temp\trdos\134\bios\tools\validate_rom.ps1:119 char:55
   +     Write-Host "BIOS POST06 ROM checksum PASS (16-bit sum = 0000h)."  ...
   +                                                       ~~~
   Unexpected token 'sum' in expression or statement.
-  At C:\Temp\trdos\134\bios\tools\validate_rom.ps1:117 char:54
+  At C:\Temp\trdos\134\bios\tools\validate_rom.ps1:119 char:54
   +     Write-Host "BIOS POST06 ROM checksum PASS (16-bit sum = 0000h)."  ...
   +                                                      ~
   Missing closing ')' in expression.
@@ -22,11 +22,11 @@
   + ... ath -and (Test-Path -LiteralPath $ReferenceRomPath -PathType Leaf)) {
   +                                                                         ~
   Missing closing '}' in statement block or type definition.
-  At C:\Temp\trdos\134\bios\tools\validate_rom.ps1:117 char:66
+  At C:\Temp\trdos\134\bios\tools\validate_rom.ps1:119 char:66
   + ... rite-Host "BIOS POST06 ROM checksum PASS (16-bit sum = 0000h)." -Fore ...
   +                                                                 ~
   Unexpected token ')' in expression or statement.
-  At C:\Temp\trdos\134\bios\tools\validate_rom.ps1:126 char:153
+  At C:\Temp\trdos\134\bios\tools\validate_rom.ps1:128 char:153
   + ... ot validate PCem execution." -f $bytes.Length) -ForegroundColor Green
   +                                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   The string is missing the terminator: ".
