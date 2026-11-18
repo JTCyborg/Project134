@@ -4098,7 +4098,67 @@ bios_post_print_decimal_digit:
     %error "POST memory/controller continuation must end at 5305h"
 %endif
 
-incbin  "ami486.bin", ($ - rom_start), (0x5520 - ($ - rom_start)) ; inherited memory/controller helpers from 5305h to 551Fh
+; F000:5305 — byte/word memory address-pattern probe.
+bios_post_memory_word_probe:
+    mov     [si], al
+    mov     [si+0x03], ah
+    db      0x8C, 0xC1                 ; mov cx, es
+    mov     es, cx
+bios_post_memory_word_probe_retry:
+    db      0x26, 0xC7, 0x05, 0xAA, 0x55 ; mov word es:[di],55AAh
+    push    ax
+    pop     ax
+    db      0x26, 0xC7, 0x45, 0x02, 0x55, 0xAA ; mov word es:[di+2],AA55h
+    push    ax
+    pop     ax
+    db      0x26, 0x81, 0x3D, 0xAA, 0x55 ; cmp word es:[di],55AAh
+    jne     short bios_post_memory_word_probe_next
+    push    ax
+    pop     ax
+    db      0x26, 0x81, 0x7D, 0x02, 0x55, 0xAA ; cmp word es:[di+2],AA55h
+    jne     short bios_post_memory_word_probe_next
+    push    ds
+    mov     cx, 0x0038
+    mov     ds, cx
+    cmp     word [0x0000], 0x55AA
+    pop     ds
+    je      short bios_post_memory_word_probe_next
+    inc     byte [si]
+    jne     short bios_post_memory_word_probe_retry
+    inc     byte [si+0x03]
+    jne     short bios_post_memory_word_probe_retry
+bios_post_memory_word_probe_next:
+    mov     al, [si]
+    mov     ah, [si+0x03]
+    ret
+
+; F000:534C — walk address bits, writing and verifying the selected byte.
+bios_post_memory_byte_probe:
+    mov     [si], al
+    mov     [si+0x03], ah
+    db      0x8C, 0xC1                 ; mov cx, es
+    mov     es, cx
+    stc
+bios_post_memory_byte_probe_write:
+    db      0x26, 0x88, 0x05           ; mov es:[di], al
+    dec     al
+    rcr     di, 1
+    jae     short bios_post_memory_byte_probe_write
+    sub     byte [si], 0x01
+    jae     short bios_post_memory_byte_probe_compare
+    dec     byte [si+0x03]
+bios_post_memory_byte_probe_compare:
+    db      0x3A, 0x1C                 ; cmp bl, [si]
+    jne     short bios_post_memory_byte_probe
+    db      0x3A, 0x7C, 0x03           ; cmp bh, [si+3]
+    jne     short bios_post_memory_byte_probe
+    ret
+
+%if ($ - rom_start) != 0x5371
+    %error "POST byte/word memory probes must end at 5371h"
+%endif
+
+incbin  "ami486.bin", ($ - rom_start), (0x5520 - ($ - rom_start)) ; inherited memory/controller helpers from 5371h to 551Fh
 
 ; F000:5520 — clear all 64 KiB at ES:0000h.
 bios_post_clear_64k:
