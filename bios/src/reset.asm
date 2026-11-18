@@ -491,9 +491,9 @@ bios_ali_read_c3_third_continue:
     jmp     0x8DDC
 
 times 0x89B8 - ($ - rom_start) db 0xFF
-bios_ali_write_c3_return:
+bios_ali_write_c3_second_return:
     dw      0x89BA
-bios_ali_write_c3_continue:
+bios_ali_write_c3_second_continue:
     mov     sp, 0x89C0
     jmp     0x8DCF
 
@@ -721,11 +721,11 @@ times 0x8CEB - ($ - rom_start) db 0xFF
 bios_8042_wait_and_read:
     loopne  0x8D20
     leave
-bios_8042_wait_input_empty:
+bios_8042_wait_input_empty_8ceb:
     jcxz    $+2
     in      al, 0x64
     test    al, 0x02
-    loopne  bios_8042_wait_input_empty
+    loopne  bios_8042_wait_input_empty_8ceb
     jnz     bios_8042_command_done
     mov     al, ah
     out     0x64, al
