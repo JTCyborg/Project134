@@ -4266,6 +4266,7 @@ bios_post_memory_controller_probe_error_wait:
     mov     al, [0x0012]
     test    al, 0x20
     je      short bios_post_memory_controller_probe_error_wait
+    jmp     short bios_post_memory_controller_probe_finish
 %if ($ - rom_start) != 0x5434
     %error "POST memory-controller probe coordinator must end at 5434h"
 %endif
@@ -4322,7 +4323,6 @@ bios_post_chipset_mode_resume:
     mov     al, 0x0D
     call    near 0xF53C
     popa
-    ret
 
 ; F000:5494 — report the selected memory size, then invoke INT 15h/AH=89h.
 bios_post_memory_size_report:
