@@ -4270,7 +4270,145 @@ bios_post_memory_controller_error_wait:
     %error "POST memory-controller probe coordinator must end at 5434h"
 %endif
 
-incbin  "ami486.bin", ($ - rom_start), (0x5520 - ($ - rom_start)) ; inherited 8042/controller helpers from 5434h to 551Fh
+; F000:5434 — enable the 8042 keyboard interface.
+bios_post_8042_enable_keyboard:
+    mov     al, 0xAE
+    call    near 0xF635
+    call    near 0xF659
+    ret
+
+; F000:543D — disable the 8042 keyboard interface and return its data byte.
+bios_post_8042_disable_keyboard:
+    mov     al, 0xAD
+    call    near 0xF635
+    call    near 0xF659
+    in      al, 0x60
+    ret
+
+; F000:5448 — consume the 8042 response and update the CMOS/controller marker.
+bios_post_8042_read_response:
+    in      al, 0x60
+    cmp     al, 0x01
+    je      short bios_post_8042_response_mark
+    cmp     al, 0x53
+    jne     short bios_post_8042_response_check
+    mov     ax, 0x8E8E
+    call    near 0xEE94
+    or      al, 0x01
+    xchg    al, ah
+    call    near 0xEE9D
+bios_post_8042_response_mark:
+    mov     word [0x0013], 0xFEDC
+bios_post_8042_response_check:
+    cmp     word [0x0013], 0xFEDC
+    ret
+
+; F000:546C — preserve the real-mode register frame across the chipset gate.
+bios_post_chipset_mode_gate:
+    pusha
+    db      0x8B, 0xC4                 ; mov ax, sp
+    mov     [0x0067], ax
+    mov     ax, 0x068F
+    call    near 0xEE9D
+    db      0x2E, 0xF6, 0x06, 0x81, 0x82, 0x40 ; test byte [cs:8281h],40h
+    je      short bios_post_chipset_mode_real_mode
+    jmp     near 0x8AD6
+bios_post_chipset_mode_real_mode:
+    jmp     near 0xF068
+bios_post_chipset_mode_resume:
+    mov     ax, [0x0067]
+    db      0x8B, 0xE0                 ; mov sp, ax
+    call    near 0x5572
+    mov     al, 0x0D
+    call    near 0xF53C
+    popa
+    ret
+
+; F000:5494 — report the selected memory size, then invoke INT 15h/AH=89h.
+bios_post_memory_size_report:
+    pusha
+    db      0x8B, 0xC3                 ; mov ax, bx
+    db      0x03, 0xC5                 ; add ax, bp
+    push    ax
+    cmp     ax, 0x061B
+    jae     short bios_post_memory_size_report_skip_padding
+    mov     cx, 0x0001
+    cmp     ax, 0x009D
+    jae     short bios_post_memory_size_report_padding
+    mov     cl, 0x02
+    cmp     al, 0x10
+    jae     short bios_post_memory_size_report_padding
+    mov     cl, 0x03
+    cmp     al, 0x02
+    jae     short bios_post_memory_size_report_padding
+    mov     cl, 0x04
+bios_post_memory_size_report_padding:
+    mov     al, 0x30
+    call    near 0xF53C
+    loop    bios_post_memory_size_report_padding
+bios_post_memory_size_report_skip_padding:
+    pop     ax
+    call    near bios_post_print_decimal
+    mov     si, 0x7ADC
+    call    near 0xF52E
+    mov     ax, 0x028F
+    call    near 0xEE9D
+    mov     si, 0x0600
+    mov     bx, 0x0800
+    mov     ah, 0x89
+    int     0x15
+    jne     short bios_post_memory_size_report_error
+    call    near 0x5506
+    mov     ax, 0x0040
+    mov     es, ax
+    popa
+    ret
+bios_post_memory_size_report_error:
+    jmp     near 0x50DB
+
+; F000:54E5 — position the cursor and optionally print the memory-test marker.
+bios_post_memory_status_marker:
+    mov     dx, [0x0069]
+    mov     bh, 0x00
+    mov     ah, 0x02
+    int     0x10
+    db      0x2E, 0xA0, 0x0F, 0xB5    ; mov al, [cs:0B50Fh]
+    call    near 0x8300
+    je      short bios_post_memory_status_restore_cursor
+    mov     si, 0x7C7C
+    call    near 0xF52E
+bios_post_memory_status_restore_cursor:
+    db      0x80, 0xEE, 0x02           ; sub dh, 2
+    mov     ah, 0x02
+    int     0x10
+    ret
+
+; F000:5506 — restore the PIC mask and enable interrupts when permitted.
+bios_post_enable_interrupts:
+    mov     al, [0x0012]
+    test    al, 0x20
+    jne     short bios_post_enable_interrupts_done
+    mov     al, 0xFE
+    out     0x21, al
+    sti
+bios_post_enable_interrupts_done:
+    ret
+
+; F000:5513 — advance the 32-bit probe address stored at DS:SI.
+bios_post_advance_probe_address:
+    add     byte [si], 0x01
+    jae     short bios_post_advance_probe_address_done
+    inc     byte [si+0x03]
+bios_post_advance_probe_address_done:
+    db      0x8C, 0xC1                 ; mov cx, es
+    mov     es, cx
+    ret
+
+%if ($ - rom_start) != 0x5520
+    %error "POST 8042, chipset-gate and memory-size helpers must end at 5520h"
+%endif
+
+incbin  "ami486.bin", ($ - rom_start), (0x5520 - ($ - rom_start)) ; no inherited POST code before 5520h
 
 ; F000:5520 — clear all 64 KiB at ES:0000h.
 bios_post_clear_64k:
