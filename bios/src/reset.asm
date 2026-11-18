@@ -840,7 +840,6 @@ bios_extended_memory_probe_restore:
     mov     sp, 0x280A
     JMP_ABS 0x8DCF
     dw      0x280C
-    or      al, 0x28
     or      al, 0x03
     db      0x86, 0xE0                 ; xchg al, ah
     mov     sp, 0x2816
