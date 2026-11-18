@@ -2006,6 +2006,54 @@ bios_8042_read_output_data:
     in      al, 0x60
     ret
 
+; F000:F622-F658 — 8042 command/data transactions.
+times 0xF622 - ($ - rom_start) db 0xFF
+bios_post_8042_write_command:
+    call    bios_8042_wait_input_empty
+    jnz     short bios_post_8042_write_command_done
+    mov     al, ah
+    call    bios_post_8042_write_data
+bios_post_8042_write_command_done:
+    ret
+
+bios_post_8042_write_output_port:
+    mov     ah, al
+    mov     al, 0xD1
+    call    bios_post_8042_write_command
+    ret
+
+bios_post_8042_write_command_byte:
+    push    ax
+    call    bios_8042_wait_input_empty
+    pop     ax
+    jnz     short bios_post_8042_write_command_byte_done
+    out     0x64, al
+    push    ax
+    call    bios_8042_wait_input_empty
+    pop     ax
+bios_post_8042_write_command_byte_done:
+    ret
+
+bios_post_8042_write_data:
+    push    ax
+    call    bios_8042_wait_input_empty
+    pop     ax
+    jnz     short bios_post_8042_write_data_done
+    out     0x60, al
+    call    bios_8042_wait_input_empty
+bios_post_8042_write_data_done:
+    ret
+
+bios_post_8042_write_output_port_data:
+    mov     ah, al
+    mov     al, 0x60
+    call    bios_post_8042_write_command
+    ret
+
+%if ($ - rom_start) != 0xF659
+    %error "8042 command/data transaction helpers must end at F659h"
+%endif
+
 ; F000:F659 — 8042 input-buffer-empty wait helper.
 times 0xF659 - ($ - rom_start) db 0xFF
 bios_8042_wait_input_empty:
