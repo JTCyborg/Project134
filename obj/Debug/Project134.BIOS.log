@@ -4,12 +4,12 @@
   Output: C:\Temp\trdos\134\out\Debug\Project134.bin
   Size:   65536 bytes
   Listing: C:\Temp\trdos\134\out\Debug\Project134.lst
-  NASM ALi 21-record profile walker: mismatch at ROM offset 0x20A9; got 0x88, expected 0x8A
+  NASM ALi 21-record profile walker: mismatch at ROM offset 0x20AD; got 0x75, expected 0x0F
   At C:\Temp\trdos\134\bios\tools\validate_rom.ps1:25 char:13
   +             throw ("{0}: mismatch at ROM offset 0x{1:X4}; got 0x{2:X2 ...
   +             ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-      + CategoryInfo          : OperationStopped: (NASM ALi 21-rec..., expected 0x8A:String) [], RuntimeException
-      + FullyQualifiedErrorId : NASM ALi 21-record profile walker: mismatch at ROM offset 0x20A9; got 0x88, expected 0x8 
-     A
+      + CategoryInfo          : OperationStopped: (NASM ALi 21-rec..., expected 0x0F:String) [], RuntimeException
+      + FullyQualifiedErrorId : NASM ALi 21-record profile walker: mismatch at ROM offset 0x20AD; got 0x75, expected 0x0 
+     F
    
 C:\Program Files\Microsoft Visual Studio\18\Community\MSBuild\Microsoft\VC\v180\Microsoft.MakeFile.Targets(45,5): error MSB3073: выход из команды "powershell.exe -NoLogo -NoProfile -ExecutionPolicy Bypass -File "C:\Temp\trdos\134\bios\tools\build_bios.ps1" -OutputDirectory "C:\Temp\trdos\134\bios\..\out\Debug" -NasmExe "nasm.exe" -RomSize 65536" с кодом 1.
