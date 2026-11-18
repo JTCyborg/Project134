@@ -215,6 +215,139 @@ times 0x82D0 - ($ - rom_start) db 0xFF
     dw      0x19A3, 0x19AB, 0x19A5, 0x19AD
     dw      0x19A7, 0x19AE, 0x19A9, 0x19AF
 
+; F000:8300 — CPU/cache profile selector and CMOS 8Eh update.
+; This region is transcribed from the original instruction stream. Alternate
+; but equivalent MOV/XOR/OR encodings are kept byte-exact where NASM canonical
+; encoding would otherwise change the ROM checksum.
+times 0x8300 - ($ - rom_start) db 0x00
+bios_cpu_profile_wrapper:
+    push    bx
+    call    bios_cpu_profile_selector
+    pop     bx
+    ret
+
+bios_cpu_profile_selector:
+    mov     bx, 0xB7D0
+    db      0x0A, 0xC0                 ; or al, al
+    jz      short bios_cpu_profile_cmos_update
+    db      0x32, 0xE4                 ; xor ah, ah
+    mov     bx, 0xB55D
+    sub     bx, 0xB508
+    cmp     ax, bx
+    mov     bx, 0xB7D0
+    jc      short bios_cpu_profile_walk
+    mov     bx, 0xB55D
+    sub     bx, 0xB508
+    sub     ax, bx
+
+bios_cpu_profile_walk:
+    mov     bx, [cs:0x82C6]
+    db      0x0A, 0xC0                 ; or al, al
+    jz      short bios_cpu_profile_cmos_update
+bios_cpu_profile_record:
+    mov     ah, [cs:bx+0x1E]
+    add     bl, [cs:bx+0x1F]
+    adc     bh, 0
+    add     bx, 0x20
+    test    ah, 0x80
+    jz      short bios_cpu_profile_next
+bios_cpu_profile_zero_list:
+    inc     bx
+    inc     bx
+    cmp     word [cs:bx-2], 0
+    jnz     short bios_cpu_profile_zero_list
+bios_cpu_profile_next:
+    dec     al
+    jnz     short bios_cpu_profile_record
+
+bios_cpu_profile_cmos_update:
+    mov     al, 0x8E
+    out     0x70, al
+    jcxz    short $
+    jcxz    short $
+    in      al, 0x71
+    db      0x8A, 0xE0                 ; mov ah, al
+    mov     al, [cs:bx+0x1C]
+    mov     bl, [cs:bx+0x1D]
+    test    ah, 0xC0
+    jnz     short bios_cpu_profile_cmos_mask
+    or      al, 0x80
+    out     0x70, al
+    jcxz    short $
+    jcxz    short $
+    in      al, 0x71
+    jmp     short bios_cpu_profile_cmos_resolve
+
+bios_cpu_profile_cmos_mask:
+    and     al, 0x7F
+
+bios_cpu_profile_cmos_resolve:
+    db      0x8A, 0xE3                 ; mov ah, bl
+    mov     bx, 0x873C
+    cmp     al, [cs:0x8888]
+    jbe     short bios_cpu_profile_resolve_scan
+    mov     bx, [cs:0x82C0]
+bios_cpu_profile_resolve_scan:
+    cmp     byte [cs:bx], al
+    jz      short bios_cpu_profile_resolve_found
+    add     bx, 4
+    jmp     short bios_cpu_profile_resolve_scan
+bios_cpu_profile_resolve_found:
+    mov     al, [cs:bx+3]
+    db      0x8A, 0xDC                 ; mov bl, ah
+    mov     bh, 0x08
+    mov     ah, 0x00
+bios_cpu_profile_resolve_shift:
+    rol     bl, 1
+    jnc     short bios_cpu_profile_resolve_rotate_al
+    rol     ax, 1
+    jmp     short bios_cpu_profile_resolve_decrement
+bios_cpu_profile_resolve_rotate_al:
+    rol     al, 1
+bios_cpu_profile_resolve_decrement:
+    dec     bh
+    jnz     short bios_cpu_profile_resolve_shift
+    db      0x8A, 0xC4                 ; mov al, ah
+    db      0x0A, 0xC0                 ; or al, al
+    ret
+
+; F000:83AE — descriptor selector returning the selected profile bytes in AX.
+bios_cpu_profile_descriptor:
+    mov     bx, 0xB7D0
+    db      0x0A, 0xC0                 ; or al, al
+    jz      short bios_cpu_profile_descriptor_return
+    db      0x32, 0xE4                 ; xor ah, ah
+    mov     bx, 0xB55D
+    sub     bx, 0xB508
+    cmp     ax, bx
+    mov     bx, 0xB7D0
+    jc      short bios_cpu_profile_descriptor_walk
+    mov     bx, 0xB55D
+    sub     bx, 0xB508
+    sub     ax, bx
+    mov     bx, [cs:0x82C6]
+    db      0x0A, 0xC0                 ; or al, al
+    jz      short bios_cpu_profile_descriptor_return
+bios_cpu_profile_descriptor_record:
+    mov     ah, [cs:bx+0x1E]
+    add     bl, [cs:bx+0x1F]
+    adc     bh, 0
+    add     bx, 0x20
+    test    ah, 0x80
+    jz      short bios_cpu_profile_descriptor_next
+bios_cpu_profile_descriptor_zero_list:
+    inc     bx
+    inc     bx
+    cmp     word [cs:bx-2], 0
+    jnz     short bios_cpu_profile_descriptor_zero_list
+bios_cpu_profile_descriptor_next:
+    dec     al
+    jnz     short bios_cpu_profile_descriptor_record
+bios_cpu_profile_descriptor_return:
+    mov     al, [cs:bx+0x1C]
+    mov     ah, [cs:bx+0x1D]
+    ret
+
 ; F000:8400 — CMOS 8Eh extended-register clear/restore path.
 times 0x8400 - ($ - rom_start) db 0xFF
 bios_cmos_8e_extended_entry:
