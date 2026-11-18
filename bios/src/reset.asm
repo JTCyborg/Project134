@@ -1992,11 +1992,11 @@ bios_setup_menu_refresh:
     je      short bios_setup_menu_move_up
     sub     ax, 0x0003
     je      short bios_setup_menu_move_up
-    jmp     short bios_setup_menu_loop
+    jmp     short bios_setup_menu_refresh
 bios_setup_menu_move_down:
     mov     al, 0xFF
     call    near bios_setup_menu_move
-    jmp     short bios_setup_menu_loop
+    jmp     short bios_setup_menu_refresh
 bios_setup_menu_move_up:
     mov     al, 0x01
     jmp     short bios_setup_menu_move_down
