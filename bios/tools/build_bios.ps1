@@ -112,9 +112,11 @@ Write-Host "Size:   $RomSize bytes"
 
 New-Item -ItemType Directory -Path $outputDirectory -Force | Out-Null
 
-# -Ox enables NASM multi-pass optimization so forward conditional branches use
-# their shortest legal encodings before fixed ROM-offset TIMES reservations.
-& $nasmPath -Ox -f bin "-DROM_SIZE=$RomSize" -o $outputPath $sourcePath
+# Keep a NASM listing even when fixed-offset TIMES assertions fail. The listing
+# exposes the exact emitted addresses/bytes immediately before each overflow.
+$listingPath = Join-Path $outputDirectory "Project134.lst"
+& $nasmPath -f bin -l $listingPath "-DROM_SIZE=$RomSize" -o $outputPath $sourcePath
+Write-Host "Listing: $listingPath"
 if ($LASTEXITCODE -ne 0) {
     throw "NASM failed with exit code $LASTEXITCODE"
 }
