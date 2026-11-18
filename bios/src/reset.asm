@@ -19,6 +19,24 @@ rom_start:
 ; PCem maps this 64 KiB image into the F0000h..FFFFFh BIOS window.
 
 ; ---------------------------------------------------------------------------
+; Exact pointer-dispatch trampoline at ROM offset 19ABh-19ACh.
+; The POST path reads CS:82DAh = 19ABh, jumps through this FF E7
+; (JMP DI), and resumes at 8A81h. The following RET stubs are retained
+; from the same original dispatch cluster.
+; ---------------------------------------------------------------------------
+times 0x19AB - ($ - rom_start) db 0xFF
+bios_post_dispatch_trampoline:
+    db 0xFF, 0xE7, 0xC3, 0xC3, 0xC3
+
+; ---------------------------------------------------------------------------
+; Exact POST dispatch pointer at ROM offset 82DAh-82DBh.
+; D774h -> 8A78h reads this word, which selects the 19ABh trampoline.
+; ---------------------------------------------------------------------------
+times 0x82DA - ($ - rom_start) db 0xFF
+bios_post_dispatch_pointer:
+    db 0xAB, 0x19
+
+; ---------------------------------------------------------------------------
 ; Exact reference code at ROM offset 88CEh-8A03h.
 ; This is the first branch selected by D604h when 8042 status bit 2 is clear.
 ; The 310-byte block is copied verbatim from the immutable AMI486 ROM.
