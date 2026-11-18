@@ -3365,7 +3365,251 @@ bios_hd_utility_geometry_coordinate:
     %error "Drive renderer/geometry helper block must end at 4CEEh"
 %endif
 
-incbin  "ami486.bin", ($ - rom_start), (0x8280 - ($ - rom_start)) ; inherited reference bytes from 4CEEh to 8280h
+; F000:4CEEh — disk-size and geometry configuration menu.
+bios_hd_size_menu:
+    push    bp
+    db      0x8B, 0xEC                 ; mov bp, sp
+    sub     sp, 0x0002
+    push    di
+    push    si
+    mov     al, [0xE1A6]
+    mov     [0xE19F], al
+    mov     ax, 0x0823
+    mov     dx, 0x0F37
+    mov     bx, 0x0003
+    call    near 0x578D
+    lea     bx, [0x38E1]
+    mov     ax, 0x092D
+    call    near 0x58BE
+    mov     ax, 0x0A24
+    mov     dl, 0x13
+    mov     bx, 0x9000
+    call    near 0x5862
+    mov     byte [0xE185], 0x00
+bios_hd_size_option_loop:
+    call    near bios_hd_size_option_coordinate
+    db      0x8B, 0xC8                 ; mov cx, ax
+    mov     al, [0xE185]
+    cbw
+    db      0x8B, 0xD8                 ; mov bx, ax
+    shl     bx, 1
+    mov     bx, [bx+0x3935]
+    db      0x8B, 0xC1                 ; mov ax, cx
+    call    near 0x58D3
+    inc     byte [0xE185]
+    cmp     byte [0xE185], 0x04
+    jl      short bios_hd_size_option_loop
+    mov     byte [0xE185], 0x00
+bios_hd_size_auto_loop:
+    cmp     byte [0xE185], 0x00
+    jne     short bios_hd_size_manual_check
+    cmp     word [0xE423], 0x03E8
+    jne     short bios_hd_size_input
+    inc     byte [0xE185]
+    cmp     byte [0xE185], 0x04
+    jne     short bios_hd_size_auto_loop
+    jmp     short bios_hd_size_auto_reset
+bios_hd_size_manual_check:
+    cmp     word [0xE423], 0x0000
+    je      short bios_hd_size_auto_next
+bios_hd_size_input:
+    mov     al, [0xE1A7]
+    mov     [0xE19F], al
+    call    near bios_hd_size_option_coordinate
+    db      0x8B, 0xF8                 ; mov di, ax
+    dec     di
+    db      0x8B, 0xC7                 ; mov ax, di
+    mov     dl, 0x13
+    call    near 0x581C
+    call    near 0x5902
+    db      0x8B, 0xF0                 ; mov si, ax
+    cmp     si, 0x000D
+    jne     short bios_hd_size_key_dispatch
+    mov     al, [0xE185]
+    cbw
+    db      0x8B, 0xD8                 ; mov bx, ax
+    shl     bx, 1
+    mov     ax, [bx+0x393D]
+    mov     [bp-0x02], ax
+    call    word [bp-0x02]
+    call    near bios_hd_utility_draw_confirmation
+bios_hd_size_key_dispatch:
+    mov     al, [0xE1A6]
+    mov     [0xE19F], al
+    db      0x8B, 0xC7                 ; mov ax, di
+    mov     dl, 0x13
+    call    near 0x581C
+    db      0x8B, 0xC6                 ; mov ax, si
+    db      0x2D, 0x1B, 0x00           ; sub ax, 001Bh
+    je      short bios_hd_size_exit
+    db      0x2D, 0x2D, 0x01           ; sub ax, 012Dh
+    je      short bios_hd_size_previous
+    db      0x2D, 0x03, 0x00           ; sub ax, 0003h
+    je      short bios_hd_size_previous
+    dec     ax
+    dec     ax
+    je      short bios_hd_size_auto_next
+    db      0x2D, 0x03, 0x00           ; sub ax, 0003h
+    je      short bios_hd_size_auto_next
+    jmp     short bios_hd_size_auto_loop
+bios_hd_size_previous:
+    dec     byte [0xE185]
+    js      short bios_hd_size_previous_wrap
+    JMP_ABS 0x4D48
+bios_hd_size_previous_wrap:
+    mov     byte [0xE185], 0x03
+    JMP_ABS 0x4D48
+bios_hd_size_auto_next:
+    inc     byte [0xE185]
+    cmp     byte [0xE185], 0x04
+    jne     short bios_hd_size_auto_loop
+    mov     byte [0xE185], 0x00
+bios_hd_size_auto_reset:
+    jmp     short bios_hd_size_auto_loop
+bios_hd_size_exit:
+    pop     si
+    pop     di
+    db      0x8B, 0xE5                 ; mov sp, bp
+    pop     bp
+    ret
+
+; 4DDDh calculates the screen coordinate from the selected option row.
+bios_hd_size_option_coordinate:
+    mov     ah, [0xE185]
+    db      0x2A, 0xC0                 ; sub al, al
+    add     ax, 0x0B25
+    ret
+
+; 4DE7h initializes the geometry table and invokes the input callback.
+bios_hd_size_geometry_initialize:
+    cmp     word [0xE423], 0x0000
+    je      short bios_hd_size_geometry_initialize_done
+    mov     ax, [0xE423]
+    db      0x8B, 0xC8                 ; mov cx, ax
+    shl     ax, 1
+    db      0x03, 0xC1                 ; add ax, cx
+    mov     bx, 0xE436
+    db      0x03, 0xD8                 ; add bx, ax
+    db      0x05, 0x39, 0xE4           ; add ax, E439h
+    mov     dx, 0x0003
+    call    near 0x594A
+bios_hd_size_geometry_initialize_done:
+    mov     ax, [0xE423]
+    inc     ax
+    call    near 0x4EE7
+    cmp     ax, 0x001B
+    je      short bios_hd_size_geometry_initialize_return
+    inc     word [0xE423]
+    mov     ax, [0xE423]
+    mov     [0xE427], ax
+    mov     [0xE425], ax
+bios_hd_size_geometry_initialize_return:
+    ret
+
+; 4E1Fh prompts for a new end-cylinder value.
+bios_hd_size_edit_end:
+    call    near bios_hd_size_edit_start_input
+    cmp     ax, 0x001B
+    je      short bios_hd_size_edit_end_return
+    mov     ax, [0xE427]
+    call    near 0x4EE7
+bios_hd_size_edit_end_return:
+    ret
+
+; 4E2Eh prompts for a new start-cylinder value.
+bios_hd_size_edit_start:
+    call    near bios_hd_size_edit_start_input
+    cmp     ax, 0x001B
+    je      short bios_hd_size_edit_start_return
+    mov     ax, [0xE427]
+    db      0x8B, 0xD8                 ; mov bx, ax
+    db      0x8B, 0xC8                 ; mov cx, ax
+    shl     bx, 1
+    db      0x03, 0xD9                 ; add bx, cx
+    mov     dx, [0xE423]
+    db      0x2B, 0xD0                 ; sub dx, ax
+    db      0x8B, 0xC2                 ; mov ax, dx
+    shl     dx, 1
+    db      0x03, 0xD0                 ; add dx, ax
+    db      0x8B, 0xC3                 ; mov ax, bx
+    mov     bx, 0xE439
+    db      0x03, 0xD8                 ; add bx, ax
+    db      0x05, 0x36, 0xE4           ; add ax, E436h
+    call    near 0x594A
+    dec     word [0xE423]
+bios_hd_size_edit_start_return:
+    ret
+
+; 4E5Fh resets the selected geometry count.
+bios_hd_size_reset:
+    mov     word [0xE423], 0x0000
+    ret
+
+; 4E66h edits the visible cylinder range and processes navigation keys.
+bios_hd_size_edit_start_input:
+    push    si
+bios_hd_size_edit_start_loop:
+    mov     al, [0xE1A5]
+    mov     [0xE19F], al
+    mov     ax, [0xE425]
+    call    near bios_hd_utility_geometry_coordinate
+    db      0x8B, 0xF0                 ; mov si, ax
+    dec     si
+    db      0x8B, 0xC6                 ; mov ax, si
+    mov     dl, 0x13
+    call    near 0x581C
+    mov     al, [0xE1A4]
+    mov     [0xE19F], al
+    call    near 0x5902
+    mov     [0xE182], ax
+    cmp     ax, 0x000D
+    je      short bios_hd_size_edit_start_done
+    db      0x8B, 0xC6                 ; mov ax, si
+    mov     dl, 0x13
+    call    near 0x581C
+    mov     ax, [0xE182]
+    db      0x2D, 0x1B, 0x00           ; sub ax, 001Bh
+    je      short bios_hd_size_edit_start_done
+    db      0x2D, 0x2D, 0x01           ; sub ax, 012Dh
+    je      short bios_hd_size_edit_start_previous
+    db      0x2D, 0x03, 0x00           ; sub ax, 0003h
+    je      short bios_hd_size_edit_start_previous
+    dec     ax
+    dec     ax
+    je      short bios_hd_size_edit_start_next
+    db      0x2D, 0x03, 0x00           ; sub ax, 0003h
+    je      short bios_hd_size_edit_start_next
+    jmp     short bios_hd_size_edit_start_loop
+bios_hd_size_edit_start_previous:
+    cmp     word [0xE427], 0x0001
+    jbe     short bios_hd_size_edit_start_loop
+    dec     word [0xE427]
+    dec     word [0xE425]
+    jns     short bios_hd_size_edit_start_loop
+    call    near bios_hd_utility_draw_confirmation
+    jmp     short bios_hd_size_edit_start_loop
+bios_hd_size_edit_start_next:
+    mov     ax, [0xE423]
+    cmp     [0xE427], ax
+    jae     short bios_hd_size_edit_start_loop
+    inc     word [0xE427]
+    inc     word [0xE425]
+    cmp     word [0xE425], 0x000A
+    jl      short bios_hd_size_edit_start_loop
+    jmp     short bios_hd_size_edit_start_redraw
+bios_hd_size_edit_start_redraw:
+    call    near bios_hd_utility_draw_confirmation
+    jmp     short bios_hd_size_edit_start_loop
+bios_hd_size_edit_start_done:
+    mov     ax, [0xE182]
+    pop     si
+    ret
+
+%if ($ - rom_start) != 0x4EE7
+    %error "Disk-size/geometry menu helper block must end at 4EE7h"
+%endif
+
+incbin  "ami486.bin", ($ - rom_start), (0x8280 - ($ - rom_start)) ; inherited reference bytes from 4EE7h to 8280h
     db      0x2F, 0x00, 0xE7, 0x03, 0x00, 0x00, 0x12, 0x00
 
 ; F000:82D0 — original POST callback vector table.
