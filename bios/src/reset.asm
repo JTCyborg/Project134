@@ -1535,7 +1535,37 @@ bios_pit_channel2_setup:
 %if ($ - rom_start) != 0x2E73
     %error "PIT channel-2 measurement helpers must end at 2E73h"
 %endif
-incbin  "ami486.bin", ($ - rom_start), (0x8280 - ($ - rom_start)) ; inherited reference bytes from 2E73h to 8280h
+; F000:2E73h–2EF1h — inherited selector-loop tail and one provisionally unreferenced byte.
+incbin  "ami486.bin", ($ - rom_start), (0x2EF2 - ($ - rom_start)) ; inherited 2E73h-2EF1h
+
+; F000:2EF2h–2F23h — Setup exit relocation handoff (direct caller F109h).
+bios_setup_relocation_handoff:
+    cld
+    db      0x33, 0xC0                 ; xor ax, ax
+    mov     ds, ax
+    db      0x8C,0x16,0x69,0x04       ; mov [0469h], ss
+    db      0x89,0x26,0x67,0x04       ; mov [0467h], sp
+    mov     ax, 0x0100
+    mov     es, ax
+    mov     ds, ax
+    cli
+    mov     ss, ax
+    mov     sp, 0xDFFE
+    sti
+    db      0x33, 0xF6                 ; xor si, si
+    db      0x33, 0xFF                 ; xor di, di
+    mov     cx, 0x7000
+    db      0x2E,0xF3,0xA5            ; cs rep movsw
+    mov     di, 0xE000
+    mov     cx, 0x0FF1
+    db      0x32, 0xC0                 ; xor al, al
+    rep     stosb
+    JMP_ABS 0x3C5E
+
+%if ($ - rom_start) != 0x2F24
+    %error "Setup relocation handoff must end at 2F24h"
+%endif
+incbin  "ami486.bin", ($ - rom_start), (0x8280 - ($ - rom_start)) ; inherited reference bytes from 2F24h to 8280h
     db      0x2F, 0x00, 0xE7, 0x03, 0x00, 0x00, 0x12, 0x00
 
 ; F000:82D0 — original POST callback vector table.
