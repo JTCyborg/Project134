@@ -48,6 +48,10 @@ function Assert-Bytes {
 }
 
 
+# Verify the indirect POST dispatch pointer and trampoline.
+Assert-Bytes -Offset 0x82DA -Expected ([byte[]](0xAB, 0x19)) -Description "POST dispatch pointer"
+Assert-Bytes -Offset 0x19AB -Expected ([byte[]](0xFF, 0xE7, 0xC3, 0xC3, 0xC3)) -Description "POST dispatch trampoline"
+
 # Verify the initial 8042-clear POST branch byte-for-byte.
 for ($offset = 0x88CE; $offset -lt 0x8A04; $offset++) {
     if ($bytes[$offset] -ne $referenceBytes[$offset]) {
