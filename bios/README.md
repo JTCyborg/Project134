@@ -21,7 +21,7 @@ The source now uses the reset-vector and first-stage entry addresses observed in
 - ROM size: 65,536 bytes.
 - Reset vector at ROM offset `FFF0h`: far jump to `F000:E05B`.
 - Reset gateway at ROM offset `E05Bh`: near jump to `F000:D604`.
-- Reset-continuation entries at `8A04h` and `8A20h`, plus the ALi indexed-I/O helper cluster at `8CCDh–8DEBh` and CMOS/PIC helpers at `EE94h–EF35h`.
+- Reset-continuation entries at `8A04h` and `8A20h`, plus the ALi indexed-I/O helper cluster at `8CCDh–8DECh` and CMOS/PIC helpers at `EE94h–EF35h`.
 - Early POST entry at ROM offset `D604h` and continuation through `D776h`: byte-backed dispatcher, stack-threaded RAM test, CMOS/8042 checks, and the first POST `80h` status writes.
 
 The reset-vector and entry bytes are checked by `validate_rom.ps1`.
