@@ -201,6 +201,11 @@ times 0x20FA - ($ - rom_start) db 0xFF
 bios_ali_profile_write_pm_return:
     dw      0x20FC
 
+; F000:8280 — recovered original BIOS configuration bytes.
+; These fields are read by POST code at 8280h..8286h.
+times 0x8280 - ($ - rom_start) db 0xFF
+    db      0x2F, 0x00, 0xE7, 0x03, 0x00, 0x00, 0x12, 0x00
+
 ; F000:8400 — CMOS 8Eh extended-register clear/restore path.
 times 0x8400 - ($ - rom_start) db 0xFF
 bios_cmos_8e_extended_entry:
