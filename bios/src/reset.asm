@@ -805,6 +805,7 @@ bios_extended_memory_probe_failed:
     db      0x0B,0xC9                 ; or cx,cx
     jne     near bios_extended_memory_probe_bad
     mov     ax, 0x1000
+bios_extended_memory_probe_load_segment:
     mov     ds, ax
     mov     es, ax
     nop
@@ -823,8 +824,6 @@ bios_extended_memory_probe_next_segment:
     add     ax, 0x0400
     cmp     ax, 0x9000
     jne     short bios_extended_memory_probe_load_segment
-bios_extended_memory_probe_load_segment:
-    mov     ds, ax
     mov     ax, 0xB3B3
     nop
     mov     sp, 0x27F2
