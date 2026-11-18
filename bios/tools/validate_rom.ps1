@@ -114,6 +114,13 @@ for ($offset = 0xD604; $offset -lt 0xD777; $offset++) {
     }
 }
 
+# Verify 8042 output-buffer wait helper used after POST code 08h.
+for ($offset = 0xF60F; $offset -lt 0xF622; $offset++) {
+    if ($bytes[$offset] -ne $referenceBytes[$offset]) {
+        throw ("8042 output-buffer helper byte mismatch at 0x{0:X4}: output 0x{1:X2}, reference 0x{2:X2}" -f $offset, $bytes[$offset], $referenceBytes[$offset])
+    }
+}
+
 # Verify 8042 wait/command helpers used by the POST continuation.
 for ($offset = 0xF659; $offset -lt 0xF691; $offset++) {
     if ($bytes[$offset] -ne $referenceBytes[$offset]) {
