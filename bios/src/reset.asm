@@ -872,7 +872,235 @@ bios_extended_memory_probe_finish:
 %if ($ - rom_start) != 0x2850
     %error "Extended memory probe and chipset restoration must end at 2850h"
 %endif
-incbin  "ami486.bin", ($ - rom_start), (0x8280 - ($ - rom_start)) ; inherited reference bytes from 2850h to 8280h
+; F000:2850h–29F5h — CMOS setup, segment-size measurement, PIT timing and RAM test.
+bios_post_memory_chipset_config:
+    mov     ax, 0xC503
+    call    near 0x8DDC
+    mov     di, 0x285C
+    JMP_ABS 0x8CB2
+bios_post_memory_chipset_config_19:
+    mov     ax, 0x1919
+    mov     di, 0x2865
+    JMP_ABS 0x8DED
+    or      al, 0x03
+    db      0x86, 0xE0                 ; xchg al, ah
+    mov     di, 0x286F
+    JMP_ABS 0x8DFB
+bios_post_memory_chipset_config_18:
+    mov     ax, 0x4318
+    mov     di, 0x2878
+    JMP_ABS 0x8DFB
+bios_post_memory_chipset_config_pm:
+    mov     di, 0x287E
+    JMP_ABS 0x2686
+bios_post_memory_chipset_config_19_second:
+    mov     ax, 0x1919
+    out     0x80, al
+    mov     di, 0x2889
+    JMP_ABS 0x8DED
+    and     al, 0xFC
+    db      0x86, 0xE0                 ; xchg al, ah
+    mov     di, 0x2893
+    JMP_ABS 0x8DFB
+bios_post_memory_type_map:
+    call    near 0x28F2
+    cmp     al, 0x70
+    jne     near bios_post_memory_type_60
+    mov     bl, 0x70
+    jmp     short bios_post_memory_type_apply
+    nop
+bios_post_memory_type_60:
+    cmp     al, 0x60
+    jne     near bios_post_memory_type_50
+    mov     bl, 0x30
+    jmp     short bios_post_memory_type_apply
+    nop
+bios_post_memory_type_50:
+    cmp     al, 0x50
+    jne     near bios_post_memory_type_40
+    mov     bl, 0x50
+    jmp     short bios_post_memory_type_apply
+    nop
+bios_post_memory_type_40:
+    cmp     al, 0x40
+    jne     near bios_post_memory_type_30
+    mov     bl, 0x10
+    jmp     short bios_post_memory_type_apply
+    nop
+bios_post_memory_type_30:
+    cmp     al, 0x30
+    jne     near bios_post_memory_type_20
+    mov     bl, 0x40
+    jmp     short bios_post_memory_type_apply
+    nop
+bios_post_memory_type_20:
+    cmp     al, 0x20
+    jne     near bios_post_memory_type_unknown
+    mov     bl, 0x00
+    jmp     short bios_post_memory_type_apply
+    nop
+bios_post_memory_type_unknown:
+    call    near 0x8D83
+    ret
+bios_post_memory_type_apply:
+    mov     di, 0x28E2
+    JMP_ABS 0x26BE
+bios_post_memory_type_write:
+    mov     ax, 0x1818
+    call    near 0x8DCF
+    and     al, 0x8D
+    db      0x0A, 0xC3                 ; or al, bl
+    db      0x86, 0xE0                 ; xchg al, ah
+    call    near 0x8DDC
+    ret
+
+; 28F2h — measure installed memory by scanning 16-KiB segments.
+bios_memory_segment_measure:
+    cli
+    mov     ax, 0x9C00
+bios_memory_segment_measure_loop:
+    mov     ds, ax
+    db      0x33, 0xF6                 ; xor si, si
+    mov     cx, 0x2000
+    rep     lodsw
+    mov     ax, ds
+    sub     ah, 0x04
+    cmp     ah, 0x1C
+    jae     short bios_memory_segment_measure_loop
+    mov     ds, ax
+    mov     di, 0x2911
+    jmp     short bios_memory_segment_timer
+    nop
+bios_memory_segment_timer:
+    db      0x8B, 0xD3                 ; mov dx, bx
+    db      0x33, 0xED                 ; xor bp, bp
+bios_memory_segment_timer_loop:
+    mov     di, 0x291B
+    jmp     short bios_memory_segment_pit
+    nop
+bios_memory_segment_pit:
+    db      0x2B, 0xDA                 ; sub bx, dx
+    jns     near bios_memory_segment_positive
+    neg     bx
+bios_memory_segment_positive:
+    cmp     bh, 0x01
+    jb      near bios_memory_segment_complete
+    inc     bp
+    mov     ax, ds
+    add     ah, 0x04
+    cmp     ah, 0xA0
+    mov     ds, ax
+    jne     short bios_memory_segment_timer_loop
+bios_memory_segment_complete:
+    db      0x8B, 0xDD                 ; mov bx, bp
+    db      0x8B, 0xEC                 ; mov bp, sp
+    db      0x8B, 0xC3                 ; mov ax, bx
+    out     0x81, al
+    cmp     bx, 0x20
+    jbe     near bios_memory_segment_banks_ready
+    mov     bx, 0x0040
+bios_memory_segment_banks_ready:
+    mov     cx, 0x0008
+bios_memory_segment_bank_loop:
+    shl     bl, 1
+    jb      near bios_memory_segment_bank_done
+    loop    bios_memory_segment_bank_loop
+bios_memory_segment_bank_done:
+    and     cl, 0x07
+    db      0x8A, 0xE1                 ; mov ah, cl
+    mov     cl, 0x04
+    shl     ah, cl
+    push    ds
+    mov     bx, 0x0040
+    mov     ds, bx
+    db      0x8A, 0xC4                 ; mov al, ah
+    mov     [0x00E0], ah
+    pop     ds
+    ret
+
+; 296Bh — PIT channel-0 latch/read timing helper; returns elapsed count in BX.
+bios_pit_measure_elapsed:
+    db      0x33, 0xF6                 ; xor si, si
+    mov     cx, 0x2000
+    mov     al, 0x00
+    out     0x43, al
+    jmp     short $+2
+    jmp     short $+2
+    in      al, 0x40
+    db      0x8A, 0xD8                 ; mov bl, al
+    jmp     short $+2
+    in      al, 0x40
+    db      0x8A, 0xF8                 ; mov bh, al
+    rep     lodsw
+    mov     al, 0x00
+    out     0x43, al
+    jmp     short $+2
+    jmp     short $+2
+    in      al, 0x40
+    db      0x8A, 0xE0                 ; mov ah, al
+    jmp     short $+2
+    in      al, 0x40
+    db      0x86, 0xC4                 ; xchg ah, al
+    db      0x2B, 0xD8                 ; sub bx, ax
+    jmp     di
+
+; 299Ah — read/clear the 512-KiB window in eight 64-KiB segment passes.
+bios_memory_clear_1000:
+    push    ds
+    push    si
+    mov     ax, 0x1000
+    mov     ds, ax
+    mov     bx, 0x0008
+bios_memory_clear_1000_loop:
+    db      0x33, 0xF6                 ; xor si, si
+    mov     cx, 0x8000
+    rep     lodsw
+    mov     ax, ds
+    add     ax, 0x1000
+    mov     ds, ax
+    dec     bx
+    cmp     bl, 0x00
+    jne     short bios_memory_clear_1000_loop
+    pop     si
+    pop     ds
+    ret
+
+; 29BBh — 32-bit memory pattern test, word fill/scan, and clear.
+bios_ram_pattern_test:
+    db      0x33, 0xF6                 ; xor si, si
+    mov     cx, 0x2000
+    db      0xF3,0x66,0xAD             ; rep o32 lodsd
+bios_ram_pattern_test_repeat:
+    mov     ax, 0x55AA
+    mov     cx, 0x2000
+    db      0x33, 0xFF                 ; xor di, di
+    rep     stosw
+    mov     cx, 0x2000
+    db      0x33, 0xFF                 ; xor di, di
+    rep     scasw
+    jne     near bios_ram_pattern_test_failed
+    not     ax
+    cmp     ax, 0x55AA
+    jne     short bios_ram_pattern_test_repeat
+bios_ram_pattern_test_failed:
+    mov     ax, 0x0000
+    mov     di, 0x0000
+    mov     cx, 0x2000
+    rep     stosw
+    ret
+
+bios_memory_test_return:
+    jmp     di
+bios_cmos_read_b6:
+    mov     ax, 0xB6B6
+    call    near 0xEE94
+    test    al, 0x01
+    ret
+
+%if ($ - rom_start) != 0x29F6
+    %error "Memory measurement, PIT and RAM test helpers must end at 29F6h"
+%endif
+incbin  "ami486.bin", ($ - rom_start), (0x8280 - ($ - rom_start)) ; inherited reference bytes from 29F6h to 8280h
     db      0x2F, 0x00, 0xE7, 0x03, 0x00, 0x00, 0x12, 0x00
 
 ; F000:82D0 — original POST callback vector table.
