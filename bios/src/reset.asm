@@ -300,6 +300,79 @@ bios_cmos_post_55:
     jmp     0xD74C
 
 ; ---------------------------------------------------------------------------
+; F000:8A78 — dynamic POST hook and stack-threaded ALi setup continuation.
+times 0x8A78 - ($ - rom_start) db 0xFF
+bios_post_dynamic_hook:
+    mov     ax, [cs:0x82DA]
+    mov     di, 0x8A81
+    jmp     ax
+
+bios_post_dynamic_hook_return:
+    mov     di, 0x8A87
+    jmp     0x8CCD
+bios_post_dynamic_hook_nop:
+    nop
+    mov     sp, 0x8A8E
+    jmp     0x8D83
+
+times 0x8A8E - ($ - rom_start) db 0xFF
+bios_post_ali_mode_return:
+    dw      0x8A90
+bios_post_ali_mode_continue:
+    mov     bh, [bx+si-0x4C4D]
+    nop
+    mov     sp, 0x8A9A
+    jmp     0xEE94
+
+times 0x8A9A - ($ - rom_start) db 0xFF
+bios_post_cmos_b3_read_return:
+    dw      0x8A9C
+bios_post_cmos_b3_read_continue:
+    and     al, 0xFE
+    xchg    ah, al
+    mov     sp, 0x8AA6
+    jmp     0xEE9D
+
+times 0x8AA6 - ($ - rom_start) db 0xFF
+bios_post_cmos_b3_write_return:
+    dw      0x8AA8
+bios_post_cmos_b3_write_continue:
+    mov     ax, 0xC503
+    nop
+    mov     sp, 0x8AB2
+    jmp     0x8DDC
+
+times 0x8AB2 - ($ - rom_start) db 0xFF
+bios_post_ali_1313_write_return:
+    dw      0x8AB4
+bios_post_ali_1313_write_continue:
+    mov     ax, 0x1313
+    nop
+    mov     sp, 0x8ABE
+    jmp     0x8DCF
+
+times 0x8ABE - ($ - rom_start) db 0xFF
+bios_post_ali_1313_read_return:
+    dw      0x8AC0
+bios_post_ali_1313_read_continue:
+    and     al, 0x3F
+    xchg    ah, al
+    mov     sp, 0x8ACA
+    jmp     0x8DDC
+
+times 0x8ACA - ($ - rom_start) db 0xFF
+bios_post_ali_1313_final_return:
+    dw      0x8ACC
+bios_post_ali_1313_final_continue:
+    jmp     0xD777
+
+; Independent 8042 command trampolines in the same ROM window.
+bios_8042_enable_trampoline:
+    jmp     0xF66A
+bios_8042_disable_trampoline:
+    jmp     0xF66E
+
+; ---------------------------------------------------------------------------
 ; F000:8AD5 — reset keyboard-controller wait and CPU reset request.
 times 0x8AD5 - ($ - rom_start) db 0xFF
 bios_reset_keyboard_wait:
