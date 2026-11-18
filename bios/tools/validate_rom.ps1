@@ -52,6 +52,20 @@ function Assert-Bytes {
 Assert-Bytes -Offset 0x82DA -Expected ([byte[]](0xAB, 0x19)) -Description "POST dispatch pointer"
 Assert-Bytes -Offset 0x19AB -Expected ([byte[]](0xFF, 0xE7, 0xC3, 0xC3, 0xC3)) -Description "POST dispatch trampoline"
 
+# Verify the protected-mode memory-read helper and its GDT at 2646h-26BDh.
+for ($offset = 0x2646; $offset -lt 0x26BE; $offset++) {
+    if ($bytes[$offset] -ne $referenceBytes[$offset]) {
+        throw ("GDT/POST memory helper byte mismatch at 0x{0:X4}: output 0x{1:X2}, reference 0x{2:X2}" -f $offset, $bytes[$offset], $referenceBytes[$offset])
+    }
+}
+
+# Verify the ALi indexed-I/O continuation helpers at 8DEDh-8E0Ch.
+for ($offset = 0x8DED; $offset -lt 0x8E0D; $offset++) {
+    if ($bytes[$offset] -ne $referenceBytes[$offset]) {
+        throw ("ALi helper continuation byte mismatch at 0x{0:X4}: output 0x{1:X2}, reference 0x{2:X2}" -f $offset, $bytes[$offset], $referenceBytes[$offset])
+    }
+}
+
 # Verify the initial 8042-clear POST branch byte-for-byte.
 for ($offset = 0x88CE; $offset -lt 0x8A04; $offset++) {
     if ($bytes[$offset] -ne $referenceBytes[$offset]) {
