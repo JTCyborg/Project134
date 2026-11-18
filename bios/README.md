@@ -26,6 +26,8 @@ Translated into NASM in `bios/src/reset.asm`:
 - CMOS read/write helpers at `EE94h` and `EE9Dh`.
 - 8259 PIC initialization at `EEE7h–EF35h`.
 - CR0/cache-control branch and indexed dispatch at `D655h–D6A4h`.
+- CR0 cache-disable and 8042 wait/read helpers at `8CCDh–8D08h`.
+- ALi1429 indexed mode helpers and read/write primitives at `8D09h–8E0Bh`.
 - POST delay completion and checkpoints `D724h–D774h`.
 
 The translations above follow the available instruction listing. The following
@@ -35,7 +37,7 @@ regions are still incomplete and prevent a meaningful PCem boot test:
 - `8A78h–8AD4h`: secondary CMOS/POST routines reached after checkpoint 05h.
 - `D6A8h–D6C0h`: CMOS-indexed near-jump table; entries need semantic resolution.
 - `D6DEh–D723h`: overlapping destructive memory/register test streams.
-- Shared routines at `8CCDh` and `8DDCh`, plus additional POST/error handlers.
+- Additional shared POST/error handlers and the unresolved CMOS dispatch table.
 - Remaining RAM test, chipset initialization, interrupt services, BIOS vectors
   and data.
 
