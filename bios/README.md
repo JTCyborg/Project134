@@ -16,6 +16,8 @@ The reconstructed BIOS is authored only in NASM assembly.
 
 The clean NASM-only restart is in progress.
 
+The ROM sections in `reset.asm` are ordered by ascending origin offsets. The build script now rejects descending `TIMES` targets before invoking NASM; this catches a source-layout error that previously would have caused a negative repeat count. This is a source-layout guard, not a successful assembly result.
+
 Translated into NASM in `bios/src/reset.asm`:
 - Reset vector `FFF0h` and gateway `E05Bh`.
 - Initial POST branch at `D604h`.
