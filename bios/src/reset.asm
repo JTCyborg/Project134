@@ -251,8 +251,8 @@ bios_cpu_profile_record:
     add     bx, 0x20
     test    ah, 0x80
     jz      short bios_cpu_profile_next
-bios_cpu_profile_zero_list:
     inc     bx
+bios_cpu_profile_zero_list:
     inc     bx
     cmp     word [cs:bx-2], 0
     jnz     short bios_cpu_profile_zero_list
@@ -336,8 +336,8 @@ bios_cpu_profile_descriptor_record:
     add     bx, 0x20
     test    ah, 0x80
     jz      short bios_cpu_profile_descriptor_next
-bios_cpu_profile_descriptor_zero_list:
     inc     bx
+bios_cpu_profile_descriptor_zero_list:
     inc     bx
     cmp     word [cs:bx-2], 0
     jnz     short bios_cpu_profile_descriptor_zero_list
