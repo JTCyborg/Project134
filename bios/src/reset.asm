@@ -639,6 +639,7 @@ bios_segment_test_setup:
 
 ; D6DEh — first SS:SP test stream.
 times 0xD6DE - ($ - rom_start) db 0xFF
+bios_ram_test_entry:
 bios_stack_test_entry:
     mov     al, 0x01
     out     0x80, al
