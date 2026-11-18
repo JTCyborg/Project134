@@ -4160,7 +4160,58 @@ bios_post_memory_byte_probe_compare:
     %error "POST byte/word memory probes must end at 5371h"
 %endif
 
-incbin  "ami486.bin", ($ - rom_start), (0x5520 - ($ - rom_start)) ; inherited memory/controller helpers from 5371h to 551Fh
+; F000:5371 — increment the candidate address and test address-line aliases.
+bios_post_memory_address_probe:
+    inc     dx
+    add     byte [si], 0x01
+    jae     short bios_post_memory_address_value_ready
+    inc     byte [si+0x03]
+bios_post_memory_address_value_ready:
+    db      0x3A, 0x1C                 ; cmp bl, [si]
+    jne     short bios_post_memory_address_test_aliases
+    db      0x3A, 0x7C, 0x03           ; cmp bh, [si+3]
+    je      short bios_post_memory_address_done
+bios_post_memory_address_test_aliases:
+    db      0x8C, 0xC1                 ; mov cx, es
+    mov     es, cx
+    mov     di, 0x0001
+bios_post_memory_address_alias_loop:
+    inc     al
+    db      0x26, 0x30, 0x05           ; xor es:[di], al
+    jne     short bios_post_memory_address_done
+    rcl     di, 1
+    jae     short bios_post_memory_address_alias_loop
+    inc     al
+    db      0x26, 0x30, 0x05           ; xor es:[di], al
+    jne     short bios_post_memory_address_done
+    call    near bios_post_memory_readback
+    jmp     short bios_post_memory_address_probe
+bios_post_memory_address_done:
+    dec     dx
+    call    near bios_post_memory_readback
+    ret
+
+; F000:53A6 — exercise reads and writes at ES:0000 and ES:0002.
+bios_post_memory_readback:
+    push    ax
+    push    di
+    db      0x33, 0xFF                 ; xor di, di
+    db      0x26, 0x8B, 0x05           ; mov ax, es:[di]
+    db      0x26, 0x89, 0x05           ; mov es:[di], ax
+    db      0x26, 0x8B, 0x45, 0x02    ; mov ax, es:[di+2]
+    db      0x26, 0x89, 0x45, 0x02    ; mov es:[di+2], ax
+    db      0x26, 0x8B, 0x05           ; mov ax, es:[di]
+    db      0x26, 0x8B, 0x45, 0x02    ; mov ax, es:[di+2]
+    call    near 0xF5A9
+    pop     di
+    pop     ax
+    ret
+
+%if ($ - rom_start) != 0x53C5
+    %error "POST address-alias probe helpers must end at 53C5h"
+%endif
+
+incbin  "ami486.bin", ($ - rom_start), (0x5520 - ($ - rom_start)) ; inherited POST controller helpers from 53C5h to 551Fh
 
 ; F000:5520 — clear all 64 KiB at ES:0000h.
 bios_post_clear_64k:
