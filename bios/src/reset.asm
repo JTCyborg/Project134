@@ -2485,7 +2485,7 @@ bios_post_newline:
     db      0x32, 0xF6                 ; xor dh, dh
     mov     cx, 0x004C
     db      0x2B, 0xCA                 ; sub cx, dx
-    jcxz    short bios_post_newline_column_ready
+    jcxz    bios_post_newline_column_ready
 bios_post_newline_delay:
     call    near 0x098A
     loop    bios_post_newline_delay
