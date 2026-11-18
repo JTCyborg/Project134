@@ -3,7 +3,10 @@ param(
     [string]$RomPath,
 
     [Parameter(Mandatory = $true)]
-    [int]$ExpectedSize
+    [int]$ExpectedSize,
+
+    [Parameter(Mandatory = $true)]
+    [string]$ReferenceRomPath
 )
 
 $ErrorActionPreference = "Stop"
@@ -13,6 +16,21 @@ if (-not (Test-Path -LiteralPath $RomPath -PathType Leaf)) {
 }
 
 $bytes = [System.IO.File]::ReadAllBytes($RomPath)
+
+if (-not (Test-Path -LiteralPath $ReferenceRomPath -PathType Leaf)) {
+    throw "Immutable reference ROM not found: $ReferenceRomPath"
+}
+
+$referenceBytes = [System.IO.File]::ReadAllBytes($ReferenceRomPath)
+if ($referenceBytes.Length -ne 65536) {
+    throw ("Invalid reference ROM size: {0} bytes; expected 65536" -f $referenceBytes.Length)
+}
+
+$referenceHash = (Get-FileHash -LiteralPath $ReferenceRomPath -Algorithm SHA256).Hash.ToLowerInvariant()
+$expectedReferenceHash = "91fd62ce3ccb0b79b42f5fd6c6a7262ed52824b8ade917181b8a12267fec003b"
+if ($referenceHash -ne $expectedReferenceHash) {
+    throw ("Reference ROM identity mismatch: SHA-256 {0}" -f $referenceHash)
+}
 if ($bytes.Length -ne $ExpectedSize) {
     throw ("Invalid ROM size: {0} bytes; expected {1}" -f $bytes.Length, $ExpectedSize)
 }
@@ -29,6 +47,15 @@ function Assert-Bytes {
     }
 }
 
+
+# Verify the complete reconstructed D604h instruction window byte-for-byte
+# against the immutable target ROM. The source window ends at D6A7h.
+for ($offset = 0xD604; $offset -lt 0xD6A7; $offset++) {
+    if ($bytes[$offset] -ne $referenceBytes[$offset]) {
+        throw ("Early POST byte mismatch at 0x{0:X4}: output 0x{1:X2}, reference 0x{2:X2}" -f $offset, $bytes[$offset], $referenceBytes[$offset])
+    }
+}
+
 # Reference reset vector: EA 5B E0 00 F0 => F000:E05B.
 Assert-Bytes -Offset 0xFFF0 -Expected ([byte[]](0xEA, 0x5B, 0xE0, 0x00, 0xF0)) -Description "Reset vector"
 # Reference reset gateway at F000:E05B: E9 A6 F5 => near JMP D604.
@@ -36,4 +63,4 @@ Assert-Bytes -Offset 0xE05B -Expected ([byte[]](0xE9, 0xA6, 0xF5)) -Description 
 # First instructions at D604 are the verified CLI/CLD/8042 status probe.
 Assert-Bytes -Offset 0xD604 -Expected ([byte[]](0xFA, 0xFC, 0xE4, 0x64, 0xA8, 0x04, 0x75, 0x06)) -Description "Early POST entry"
 
-Write-Host ("BIOS ROM layout validation PASS: {0} bytes; FFFF:0000 -> F000:E05B -> D604h" -f $bytes.Length) -ForegroundColor Green
+Write-Host ("BIOS ROM validation PASS: {0} bytes; reference SHA-256 verified; D604h-D6A6h byte match; FFFF:0000 -> F000:E05B -> D604h" -f $bytes.Length) -ForegroundColor Green
