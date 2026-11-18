@@ -794,6 +794,123 @@ bios_post_checkpoint_05:
     out     0x80, al
     jmp     0x8A78
 
+; ---------------------------------------------------------------------------
+; F000:D777 — memory checksum, 8042 drain and keyboard-controller POST.
+times 0xD777 - ($ - rom_start) db 0xFF
+bios_post_memory_checksum:
+    mov     al, 0x06
+    out     0x80, al
+    mov     ax, cs
+    mov     ss, ax
+    xor     ax, ax
+    mov     ds, ax
+    mov     es, ax
+    xor     bx, bx
+    mov     cx, 0x8000
+    xor     si, si
+bios_post_checksum_loop:
+    cs lodsw
+    add     bx, ax
+    loop    bios_post_checksum_loop
+    jz      bios_post_8042_drain
+    mov     bp, 0x0009
+    jmp     0xF4A5
+
+bios_post_8042_drain:
+    xor     cx, cx
+bios_post_8042_status:
+    in      al, 0x64
+    mov     ah, al
+    test    al, 0x01
+    jz      bios_post_8042_test_input
+    in      al, 0x60
+bios_post_8042_test_input:
+    test    ah, 0x02
+    loopne  bios_post_8042_status
+    mov     al, 0x07
+    out     0x80, al
+    jcxz    $+2
+    jcxz    $+2
+    mov     al, 0xAA
+    xchg    bx, bx
+    xchg    bx, bx
+    xchg    bx, bx
+    xchg    bx, bx
+    xchg    bx, bx
+    xchg    bx, bx
+    xchg    bx, bx
+    nop
+    jmp     short bios_post_8042_command_aa
+
+bios_post_8042_command_aa:
+    out     0x64, al
+    in      al, 0x64
+    xor     di, di
+    test    al, 0x01
+    jz      bios_post_8042_response_wait
+    dec     di
+bios_post_8042_response_wait:
+    nop
+    mov     sp, 0xD7D8
+    jmp     0xF659
+
+times 0xD7D8 - ($ - rom_start) db 0xFF
+bios_post_8042_wait_aa_return:
+    dw      0xD7DA
+bios_post_8042_wait_aa_continue:
+    mov     al, 0x08
+    out     0x80, al
+    mov     sp, 0xD7E4
+    jmp     0xF60F
+
+times 0xD7E4 - ($ - rom_start) db 0xFF
+bios_post_8042_read_response_return:
+    dw      0xD7E6
+bios_post_8042_read_response_continue:
+    cmp     al, 0x55
+    jz      bios_post_8042_response_ok
+    test    byte [cs:0x8280], 0x80
+    jz      bios_post_8042_response_ok
+    mov     bp, 0x0006
+    jmp     0xF4A5
+
+bios_post_8042_response_ok:
+    or      di, di
+    jz      bios_post_keyboard_init_done
+    mov     al, 0xA1
+    out     0x64, al
+    mov     sp, 0xD806
+    jmp     0xF659
+
+times 0xD806 - ($ - rom_start) db 0xFF
+bios_post_8042_a1_return:
+    dw      0xD808
+bios_post_8042_a1_continue:
+    or      al, bl
+    xor     cx, cx
+bios_post_8042_a1_wait:
+    in      al, 0x64
+    test    al, 0x01
+    loope   bios_post_8042_a1_wait
+    jz      bios_post_8042_a1_done
+    in      al, 0x60
+    xor     al, 0x38
+    jnz     bios_post_8042_a1_done
+    or      bp, 0x0000
+bios_post_8042_a1_done:
+    mov     al, 0xFF
+    out     0x64, al
+    mov     sp, 0xD826
+    jmp     0xF659
+
+times 0xD826 - ($ - rom_start) db 0xFF
+bios_post_8042_ff_return:
+    dw      0xD828
+bios_post_keyboard_init_done:
+    mov     al, 0x09
+    out     0x80, al
+    jmp     0x1AF8
+
 ; F000:E05B — reset gateway.
 times 0xE05B - ($ - rom_start) db 0xFF
 reset_gateway:
@@ -865,6 +982,68 @@ bios_pic_initialize:
     jcxz    $+2
     jcxz    $+2
     out     0x21, al
+    ret
+
+; ---------------------------------------------------------------------------
+; F000:F60F — bounded 8042 output-buffer read helper.
+times 0xF60F - ($ - rom_start) db 0xFF
+bios_8042_read_output:
+    mov     ah, 0x0C
+    xor     cx, cx
+bios_8042_read_output_wait:
+    in      al, 0x64
+    test    al, 0x01
+    loope   bios_8042_read_output_wait
+    jnz     bios_8042_read_output_data
+    dec     ah
+    jnz     bios_8042_read_output_wait
+bios_8042_read_output_data:
+    in      al, 0x60
+    ret
+
+; F000:F659 — 8042 input-buffer-empty wait helper.
+times 0xF659 - ($ - rom_start) db 0xFF
+bios_8042_wait_input_empty:
+    xor     cx, cx
+bios_8042_wait_input_empty_first:
+    in      al, 0x64
+    test    al, 0x02
+    loopne  bios_8042_wait_input_empty_first
+    jz      bios_8042_wait_input_empty_done
+bios_8042_wait_input_empty_second:
+    in      al, 0x64
+    test    al, 0x02
+    loopne  bios_8042_wait_input_empty_second
+bios_8042_wait_input_empty_done:
+    ret
+
+; F000:F66Ah/F66Eh — 8042 A20 output-port enable/disable helpers.
+times 0xF66A - ($ - rom_start) db 0xFF
+bios_8042_a20_enable:
+    mov     ah, 0xDF
+    jmp     short bios_8042_a20_write
+bios_8042_a20_disable:
+    mov     ah, 0xDD
+bios_8042_a20_write:
+    xor     cx, cx
+bios_8042_a20_wait_command:
+    in      al, 0x64
+    test    al, 0x02
+    loopne  bios_8042_a20_wait_command
+    mov     al, 0xD1
+    out     0x64, al
+    xor     cx, cx
+bios_8042_a20_wait_data:
+    in      al, 0x64
+    test    al, 0x02
+    loopne  bios_8042_a20_wait_data
+    mov     al, ah
+    out     0x60, al
+    xor     cx, cx
+bios_8042_a20_wait_finish:
+    in      al, 0x64
+    test    al, 0x02
+    loopne  bios_8042_a20_wait_finish
     ret
 
 ; FFFF:0000 reset vector -> F000:E05B.
