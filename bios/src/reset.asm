@@ -2094,7 +2094,7 @@ bios_post_8042_compare_command:
     jnz     short bios_post_8042_compare_done
     call    bios_post_8042_read_response
     jz      short bios_post_8042_compare_success
-    cmp     al, ah
+    db      0x3A, 0xC4                 ; cmp al, ah
 bios_post_8042_compare_done:
     ret
 
@@ -2103,7 +2103,7 @@ bios_post_8042_compare_data:
     jnz     short bios_post_8042_compare_data_done
     call    bios_post_8042_read_response
     jz      short bios_post_8042_compare_success
-    cmp     al, ah
+    db      0x3A, 0xC4                 ; cmp al, ah
 bios_post_8042_compare_data_done:
     ret
 
