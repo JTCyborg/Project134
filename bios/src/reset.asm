@@ -17,6 +17,136 @@ times 0x1AF8 - ($ - rom_start) db 0xFF
 bios_post_8042_continuation:
     jmp     0xD82F
 
+; ---------------------------------------------------------------------------
+; F000:8400 — CMOS 8Eh extended-register clear/restore path.
+times 0x8400 - ($ - rom_start) db 0xFF
+bios_cmos_8e_extended_entry:
+    test    byte [cs:0x8280], 0x40
+    jnz     short bios_cmos_8e_read
+    jmp     0xD90D
+
+bios_cmos_8e_read:
+    mov     al, 0x8E
+    nop
+    mov     sp, 0x8414
+    jmp     0xEE94
+
+times 0x8414 - ($ - rom_start) db 0xFF
+bios_cmos_8e_initial_read_return:
+    dw      0x8416
+bios_cmos_8e_initial_read_continue:
+    test    al, 0xC0
+    jz      short bios_cmos_8e_extended_entry+8
+    and     bp, 0xFFC7
+    mov     al, 0x8E
+    mov     cx, 0x0072
+    xor     ah, ah
+    mov     sp, 0x842A
+    jmp     0xEE9D
+
+times 0x842A - ($ - rom_start) db 0xFF
+bios_cmos_8e_clear_return:
+    dw      0x842C
+bios_cmos_8e_clear_continue:
+    inc     al
+    loop    bios_cmos_8e_clear_iteration
+
+bios_cmos_8e_clear_iteration:
+    mov     sp, 0x842A
+    jmp     0xEE9D
+
+; The loop's first iteration enters the helper body at 8424h.
+times 0x8430 - ($ - rom_start) db 0xFF
+bios_cmos_8e_restore_setup:
+    mov     al, 0x8E
+    mov     cx, 0x0032
+    mov     si, 0x820E
+bios_cmos_8e_restore_loop:
+    mov     ah, al
+    cs lodsb
+    xchg    ah, al
+    mov     sp, 0x8444
+    jmp     0xEE9D
+
+times 0x8444 - ($ - rom_start) db 0xFF
+bios_cmos_8e_restore_return:
+    dw      0x8446
+bios_cmos_8e_restore_continue:
+    inc     al
+    loop    bios_cmos_8e_restore_loop
+
+bios_cmos_8e_rom_table_setup:
+    mov     cx, [cs:0x8886]
+    jcxz    bios_cmos_8e_descriptor_setup
+    mov     si, 0x873C
+bios_cmos_8e_rom_table_loop:
+    mov     al, [cs:si]
+    or      al, 0x80
+    nop
+    mov     sp, 0x8460
+    jmp     0xEE94
+
+times 0x8460 - ($ - rom_start) db 0xFF
+bios_cmos_8e_rom_table_read_return:
+    dw      0x8462
+bios_cmos_8e_rom_table_read_continue:
+    mov     ah, [cs:si+2]
+    mov     dl, [cs:si+1]
+    and     ah, dl
+    not     dl
+    and     al, dl
+    or      ah, al
+    mov     al, [cs:si]
+    or      al, 0x80
+    nop
+    mov     sp, 0x847E
+    jmp     0xEE94
+
+times 0x847E - ($ - rom_start) db 0xFF
+bios_cmos_8e_rom_table_write_return:
+    dw      0x8480
+bios_cmos_8e_rom_table_write_continue:
+    add     si, 0x04
+    loop    bios_cmos_8e_rom_table_loop
+
+bios_cmos_8e_descriptor_setup:
+    mov     si, [cs:0x82C0]
+    cmp     si, [cs:0x82C2]
+    jc      short bios_cmos_8e_descriptor_loop
+    jmp     short bios_cmos_8e_finish
+
+bios_cmos_8e_descriptor_loop:
+    mov     al, [cs:si]
+    or      al, 0x80
+    mov     sp, 0x849E
+    jmp     0xEE94
+
+times 0x849E - ($ - rom_start) db 0xFF
+bios_cmos_8e_descriptor_read_return:
+    dw      0x84A0
+bios_cmos_8e_descriptor_read_continue:
+    mov     ah, [cs:si+2]
+    mov     dl, [cs:si+1]
+    and     ah, dl
+    not     dl
+    and     al, dl
+    or      ah, al
+    mov     al, [cs:si]
+    or      al, 0x80
+    nop
+    mov     sp, 0x84BC
+    jmp     0xEE9D
+
+times 0x84BC - ($ - rom_start) db 0xFF
+bios_cmos_8e_descriptor_write_return:
+    dw      0x84BE
+bios_cmos_8e_descriptor_write_continue:
+    add     si, 0x04
+    cmp     si, [cs:0x82C2]
+    jc      short bios_cmos_8e_descriptor_loop
+bios_cmos_8e_finish:
+    jmp     0xD90D
+
 ; F000:19AB–19AF — stock callback trampolines used by the POST hook slots.
 times 0x19AB - ($ - rom_start) db 0xFF
 bios_callback_jmp_di:
