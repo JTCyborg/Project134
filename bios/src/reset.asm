@@ -1638,8 +1638,86 @@ bios_pit_channel2_setup:
 %if ($ - rom_start) != 0x2E73
     %error "PIT channel-2 measurement helpers must end at 2E73h"
 %endif
-; F000:2E73h–2EF1h — inherited selector-loop tail and one provisionally unreferenced byte.
-incbin  "ami486.bin", ($ - rom_start), (0x2EF2 - ($ - rom_start)) ; inherited 2E73h-2EF1h
+; 2E73h and 2EF1h are zero bytes with no confirmed entry/reference.
+    db      0x00
+%if ($ - rom_start) != 0x2E74
+    %error "B513 selector handler must begin at 2E74h"
+%endif
+
+; B7B2 table handler: CMOS B513h selector and E000h working-image bit merge.
+bios_cmos_b513_selector_handler:
+    push    ax
+    db      0x33, 0xFF                 ; xor di, di
+    smsw    ax
+    db      0x0A, 0xE4                 ; or ah, ah
+    je      short bios_cmos_b513_mode_ready
+    db      0xF7, 0xD7                 ; not di
+bios_cmos_b513_mode_ready:
+    mov     al, [cs:0xB513]
+    call    near 0x83AE
+    mov     si, ax
+    and     si, 0x7F
+    pop     bx
+    db      0x8A, 0xFC                 ; mov bh, ah
+    mov     ax, cs
+    db      0x0B, 0xFF                 ; or di, di
+    jne     short bios_cmos_b513_merge_done
+    cmp     ax, 0xF000
+    jne     short bios_cmos_b513_merge_done
+    db      0x08, 0xBC, 0x00, 0xE0    ; or byte [si+E000h], bh
+bios_cmos_b513_merge_done:
+    db      0x0A, 0xDB                 ; or bl, bl
+    je      near 0x8727
+    db      0x0B, 0xFF                 ; or di, di
+    jne     short bios_cmos_b513_alt_path
+    cmp     ax, 0xF000
+    je      short bios_cmos_b513_rom_path
+bios_cmos_b513_alt_path:
+    JMP_ABS 0x8734
+bios_cmos_b513_rom_path:
+    JMP_ABS 0x8738
+
+%if ($ - rom_start) != 0x2EB4
+    %error "B513 selector handler must end at 2EB4h"
+%endif
+
+; B7B4 table handler: CMOS B519h selector and E000h working-image bit clear.
+bios_cmos_b519_selector_handler:
+    push    ax
+    db      0x33, 0xFF                 ; xor di, di
+    smsw    ax
+    db      0x0A, 0xE4                 ; or ah, ah
+    je      short bios_cmos_b519_mode_ready
+    db      0xF7, 0xD7                 ; not di
+bios_cmos_b519_mode_ready:
+    mov     al, [cs:0xB519]
+    call    near 0x83AE
+    mov     si, ax
+    and     si, 0x7F
+    pop     bx
+    db      0x8A, 0xFC                 ; mov bh, ah
+    mov     ax, cs
+    db      0x0B, 0xFF                 ; or di, di
+    je      short bios_cmos_b519_merge_done
+    cmp     ax, 0xF000
+    jne     short bios_cmos_b519_merge_done
+    db      0xF6, 0xD7                 ; not bh
+    db      0x20, 0xBC, 0x00, 0xE0    ; and byte [si+E000h], bh
+    db      0xF6, 0xD7                 ; not bh
+bios_cmos_b519_merge_done:
+    db      0x0A, 0xDB                 ; or bl, bl
+    je      near 0x8727
+    db      0x0B, 0xFF                 ; or di, di
+    je      short bios_cmos_b519_return_path
+    cmp     ax, 0xF000
+    je      near 0x8738
+bios_cmos_b519_return_path:
+    JMP_ABS 0x8734
+
+%if ($ - rom_start) != 0x2EF1
+    %error "B519 selector handler must end at 2EF1h"
+%endif
+    db      0x00
 
 ; F000:2EF2h–2F23h — Setup exit relocation handoff (direct caller F109h).
 bios_setup_relocation_handoff:
