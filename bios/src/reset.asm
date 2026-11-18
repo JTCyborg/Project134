@@ -3906,7 +3906,199 @@ bios_post_extended_memory_skip_high_probe:
     %error "POST extended-memory entry block must end at 5190h"
 %endif
 
-incbin  "ami486.bin", ($ - rom_start), (0x5520 - ($ - rom_start)) ; inherited POST memory/controller helpers from 5190h to 551Fh
+; F000:5190 — continuation of POST memory/controller diagnostics.
+; The RET at 518F transfers through the stack-crafted F000:FA4E path back here.
+bios_post_memory_controller_continue:
+    mov     al, 0x4B
+    out     0x80, al
+    db      0x0B, 0xED                 ; or bp, bp
+    jns     short bios_post_memory_controller_chipset_path
+    push    dx
+    push    bx
+    call    near 0x5434
+    mov     cx, 0x0040
+    cmp     bx, 0x002F
+    ja      short bios_post_memory_controller_poll
+    mov     cx, 0x0080
+bios_post_memory_controller_poll:
+    push    cx
+    mov     cx, 0x0400
+    call    near 0xE93C
+    call    near 0x5448
+    pop     cx
+    loopne  short bios_post_memory_controller_poll
+    db      0x0B, 0xD2                 ; or dx, dx
+    je      short bios_post_memory_controller_clear_low
+    mov     byte [si], 0x00
+    mov     byte [si+0x03], 0x00
+bios_post_memory_controller_clear_low:
+    call    near 0x5448
+    call    near 0x5513
+    call    near 0x5520
+    dec     dx
+    jne     short bios_post_memory_controller_clear_low
+    mov     al, 0x4C
+    out     0x80, al
+    db      0x0B, 0xDB                 ; or bx, bx
+    je      short bios_post_memory_controller_finish_low
+    mov     byte [si], 0x0F
+    mov     byte [si+0x03], 0x00
+bios_post_memory_controller_clear_high:
+    call    near 0x5448
+    call    near 0x5513
+    call    near 0x5520
+    dec     bx
+    jne     short bios_post_memory_controller_clear_high
+bios_post_memory_controller_finish_low:
+    mov     al, 0x4D
+    out     0x80, al
+    call    near 0x543D
+    pop     bx
+    pop     dx
+    inc     dx
+    jmp     near bios_post_memory_controller_set_map
+
+bios_post_memory_controller_chipset_path:
+    push    bp
+    mov     bp, 0x0001
+    push    bx
+    db      0x33, 0xDB                 ; xor bx, bx
+    mov     al, 0x4E
+    out     0x80, al
+    call    near 0x546C
+    mov     byte [si], 0x00
+    mov     byte [si+0x03], 0x00
+    mov     al, 0x4F
+    out     0x80, al
+    call    near 0x53C5
+    inc     bx
+    db      0x8B, 0xEB                 ; mov bp, bx
+    mov     al, 0x50
+    out     0x80, al
+    call    near 0x1C05
+    pop     dx
+    push    bx
+    db      0x2E, 0xA0, 0x0C, 0xB5    ; mov al, [cs:0B50Ch]
+    call    near 0x8300
+    jne     short bios_post_memory_controller_probe_next
+    mov     word [0x0013], 0xBA98
+bios_post_memory_controller_probe_next:
+    mov     byte [si], 0x0F
+    mov     byte [si+0x03], 0x00
+    mov     al, 0x51
+    out     0x80, al
+    call    near 0x53C5
+    pop     dx
+    pop     bp
+bios_post_memory_controller_set_map:
+    mov     al, 0x52
+    out     0x80, al
+    shl     dx, 0x06
+    cmp     bx, 0x03FF
+    jbe     short bios_post_memory_controller_map_size_ready
+    mov     bx, 0x03FF
+bios_post_memory_controller_map_size_ready:
+    shl     bx, 0x06
+    mov     [0x0013], dx
+    mov     ah, bl
+    mov     al, 0xB0
+    call    near 0xEE9D
+    mov     ah, bh
+    mov     al, 0xB1
+    call    near 0xEE9D
+    pusha
+    db      0x8B, 0xC4                 ; mov ax, sp
+    mov     [0x0067], ax
+    mov     ax, 0x038F
+    call    near 0xEE9D
+    call    near 0xF5A9
+    mov     al, 0x53
+    out     0x80, al
+    db      0x2E, 0xF6, 0x06, 0x81, 0x82, 0x40 ; test byte [cs:8281h],40h
+    je      short bios_post_memory_controller_real_mode
+    jmp     near 0x8AD6
+bios_post_memory_controller_real_mode:
+    jmp     near 0xF068
+bios_post_memory_controller_resume:
+    mov     ax, [0x0067]
+    mov     sp, ax
+    mov     al, 0x54
+    out     0x80, al
+    popa
+    mov     al, 0x55
+    out     0x80, al
+    call    near 0x8AD2
+    call    near 0xF66E
+    jne     short bios_post_memory_controller_error
+    mov     al, 0x56
+    out     0x80, al
+    call    near 0xF419
+    mov     al, 0x57
+    out     0x80, al
+    call    near 0x1C06
+    mov     al, 0x58
+    out     0x80, al
+    call    near bios_post_video_clear_helper
+    mov     si, 0x7CA0
+    call    near 0xF52E
+    mov     al, 0x59
+    out     0x80, al
+    mov     al, [0x0012]
+    test    al, 0x20
+    jne     short bios_post_memory_controller_finish
+    mov     al, 0xFE
+    out     0x21, al
+    sti
+bios_post_memory_controller_finish:
+    jmp     near 0xE2C6
+bios_post_memory_controller_error:
+    jmp     near 0x50DB
+
+; F000:52C7 — clear the active text row and restore the cursor position.
+bios_post_video_clear_helper:
+    mov     dx, [0x0069]
+    mov     ah, 0x02
+    mov     bh, 0x00
+    int     0x10
+    mov     cx, 0x0050
+bios_post_video_clear_loop:
+    mov     ax, 0x0E20
+    int     0x10
+    loop    bios_post_video_clear_loop
+    mov     ah, 0x02
+    int     0x10
+    ret
+
+; F000:52E0 — print AX as an unsigned decimal value.
+bios_post_print_decimal:
+    mov     cx, 0x0006
+    db      0x33, 0xD2                 ; xor dx, dx
+bios_post_print_decimal_shift:
+    shl     ax, 1
+    rcl     dx, 1
+    loop    bios_post_print_decimal_shift
+    mov     cx, 0x000A
+    jmp     short bios_post_print_decimal_divide
+bios_post_print_decimal_recurse:
+    db      0x33, 0xD2                 ; xor dx, dx
+bios_post_print_decimal_divide:
+    div     cx
+    db      0x0B, 0xC0                 ; or ax, ax
+    je      short bios_post_print_decimal_digit
+    push    dx
+    call    near bios_post_print_decimal_recurse
+    pop     dx
+bios_post_print_decimal_digit:
+    mov     al, dl
+    or      al, 0x30
+    call    near 0xF53C
+    ret
+
+%if ($ - rom_start) != 0x5305
+    %error "POST memory/controller continuation must end at 5305h"
+%endif
+
+incbin  "ami486.bin", ($ - rom_start), (0x5520 - ($ - rom_start)) ; inherited memory/controller helpers from 5305h to 551Fh
 
 ; F000:5520 — clear all 64 KiB at ES:0000h.
 bios_post_clear_64k:
