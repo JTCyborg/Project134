@@ -18,7 +18,226 @@ rom_start:
 ; continuations and overlapping entry points are fully mapped.
 times 0x88CE - ($ - rom_start) db 0xFF
 bios_8042_clear_entry:
-    ; TODO: full translation of 88CEh–8A03h.
+    mov     cx, 0x0100
+bios_8042_delay:
+    loop    bios_8042_delay
+    mov     ax, cs
+    mov     ss, ax
+    smsw    ax
+    test    al, 0x01
+    jnz     short bios_8042_reset_reentry
+    or      ah, ah
+    jnz     short bios_8042_cmos_read
+    cmp     dh, 0x04
+    jnz     short bios_8042_cmos_read
+    nop
+    mov     sp, 0x88EE
+    jmp     short bios_8042_arithmetic_probe
+    nop
+
+; The CMOS helper RET consumes this inline word and resumes at 88F0h.
+times 0x88EE - ($ - rom_start) db 0xFF
+bios_8042_probe_return:
+    dw      0x88F0
+
+; This is an intentional overlapping entry: RET above lands at 88F0h,
+; inside the linear LOCK/MOV decode beginning at 88EEh.
+bios_8042_probe_result:
+    jnz     short bios_8042_alternate_cmos
+    mov     di, 0x88F8
+    jmp     short bios_8042_alternate_test
+    nop
+bios_8042_alternate_test:
+    jmp     short bios_8042_cmos_read
+bios_8042_alternate_cmos:
+    and     dl, 0x30
+    cmp     dl, 0x30
+    mov     ah, 0x02
+    jz      short bios_8042_cmos_read
+bios_8042_cmos_read:
+    mov     ah, 0x00
+    mov     al, 0xB3
+    mov     sp, 0x890E
+    jmp     0xEE94
+
+; EE94h returns to 8910h through this semantic stack word.
+times 0x890E - ($ - rom_start) db 0xFF
+bios_8042_cmos_read_return:
+    dw      0x8910
+bios_8042_cmos_read_continue:
+    and     al, 0xF1
+    or      ah, al
+    mov     al, 0xB3
+    mov     sp, 0x891C
+    jmp     0xEE9D
+
+; EE9Dh returns to 891Eh; that continuation restarts POST at D60Fh.
+times 0x891C - ($ - rom_start) db 0xFF
+bios_8042_cmos_write_return:
+    dw      0x891E
+bios_8042_reset_reentry:
+    jmp     0xD60F
+
+; The crafted stack at 88EEh returns here after the arithmetic/flags probe.
+bios_8042_arithmetic_probe:
+    xor     ax, ax
+    sahf
+    mov     ax, 0x0005
+    mov     bx, 0x0002
+    div     bl
+    lahf
+    cmp     ah, 0x02
+    ret
+
+; ALi C2h/C3h indexed-register probe. Each helper returns through an inline
+; word (DW) to the aligned continuation immediately following that word.
+bios_ali_probe_start:
+    xor     cl, cl
+    mov     ax, 0xC2C2
+    mov     sp, 0x893C
+    jmp     0x8DCF
+
+times 0x893C - ($ - rom_start) db 0xFF
+bios_ali_read_c2_return:
+    dw      0x893E
+bios_ali_read_c2_continue:
+    mov     bl, al
+    or      al, 0x04
+    xchg    ah, al
+    mov     sp, 0x894A
+    jmp     0x8DDC
+
+times 0x894A - ($ - rom_start) db 0xFF
+bios_ali_write_c2_return:
+    dw      0x894C
+bios_ali_write_c2_continue:
+    mov     sp, 0x8952
+    jmp     0x8DCF
+
+times 0x8952 - ($ - rom_start) db 0xFF
+bios_ali_read_c3_return:
+    dw      0x8954
+bios_ali_read_c3_continue:
+    test    al, 0x04
+    jz      short bios_ali_c2_no_bit2
+    mov     ah, bl
+    and     ah, 0xFB
+    mov     al, 0xC2
+    nop
+    mov     sp, 0x8966
+    jmp     0x8DDC
+bios_ali_c2_no_bit2:
+    ; This aligned continuation is reached by the original JZ at 8956h.
+    mov     sp, 0x8966
+    jmp     0x8DDC
+
+times 0x8966 - ($ - rom_start) db 0xFF
+bios_ali_write_c2_second_return:
+    dw      0x8968
+bios_ali_write_c2_second_continue:
+    mov     sp, 0x896E
+    jmp     0x8DDC
+
+times 0x896E - ($ - rom_start) db 0xFF
+bios_ali_read_c2_second_return:
+    dw      0x8970
+bios_ali_read_c2_second_continue:
+    test    al, 0x04
+    jz      short bios_ali_c2_second_no_bit2
+    or      cl, 0x02
+bios_ali_c2_second_no_bit2:
+    mov     ah, bl
+    mov     al, 0xC2
+    nop
+    mov     sp, 0x8982
+    jmp     0x8DDC
+
+times 0x8982 - ($ - rom_start) db 0xFF
+bios_ali_write_c3_return:
+    dw      0x8984
+bios_ali_write_c3_continue:
+    mov     ax, 0xC3C3
+    nop
+    mov     sp, 0x898E
+    jmp     0x8DCF
+
+times 0x898E - ($ - rom_start) db 0xFF
+bios_ali_read_c3_second_return:
+    dw      0x8990
+bios_ali_read_c3_second_continue:
+    mov     bl, al
+    or      al, 0x02
+    xchg    ah, al
+    mov     sp, 0x89A4
+    jmp     0x8DCF
+
+times 0x89A4 - ($ - rom_start) db 0xFF
+bios_ali_read_c3_third_return:
+    dw      0x89A6
+bios_ali_read_c3_third_continue:
+    test    al, 0x02
+    jz      short bios_ali_c3_no_bit1
+    mov     ah, bl
+    and     ah, 0xFB
+    mov     al, 0xC3
+    nop
+    mov     sp, 0x89B8
+    jmp     0x8DDC
+bios_ali_c3_no_bit1:
+    mov     sp, 0x89B8
+    jmp     0x8DDC
+
+times 0x89B8 - ($ - rom_start) db 0xFF
+bios_ali_write_c3_return:
+    dw      0x89BA
+bios_ali_write_c3_continue:
+    mov     sp, 0x89C0
+    jmp     0x8DCF
+
+times 0x89C0 - ($ - rom_start) db 0xFF
+bios_ali_read_c3_fourth_return:
+    dw      0x89C2
+bios_ali_read_c3_fourth_continue:
+    test    al, 0x02
+    jz      short bios_ali_c3_fourth_no_bit1
+    or      cl, 0x01
+bios_ali_c3_fourth_no_bit1:
+    mov     ah, bl
+    mov     al, 0xC3
+    nop
+    mov     sp, 0x89D4
+    jmp     0x8DDC
+
+times 0x89D4 - ($ - rom_start) db 0xFF
+bios_ali_write_c3_second_return:
+    dw      0x89D6
+bios_ali_write_c3_second_continue:
+    mov     ah, 0x08
+    cmp     cl, 0x01
+    jz      short bios_ali_dispatch_di
+    mov     ah, 0x04
+    cmp     cl, 0x03
+    jz      short bios_ali_dispatch_di
+    mov     al, 0xFE
+    mov     sp, 0x89EC
+    jmp     0x8DCF
+
+times 0x89EC - ($ - rom_start) db 0xFF
+bios_ali_read_final_return:
+    dw      0x89EE
+bios_ali_read_final_continue:
+    mov     ah, 0x04
+    cmp     al, 0x05
+    jbe     short bios_ali_dispatch_di
+    mov     ah, 0x06
+    cmp     al, 0x07
+    jbe     short bios_ali_dispatch_di
+    mov     ah, 0x0A
+    test    al, 0x01
+    jnz     short bios_ali_dispatch_di
+    mov     ah, 0x08
+bios_ali_dispatch_di:
+    jmp     di
 
 ; ---------------------------------------------------------------------------
 ; F000:8A04 — reset-mode dispatch.
