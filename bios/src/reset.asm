@@ -2694,7 +2694,7 @@ bios_hd_utility_refresh:
     mov     [0xE19F], al
     call    near 0x5902
     mov     [0xE182], ax
-    cmp     ax, 0x000D
+    db      0x3D, 0x0D, 0x00           ; cmp ax, 000Dh
     je      short bios_hd_utility_exit_dialog
     mov     ax, [0xE180]
     mov     dl, 0x12
@@ -2827,53 +2827,53 @@ bios_hd_utility_drive_status_done:
     cmp     byte [0xE187], 0x09
     jne     short bios_hd_utility_drive_absent_default
     mov     ax, [0xE180]
-    add     ax, 0x0018
+    db      0x05, 0x18, 0x00           ; add ax, 0018h
     lea     bx, [0x3731]
 bios_hd_utility_drive_render:
     call    near 0x58D3
     JMP_ABS 0x488C
 bios_hd_utility_drive_absent_default:
     mov     ax, [0xE180]
-    add     ax, 0x0018
+    db      0x05, 0x18, 0x00           ; add ax, 0018h
     lea     bx, [0x373F]
     jmp     short bios_hd_utility_drive_render
 bios_hd_utility_drive_present:
     cmp     byte [bp-0x01], 0x2F
     jne     short bios_hd_utility_drive_fields
     mov     ax, [0xE180]
-    add     ax, 0x001A
+    db      0x05, 0x1A, 0x00           ; add ax, 001Ah
     lea     bx, [0x374C]
     call    near 0x58D3
 bios_hd_utility_drive_fields:
     mov     ax, [0xE180]
-    add     ax, 0x0018
+    db      0x05, 0x18, 0x00           ; add ax, 0018h
     mov     bl, [bp-0x01]
     db      0x2A, 0xFF                 ; sub bh, bh
     mov     dx, 0x0002
     call    near 0x09EB
     mov     ax, [0xE180]
-    add     ax, 0x0026
+    db      0x05, 0x26, 0x00           ; add ax, 0026h
     mov     dx, 0x0005
     mov     bx, [0xE411]
     call    near 0x09EB
     mov     ax, [0xE180]
-    add     ax, 0x002C
+    db      0x05, 0x2C, 0x00           ; add ax, 002Ch
     mov     bl, [0xE413]
     db      0x2A, 0xFF                 ; sub bh, bh
     mov     dx, 0x0003
     call    near 0x09EB
     mov     ax, [0xE180]
-    add     ax, 0x0032
+    db      0x05, 0x32, 0x00           ; add ax, 0032h
     mov     dx, 0x0005
     mov     bx, [0xE416]
     call    near 0x09EB
     mov     ax, [0xE180]
-    add     ax, 0x0038
+    db      0x05, 0x38, 0x00           ; add ax, 0038h
     mov     dx, 0x0005
     mov     bx, [0xE41D]
     call    near 0x09EB
     mov     ax, [0xE180]
-    add     ax, 0x003E
+    db      0x05, 0x3E, 0x00           ; add ax, 003Eh
     mov     bl, [0xE41F]
     db      0x2A, 0xFF                 ; sub bh, bh
     mov     dx, 0x0003
