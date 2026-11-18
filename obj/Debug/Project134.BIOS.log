@@ -4,5 +4,11 @@
   Output: C:\Temp\trdos\134\out\Debug\Project134.bin
   Size:   65536 bytes
   Listing: C:\Temp\trdos\134\out\Debug\Project134.lst
-  NASM BIOS structural validation PASS: 65536 bytes; reset vector, gateway and POST instruction encoding verified. This does not validate POST completion or boot.
-  BUILD SUCCESS: C:\Temp\trdos\134\out\Debug\Project134.bin (65536 bytes)
+  NASM POST CS string printer: mismatch at ROM offset 0xF53A; got 0xF5, expected 0xF3
+  At C:\Temp\trdos\134\bios\tools\validate_rom.ps1:25 char:13
+  +             throw ("{0}: mismatch at ROM offset 0x{1:X4}; got 0x{2:X2 ...
+  +             ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      + CategoryInfo          : OperationStopped: (NASM POST CS st..., expected 0xF3:String) [], RuntimeException
+      + FullyQualifiedErrorId : NASM POST CS string printer: mismatch at ROM offset 0xF53A; got 0xF5, expected 0xF3
+   
+C:\Program Files\Microsoft Visual Studio\18\Community\MSBuild\Microsoft\VC\v180\Microsoft.MakeFile.Targets(45,5): error MSB3073: выход из команды "powershell.exe -NoLogo -NoProfile -ExecutionPolicy Bypass -File "C:\Temp\trdos\134\bios\tools\build_bios.ps1" -OutputDirectory "C:\Temp\trdos\134\bios\..\out\Debug" -NasmExe "nasm.exe" -RomSize 65536" с кодом 1.
