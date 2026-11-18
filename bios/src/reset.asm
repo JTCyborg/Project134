@@ -233,12 +233,12 @@ bios_cpu_profile_selector:
     db      0x32, 0xE4                 ; xor ah, ah
     mov     bx, 0xB55D
     sub     bx, 0xB508
-    cmp     ax, bx
+    db      0x3B, 0xC3                 ; cmp ax, bx
     mov     bx, 0xB7D0
     jc      short bios_cpu_profile_record
     mov     bx, 0xB55D
     sub     bx, 0xB508
-    sub     ax, bx
+    db      0x2B, 0xC3                 ; sub ax, bx
 
 bios_cpu_profile_walk:
     mov     bx, [cs:0x82C6]
