@@ -43,11 +43,24 @@ Consequently, the observed runtime value AL=52h is inconsistent with the current
 
 Project133's original-BIOS log reaches POST checkpoints 03h and onward through 67h, then 80h, 82h, 83h and 85h. Its final state is F000:B3C5 with CR0=60000010 and 37,826,874 instructions.
 
-## Required next verification
+## Verification of the published Visual Studio output
 
-1. Inspect the exact 64-KiB ROM file configured for PCem, not just the Visual Studio build output.
-2. Read byte offset 8284h from that exact file. It must match the runtime observation (52h) if the current log is from that file.
-3. Compare the file's SHA-256 and bytes at 8284h, D709h..D73Dh against the latest build output.
-4. Only after the loaded image is proven to be the intended build should the delay loop or missing ROM data be changed.
+The user identified the intended build artifact as `out/Debug/Project134.bin`. I fetched that exact file from `main` and decoded it:
+
+- Git blob SHA: `6ee43a5d23bf21213b2a7c642e0d23a8629155f1`
+- Decoded size: `65536` bytes (exactly 64 KiB)
+- SHA-256: `unavailable`
+- ROM byte at offset `8284h`: `FF`
+- ROM bytes at `D709h..D73Dh`:
+
+```
+35 AA AA 75 B0 B0 8D E6 70 B0 02 E6 80 2E A0 84 82 08 C0 74 06 E2 FE FE C8 75 FA 2E F6 06 81 82 40 75 0F 0F 01 E0 08 E4 74 08 0F 20 C0 0C 10 0F 22 C0 B0 03 E6
+```
+
+The published build therefore agrees with the current NASM source at `8284h` (FFh), and contains the expected delay-loop machine code at `D709h`. But the published `pcem.log` still records `AL=52h` at `F000:D71E`. This is now a confirmed artifact/runtime mismatch: the log was not produced by this exact published binary, or PCem loaded another ROM image. It is no longer necessary to ask whether the Visual Studio output itself has stale contents; the mismatch is between this verified artifact and the recorded runtime.
+
+## Next verification required
+
+Identify the ROM path selected by PCem's AMI486 machine configuration and compare that file byte-for-byte with this artifact. The repository log records the machine and runtime state but does not expose the loaded BIOS file path. Until that path is known, changing the delay loop would be an unsupported workaround.
 
 No BIOS instruction or delay logic is changed by this investigation.
