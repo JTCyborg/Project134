@@ -3140,12 +3140,13 @@ bios_hd_utility_drive_type_callback:
     jmp     short bios_hd_utility_drive_type_draw
 bios_hd_utility_drive_type_selected:
     cmp     byte [0xE1AD], 0x00
-    jne     short bios_hd_utility_drive_type_prompt
+    jne     short bios_hd_utility_drive_type_prompt_entry
     mov     byte [0x3A45], 0x44
 bios_hd_utility_drive_type_draw:
     call    near bios_hd_utility_drive_type_render
     mov     byte [0xE182], 0x0D
     jmp     short bios_hd_utility_drive_type_loop
+bios_hd_utility_drive_type_prompt_entry:
     call    near 0x099D
 bios_hd_utility_drive_type_prompt:
     call    near bios_hd_utility_drive_type_render
