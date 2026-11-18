@@ -21,12 +21,12 @@ The source now uses the reset-vector and first-stage entry addresses observed in
 - ROM size: 65,536 bytes.
 - Reset vector at ROM offset `FFF0h`: far jump to `F000:E05B`.
 - Reset gateway at ROM offset `E05Bh`: near jump to `F000:D604`.
-- Reset-continuation entry at ROM offset `8A04h`: exact 28-byte path for the SMSW/CR0 test, CMOS `8Fh` clear/reset branch and continuation to `D615h`.
+- Reset-continuation entries at `8A04h` and `8A20h`, plus the ALi indexed-I/O helper cluster at `8CCDh–8DEBh` and CMOS/PIC helpers at `EE94h–EF35h`.
 - Early POST entry at ROM offset `D604h` and continuation through `D776h`: byte-backed dispatcher, stack-threaded RAM test, CMOS/8042 checks, and the first POST `80h` status writes.
 
 The reset-vector and entry bytes are checked by `validate_rom.ps1`.
 
-**This is not yet a functional or PCem-bootable BIOS.** The early POST code branches to additional routines at `88CEh`, `8A20h`, `EEE7h` and other destinations that have not yet been reconstructed into source. The remaining ROM is currently filled with `FFh`. Do not select this image as the AMI486 machine BIOS yet.
+**This is not yet a functional or PCem-bootable BIOS.** The early POST code branches to additional routines at `88CEh`, `2686h`, `F1E2h` and other destinations that have not yet been reconstructed into source. The remaining ROM is currently filled with `FFh`. Do not select this image as the AMI486 machine BIOS yet.
 
 ## Next implementation boundary
 
@@ -41,7 +41,7 @@ The original `ami486.bin` remains unchanged. Keep it separate from generated out
 The post-build PowerShell validator checks:
 - exact output size (currently 65,536 bytes);
 - immutable reference ROM identity (SHA-256 `91fd62ce3ccb0b79b42f5fd6c6a7262ed52824b8ade917181b8a12267fec003b`);
-- the implemented reset-continuation window `8A04h–8A1Fh` and early POST byte window `D604h–D776h` against the reference ROM, not only its first instructions;
+- the implemented reset-continuation window `8A04h–8A1Fh`, `8A20h–8A74h`, `8CCDh–8DEBh`, `EE94h–EF35h` and `D604h–D776h` against the reference ROM, not only its first instructions;
 - the reference reset-vector bytes at `FFF0h`;
 - the reset gateway at `E05Bh`;
 - the first verified POST instructions at `D604h`.
