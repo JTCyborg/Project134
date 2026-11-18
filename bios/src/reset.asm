@@ -320,12 +320,12 @@ bios_cpu_profile_descriptor:
     db      0x32, 0xE4                 ; xor ah, ah
     mov     bx, 0xB55D
     sub     bx, 0xB508
-    cmp     ax, bx
+    db      0x3B, 0xC3                 ; cmp ax, bx
     mov     bx, 0xB7D0
     jc      short bios_cpu_profile_descriptor_record
     mov     bx, 0xB55D
     sub     bx, 0xB508
-    sub     ax, bx
+    db      0x2B, 0xC3                 ; sub ax, bx
     mov     bx, [cs:0x82C6]
     db      0x0A, 0xC0                 ; or al, al
     jz      short bios_cpu_profile_descriptor_return
