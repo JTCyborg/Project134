@@ -1658,6 +1658,41 @@ reset_gateway_end:
 %endif
 
 ; ---------------------------------------------------------------------------
+; F000:E93Ch — PIT channel-2 transition wait used by POST speaker diagnostics.
+times 0xE93C - ($ - rom_start) db 0xFF
+bios_post_pit_transition_wait:
+    push    ax
+    mov     al, [cs:0x8285]
+    or      al, al
+    jz      short bios_post_pit_wait_high
+bios_post_pit_delay_outer:
+    mov     al, [cs:0x8285]
+bios_post_pit_delay_inner:
+    dec     al
+    jnz     short bios_post_pit_delay_inner
+    dec     cx
+    jnz     short bios_post_pit_delay_outer
+    jmp     short bios_post_pit_wait_done
+bios_post_pit_wait_high:
+    in      al, 0x61
+    test    al, 0x10
+    jz      short bios_post_pit_wait_high
+    dec     cx
+    jz      short bios_post_pit_wait_done
+bios_post_pit_wait_low:
+    in      al, 0x61
+    test    al, 0x10
+    jnz     short bios_post_pit_wait_low
+    dec     cx
+    jnz     short bios_post_pit_wait_high
+bios_post_pit_wait_done:
+    pop     ax
+    ret
+
+%if ($ - rom_start) != 0xE966
+    %error "PIT channel-2 transition helper must end at E966h"
+%endif
+
 ; F000:EE94 — CMOS indexed read helper.
 times 0xEE94 - ($ - rom_start) db 0xFF
 bios_cmos_read_index:
