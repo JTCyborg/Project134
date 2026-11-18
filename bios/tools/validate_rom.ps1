@@ -114,6 +114,13 @@ for ($offset = 0xD604; $offset -lt 0xD777; $offset++) {
     }
 }
 
+# Verify 8042 wait/command helpers used by the POST continuation.
+for ($offset = 0xF659; $offset -lt 0xF691; $offset++) {
+    if ($bytes[$offset] -ne $referenceBytes[$offset]) {
+        throw ("8042 helper byte mismatch at 0x{0:X4}: output 0x{1:X2}, reference 0x{2:X2}" -f $offset, $bytes[$offset], $referenceBytes[$offset])
+    }
+}
+
 # Reference reset vector: EA 5B E0 00 F0 => F000:E05B.
 Assert-Bytes -Offset 0xFFF0 -Expected ([byte[]](0xEA, 0x5B, 0xE0, 0x00, 0xF0)) -Description "Reset vector"
 # Reference reset gateway at F000:E05B: E9 A6 F5 => near JMP D604.
