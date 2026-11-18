@@ -15,7 +15,9 @@ rom_start:
 ; Encode a 16-bit near jump to an absolute offset in the current CS.
 ; NASM's numeric JMP operand is a displacement, not an absolute IP.
 %macro JMP_ABS 1
-    jmp near (((%1) - (($ - rom_start) + 3) + 0x8000) & 0xFFFF) - 0x8000
+    ; NASM treats a numeric near-JMP operand as the absolute target offset
+    ; and calculates the signed relative displacement itself.
+    jmp near %1
 %endmacro
 
 ; F000:19AB–19AF — stock callback trampolines used by the POST hook slots.
