@@ -18,6 +18,27 @@ ORG 0
 ; PCem maps this 64 KiB image into the F0000h..FFFFFh BIOS window.
 
 ; ---------------------------------------------------------------------------
+; Verified reset-continuation entry at ROM offset 8A04h (CS=F000h).
+; Reached from D612h when the 8042 status bit 2 is set.
+; Bytes are copied from the immutable reference ROM and retain both paths:
+; PE=1 clears CMOS[8Fh] and enters the 8042 reset wait; PE=0 resumes at D615h.
+; ---------------------------------------------------------------------------
+times 0x8A04 - ($ - $) db 0xFF
+bios_reset_continuation:
+    db 0x0F, 0x01, 0xE0             ; SMSW AX
+    db 0xA8, 0x01                   ; TEST AL,01h
+    db 0x74, 0x0F                   ; JZ 8A1Ah
+    db 0xB0, 0x8F                   ; MOV AL,8Fh
+    db 0xE6, 0x70                   ; OUT 70h,AL
+    db 0xE3, 0x00
+    db 0xE3, 0x00
+    db 0xB0, 0x00
+    db 0xE6, 0x71                   ; OUT 71h,AL
+    db 0xE9, 0xBB, 0x00             ; JMP 8AD5h
+    db 0xE9, 0xF8, 0x4B             ; JMP D615h
+    db 0xE9, 0x04, 0x4D             ; Alternate entry: JMP D724h
+
+; ---------------------------------------------------------------------------
 ; Verified early POST entry at ROM offset D604h (CS=F000h).
 ; Source: ami486_post_entry.disasm.txt, byte-backed disassembly.
 ; Preserve the original instruction stream and exact near-branch destinations.
