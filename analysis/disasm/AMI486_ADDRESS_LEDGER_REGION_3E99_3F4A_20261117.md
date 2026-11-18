@@ -80,3 +80,8 @@ The manifest has not yet been regenerated after this addition. No new global cov
 - Exact field format and caller that selects the 3E99h parser.
 - Scaling/unit meaning of the 0A28h/0E28h arithmetic in 3EF2h.
 - Whether the 3EF2h output is the same metric pair shown by 714Eh or a separate Setup measurement.
+
+
+## Native-source integration verified on 2026-11-18
+
+The `3E99h–3EF1h` parser and `3EF2h–3F49h` metric formatter are now included in `bios/src/reset.asm` as instruction-level NASM. Their emitted bytes match the reference as part of the full-ROM comparison in run `44384426423`. The following `3F4Ah` POST system-configuration display block is also source-emitted and verified in the same run.
