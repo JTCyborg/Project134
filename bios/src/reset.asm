@@ -103,24 +103,95 @@ bios_reset_entry_trampoline:
 ; F000:2068 — 16-bit LGDT pseudo-descriptor.
 bios_pm_gdt_descriptor:
     dw      0x0017
-    dd      0x000F2070
+    ; Low 24 bits are F2070h; retain the original reserved high byte 93h.
+    dd      0x930F2070
 
 times 0x2070 - ($ - rom_start) db 0x00
 bios_pm_gdt:
     dq      0x0000000000000000
-    ; Selector 0008h: flat, present, ring-0, writable 32-bit data, 4-GiB.
+    ; Selector 0008h: flat writable data segment, 4-GiB granularity.
     dw      0xFFFF, 0x0000
-    db      0x00, 0x92, 0xCF, 0x00
-    ; Selector 0010h: base-zero, present, ring-0, writable 16-bit data, 64-KiB.
+    db      0x00, 0x93, 0x8F, 0x00
+    ; Selector 0010h: base-zero writable data segment, 64-KiB limit.
     dw      0xFFFF, 0x0000
-    db      0x00, 0x92, 0x00, 0x00
+    db      0x00, 0x93, 0x00, 0x00
 bios_pm_gdt_end:
 %if (bios_pm_gdt_end - bios_pm_gdt) != 24
     %error "Protected-mode GDT must contain three descriptors"
 %endif
 
-; F000:2088 — five-byte parameter area; meaning remains unresolved.
+; F000:2088 — five-byte parameter area; semantics remain unresolved.
     db      0x01, 0x04, 0x02, 0x10, 0x40
+
+; F000:208D — 21-record ALi1429 profile table walker.
+times 0x208D - ($ - rom_start) db 0xFF
+bios_ali_profile_apply:
+    mov     ax, 0xC503
+    mov     sp, 0x2096
+    jmp     0x8DDC
+
+times 0x2096 - ($ - rom_start) db 0xFF
+bios_ali_profile_select_return:
+    dw      0x2098
+bios_ali_profile_select_continue:
+    mov     si, 0x8750
+    mov     cx, 0x87A4
+    sub     cx, 0x8750
+    shr     cx, 2
+bios_ali_profile_record_loop:
+    cs lodsw
+    sub     al, 0x30
+    mov     bl, al
+    cmp     al, 0x26
+    jne     bios_ali_profile_record_write
+    dec     cx
+    add     si, 2
+    jmp     short bios_ali_profile_record_loop
+
+bios_ali_profile_record_write:
+    cs lodsw
+    mov     al, bl
+    nop
+    mov     sp, 0x20C2
+    jmp     0x8DDC
+
+times 0x20C2 - ($ - rom_start) db 0xFF
+bios_ali_profile_write_return:
+    dw      0x20C4
+bios_ali_profile_write_continue:
+    loop    bios_ali_profile_record_loop
+    mov     sp, 0x20CC
+    jmp     bios_8042_a20_enable
+
+times 0x20CC - ($ - rom_start) db 0xFF
+bios_ali_profile_a20_return:
+    dw      0x20CE
+bios_ali_profile_a20_continue:
+    mov     bx, 0x0800
+    nop
+    mov     sp, 0x20D8
+    jmp     0xEEEF
+
+times 0x20D8 - ($ - rom_start) db 0xFF
+bios_ali_profile_eeef_return:
+    dw      0x20DA
+bios_ali_profile_pm_setup:
+    mov     eax, cr0
+    or      al, 0x01
+    mov     cr0, eax
+    cli
+    lgdt    [cs:0x2068]
+    jmp     short $+2
+    mov     ax, 0x0008
+    mov     es, ax
+    mov     ax, 0x4410
+    nop
+    mov     sp, 0x20FA
+    jmp     0x8DDC
+
+times 0x20FA - ($ - rom_start) db 0xFF
+bios_ali_profile_write_pm_return:
+    dw      0x20FC
 
 ; F000:8400 — CMOS 8Eh extended-register clear/restore path.
 times 0x8400 - ($ - rom_start) db 0xFF
