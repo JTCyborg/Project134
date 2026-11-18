@@ -1230,7 +1230,171 @@ bios_chipset_cmos_select_table:
 %if ($ - rom_start) != 0x2B13
     %error "CMOS-selected far-handler lookup must end at 2B13h"
 %endif
-incbin  "ami486.bin", ($ - rom_start), (0x8280 - ($ - rom_start)) ; inherited reference bytes from 2B13h to 8280h
+; F000:2B13h–2C68h — CMOS-indexed selectors for E046h and E049h fields.
+bios_cmos_e046_low_selector:
+    push    si
+    push    di
+    db      0x33, 0xDB                 ; xor bx, bx
+    mov     si, 0x2B0B
+    mov     bl, [0xE046]
+    test    byte [0xE036], 0x01
+    je      near bios_cmos_e046_low_normalize
+    and     bl, 0x03
+    shl     bl, 1
+    db      0x03, 0xF3                 ; add si, bx
+    mov     ax, [cs:si]
+    jmp     short bios_cmos_e046_low_return
+    nop
+bios_cmos_e046_low_normalize:
+    and     byte [0xE046], 0xFC
+    db      0x02, 0xD8                 ; add bl, al
+    and     bl, 0x03
+    db      0x08, 0x1E, 0x46, 0xE0    ; or [E046h], bl
+    shl     bl, 1
+    db      0x03, 0xF3                 ; add si, bx
+    mov     ax, [cs:si]
+bios_cmos_e046_low_return:
+    pop     di
+    pop     si
+    retf
+
+bios_cmos_e046_high_selector:
+    push    si
+    push    di
+    db      0x33, 0xDB                 ; xor bx, bx
+    mov     si, 0x2B0B
+    mov     bl, [0xE046]
+    test    byte [0xE036], 0x01
+    je      near bios_cmos_e046_high_normalize
+    and     bl, 0x0C
+    shr     bl, 1
+    db      0x03, 0xF3                 ; add si, bx
+    mov     ax, [cs:si]
+    jmp     short bios_cmos_e046_high_return
+    nop
+bios_cmos_e046_high_normalize:
+    and     byte [0xE046], 0xF3
+    shr     bl, 2
+    db      0x02, 0xD8                 ; add bl, al
+    and     bl, 0x03
+    db      0x8A, 0xC3                 ; mov al, bl
+    shl     al, 2
+    db      0x08, 0x06, 0x46, 0xE0    ; or [E046h], al
+    shl     bl, 1
+    db      0x03, 0xF3                 ; add si, bx
+    mov     ax, [cs:si]
+bios_cmos_e046_high_return:
+    pop     di
+    pop     si
+    retf
+
+; Two CMOS handler offsets used by the E049h bit selectors.
+bios_cmos_e049_table:
+    dw      0xB6D3, 0xB6D8
+
+bios_cmos_e049_bit6_selector:
+    push    si
+    push    di
+    db      0x33, 0xDB                 ; xor bx, bx
+    mov     si, 0x2B8D
+    mov     bl, [0xE049]
+    test    byte [0xE036], 0x01
+    je      near bios_cmos_e049_bit6_normalize
+    and     bl, 0x40
+    shr     bl, 5
+    db      0x03, 0xF3                 ; add si, bx
+    mov     ax, [cs:si]
+    jmp     short bios_cmos_e049_bit6_return
+    nop
+bios_cmos_e049_bit6_normalize:
+    and     byte [0xE049], 0xBF
+    shr     bl, 6
+    db      0x02, 0xD8                 ; add bl, al
+    and     bl, 0x01
+    db      0x8A, 0xC3                 ; mov al, bl
+    shl     al, 6
+    db      0x08, 0x06, 0x49, 0xE0    ; or [E049h], al
+    shl     bl, 1
+    db      0x03, 0xF3                 ; add si, bx
+    mov     ax, [cs:si]
+bios_cmos_e049_bit6_return:
+    pop     di
+    pop     si
+    retf
+
+bios_cmos_e049_bit5_selector:
+    push    si
+    push    di
+    db      0x33, 0xDB                 ; xor bx, bx
+    mov     si, 0x2B8D
+    mov     bl, [0xE049]
+    test    byte [0xE036], 0x01
+    je      near bios_cmos_e049_bit5_normalize
+    and     bl, 0x20
+    shr     bl, 4
+    db      0x03, 0xF3                 ; add si, bx
+    mov     ax, [cs:si]
+    jmp     short bios_cmos_e049_bit5_return
+    nop
+bios_cmos_e049_bit5_normalize:
+    and     byte [0xE049], 0xDF
+    shr     bl, 5
+    db      0x02, 0xD8                 ; add bl, al
+    and     bl, 0x01
+    db      0x8A, 0xC3                 ; mov al, bl
+    shl     al, 5
+    db      0x08, 0x06, 0x49, 0xE0    ; or [E049h], al
+    shl     bl, 1
+    db      0x03, 0xF3                 ; add si, bx
+    mov     ax, [cs:si]
+bios_cmos_e049_bit5_return:
+    pop     di
+    pop     si
+    retf
+
+; Four handler offsets for the E047h low two-bit selector.
+bios_cmos_e047_table:
+    dw      0xB55F, 0xB60B, 0xB604, 0xB5FF
+
+bios_cmos_e047_low_selector:
+    push    si
+    push    di
+    db      0x33, 0xDB                 ; xor bx, bx
+    mov     si, 0x2C15
+    mov     bl, [0xE047]
+    test    byte [0xE036], 0x01
+    je      near bios_cmos_e047_low_normalize
+    and     bl, 0x03
+    shl     bl, 1
+    db      0x03, 0xF3                 ; add si, bx
+    mov     ax, [cs:si]
+    jmp     short bios_cmos_e047_low_return
+    nop
+bios_cmos_e047_low_normalize:
+    and     byte [0xE047], 0xFC
+    db      0x02, 0xD8                 ; add bl, al
+    and     bl, 0x03
+    cmp     bl, 0x00
+    jne     near bios_cmos_e047_low_store
+    mov     bl, 0x03
+    cmp     al, 0x80
+    ja      near bios_cmos_e047_low_store
+    mov     bl, 0x01
+bios_cmos_e047_low_store:
+    db      0x08, 0x1E, 0x47, 0xE0    ; or [E047h], bl
+    db      0x8A, 0xD3                 ; mov dl, bl
+    shl     bl, 1
+    db      0x03, 0xF3                 ; add si, bx
+    mov     ax, [cs:si]
+bios_cmos_e047_low_return:
+    pop     di
+    pop     si
+    retf
+
+%if ($ - rom_start) != 0x2C69
+    %error "CMOS E046/E049/E047 selector handlers must end at 2C69h"
+%endif
+incbin  "ami486.bin", ($ - rom_start), (0x8280 - ($ - rom_start)) ; inherited reference bytes from 2C69h to 8280h
     db      0x2F, 0x00, 0xE7, 0x03, 0x00, 0x00, 0x12, 0x00
 
 ; F000:82D0 — original POST callback vector table.
