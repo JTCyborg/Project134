@@ -1067,7 +1067,7 @@ bios_cmos_read:
     jcxz    $+2
     in      al, 0x71
     mov     ah, 0
-    mov     si, ax
+    db      0x8B, 0xF0                 ; mov si, ax
     mov     al, 0x8F
     jcxz    $+2
     out     0x70, al
@@ -1077,7 +1077,7 @@ bios_cmos_read:
     out     0x71, al
     mov     ax, cs
     mov     ss, ax
-    mov     ax, si
+    db      0x8B, 0xC6                 ; mov ax, si
     cmp     al, 0x04
     je      bios_pic_init
     cmp     al, 0x05
@@ -1102,7 +1102,7 @@ bios_cmos_post:
     jz      bios_post_delay_setup
     test    byte [cs:0x8281], 0x40
     jnz     bios_post_delay_setup
-    mov     ax, si
+    db      0x8B, 0xC6                 ; mov ax, si
     cmp     al, 0x05
     je      bios_cr0_adjust
     cmp     al, 0x09
@@ -1111,9 +1111,9 @@ bios_cmos_post:
     jnz     bios_post_delay_setup
 bios_cr0_adjust:
     ror     eax, 16
-    mov     cx, ax
+    db      0x8B, 0xC8                 ; mov cx, ax
     smsw    ax
-    or      ah, ah
+    db      0x0A, 0xE4                 ; or ah, ah
     mov     eax, cr0
     jz      bios_cr0_clear_cache
     or      al, 0x10
@@ -1122,7 +1122,7 @@ bios_cr0_clear_cache:
     and     eax, 0x9FFFFFFF
 bios_cr0_write:
     mov     cr0, eax
-    mov     ax, cx
+    db      0x8B, 0xC1                 ; mov ax, cx
     ror     eax, 16
 bios_post_delay_setup:
     mov     ax, 0x0040
@@ -1163,17 +1163,13 @@ bios_stack_test_failure:
 ; D6C4h — copy register state through all segment registers, then execute
 ; the code at SS:SP. This is an intentional JMP-SP trampoline.
 bios_segment_test_setup:
-    mov     bx, ax
-    mov     cx, bx
-    mov     dx, cx
-    mov     si, dx
-    mov     di, si
-    mov     bp, di
+    db      0x8B,0xD8, 0x8B,0xCB, 0x8B,0xD1, 0x8B,0xF2, 0x8B,0xFE, 0x8B,0xEF
     mov     es, bp
     mov     ax, es
     mov     ds, ax
     mov     ax, ds
     mov     ss, ax
+    mov     ax, ss
     jmp     sp
 
 ; D6DEh — first SS:SP test stream.
@@ -1232,7 +1228,7 @@ bios_post_checkpoint_03:
     out     0x80, al
     mov     ax, cs
     mov     ss, ax
-    xor     bp, bp
+    db      0x33, 0xED                 ; xor bp, bp
     mov     ds, bp
     mov     es, bp
     JMP_ABS 0x8A75
@@ -1243,7 +1239,7 @@ bios_post_checkpoint_04:
     out     0x80, al
     mov     ax, cs
     mov     ss, ax
-    xor     ax, ax
+    db      0x33, 0xC0                 ; xor ax, ax
     mov     ds, ax
     mov     es, ax
     in      al, 0x64
@@ -1266,22 +1262,22 @@ bios_post_memory_checksum:
     out     0x80, al
     mov     ax, cs
     mov     ss, ax
-    xor     ax, ax
+    db      0x33, 0xC0                 ; xor ax, ax
     mov     ds, ax
     mov     es, ax
-    xor     bx, bx
+    db      0x33, 0xDB                 ; xor bx, bx
     mov     cx, 0x8000
-    xor     si, si
+    db      0x33, 0xF6                 ; xor si, si
 bios_post_checksum_loop:
     cs lodsw
-    add     bx, ax
+    db      0x03, 0xD8                 ; add bx, ax
     loop    bios_post_checksum_loop
     jz      bios_post_8042_drain
     mov     bp, 0x0009
     JMP_ABS 0xF4A5
 
 bios_post_8042_drain:
-    xor     cx, cx
+    db      0x33, 0xC9                 ; xor cx, cx
 bios_post_8042_status:
     in      al, 0x64
     mov     ah, al
@@ -1339,7 +1335,7 @@ bios_post_8042_read_response_continue:
     JMP_ABS 0xF4A5
 
 bios_post_8042_response_ok:
-    or      di, di
+    db      0x0B, 0xFF                 ; or di, di
     jz      bios_post_keyboard_init_done
     mov     al, 0xA1
     out     0x64, al
@@ -1450,7 +1446,7 @@ incbin  "ami486.bin", ($ - rom_start), (0xD89A - ($ - rom_start)) ; inherited re
 bios_post_cmos_8f_55_compare_return:
     dw      0xD89C
 bios_post_cmos_8f_55_compare_continue:
-    xor     al, ah
+    db      0x32, 0xC4                 ; xor al, ah
     jnz     short bios_post_cmos_8f_mismatch
     mov     ax, 0xAA8F
     nop
@@ -1468,7 +1464,7 @@ incbin  "ami486.bin", ($ - rom_start), (0xD8B2 - ($ - rom_start)) ; inherited re
 bios_post_cmos_8f_aa_read_return:
     dw      0xD8B4
 bios_post_cmos_8f_aa_read_continue:
-    xor     al, ah
+    db      0x32, 0xC4                 ; xor al, ah
     jz      short bios_post_cmos_8e_read
 bios_post_cmos_8f_mismatch:
     mov     bp, 0x000A
@@ -1485,7 +1481,7 @@ incbin  "ami486.bin", ($ - rom_start), (0xD8CA - ($ - rom_start)) ; inherited re
 bios_post_cmos_8e_read_return:
     dw      0xD8CC
 bios_post_cmos_8e_read_continue:
-    or      al, al
+    db      0x0A, 0xC0                 ; or al, al
     mov     ax, 0x8E8E
     nop
     mov     sp, 0xD8D8
@@ -1500,7 +1496,7 @@ bios_post_cmos_8e_flags_continue:
     or      al, 0xDC
     jmp     short bios_post_cmos_8e_flags_done
 bios_post_cmos_8e_negative:
-    or      al, al
+    db      0x0A, 0xC0                 ; or al, al
     js      short bios_post_cmos_8e_sign
     JMP_ABS 0x868B
 bios_post_cmos_8e_zero:
@@ -1515,7 +1511,7 @@ bios_post_cmos_8e_mask:
     and     al, 0x8B
 bios_post_cmos_8e_flags_done:
     and     al, 0xFE
-    xchg    ah, al
+    db      0x86, 0xC4                 ; xchg ah, al
     mov     sp, 0xD904
     JMP_ABS 0xEE9D
 
@@ -1541,7 +1537,7 @@ bios_post_cmos_8b_read_return:
     dw      0xD91C
 bios_post_cmos_8b_read_continue:
     and     al, 0x07
-    xchg    ah, al
+    db      0x86, 0xC4                 ; xchg ah, al
     mov     sp, 0xD926
     JMP_ABS 0xEE9D
 
@@ -1569,7 +1565,7 @@ bios_post_cmos_8a_compare_continue:
     and     al, 0x0F
     jnz     short bios_post_cmos_8a_enable_keyboard
     mov     al, 0x26
-    xchg    ah, al
+    db      0x86, 0xC4                 ; xchg ah, al
     mov     sp, 0xD94C
     JMP_ABS 0xEE9D
 
@@ -1674,7 +1670,7 @@ bios_post_pit_channel2_test:
     out     0x80, al
     mov     ax, cs
     mov     ss, ax
-    xor     ax, ax
+    db      0x33, 0xC0                 ; xor ax, ax
     mov     es, ax
     mov     ds, ax
     mov     al, 0xFC
@@ -1724,7 +1720,7 @@ bios_post_pit_channel2_ok:
     test    byte [cs:0x8280], 0x80
     jz      short bios_post_pit_test_done
     mov     al, [cs:0x8285]
-    or      al, al
+    db      0x0A, 0xC0                 ; or al, al
     jnz     short bios_post_pit_test_done
     xor     bx, bx
     mov     ah, 0x10
@@ -1755,7 +1751,7 @@ bios_post_pit_wait_second_high:
     in      al, 0x61
     test    ah, al
     loope   bios_post_pit_wait_second_high
-    sub     cx, bx
+    db      0x2B, 0xCB                 ; sub cx, bx
     jns     short bios_post_pit_delta_ready
     neg     cx
 bios_post_pit_delta_ready:
@@ -1797,7 +1793,7 @@ incbin  "ami486.bin", ($ - rom_start), (0xE93C - ($ - rom_start)) ; inherited re
 bios_post_pit_transition_wait:
     push    ax
     mov     al, [cs:0x8285]
-    or      al, al
+    db      0x0A, 0xC0                 ; or al, al
     jz      short bios_post_pit_transition_wait_high
 bios_post_pit_delay_outer:
     mov     al, [cs:0x8285]
@@ -1860,11 +1856,11 @@ bios_pic_initialize:
     out     0x20, al
     jcxz    $+2
     jcxz    $+2
-    mov     al, bl
+    db      0x8A, 0xC3                 ; mov al, bl
     out     0xA1, al
     jcxz    $+2
     jcxz    $+2
-    mov     al, bh
+    db      0x8A, 0xC7                 ; mov al, bh
     out     0x21, al
     jcxz    $+2
     jcxz    $+2
@@ -2273,7 +2269,7 @@ incbin  "ami486.bin", ($ - rom_start), (0xFFF0 - ($ - rom_start)) ; inherited re
 bios_reset_vector:
     jmp     0xF000:reset_gateway
 
-times ROM_SIZE - ($ - rom_start) db 0xFF
+incbin  "ami486.bin", ($ - rom_start), (ROM_SIZE - ($ - rom_start)) ; inherited trailing bytes after reset vector
 %if ($ - rom_start) != ROM_SIZE
     %error "Incorrect BIOS ROM size"
 %endif
