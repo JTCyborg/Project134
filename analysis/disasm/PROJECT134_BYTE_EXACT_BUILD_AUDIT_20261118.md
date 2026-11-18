@@ -2,7 +2,7 @@
 
 Date: 2026-11-18  
 Branch: `main`  
-Build workflow: [run 44378354650](https://github.com/JTCyborg/Project134/actions/runs/44375480780)
+Build workflow: [run 44382969490](https://github.com/JTCyborg/Project134/actions/runs/44382969490)
 
 ## Verified build result
 
@@ -24,26 +24,41 @@ The build log explicitly reports:
 - `BIOS POST06 ROM checksum PASS (16-bit sum = 0000h).`
 - `NASM BIOS structural validation PASS: 65536 bytes`.
 
-The committed `out/Debug/Project134.bin` is also byte-identical to `ami486.bin`. The generated `Project134.native-candidate.bin` has the same size and SHA-256.
+The committed `out/Debug/Project134.bin` and generated `Project134.native-candidate.bin` are both byte-identical to the reference. The CI job did **not** launch PCem.
 
 ## Native versus inherited coverage
 
-The NASM listing `Project134.native-candidate.lst` from run `44378354650` was parsed for all `<bin NNh>` records emitted by `incbin`.
+The NASM listing `Project134.native-candidate.lst` from run `44382969490` was parsed for all `<bin NNh>` records emitted by `incbin`.
 
 | Output origin | Bytes | Share |
 |---|---:|---:|
-| Explicit inherited `incbin` slices from `ami486.bin` | 58,325 | 89.00% |
-| Bytes emitted directly by NASM source (instructions, explicit data, and fill) | 7,211 | 11.00% |
+| Explicit inherited `incbin` slices from `ami486.bin` | 55,961 | 85.39% |
+| Bytes emitted directly by NASM source (instructions, explicit data, and fill) | 9,575 | 14.61% |
 | Total | 65,536 | 100% |
 
-There are 102 `incbin` directives in the listing, 17 of which contribute non-zero bytes. The newly reconstructed NASM interval `20FCh–29F5h` adds 2,303 bytes of source-emitted instructions/data compared with the earlier audited build. Zero-length slices are retained as explicit layout boundaries.
+The listing contains 103 `<bin>` records, 18 of which contribute non-zero bytes. Zero-length slices are retained as explicit layout boundaries.
 
-**Interpretation:** the result is a byte-exact, behavior-preserving compatibility image. It is not accurate to call 100% of the ROM independently reconstructed: 92.5% is inherited from the original reference. The byte comparison proves the assembled image matches the reference, not that every inherited routine has been semantically reconstructed.
+**Interpretation:** the output is a byte-exact compatibility image, but only 14.61% of its bytes are currently emitted directly by NASM source. The remaining 85.39% are inherited from the original reference through explicit slices. Byte equality proves the assembled image matches the reference; it does not prove the inherited routines have been semantically reconstructed.
+
+## Newly verified source regions
+
+The latest source and listing include these regions as NASM instructions/data rather than inherited slices:
+
+| ROM interval | Contents |
+|---|---|
+| `2065h–2F23h` | POST memory/CMOS paths, Setup selectors, memory benchmark, PIT helpers, and Setup relocation handoff |
+| `2F24h–3043h` | Setup exit prompt strings and handlers, BDA clear helper, temporary IVT/INT 13h AH=14h path |
+| `3C5Ch–3F49h` | Setup main menu, shared menu/header renderer, value parser, and metric formatter |
+| `8300h–83FFh` | CPU/cache profile selector and CMOS 8Eh update path |
+
+The Setup handler table at `B7B2h` contains 14 near-offset entries. The earlier analysis note omitted `2EB4h`, shifting the later table entries; that transcription has been corrected. The two selector handlers at `2E74h` and `2EB4h` now have instruction-level source.
+
+The `2D11h–2DF4h` benchmark block was reconstructed from the ROM instruction stream. Its caller/entry provenance remains unresolved; its code bytes nevertheless match the reference exactly. The `2E74h` and `2EB4h` Setup handlers are confirmed by the pointer table at `B7B2h`.
 
 ## Test boundary
 
-The GitHub Actions job installed NASM, assembled the candidate, ran the full byte comparison and checksum validator, verified the default boot image against the reference hash, and uploaded the artifacts. It did **not** launch PCem. Since the resulting candidate is byte-identical to the original ROM, it has the same ROM contents; a separate PCem launch remains an external runtime confirmation.
+GitHub Actions run `44382969490` installed NASM, assembled the candidate, ran the full byte comparison and checksum validator, verified the default boot image against the reference hash, and uploaded the artifacts. It did **not** launch PCem. A separate PCem boot and runtime differential trace are still required.
 
 ## Next reconstruction work
 
-The current source has instruction-level NASM coverage for `20FCh–29F5h` and `8300h–83FFh`, plus previously reconstructed helpers. The next inherited region begins at `29F6h`; its setup/configuration handlers and inline pointer tables need to be mapped before conversion. Replace inherited ranges with instruction-level NASM only when entry points, instruction boundaries, data tables, alternate entries, stack-threaded continuations, and side effects are supported by the existing disassembly evidence. Keep the full 65,536-byte comparison and POST checksum as regression gates. Never use a checksum-adjustment word to conceal missing or incorrect code.
+The next selected inherited executable interval is `3F4Ah–4230h`, called directly from `164Ch` during POST. It contains the system-configuration display routine and its helpers. Preserve the adjacent strings/data beginning at `4231h` until their boundaries are independently mapped. Continue using full-image byte comparison and POST checksum as regression gates; never add a checksum-adjustment word to conceal missing or incorrect code.
