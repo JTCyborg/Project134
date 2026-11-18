@@ -653,11 +653,11 @@ bios_segment_sweep_7000:
     mov     dx, ds
     db      0x33, 0xDB                 ; xor bx, bx
     db      0x2B, 0xF6                 ; sub si, si
+bios_segment_sweep_loop:
     mov     ds, bx
     mov     cx, 0x8000
     rep     lodsw
     db      0x2B, 0xF6                 ; sub si, si
-bios_segment_sweep_loop:
     cmp     bx, 0x8000
     add     bx, 0x1000
     jne     short bios_segment_sweep_loop
@@ -669,6 +669,7 @@ bios_temp_gdt:
     db      0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00
 bios_temp_gdtr:
     db      0x40,0x00,0x46,0x26,0x0F,0x00
+    db      0x00,0x00
     db      0xFF,0xFF,0x00,0x00,0x00,0x93,0x00,0x00
     db      0xFF,0xFF,0x00,0x80,0x83,0x93,0x00,0x03
     db      0xFF,0xFF,0x00,0x00,0xA3,0x93,0x00,0x03
@@ -702,10 +703,11 @@ bios_segment_sweep_4000:
     db      0x33, 0xF6                 ; xor si, si
     mov     cx, 0x8000
     rep     lodsw
+bios_segment_sweep_4000_next:
     mov     ax, ds
     add     ah, 0x08
     cmp     ah, 0xA0
-    jne     short bios_segment_sweep_4000
+    jne     short bios_segment_sweep_4000_next
     jmp     di
 
 bios_segment_sweep_0700:
