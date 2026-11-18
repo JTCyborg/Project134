@@ -2901,7 +2901,293 @@ bios_hd_utility_drive_status_epilogue:
     %error "Setup hard-disk utility handler block must end at 4891h"
 %endif
 
-incbin  "ami486.bin", ($ - rom_start), (0x8280 - ($ - rom_start)) ; inherited reference bytes from 4891h to 8280h
+; F000:4891 — Setup hard-disk utility option panel and callback dispatcher.
+bios_hd_utility_panel:
+    push    bp
+    db      0x8B, 0xEC                 ; mov bp, sp
+    sub     sp, 0x000A
+    push    di
+    push    si
+    mov     byte [bp-0x04], 0x00
+    mov     al, [0xE1AC]
+    cbw
+    db      0x8B, 0xF8                 ; mov di, ax
+    shl     di, 1
+    shl     di, 1
+    add     di, 0x38AD
+    lea     bx, [0x37E9]
+    mov     ax, 0x1828
+    call    near bios_setup_menu_value_input
+    mov     al, [0xE1A4]
+    mov     [0xE19F], al
+    mov     dh, [di+0x02]
+    db      0x2A, 0xD2                 ; sub dl, dl
+    add     dx, 0x0B21
+    mov     ax, 0x0802
+    mov     bx, 0x0003
+    call    near 0x578D
+    mov     bx, [di]
+    mov     ax, 0x0912
+    call    near 0x58BE
+    mov     ax, 0x0A03
+    mov     dl, 0x1E
+    mov     bx, 0x9000
+    call    near 0x5862
+    mov     byte [bp-0x01], 0x00
+    mov     word [0xE180], 0x0B04
+    mov     al, [di+0x03]
+    mov     [bp-0x02], al
+    mov     [bp-0x03], al
+    jmp     short bios_hd_utility_option_count
+bios_hd_utility_option_draw:
+    test    byte [bp-0x02], 0x01
+    je      short bios_hd_utility_option_next
+    mov     bl, [bp-0x01]
+    db      0x2A, 0xFF                 ; sub bh, bh
+    shl     bx, 1
+    mov     bx, [bx+0x3873]
+    mov     ax, [0xE180]
+    call    near 0x58D3
+    mov     dx, [0xE180]
+    add     dx, 0x0016
+    mov     al, 0x3F
+    call    near 0x58EE
+    db      0x80, 0x06, 0x81, 0xE1, 0x01 ; add byte [E181], 1
+bios_hd_utility_option_next:
+    inc     byte [bp-0x01]
+    shr     byte [bp-0x02], 1
+bios_hd_utility_option_count:
+    cmp     byte [bp-0x01], 0x05
+    jb      short bios_hd_utility_option_draw
+
+    mov     byte [bp-0x01], 0x00
+    mov     word [0xE180], 0x0B1C
+    mov     al, [bp-0x03]
+    mov     [bp-0x02], al
+    jmp     short bios_hd_utility_callback_count
+bios_hd_utility_callback_loop:
+    test    byte [bp-0x02], 0x01
+    je      short bios_hd_utility_callback_next
+    mov     ax, [0xE180]
+    call    near 0x09C1
+    mov     bl, [bp-0x01]
+    db      0x2A, 0xFF                 ; sub bh, bh
+    shl     bx, 1
+    mov     ax, [bx+0x38B9]
+    mov     [bp-0x0A], ax
+    call    word [bp-0x0A]
+    mov     [bp-0x05], al
+    cmp     al, 0x1B
+    jne     short bios_hd_utility_callback_not_escape
+    JMP_ABS 0x4AE8
+bios_hd_utility_callback_not_escape:
+    db      0x80, 0x06, 0x81, 0xE1, 0x01 ; add byte [E181], 1
+bios_hd_utility_callback_next:
+    inc     byte [bp-0x01]
+    shr     byte [bp-0x02], 1
+bios_hd_utility_callback_count:
+    cmp     byte [bp-0x01], 0x05
+    jb      short bios_hd_utility_callback_loop
+    cmp     byte [bp-0x05], 0x59
+    je      short bios_hd_utility_after_confirm
+    JMP_ABS 0x48B5
+bios_hd_utility_after_confirm:
+    mov     byte [0xE1AB], 0x00
+    mov     al, [0xE1A7]
+    mov     [0xE19F], al
+    mov     ax, 0x082B
+    mov     dx, 0x0F4D
+    mov     bx, 0x0003
+    call    near 0x578D
+    lea     bx, [0x34C1]
+    mov     ax, 0x093C
+    call    near 0x58A1
+    lea     bx, [0x3982]
+    mov     ax, 0x0B3C
+    call    near 0x58C6
+    lea     bx, [0x3998]
+    mov     ax, 0x0C3C
+    call    near 0x58C6
+    lea     bx, [0x39AE]
+    mov     ax, 0x0E3C
+    call    near 0x58C6
+    mov     word [0xE180], 0x0E49
+    call    near 0xF571
+    call    near 0x5985
+    cmp     al, 0x59
+    je      short bios_hd_utility_confirm_yes
+    JMP_ABS 0x4ACD
+bios_hd_utility_confirm_yes:
+    mov     ax, 0x082B
+    mov     dx, 0x0F4D
+    mov     bx, 0x0003
+    call    near 0x578D
+    lea     bx, [0x39C7]
+    mov     ax, 0x093C
+    call    near 0x58BE
+    lea     bx, [0x394B]
+    mov     ax, 0x0B2D
+    call    near 0x58D3
+    lea     bx, [0x395E]
+    mov     ax, 0x0B40
+    call    near 0x58D3
+    lea     bx, [0x39CE]
+    mov     ax, 0x0D3C
+    call    near 0x58A1
+    cmp     byte [0xE1AC], 0x02
+    jne     short bios_hd_utility_drive_choice_ready
+    mov     byte [bp-0x04], 0x01
+bios_hd_utility_drive_choice_ready:
+    cmp     byte [0xE1AC], 0x01
+    jne     short bios_hd_utility_format_check_done
+    cmp     byte [bp-0x05], 0x59
+    jne     short bios_hd_utility_format_check_done
+    mov     al, [0xE1A4]
+    mov     [0xE19F], al
+    mov     ax, 0x102B
+    mov     dx, 0x174D
+    mov     bx, 0x0003
+    call    near 0x578D
+    lea     bx, [0x3A66]
+    mov     ax, 0x113C
+    call    near 0x58BE
+    mov     di, 0x0001
+    mov     si, 0x1232
+    mov     [0xE180], si
+bios_hd_utility_cylinder_head_loop:
+    db      0x8B, 0xC6                 ; mov ax, si
+    mov     dx, 0x0001
+    db      0x8B, 0xDF                 ; mov bx, di
+    call    near 0x09EB
+    mov     ax, [0xE180]
+    inc     ax
+    inc     ax
+    lea     bx, [0x3A81]
+    call    near 0x58D3
+    add     si, 0x0100
+    inc     di
+    cmp     si, 0x1532
+    jbe     short bios_hd_utility_cylinder_head_loop
+    lea     bx, [0x3A89]
+    mov     ax, 0x163C
+    call    near 0x58BE
+bios_hd_utility_format_check_done:
+    call    near 0x2FA3
+    mov     [bp-0x05], al
+    mov     al, [0xE1A7]
+    mov     [0xE19F], al
+    mov     ax, 0x0D2C
+    mov     dl, 0x21
+    call    near 0x57FD
+    cmp     byte [bp-0x05], 0x1B
+    je      short bios_hd_utility_format_result
+    cmp     byte [bp-0x05], 0x03
+    jbe     short bios_hd_utility_format_choice
+bios_hd_utility_format_result:
+    lea     bx, [0x39ED]
+    mov     ax, 0x0D3C
+    call    near 0x58A1
+    JMP_ABS 0x49B1
+bios_hd_utility_format_choice:
+    cmp     byte [bp-0x05], 0x00
+    jne     short bios_hd_utility_format_choice_indexed
+    mov     ax, 0x0B2C
+    mov     dl, 0x21
+    call    near 0x57FD
+    lea     bx, [0x39F8]
+    mov     ax, 0x0B3C
+    jmp     short bios_hd_utility_format_choice_render
+bios_hd_utility_format_choice_indexed:
+    mov     bl, [bp-0x05]
+    db      0x2A, 0xFF                 ; sub bh, bh
+    shl     bx, 1
+    mov     bx, [bx+0x3A5E]
+    mov     ax, 0x0D3C
+bios_hd_utility_format_choice_render:
+    call    near 0x58A1
+    lea     bx, [0x36DB]
+    mov     ax, 0x0E3C
+    call    near 0x58A1
+    call    near 0x5902
+bios_hd_utility_panel_exit:
+    cmp     byte [bp-0x04], 0x00
+    je      short bios_hd_utility_panel_return
+    mov     al, [0xE1A2]
+    mov     [0xE19F], al
+    mov     ax, 0x082B
+    mov     dx, 0x174E
+    call    near 0x5802
+    call    near 0x4BDA
+    call    near 0x4CEE
+bios_hd_utility_panel_return:
+    pop     si
+    pop     di
+    db      0x8B, 0xE5                 ; mov sp, bp
+    pop     bp
+    ret
+
+%if ($ - rom_start) != 0x4AEE
+    %error "Setup utility panel must end at 4AEEh"
+%endif
+
+; B7BA table callback: update selected drive/type selector.
+bios_hd_utility_drive_type_callback:
+    push    bp
+    db      0x8B, 0xEC                 ; mov bp, sp
+    cmp     byte [0xE1AE], 0x00
+    jne     short bios_hd_utility_drive_type_selected
+    mov     byte [0x3A45], 0x43
+    jmp     short bios_hd_utility_drive_type_draw
+bios_hd_utility_drive_type_selected:
+    cmp     byte [0xE1AD], 0x00
+    jne     short bios_hd_utility_drive_type_prompt
+    mov     byte [0x3A45], 0x44
+bios_hd_utility_drive_type_draw:
+    call    near bios_hd_utility_drive_type_render
+    mov     byte [0xE182], 0x0D
+    jmp     short bios_hd_utility_drive_type_loop
+bios_hd_utility_drive_type_prompt:
+    call    near 0x099D
+    call    near bios_hd_utility_drive_type_render
+    call    near 0x591A
+    mov     [0xE182], ax
+    db      0x2D, 0x0D, 0x00           ; sub ax, 000Dh
+    je      short bios_hd_utility_drive_type_done
+    db      0x2D, 0x0E, 0x00           ; sub ax, 000Eh
+    je      short bios_hd_utility_drive_type_done
+    db      0x2D, 0x28, 0x00           ; sub ax, 0028h
+    jb      short bios_hd_utility_drive_type_prompt
+    db      0x2D, 0x01, 0x00           ; sub ax, 0001h
+    ja      short bios_hd_utility_drive_type_prompt
+    mov     al, [0xE182]
+    mov     [0x3A45], al
+    jmp     short bios_hd_utility_drive_type_prompt
+bios_hd_utility_drive_type_loop:
+    mov     al, [0x3A45]
+    db      0x2A, 0x06, 0x21, 0xE4    ; sub al, [E421]
+    cmp     al, 0x43
+    je      short bios_hd_utility_drive_type_done
+    mov     word [0xE423], 0x0000
+bios_hd_utility_drive_type_done:
+    mov     al, [0x3A45]
+    sub     al, 0x43
+    mov     [0xE421], al
+    mov     al, [0xE182]
+    db      0x8B, 0xE5                 ; mov sp, bp
+    pop     bp
+    ret
+
+bios_hd_utility_drive_type_render:
+    mov     al, [0x3A45]
+    mov     dx, [0xE180]
+    call    near 0x58EE
+    ret
+
+%if ($ - rom_start) != 0x4B68
+    %error "Drive-type callback block must end at 4B68h"
+%endif
+
+incbin  "ami486.bin", ($ - rom_start), (0x8280 - ($ - rom_start)) ; inherited reference bytes from 4B68h to 8280h
     db      0x2F, 0x00, 0xE7, 0x03, 0x00, 0x00, 0x12, 0x00
 
 ; F000:82D0 — original POST callback vector table.
