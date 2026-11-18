@@ -3926,7 +3926,7 @@ bios_post_memory_controller_poll:
     call    near 0xE93C
     call    near 0x5448
     pop     cx
-    loopne  short bios_post_memory_controller_poll
+    loopne  bios_post_memory_controller_poll
     db      0x0B, 0xD2                 ; or dx, dx
     je      short bios_post_memory_controller_clear_low
     mov     byte [si], 0x00
@@ -3956,7 +3956,7 @@ bios_post_memory_controller_finish_low:
     pop     bx
     pop     dx
     inc     dx
-    jmp     near bios_post_memory_controller_set_map
+    jmp     short bios_post_memory_controller_set_map
 
 bios_post_memory_controller_chipset_path:
     push    bp
@@ -4000,10 +4000,10 @@ bios_post_memory_controller_set_map:
 bios_post_memory_controller_map_size_ready:
     shl     bx, 0x06
     mov     [0x0013], dx
-    mov     ah, bl
+    db      0x8A, 0xE3                 ; mov ah, bl
     mov     al, 0xB0
     call    near 0xEE9D
-    mov     ah, bh
+    db      0x8A, 0xE7                 ; mov ah, bh
     mov     al, 0xB1
     call    near 0xEE9D
     pusha
@@ -4021,7 +4021,7 @@ bios_post_memory_controller_real_mode:
     jmp     near 0xF068
 bios_post_memory_controller_resume:
     mov     ax, [0x0067]
-    mov     sp, ax
+    db      0x8B, 0xE0                 ; mov sp, ax
     mov     al, 0x54
     out     0x80, al
     popa
@@ -4089,7 +4089,7 @@ bios_post_print_decimal_divide:
     call    near bios_post_print_decimal_recurse
     pop     dx
 bios_post_print_decimal_digit:
-    mov     al, dl
+    db      0x8A, 0xC2                 ; mov al, dl
     or      al, 0x30
     call    near 0xF53C
     ret
