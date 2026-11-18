@@ -1913,7 +1913,7 @@ incbin  "ami486.bin", ($ - rom_start), (0x3C5C - ($ - rom_start)) ; inherited st
 ; F000:3C5E — BIOS Setup main menu and twelve-item dispatch loop.
 bios_setup_main_menu:
     push    bp
-    mov     bp, sp
+    db      0x8B, 0xEC                 ; mov bp, sp
     sub     sp, 0x0002
     call    near 0x84CB
     call    near 0x566B
@@ -1943,12 +1943,13 @@ bios_setup_menu_key_ready:
     mov     dl, 0x50
     mov     bx, 0x2016
     call    near 0x5862
+bios_setup_menu_draw_loop:
     mov     al, [0xE1A2]
     call    near bios_setup_menu_draw_selection
     mov     al, 0x01
     call    near bios_setup_menu_move
     cmp     byte [0xE187], 0x00
-    jne     short bios_setup_menu_refresh
+    jne     short bios_setup_menu_draw_loop
     mov     al, [0xE189]
     mov     [0xE187], al
     mov     al, [0xE18A]
@@ -1973,38 +1974,39 @@ bios_setup_menu_refresh:
     mov     al, [0xE1A2]
     call    near bios_setup_menu_draw_selection
     mov     ax, [0xE182]
-    sub     ax, 0x000D
+    db      0x2D, 0x0D, 0x00           ; sub ax, 000Dh
     je      short bios_setup_menu_warning
-    sub     ax, 0x000E
+    db      0x2D, 0x0E, 0x00           ; sub ax, 000Eh
     je      short bios_setup_menu_exit_no_save
     sub     ax, 0x0121
     jb      short bios_setup_menu_refresh
-    sub     ax, 0x0001
+    db      0x2D, 0x01, 0x00           ; sub ax, 0001h
     jbe     short bios_setup_menu_palette
-    sub     ax, 0x0007
+    db      0x2D, 0x07, 0x00           ; sub ax, 0007h
     je      short bios_setup_menu_exit_save
-    sub     ax, 0x0004
+    db      0x2D, 0x04, 0x00           ; sub ax, 0004h
     je      short bios_setup_menu_move_down
-    sub     ax, 0x0003
+    db      0x2D, 0x03, 0x00           ; sub ax, 0003h
     je      short bios_setup_menu_move_down
     dec     ax
     dec     ax
     je      short bios_setup_menu_move_up
-    sub     ax, 0x0003
+    db      0x2D, 0x03, 0x00           ; sub ax, 0003h
     je      short bios_setup_menu_move_up
     jmp     short bios_setup_menu_refresh
 bios_setup_menu_move_down:
     mov     al, 0xFF
+bios_setup_menu_move_apply:
     call    near bios_setup_menu_move
     jmp     short bios_setup_menu_refresh
 bios_setup_menu_move_up:
     mov     al, 0x01
-    jmp     short bios_setup_menu_move_down
+    jmp     short bios_setup_menu_move_apply
 bios_setup_menu_warning:
     cmp     byte [0xE187], 0x04
     jg      short bios_setup_menu_dispatch
     call    near bios_setup_menu_warning_screen
-    cmp     ax, 0x001B
+    db      0x3D, 0x1B, 0x00           ; cmp ax, 001Bh
     jne     short bios_setup_menu_dispatch
     JMP_ABS 0x3C6D
 bios_setup_menu_dispatch:
@@ -2074,9 +2076,10 @@ bios_setup_menu_warning_screen:
 
 bios_setup_menu_move:
     push    bp
-    mov     bp, sp
+    db      0x8B, 0xEC                 ; mov bp, sp
     push    ax
     db      0x00, 0x06, 0x88, 0xE1    ; add byte [0xE188], al
+bios_setup_menu_move_delta:
     mov     al, [bp-0x02]
     db      0x00, 0x06, 0x87, 0xE1    ; add byte [0xE187], al
     jns     short bios_setup_menu_move_in_range
@@ -2089,7 +2092,7 @@ bios_setup_menu_move_in_range:
 bios_setup_menu_move_poll:
     call    near 0x5AA2
     db      0x0B, 0xC0                 ; or ax, ax
-    je      short bios_setup_menu_move_in_range
+    je      short bios_setup_menu_move_delta
     db      0x8B, 0xE5                 ; mov sp, bp
     pop     bp
     ret
@@ -2118,7 +2121,7 @@ bios_setup_menu_last_loop:
 ; F000:3E3F — shared Setup menu/header renderer.
 bios_setup_menu_header:
     push    bp
-    mov     bp, sp
+    db      0x8B, 0xEC                 ; mov bp, sp
     push    ax
     push    bx
     mov     al, [0xE1A8]
@@ -2159,7 +2162,7 @@ bios_setup_menu_header:
 ; F000:3E99 — Setup value-input/parser routine.
 bios_setup_menu_value_input:
     push    bp
-    mov     bp, sp
+    db      0x8B, 0xEC                 ; mov bp, sp
     sub     sp, 0x0004
     push    bx
     push    di
@@ -2174,7 +2177,7 @@ bios_setup_menu_value_input:
     mov     [bp-0x04], ax
     dec     cx
     shr     cx, 1
-    add     di, cx
+    db      0x03, 0xF9                 ; add di, cx
     jmp     short bios_setup_menu_value_input_loop_bound
 bios_setup_menu_value_input_loop:
     mov     bx, [bp-0x04]
@@ -2210,7 +2213,7 @@ bios_setup_menu_value_input_loop_bound:
 ; F000:3EF2 — Setup metric/value formatter.
 bios_setup_menu_metric_formatter:
     push    bp
-    mov     bp, sp
+    db      0x8B, 0xEC                 ; mov bp, sp
     sub     sp, 0x0002
     push    bx
     push    di
@@ -2224,7 +2227,7 @@ bios_setup_menu_metric_formatter:
 bios_setup_menu_metric_clamped:
     db      0x8B, 0xC6                 ; mov ax, si
     shr     ax, 1
-    add     ax, 0x0003
+    db      0x05, 0x03, 0x00           ; add ax, 0003h
     db      0x8B, 0xC8                 ; mov cx, ax
     sub     ax, 0x0A28
     neg     ax
