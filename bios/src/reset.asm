@@ -32,7 +32,7 @@ bios_callback_ret_19af:
 ; F000:1AF8 — POST continuation trampoline into the D82Fh 8042 sequence.
 times 0x1AF8 - ($ - rom_start) db 0xFF
 bios_post_8042_continuation:
-    JMP_ABS D82F
+    JMP_ABS 0xD82F
 
 ; ---------------------------------------------------------------------------
 ; F000:1AFB — CMOS B3h profile selection and PIT/speaker initialization.
@@ -41,7 +41,7 @@ bios_cmos_b3_profile_entry:
     mov     al, 0xB3
     nop
     mov     sp, 0x1B04
-    JMP_ABS EE94
+    JMP_ABS 0xEE94
 
 times 0x1B04 - ($ - rom_start) db 0xFF
 bios_cmos_b3_profile_return:
@@ -61,7 +61,7 @@ bios_cmos_profile_table_loop:
 bios_cmos_profile_table_write:
     cs lodsw
     mov     sp, 0x1B2A
-    JMP_ABS 8DDC
+    JMP_ABS 0x8DDC
 
 times 0x1B2A - ($ - rom_start) db 0xFF
 bios_cmos_profile_write_return:
@@ -91,10 +91,10 @@ bios_speaker_pit_init:
 bios_speaker_buffer_clear:
     stosb
     loop    bios_speaker_buffer_clear
-    JMP_ABS 208D
+    JMP_ABS 0x208D
 
 bios_post_early_reentry:
-    JMP_ABS D724
+    JMP_ABS 0xD724
 bios_callback_ret_1b5e:
     ret
 bios_callback_ret_1b5f:
@@ -104,7 +104,7 @@ bios_callback_ret_1b5f:
 ; The descriptor and GDT are reconstructed as NASM data declarations.
 times 0x2065 - ($ - rom_start) db 0xFF
 bios_reset_entry_trampoline:
-    JMP_ABS E05B
+    JMP_ABS 0xE05B
 
 ; F000:2068 — 16-bit LGDT pseudo-descriptor.
 bios_pm_gdt_descriptor:
@@ -134,7 +134,7 @@ times 0x208D - ($ - rom_start) db 0xFF
 bios_ali_profile_apply:
     mov     ax, 0xC503
     mov     sp, 0x2096
-    JMP_ABS 8DDC
+    JMP_ABS 0x8DDC
 
 times 0x2096 - ($ - rom_start) db 0xFF
 bios_ali_profile_select_return:
@@ -159,7 +159,7 @@ bios_ali_profile_record_write:
     mov     al, bl
     nop
     mov     sp, 0x20C2
-    JMP_ABS 8DDC
+    JMP_ABS 0x8DDC
 
 times 0x20C2 - ($ - rom_start) db 0xFF
 bios_ali_profile_write_return:
@@ -176,7 +176,7 @@ bios_ali_profile_a20_continue:
     mov     bx, 0x0800
     nop
     mov     sp, 0x20D8
-    JMP_ABS EEEF
+    JMP_ABS 0xEEEF
 
 times 0x20D8 - ($ - rom_start) db 0xFF
 bios_ali_profile_eeef_return:
@@ -193,7 +193,7 @@ bios_ali_profile_pm_setup:
     mov     ax, 0x4410
     nop
     mov     sp, 0x20FA
-    JMP_ABS 8DDC
+    JMP_ABS 0x8DDC
 
 times 0x20FA - ($ - rom_start) db 0xFF
 bios_ali_profile_write_pm_return:
@@ -204,13 +204,13 @@ times 0x8400 - ($ - rom_start) db 0xFF
 bios_cmos_8e_extended_entry:
     test    byte [cs:0x8280], 0x40
     jnz     short bios_cmos_8e_read
-    JMP_ABS D90D
+    JMP_ABS 0xD90D
 
 bios_cmos_8e_read:
     mov     al, 0x8E
     nop
     mov     sp, 0x8414
-    JMP_ABS EE94
+    JMP_ABS 0xEE94
 
 times 0x8414 - ($ - rom_start) db 0xFF
 bios_cmos_8e_initial_read_return:
@@ -224,7 +224,7 @@ bios_cmos_8e_initial_read_continue:
     xor     ah, ah
 bios_cmos_8e_clear_iteration:
     mov     sp, 0x842A
-    JMP_ABS EE9D
+    JMP_ABS 0xEE9D
 
 times 0x842A - ($ - rom_start) db 0xFF
 bios_cmos_8e_clear_return:
@@ -244,7 +244,7 @@ bios_cmos_8e_restore_loop:
     cs lodsb
     xchg    ah, al
     mov     sp, 0x8444
-    JMP_ABS EE9D
+    JMP_ABS 0xEE9D
 
 times 0x8444 - ($ - rom_start) db 0xFF
 bios_cmos_8e_restore_return:
@@ -262,7 +262,7 @@ bios_cmos_8e_rom_table_loop:
     or      al, 0x80
     nop
     mov     sp, 0x8460
-    JMP_ABS EE94
+    JMP_ABS 0xEE94
 
 times 0x8460 - ($ - rom_start) db 0xFF
 bios_cmos_8e_rom_table_read_return:
@@ -278,7 +278,7 @@ bios_cmos_8e_rom_table_read_continue:
     or      al, 0x80
     nop
     mov     sp, 0x847E
-    JMP_ABS EE94
+    JMP_ABS 0xEE94
 
 times 0x847E - ($ - rom_start) db 0xFF
 bios_cmos_8e_rom_table_write_return:
@@ -297,7 +297,7 @@ bios_cmos_8e_descriptor_loop:
     mov     al, [cs:si]
     or      al, 0x80
     mov     sp, 0x849E
-    JMP_ABS EE94
+    JMP_ABS 0xEE94
 
 times 0x849E - ($ - rom_start) db 0xFF
 bios_cmos_8e_descriptor_read_return:
@@ -313,7 +313,7 @@ bios_cmos_8e_descriptor_read_continue:
     or      al, 0x80
     nop
     mov     sp, 0x84BC
-    JMP_ABS EE9D
+    JMP_ABS 0xEE9D
 
 times 0x84BC - ($ - rom_start) db 0xFF
 bios_cmos_8e_descriptor_write_return:
@@ -323,7 +323,7 @@ bios_cmos_8e_descriptor_write_continue:
     cmp     si, [cs:0x82C2]
     jc      short bios_cmos_8e_descriptor_loop
 bios_cmos_8e_finish:
-    JMP_ABS D90D
+    JMP_ABS 0xD90D
 
 ; ---------------------------------------------------------------------------
 ; ---------------------------------------------------------------------------
@@ -373,7 +373,7 @@ bios_8042_set_ah_zero:
 bios_8042_cmos_read:
     mov     al, 0xB3
     mov     sp, 0x890E
-    JMP_ABS EE94
+    JMP_ABS 0xEE94
 
 ; EE94h returns to 8910h through this semantic stack word.
 times 0x890E - ($ - rom_start) db 0xFF
@@ -384,14 +384,14 @@ bios_8042_cmos_read_continue:
     or      ah, al
     mov     al, 0xB3
     mov     sp, 0x891C
-    JMP_ABS EE9D
+    JMP_ABS 0xEE9D
 
 ; EE9Dh returns to 891Eh; that continuation restarts POST at D60Fh.
 times 0x891C - ($ - rom_start) db 0xFF
 bios_8042_cmos_write_return:
     dw      0x891E
 bios_8042_reset_reentry:
-    JMP_ABS D60F
+    JMP_ABS 0xD60F
 
 ; The crafted stack at 88EEh returns here after the arithmetic/flags probe.
 bios_8042_arithmetic_probe:
@@ -410,7 +410,7 @@ bios_ali_probe_start:
     xor     cl, cl
     mov     ax, 0xC2C2
     mov     sp, 0x893C
-    JMP_ABS 8DCF
+    JMP_ABS 0x8DCF
 
 times 0x893C - ($ - rom_start) db 0xFF
 bios_ali_read_c2_return:
@@ -420,14 +420,14 @@ bios_ali_read_c2_continue:
     or      al, 0x04
     xchg    ah, al
     mov     sp, 0x894A
-    JMP_ABS 8DDC
+    JMP_ABS 0x8DDC
 
 times 0x894A - ($ - rom_start) db 0xFF
 bios_ali_write_c2_return:
     dw      0x894C
 bios_ali_write_c2_continue:
     mov     sp, 0x8952
-    JMP_ABS 8DCF
+    JMP_ABS 0x8DCF
 
 times 0x8952 - ($ - rom_start) db 0xFF
 bios_ali_read_c3_return:
@@ -440,14 +440,14 @@ bios_ali_read_c3_continue:
     mov     al, 0xC2
     nop
     mov     sp, 0x8966
-    JMP_ABS 8DDC
+    JMP_ABS 0x8DDC
 
 times 0x8966 - ($ - rom_start) db 0xFF
 bios_ali_write_c2_second_return:
     dw      0x8968
 bios_ali_write_c2_second_continue:
     mov     sp, 0x896E
-    JMP_ABS 8DDC
+    JMP_ABS 0x8DDC
 
 times 0x896E - ($ - rom_start) db 0xFF
 bios_ali_read_c2_second_return:
@@ -462,7 +462,7 @@ bios_ali_c2_common_write:
     mov     al, 0xC2
     nop
     mov     sp, 0x8982
-    JMP_ABS 8DDC
+    JMP_ABS 0x8DDC
 
 times 0x8982 - ($ - rom_start) db 0xFF
 bios_ali_write_c3_return:
@@ -471,7 +471,7 @@ bios_ali_write_c3_continue:
     mov     ax, 0xC3C3
     nop
     mov     sp, 0x898E
-    JMP_ABS 8DCF
+    JMP_ABS 0x8DCF
 
 times 0x898E - ($ - rom_start) db 0xFF
 bios_ali_read_c3_second_return:
@@ -481,7 +481,7 @@ bios_ali_read_c3_second_continue:
     or      al, 0x02
     xchg    ah, al
     mov     sp, 0x89A4
-    JMP_ABS 8DCF
+    JMP_ABS 0x8DCF
 
 times 0x89A4 - ($ - rom_start) db 0xFF
 bios_ali_read_c3_third_return:
@@ -494,14 +494,14 @@ bios_ali_read_c3_third_continue:
     mov     al, 0xC3
     nop
     mov     sp, 0x89B8
-    JMP_ABS 8DDC
+    JMP_ABS 0x8DDC
 
 times 0x89B8 - ($ - rom_start) db 0xFF
 bios_ali_write_c3_second_return:
     dw      0x89BA
 bios_ali_write_c3_second_continue:
     mov     sp, 0x89C0
-    JMP_ABS 8DCF
+    JMP_ABS 0x8DCF
 
 times 0x89C0 - ($ - rom_start) db 0xFF
 bios_ali_read_c3_fourth_return:
@@ -515,7 +515,7 @@ bios_ali_c3_fourth_no_bit1:
     mov     al, 0xC3
     nop
     mov     sp, 0x89D4
-    JMP_ABS 8DDC
+    JMP_ABS 0x8DDC
 
 times 0x89D4 - ($ - rom_start) db 0xFF
 bios_ali_write_c3_third_return:
@@ -529,7 +529,7 @@ bios_ali_write_c3_third_continue:
     jz      short bios_ali_dispatch_di
     mov     al, 0xFE
     mov     sp, 0x89EC
-    JMP_ABS 8DCF
+    JMP_ABS 0x8DCF
 
 times 0x89EC - ($ - rom_start) db 0xFF
 bios_ali_read_final_return:
@@ -581,7 +581,7 @@ bios_cmos_dispatch:
 bios_cmos_pic_dispatch:
     mov     al, 0xB3
     mov     sp, 0x8A36
-    JMP_ABS EE94
+    JMP_ABS 0xEE94
 bios_cmos_pic_return:
     cmp     [bp+si+0x0CA8], cl
     jz      bios_cmos_post_55
@@ -589,7 +589,7 @@ bios_cmos_pic_return:
     ror     eax, 16
     mov     bx, ax
     mov     di, bios_cmos_mode_table
-    JMP_ABS 8CCD
+    JMP_ABS 0x8CCD
 bios_cmos_mode_table:
     mov     di, 0x8E62
     mov     cx, 0x000A
@@ -602,7 +602,7 @@ bios_cmos_mode_selected:
     inc     di
     inc     di
     mov     sp, 0x8A66
-    JMP_ABS 8DDC
+    JMP_ABS 0x8DDC
 bios_cmos_mode_return:
     push    word 0xE28A
     int1
@@ -610,8 +610,8 @@ bios_cmos_mode_return:
     ror     eax, 16
 bios_cmos_post_55:
     or      al, 0xFF
-    JMP_ABS D655
-    JMP_ABS D74C
+    JMP_ABS 0xD655
+    JMP_ABS 0xD74C
 
 ; ---------------------------------------------------------------------------
 ; F000:8A78 — dynamic POST hook and stack-threaded ALi setup continuation.
@@ -623,11 +623,11 @@ bios_post_dynamic_hook:
 
 bios_post_dynamic_hook_return:
     mov     di, 0x8A87
-    JMP_ABS 8CCD
+    JMP_ABS 0x8CCD
 bios_post_dynamic_hook_nop:
     nop
     mov     sp, 0x8A8E
-    JMP_ABS 8D83
+    JMP_ABS 0x8D83
 
 times 0x8A8E - ($ - rom_start) db 0xFF
 bios_post_ali_mode_return:
@@ -636,7 +636,7 @@ bios_post_ali_mode_continue:
     mov     ax, 0xB3B3
     nop
     mov     sp, 0x8A9A
-    JMP_ABS EE94
+    JMP_ABS 0xEE94
 
 times 0x8A9A - ($ - rom_start) db 0xFF
 bios_post_cmos_b3_read_return:
@@ -645,7 +645,7 @@ bios_post_cmos_b3_read_continue:
     and     al, 0xFE
     xchg    ah, al
     mov     sp, 0x8AA6
-    JMP_ABS EE9D
+    JMP_ABS 0xEE9D
 
 times 0x8AA6 - ($ - rom_start) db 0xFF
 bios_post_cmos_b3_write_return:
@@ -654,7 +654,7 @@ bios_post_cmos_b3_write_continue:
     mov     ax, 0xC503
     nop
     mov     sp, 0x8AB2
-    JMP_ABS 8DDC
+    JMP_ABS 0x8DDC
 
 times 0x8AB2 - ($ - rom_start) db 0xFF
 bios_post_ali_1313_write_return:
@@ -663,7 +663,7 @@ bios_post_ali_1313_write_continue:
     mov     ax, 0x1313
     nop
     mov     sp, 0x8ABE
-    JMP_ABS 8DCF
+    JMP_ABS 0x8DCF
 
 times 0x8ABE - ($ - rom_start) db 0xFF
 bios_post_ali_1313_read_return:
@@ -672,19 +672,19 @@ bios_post_ali_1313_read_continue:
     and     al, 0x3F
     xchg    ah, al
     mov     sp, 0x8ACA
-    JMP_ABS 8DDC
+    JMP_ABS 0x8DDC
 
 times 0x8ACA - ($ - rom_start) db 0xFF
 bios_post_ali_1313_final_return:
     dw      0x8ACC
 bios_post_ali_1313_final_continue:
-    JMP_ABS D777
+    JMP_ABS 0xD777
 
 ; Independent 8042 command trampolines in the same ROM window.
 bios_8042_enable_trampoline:
-    JMP_ABS F66A
+    JMP_ABS 0xF66A
 bios_8042_disable_trampoline:
-    JMP_ABS F66E
+    JMP_ABS 0xF66E
 
 ; ---------------------------------------------------------------------------
 ; F000:8AD5 — reset keyboard-controller wait and CPU reset request.
@@ -790,10 +790,10 @@ bios_ali_memory_mode:
     test    al, 0x02
     jnz     short bios_ali_memory_mode_return
     mov     di, 0x8D6C
-    JMP_ABS 2686
+    JMP_ABS 0x2686
 bios_ali_memory_mode_retry:
     mov     di, 0x8D72
-    JMP_ABS 2629
+    JMP_ABS 0x2629
 bios_ali_memory_mode_apply:
     mov     ax, 0x1818
     call    0x8DCF
@@ -823,7 +823,7 @@ bios_ali_shadow_step_2:
     nop
 bios_ali_shadow_step_3:
     mov     di, 0x8DA5
-    JMP_ABS 2686
+    JMP_ABS 0x2686
 bios_ali_shadow_step_4:
     mov     ax, 0x1919
     mov     di, 0x8DAE
@@ -940,7 +940,7 @@ bios_pic_init:
     mov     bx, 0x0870
     nop
     mov     sp, 0xD650
-    JMP_ABS EEE7
+    JMP_ABS 0xEEE7
 bios_pic_return:
     push    dx
     salc
@@ -1008,7 +1008,7 @@ bios_cmos_8f_dispatch_table_end:
 ; D6BEh — common stack/register test failure path.
 bios_stack_test_failure:
     mov     bp, 0x0005
-    JMP_ABS F4A5
+    JMP_ABS 0xF4A5
 
 ; D6C4h — copy register state through all segment registers, then execute
 ; the code at SS:SP. This is an intentional JMP-SP trampoline.
@@ -1085,7 +1085,7 @@ bios_post_checkpoint_03:
     xor     bp, bp
     mov     ds, bp
     mov     es, bp
-    JMP_ABS 8A75
+    JMP_ABS 0x8A75
 
 ; F000:D74C — POST checkpoint 04h and 8042/reset-state dispatch.
 bios_post_checkpoint_04:
@@ -1106,7 +1106,7 @@ bios_post_checkpoint_04:
 bios_post_checkpoint_05:
     mov     al, 0x05
     out     0x80, al
-    JMP_ABS 8A78
+    JMP_ABS 0x8A78
 
 ; ---------------------------------------------------------------------------
 ; F000:D777 — memory checksum, 8042 drain and keyboard-controller POST.
@@ -1128,7 +1128,7 @@ bios_post_checksum_loop:
     loop    bios_post_checksum_loop
     jz      bios_post_8042_drain
     mov     bp, 0x0009
-    JMP_ABS F4A5
+    JMP_ABS 0xF4A5
 
 bios_post_8042_drain:
     xor     cx, cx
@@ -1166,7 +1166,7 @@ bios_post_8042_command_aa:
 bios_post_8042_response_wait:
     nop
     mov     sp, 0xD7D8
-    JMP_ABS F659
+    JMP_ABS 0xF659
 
 times 0xD7D8 - ($ - rom_start) db 0xFF
 bios_post_8042_wait_aa_return:
@@ -1175,7 +1175,7 @@ bios_post_8042_wait_aa_continue:
     mov     al, 0x08
     out     0x80, al
     mov     sp, 0xD7E4
-    JMP_ABS F60F
+    JMP_ABS 0xF60F
 
 times 0xD7E4 - ($ - rom_start) db 0xFF
 bios_post_8042_read_response_return:
@@ -1186,7 +1186,7 @@ bios_post_8042_read_response_continue:
     test    byte [cs:0x8280], 0x80
     jz      bios_post_8042_response_ok
     mov     bp, 0x0006
-    JMP_ABS F4A5
+    JMP_ABS 0xF4A5
 
 bios_post_8042_response_ok:
     or      di, di
@@ -1194,7 +1194,7 @@ bios_post_8042_response_ok:
     mov     al, 0xA1
     out     0x64, al
     mov     sp, 0xD806
-    JMP_ABS F659
+    JMP_ABS 0xF659
 
 times 0xD806 - ($ - rom_start) db 0xFF
 bios_post_8042_a1_return:
@@ -1215,7 +1215,7 @@ bios_post_8042_a1_done:
     mov     al, 0xFF
     out     0x64, al
     mov     sp, 0xD826
-    JMP_ABS F659
+    JMP_ABS 0xF659
 
 times 0xD826 - ($ - rom_start) db 0xFF
 bios_post_8042_ff_return:
@@ -1223,7 +1223,7 @@ bios_post_8042_ff_return:
 bios_post_keyboard_init_done:
     mov     al, 0x09
     out     0x80, al
-    JMP_ABS 1AF8
+    JMP_ABS 0x1AF8
 
 ; ---------------------------------------------------------------------------
 ; F000:D82F — first 8042 command/data exchange after POST 09h.
@@ -1233,7 +1233,7 @@ bios_post_8042_command_60:
     out     0x64, al
     nop
     mov     sp, 0xD83A
-    JMP_ABS F659
+    JMP_ABS 0xF659
 
 times 0xD83A - ($ - rom_start) db 0xFF
 bios_post_8042_command_60_return:
@@ -1248,7 +1248,7 @@ bios_post_8042_command_60_continue:
 bios_post_8042_command_data:
     out     0x60, al
     mov     sp, 0xD854
-    JMP_ABS F659
+    JMP_ABS 0xF659
 
 times 0xD854 - ($ - rom_start) db 0xFF
 bios_post_8042_command_data_return:
@@ -1264,7 +1264,7 @@ bios_post_8042_command_0b:
 bios_post_8042_command_c8:
     out     0x64, al
     mov     sp, 0xD86E
-    JMP_ABS F659
+    JMP_ABS 0xF659
 
 times 0xD86E - ($ - rom_start) db 0xFF
 bios_post_8042_command_0b_return:
@@ -1277,7 +1277,7 @@ bios_post_8042_command_0b_continue:
     mov     al, 0xFF
     out     0x64, al
     mov     sp, 0xD882
-    JMP_ABS F659
+    JMP_ABS 0xF659
 
 times 0xD882 - ($ - rom_start) db 0xFF
 bios_post_cmos_8f_55_return:
@@ -1288,14 +1288,14 @@ bios_post_cmos_8f_55_continue:
     mov     ax, 0x558F
     nop
     mov     sp, 0xD892
-    JMP_ABS EE9D
+    JMP_ABS 0xEE9D
 
 times 0xD892 - ($ - rom_start) db 0xFF
 bios_post_cmos_8f_55_read_return:
     dw      0xD894
 bios_post_cmos_8f_55_read_continue:
     mov     sp, 0xD89A
-    JMP_ABS EE94
+    JMP_ABS 0xEE94
 
 times 0xD89A - ($ - rom_start) db 0xFF
 bios_post_cmos_8f_55_compare_return:
@@ -1306,14 +1306,14 @@ bios_post_cmos_8f_55_compare_continue:
     mov     ax, 0xAA8F
     nop
     mov     sp, 0xD8AA
-    JMP_ABS EE9D
+    JMP_ABS 0xEE9D
 
 times 0xD8AA - ($ - rom_start) db 0xFF
 bios_post_cmos_8f_aa_write_return:
     dw      0xD8AC
 bios_post_cmos_8f_aa_write_continue:
     mov     sp, 0xD8B2
-    JMP_ABS EE94
+    JMP_ABS 0xEE94
 
 times 0xD8B2 - ($ - rom_start) db 0xFF
 bios_post_cmos_8f_aa_read_return:
@@ -1323,14 +1323,14 @@ bios_post_cmos_8f_aa_read_continue:
     jz      short bios_post_cmos_8e_read
 bios_post_cmos_8f_mismatch:
     mov     bp, 0x000A
-    JMP_ABS F4A5
+    JMP_ABS 0xF4A5
 
 bios_post_cmos_8e_read:
     mov     al, 0x0E
     out     0x80, al
     mov     al, 0x8D
     mov     sp, 0xD8CA
-    JMP_ABS EE94
+    JMP_ABS 0xEE94
 
 times 0xD8CA - ($ - rom_start) db 0xFF
 bios_post_cmos_8e_read_return:
@@ -1340,7 +1340,7 @@ bios_post_cmos_8e_read_continue:
     mov     ax, 0x8E8E
     nop
     mov     sp, 0xD8D8
-    JMP_ABS EE94
+    JMP_ABS 0xEE94
 
 times 0xD8D8 - ($ - rom_start) db 0xFF
 bios_post_cmos_8e_flags_return:
@@ -1353,7 +1353,7 @@ bios_post_cmos_8e_flags_continue:
 bios_post_cmos_8e_negative:
     or      al, al
     js      short bios_post_cmos_8e_sign
-    JMP_ABS 868B
+    JMP_ABS 0x868B
 bios_post_cmos_8e_zero:
     jz      short bios_post_cmos_8e_mask
     or      al, 0x5C
@@ -1368,7 +1368,7 @@ bios_post_cmos_8e_flags_done:
     and     al, 0xFE
     xchg    ah, al
     mov     sp, 0xD904
-    JMP_ABS EE9D
+    JMP_ABS 0xEE9D
 
 times 0xD904 - ($ - rom_start) db 0xFF
 bios_post_cmos_8e_write_return:
@@ -1376,7 +1376,7 @@ bios_post_cmos_8e_write_return:
 bios_post_cmos_8e_write_continue:
     mov     al, 0x0F
     out     0x80, al
-    JMP_ABS 8400
+    JMP_ABS 0x8400
 
 ; Separate D90Dh POST entry: CMOS 8Bh read/modify/write sequence.
 times 0xD90D - ($ - rom_start) db 0xFF
@@ -1385,7 +1385,7 @@ bios_post_cmos_8b_update:
     out     0x80, al
     mov     ax, 0x8B8B
     mov     sp, 0xD91A
-    JMP_ABS EE94
+    JMP_ABS 0xEE94
 
 times 0xD91A - ($ - rom_start) db 0xFF
 bios_post_cmos_8b_read_return:
@@ -1394,7 +1394,7 @@ bios_post_cmos_8b_read_continue:
     and     al, 0x07
     xchg    ah, al
     mov     sp, 0xD926
-    JMP_ABS EE9D
+    JMP_ABS 0xEE9D
 
 times 0xD926 - ($ - rom_start) db 0xFF
 bios_post_cmos_8c_read_return:
@@ -1402,7 +1402,7 @@ bios_post_cmos_8c_read_return:
 bios_post_cmos_8c_read_continue:
     mov     al, 0x8C
     mov     sp, 0xD930
-    JMP_ABS EE94
+    JMP_ABS 0xEE94
 
 times 0xD930 - ($ - rom_start) db 0xFF
 bios_post_cmos_8a_read_return:
@@ -1411,7 +1411,7 @@ bios_post_cmos_8a_read_continue:
     mov     ax, 0x8A8A
     nop
     mov     sp, 0xD93C
-    JMP_ABS EE94
+    JMP_ABS 0xEE94
 
 times 0xD93C - ($ - rom_start) db 0xFF
 bios_post_cmos_8a_compare_return:
@@ -1422,7 +1422,7 @@ bios_post_cmos_8a_compare_continue:
     mov     al, 0x26
     xchg    ah, al
     mov     sp, 0xD94C
-    JMP_ABS EE9D
+    JMP_ABS 0xEE9D
 
 times 0xD94C - ($ - rom_start) db 0xFF
 bios_post_keyboard_enable_return:
@@ -1432,7 +1432,7 @@ bios_post_cmos_8a_enable_keyboard:
     mov     al, 0xAE
     out     0x64, al
     mov     sp, 0xD958
-    JMP_ABS F659
+    JMP_ABS 0xF659
 
 times 0xD958 - ($ - rom_start) db 0xFF
 bios_post_keyboard_ack_return:
@@ -1446,7 +1446,7 @@ bios_post_keyboard_ack_wait:
     jnz     bios_post_keyboard_disable
     mov     ax, 0x8E8E
     mov     sp, 0xD96E
-    JMP_ABS EE94
+    JMP_ABS 0xEE94
 
 times 0xD96E - ($ - rom_start) db 0xFF
 bios_post_cmos_8e_update_return:
@@ -1455,7 +1455,7 @@ bios_post_cmos_8e_update_continue:
     or      al, 0x01
     xchg    ah, al
     mov     sp, 0xD97A
-    JMP_ABS EE9D
+    JMP_ABS 0xEE9D
 
 times 0xD97A - ($ - rom_start) db 0xFF
 bios_post_keyboard_disable_return:
@@ -1464,7 +1464,7 @@ bios_post_keyboard_disable:
     mov     al, 0xAD
     out     0x64, al
     mov     sp, 0xD986
-    JMP_ABS F659
+    JMP_ABS 0xF659
 
 times 0xD986 - ($ - rom_start) db 0xFF
 bios_post_pic_setup_return:
@@ -1480,7 +1480,7 @@ bios_post_pic_setup_continue:
     mov     bx, 0x0870
     nop
     mov     sp, 0xD9A0
-    JMP_ABS EEEF
+    JMP_ABS 0xEEEF
 
 times 0xD9A0 - ($ - rom_start) db 0xFF
 bios_post_chipset_io_return:
@@ -1516,7 +1516,7 @@ bios_post_chipset_io_continue:
     mov     ds, ax
     mov     al, 0x13
     out     0x80, al
-    JMP_ABS 1AFB
+    JMP_ABS 0x1AFB
 
 ; F000:E05B — reset gateway.
 times 0xE05B - ($ - rom_start) db 0xFF
