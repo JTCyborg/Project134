@@ -73,7 +73,9 @@ times 0x8CCD - ($ - 0) db 0xFF
 ; Source: ami486_post_entry.disasm.txt, byte-backed disassembly.
 ; Preserve the original instruction stream and exact near-branch destinations.
 ; ---------------------------------------------------------------------------
-times 0xD604 - ($ - $$) db 0xFF
+    db 0xC3                         ; 8DECh: RET (end of indexed-I/O helper)
+
+times 0xD604 - ($ - $) db 0xFF
 bios_post_entry:
     db 0xFA                         ; CLI
     db 0xFC                         ; CLD
