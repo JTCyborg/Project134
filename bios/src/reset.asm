@@ -3794,7 +3794,119 @@ bios_hd_utility_geometry_screen_loop:
     %error "HD utility geometry screen must end at 509Eh"
 %endif
 
-incbin  "ami486.bin", ($ - rom_start), (0x8280 - ($ - rom_start)) ; inherited reference bytes from 509Eh to 8280h
+; F000:509E — POST extended-memory/controller setup and initial RAM probe.
+; Entry is reached from the POST path through the 5F62h transfer.
+bios_post_extended_memory_entry:
+    mov     ax, 0x028F
+    call    near 0xEE9D
+    mov     al, 0x40
+    out     0x80, al
+    call    near 0xF3DB
+    mov     al, 0x41
+    out     0x80, al
+    mov     di, 0x0600
+    push    di
+    mov     si, 0xE260
+    mov     cx, 0x0030
+    cli
+    cld
+    db      0x2E, 0xF3, 0xA5           ; rep movsw cs:[si] -> es:[di]
+    pop     si
+    db      0x26, 0xC7, 0x44, 0x0A, 0x00, 0x06 ; mov word es:[si+0Ah],0600h
+    db      0x26, 0xC6, 0x44, 0x0C, 0x00      ; mov byte es:[si+0Ch],00h
+    mov     bx, 0x0800
+    mov     ah, 0x89
+    mov     al, 0x42
+    out     0x80, al
+    int     0x15
+    mov     al, 0x43
+    out     0x80, al
+    je      short bios_post_extended_memory_int15_ok
+    mov     si, 0x7AB2
+    jmp     near 0xF509
+bios_post_extended_memory_int15_ok:
+    call    near 0x5506
+    mov     ax, 0x0040
+    mov     es, ax
+    mov     al, 0x44
+    out     0x80, al
+    xor     di, di
+    mov     si, 0x0244
+    mov     word [0x0238], 0xFFFF
+    mov     word [0x023D], 0x0093
+    push    ds
+    mov     ax, 0x0038
+    mov     ds, ax
+    mov     ax, [0x0000]
+    mov     cx, [0x0002]
+    mov     word [0x0000], 0xFFFF
+    mov     word [0x0002], 0xFFFF
+    pop     ds
+    push    ax
+    push    cx
+    mov     al, 0x45
+    out     0x80, al
+    mov     ax, 0x0010
+    call    near 0x5305
+    pop     cx
+    pop     bx
+    push    ax
+    mov     al, 0x46
+    out     0x80, al
+    push    ds
+    mov     ax, 0x0038
+    mov     ds, ax
+    mov     [0x0002], cx
+    mov     [0x0000], bx
+    pop     ds
+    pop     ax
+    push    ax
+    dec     ax
+    mov     bx, 0x000F
+    db      0x3B, 0xC3                 ; cmp ax, bx
+    je      short bios_post_extended_memory_skip_byte_probe
+    call    near 0x534C
+bios_post_extended_memory_skip_byte_probe:
+    push    ax
+    mov     al, 0x47
+    out     0x80, al
+    mov     ax, 0x0009
+    xor     bx, bx
+    call    near 0x534C
+    push    ax
+    mov     al, 0x48
+    out     0x80, al
+    pop     ax
+    mov     bx, 0x000A
+    mov     byte [si], 0x00
+    mov     byte [si+0x03], 0x00
+    xor     dx, dx
+    call    near 0x5371
+    mov     al, 0x49
+    out     0x80, al
+    pop     ax
+    pop     bx
+    push    dx
+    xor     dx, dx
+    mov     byte [si], 0x0F
+    mov     byte [si+0x03], 0x00
+    cmp     bx, 0x0010
+    je      short bios_post_extended_memory_skip_high_probe
+    call    near 0x5371
+bios_post_extended_memory_skip_high_probe:
+    pop     bx
+    xchg    bx, dx
+    mov     al, 0x4A
+    out     0x80, al
+    push    word 0x5190
+    push    word 0xFA4E
+    ret
+
+%if ($ - rom_start) != 0x5190
+    %error "POST extended-memory entry block must end at 5190h"
+%endif
+
+incbin  "ami486.bin", ($ - rom_start), (0x8280 - ($ - rom_start)) ; inherited reference bytes from 5190h to 827Fh
     db      0x2F, 0x00, 0xE7, 0x03, 0x00, 0x00, 0x12, 0x00
 
 ; F000:82D0 — original POST callback vector table.
