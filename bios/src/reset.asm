@@ -1467,9 +1467,115 @@ bios_cmos_e052_timing_return:
 %if ($ - rom_start) != 0x2D11
     %error "CMOS E042/E052 selectors must end at 2D11h"
 %endif
-; F000:2D11h–2DF4h — inherited candidate timing benchmark stream.
-; Its stack entry contract is unresolved (no aligned near-call target/prologue was found).
-incbin  "ami486.bin", ($ - rom_start), (0x2DF5 - ($ - rom_start)) ; inherited 2D11h-2DF4h benchmark entry stream
+; F000:2D11h–2DF4h — memory-pattern benchmark and PIT-calibrated divisor selector.
+; The block is fully transcribed; its external entry provenance remains unresolved.
+bios_memory_benchmark_entry:
+    add     byte [0xFA06], bl
+    push    ds
+    push    es
+    cli
+    mov     ax, 0x1000
+    mov     es, ax
+    mov     di, 0x0000
+    mov     ax, 0xF3F7
+    push    ax
+    cld
+    mov     cx, 0x03E8
+    rep     stosw
+    mov     al, 0xCB
+    stosb
+    pop     ax
+    dec     ax
+    mov     di, 0x0800
+    cld
+    mov     cx, 0x03E8
+    rep     stosw
+    mov     al, 0xCB
+    stosb
+    mov     ax, es
+    mov     ds, ax
+    call    near bios_pit_measurement
+    mov     di, 0xF000
+    mov     cx, 0x0028
+bios_memory_benchmark_fill_loop:
+    push    cx
+    push    di
+    call    near bios_pit_measurement
+    pop     di
+    stosw
+    pop     cx
+    loop    bios_memory_benchmark_fill_loop
+
+    mov     si, 0xF000
+    mov     cx, 0x0028
+    push    cx
+    db      0x2B, 0xC0                 ; sub ax, ax
+    db      0x2B, 0xD2                 ; sub dx, dx
+bios_memory_benchmark_average_loop:
+    add     ax, [si]
+    adc     dx, 0x0000
+    add     si, 0x0002
+    loop    bios_memory_benchmark_average_loop
+    pop     cx
+    div     cx
+    mov     cx, ax
+    mov     [0xF800], ax
+    mov     dx, 0x000E
+    mov     ax, 0x236E
+    div     cx
+
+    mov     bx, 0x0004
+    cmp     ax, 0x01C2
+    jbe     short bios_memory_benchmark_class_ready
+    mov     bx, 0x0005
+    cmp     ax, 0x0226
+    jbe     short bios_memory_benchmark_class_ready
+    mov     bx, 0x0006
+    cmp     ax, 0x02BC
+    jbe     short bios_memory_benchmark_class_ready
+    mov     bx, 0x0008
+    cmp     ax, 0x0384
+    jbe     short bios_memory_benchmark_class_ready
+    mov     bx, 0x000A
+    cmp     ax, 0x044C
+    jbe     short bios_memory_benchmark_class_ready
+    mov     bx, 0x000C
+    cmp     ax, 0x0578
+    jbe     short bios_memory_benchmark_class_ready
+    mov     bx, 0x0010
+    cmp     ax, 0x0640
+    jbe     short bios_memory_benchmark_class_ready
+    mov     bx, 0x0010
+    cmp     ax, 0x0708
+    jbe     short bios_memory_benchmark_class_ready
+    mov     bx, 0x0014
+    cmp     ax, 0x08CA
+    jbe     short bios_memory_benchmark_class_ready
+    mov     bx, 0x0019
+    cmp     ax, 0x0ABE
+    jbe     short bios_memory_benchmark_class_ready
+    mov     bx, 0x0021
+    cmp     ax, 0x0E2E
+    jbe     short bios_memory_benchmark_class_ready
+    mov     bx, 0x0028
+    cmp     ax, 0x1130
+    jbe     short bios_memory_benchmark_class_ready
+    mov     bx, 0x0032
+    cmp     ax, 0x15E0
+    jbe     short bios_memory_benchmark_class_ready
+    mov     bx, 0x0042
+    cmp     ax, 0x1BBC
+    jbe     short bios_memory_benchmark_class_ready
+    mov     bx, 0x0050
+bios_memory_benchmark_class_ready:
+    db      0x33, 0xFF                 ; xor di, di
+    mov     cx, 0x8000
+    db      0x33, 0xC0                 ; xor ax, ax
+    rep     stosw
+    db      0x8B, 0xC3                 ; mov ax, bx
+    pop     es
+    pop     ds
+    ret
 
 ; F000:2DF5h–2E72h — PIT channel-2 measurement, counter read and setup.
 bios_pit_measurement:
