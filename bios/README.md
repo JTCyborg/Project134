@@ -39,31 +39,39 @@ Translated into NASM in `bios/src/reset.asm`:
 - POST delay completion and checkpoints `D724h–D774h`.
 - Memory checksum and 8042 initialization sequence `D777h–D82Ch`, including
   stack-return words and the `F60Fh`/`F659h` wait helpers.
+- PIT channel-2 transition wait helper `E93Ch–E965h`, used by POST speaker diagnostics.
+- Fatal POST error loop, `JMP SP` stack-threaded delay, diagnostic port output,
+  video/string entry points and 8042 diagnostic helpers `F4A5h–F658h`.
 - 8042 A20 output-port enable/disable routines `F66Ah–F690h`.
 - Reset-entry trampoline at `2065h`, six-byte LGDT pseudo-descriptor at `2068h`, and the three-entry protected-mode GDT at `2070h`, expressed as NASM instructions/data declarations. The five-byte adjacent parameter area at `2088h` is retained as data; its semantics remain unresolved.
 - ALi1429 21-record table walker at `208Dh–20C8h`, including the two stack-return trampolines into `8DDCh`; A20 enable and protected-mode/GDT setup at `20C9h–20FAh`.
 
-The translations above follow the available instruction listing. The GDT fields at `2068h–2087h` were cross-checked against the reference disassembly, including the nonzero reserved high descriptor byte and the exact access/limit flags. A source-level audit now finds 95 ascending `TIMES` origins and no duplicate labels; this is not a substitute for running NASM.
+The translations above follow the available instruction listing. The GDT fields at `2068h–2087h` were cross-checked against the reference disassembly, including the nonzero reserved high descriptor byte and the exact access/limit flags. A source-level audit now finds 105 ascending `TIMES` origins and no duplicate labels; this is not a substitute for running NASM.
 
 The following regions are still incomplete and prevent a meaningful PCem boot test:
-- Additional POST/error handlers and the remainder of the startup/boot path.
 - The protected-mode memory-alias test beginning at `20FCh` and its return-to-real-mode/A20-disable tail through `23CEh`.
-- Remaining RAM test, chipset initialization, interrupt services, BIOS vectors
-  and data.
+- The POST/BIOS transition and memory-test path around `509Eh–55A7h`.
+- Remaining RAM test, chipset initialization, interrupt services, BIOS vectors,
+  Setup/boot continuation and data.
 
 ## Test readiness
 
-**Not ready for a PCem boot test.** The reset path now reaches the POST 09h checkpoint after the initial memory
-checksum and first 8042 exchanges. The protected-mode memory-alias test at `20FCh–23CEh`, subsequent memory sizing,
-chipset setup and the remaining low-ROM continuation remain incomplete. A run now would stop in unimplemented
-ROM space or execute incomplete dispatch behavior.
+**Not ready for a successful POST/boot test.** The reference ROM's 16-bit word checksum is `0000h`.
+The checked-in reconstructed binary was measured at `AAB2h`; therefore the real checksum routine at
+`D777h` takes its fatal branch to `F000:F4A5`, not the 8042 drain path and POST07. The original checksum
+field is at `FFFEh`; it must be recalculated only after the ROM content is reconstructed. Do not force
+the checksum to zero while large executable regions remain `FF`, because that would conceal missing code.
 
-The first PCem test will be announced only after:
-1. both initial reset branches and their called helpers are translated;
-2. the complete path through the first stable POST checkpoint is present;
-3. NASM build and structural validation pass;
-4. a static control-flow audit confirms no reachable placeholder holes before
-   that checkpoint.
+The fatal POST handler `F4A5h–F658h` and its PIT/8042 dependencies are now represented in NASM,
+but the checked-in `out/Debug/Project134.bin` has not yet been rebuilt from this source revision.
+A source edit or POST marker alone is not a runtime validation.
+
+A valid PCem milestone requires:
+1. a fresh NASM build and binary/source instruction-byte validation;
+2. the reconstructed ROM checksum to pass for the actual complete image;
+3. static control-flow verification that the next POST checkpoint is reached
+   through real test logic, not an unimplemented placeholder;
+4. comparison with the original BIOS under the same PCem configuration.
 
 A successful first POST test is not equivalent to a fully bootable BIOS; later
 milestones will cover memory sizing, chipset setup, interrupt vectors and boot.
