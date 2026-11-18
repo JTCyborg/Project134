@@ -1471,9 +1471,6 @@ bios_cmos_e052_timing_return:
 ; The block is fully transcribed; its external entry provenance remains unresolved.
 bios_memory_benchmark_entry:
     add     byte [0xFA06], bl
-    push    ds
-    push    es
-    cli
     mov     ax, 0x1000
     mov     es, ax
     mov     di, 0x0000
