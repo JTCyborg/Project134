@@ -3018,6 +3018,8 @@ bios_hd_utility_after_confirm:
     je      short bios_hd_utility_confirm_yes
     JMP_ABS 0x4ACD
 bios_hd_utility_confirm_yes:
+    mov     al, [0xE1A4]
+    mov     [0xE19F], al
     mov     ax, 0x082B
     mov     dx, 0x0F4D
     mov     bx, 0x0003
