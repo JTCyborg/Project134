@@ -121,4 +121,4 @@ Assert-Bytes -Offset 0xE05B -Expected ([byte[]](0xE9, 0xA6, 0xF5)) -Description 
 # First instructions at D604 are the verified CLI/CLD/8042 status probe.
 Assert-Bytes -Offset 0xD604 -Expected ([byte[]](0xFA, 0xFC, 0xE4, 0x64, 0xA8, 0x04, 0x75, 0x06)) -Description "Early POST entry"
 
-Write-Host ("BIOS ROM validation PASS: {0} bytes; reference SHA-256 verified; 8A04h-8A1Fh, 8A20h-8A74h, 8CCDh-8DECh, EE94h-EF35h and D604h-D776h byte matches; FFFF:0000 -> F000:E05B -> D604h" -f $bytes.Length) -ForegroundColor Green
+Write-Host ("BIOS ROM validation PASS: {0} bytes; reference SHA-256 verified; POST pointer/trampoline, GDT+PM helper, 88CEh-8A03h, 8A04h-8A1Fh, 8A20h-8A74h, 8A75h-8CCCh, 8CCDh-8E0Ch, EE94h-EF35h and D604h-D776h byte matches; FFFF:0000 -> F000:E05B -> D604h" -f $bytes.Length) -ForegroundColor Green
