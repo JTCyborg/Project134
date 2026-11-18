@@ -79,9 +79,9 @@ The current NASM build is now **byte-identical to the original 64-KiB ROM**. Git
 
 This is **not yet an independent native reconstruction**. The NASM listing shows 58,325 bytes (89.0%) inherited from explicit `incbin "ami486.bin"` slices and 7,211 bytes (11.0%) emitted by the source as instructions/data/fill. The latter are byte-verified; inherited regions are preserved, not reimplemented. The next work is to replace inherited ranges with verified NASM routines while keeping the full-image byte comparison and POST checksum passing. The source now reconstructs the additional executable region `20FCh–29F5h` (memory alias checks, shadow-copy/ALi handlers, CMOS AUTO Config selection, segment/GDT sweeps, extended-memory probe, PIT measurement and RAM test). See `analysis/disasm/PROJECT134_BYTE_EXACT_BUILD_AUDIT_20261118.md` for the reproducible measurements.
 
-The Visual Studio build now produces two distinct artifacts:
+The Visual Studio build produces two artifacts:
 
-- `Project134.native-candidate.bin` — output assembled from `bios/src/reset.asm`; retained for instruction-level development and validation. It is not represented as a working BIOS.
-- `Project134.bin` — by default, a byte-for-byte copy of the known-working `ami486.bin` reference. This provides a bootable compatibility baseline while native regions are reconstructed. Use `-NativeOnly` only when deliberately testing the incomplete candidate.
+- `Project134.native-candidate.bin` — assembled from `bios/src/reset.asm`. In the current verified build it is byte-identical to the original ROM, but 89.0% of its bytes are still inherited through explicit reference slices.
+- `Project134.bin` — the default boot image, copied from the known-working `ami486.bin` reference before native assembly. It has the same SHA-256 as the assembled candidate in the current verified build.
 
-The default output is verified against the reference SHA-256 before the build reports success. This is an interim compatibility image, not an independently reconstructed BIOS. Native replacement status must be reported separately from bootability.
+Both files therefore contain the same known-working ROM bytes at this revision. The build does not launch PCem; runtime confirmation remains separate. Use `-NativeOnly` only when deliberately testing the assembled candidate as the primary output.
