@@ -316,17 +316,17 @@ bios_memory_alias_second_low_fail:
     mov     bh, 0x04
 bios_memory_alias_second_high_fail:
     and     dx, 0x0F0F
-    mov     ah, dh
+    db      0x8A, 0xE6                 ; mov ah, dh
     shl     ah, 4
-    or      ah, dl
+    db      0x0A, 0xE2                 ; or ah, dl
     mov     al, 0x10
     mov     sp, 0x2394
     JMP_ABS 0x8DDC
     dw      0x2396
     and     bx, 0x0F0F
-    mov     ah, bh
+    db      0x8A, 0xE7                 ; mov ah, bh
     shl     ah, 4
-    or      ah, bl
+    db      0x0A, 0xE3                 ; or ah, bl
     mov     al, 0x11
     nop
     mov     sp, 0x23AA
@@ -337,7 +337,7 @@ bios_memory_alias_second_high_fail:
     mov     sp, 0x23B6
     JMP_ABS 0x8DDC
     dw      0x23B8
-    mov     ax, 0xB823
+    mov     ax, 0x0010
     mov     es, ax
     mov     eax, cr0
     and     al, 0xFE
@@ -425,13 +425,13 @@ bios_shadow_copy_common:
     mov     ax, 0x1313
     call    near 0x8DCF
     db      0x0A, 0xC2                 ; or al, dl
-    xchg    al, ah
+    db      0x86, 0xE0                 ; xchg al, ah
     call    near 0x8DDC
     mov     ax, 0x1414
     call    near 0x8DCF
     and     al, 0xFC
     or      al, 0x02
-    xchg    al, ah
+    db      0x86, 0xE0                 ; xchg al, ah
     call    near 0x8DDC
     db      0x8B, 0xC3                 ; mov ax, bx
     mov     ds, ax
@@ -453,7 +453,7 @@ bios_ali_register_12_prepare:
     mov     ax, 0x1212
     call    near 0x8DCF
     and     al, 0xFB
-    xchg    al, ah
+    db      0x86, 0xE0                 ; xchg al, ah
     call    near 0x8DDC
     mov     al, 0x42
     call    near 0xEE94
@@ -466,7 +466,7 @@ bios_ali_register_12_weighted:
     db      0x33, 0xD2                 ; xor dx, dx
     mov     ax, 0x1110
     call    near 0x8DCF
-    xchg    al, ah
+    db      0x86, 0xE0                 ; xchg al, ah
     call    near 0x8DCF
     db      0x8B, 0xD8                 ; mov bx, ax
     and     ax, 0x0F0F
@@ -516,7 +516,7 @@ bios_ali_weight_sum:
     mov     ax, 0x1212
     call    near 0x8DCF
     or      al, 0x04
-    xchg    al, ah
+    db      0x86, 0xE0                 ; xchg al, ah
     call    near 0x8DDC
     ret
 
