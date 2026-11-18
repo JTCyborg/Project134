@@ -1667,7 +1667,7 @@ bios_cmos_b513_mode_ready:
     db      0x08, 0xBC, 0x00, 0xE0    ; or byte [si+E000h], bh
 bios_cmos_b513_merge_done:
     db      0x0A, 0xDB                 ; or bl, bl
-    je      near 0x8727
+    je      short bios_cmos_b513_empty_path
     db      0x0B, 0xFF                 ; or di, di
     jne     short bios_cmos_b513_alt_path
     cmp     ax, 0xF000
@@ -1676,6 +1676,8 @@ bios_cmos_b513_alt_path:
     JMP_ABS 0x8734
 bios_cmos_b513_rom_path:
     JMP_ABS 0x8738
+bios_cmos_b513_empty_path:
+    JMP_ABS 0x8727
 
 %if ($ - rom_start) != 0x2EB4
     %error "B513 selector handler must end at 2EB4h"
@@ -1706,13 +1708,13 @@ bios_cmos_b519_mode_ready:
     db      0xF6, 0xD7                 ; not bh
 bios_cmos_b519_merge_done:
     db      0x0A, 0xDB                 ; or bl, bl
-    je      near 0x8727
+    je      short bios_cmos_b513_empty_path
     db      0x0B, 0xFF                 ; or di, di
-    je      short bios_cmos_b519_return_path
+    je      short bios_cmos_b519_final_alt
     cmp     ax, 0xF000
-    je      near 0x8738
-bios_cmos_b519_return_path:
-    JMP_ABS 0x8734
+    je      short bios_cmos_b513_rom_path
+bios_cmos_b519_final_alt:
+    jmp     short bios_cmos_b513_alt_path
 
 %if ($ - rom_start) != 0x2EF1
     %error "B519 selector handler must end at 2EF1h"
