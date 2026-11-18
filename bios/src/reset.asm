@@ -1748,7 +1748,162 @@ bios_setup_relocation_handoff:
 %if ($ - rom_start) != 0x2F24
     %error "Setup relocation handoff must end at 2F24h"
 %endif
-incbin  "ami486.bin", ($ - rom_start), (0x8280 - ($ - rom_start)) ; inherited reference bytes from 2F24h to 8280h
+; Setup exit prompt strings at 2F24h and 2F43h.
+bios_setup_exit_save_prompt:
+    db      "Write to CMOS and Exit (Y/N) ?", 0
+bios_setup_exit_quit_prompt:
+    db      "Want to Quit Without Saving (Y/N) ?", 0
+
+%if ($ - rom_start) != 0x2F67
+    %error "Setup exit prompt strings must end at 2F67h"
+%endif
+
+; F000:2F67 — Setup exit confirmation and saved-stack restoration.
+bios_setup_exit_confirm:
+    mov     bx, 0x2F24
+    call    near 0x5959
+    cmp     al, 0x59
+    jne     short bios_setup_exit_return
+    call    near 0x852F
+    jmp     short bios_setup_exit_restore_stack
+bios_setup_exit_quit_confirm:
+    mov     bx, 0x2F43
+    call    near 0x5959
+    cmp     al, 0x59
+    jne     short bios_setup_exit_return
+bios_setup_exit_restore_stack:
+    db      0x33, 0xC0                 ; xor ax, ax
+    mov     ds, ax
+    cli
+    mov     ss, [0x0469]
+    mov     sp, [0x0467]
+    sti
+bios_setup_exit_return:
+    ret
+
+%if ($ - rom_start) != 0x2F8F
+    %error "Setup exit handler must end at 2F8Fh"
+%endif
+
+; F000:2F8F — clear the BIOS Data Area fields used by the temporary disk test.
+bios_clear_disk_bda_fields:
+    db      0x33, 0xC0                 ; xor ax, ax
+    mov     di, 0x0442
+    stosw
+    stosw
+    stosw
+    stosb
+    mov     di, 0x0474
+    stosw
+    stosb
+    mov     di, 0x048C
+    stosw
+    stosb
+    ret
+
+%if ($ - rom_start) != 0x2FA3
+    %error "BDA clear helper must end at 2FA3h"
+%endif
+
+; F000:2FA3 — temporary IVT substitution around INT 13h AH=14h.
+bios_setup_temp_int13_test:
+    push    si
+    push    di
+    push    ds
+    push    ds
+    pop     es
+    mov     di, 0xE429
+    db      0x33, 0xC0                 ; xor ax, ax
+    mov     ds, ax
+    mov     si, 0x0100
+    movsw
+    movsw
+    mov     si, 0x004C
+    movsw
+    movsw
+    mov     si, 0x0104
+    movsw
+    movsw
+    mov     si, 0x0118
+    movsw
+    movsw
+    push    ds
+    pop     es
+    cli
+    mov     si, 0x004C
+    mov     di, 0x0100
+    mov     ax, 0xA08D
+    db      0x87, 0x04                 ; xchg [si], ax
+    stosw
+    mov     ax, cs
+    db      0x87, 0x44, 0x02           ; xchg [si+2], ax
+    stosw
+    call    near bios_clear_disk_bda_fields
+    pop     ds
+    push    ds
+    cmp     byte [0xE421], 0x00
+    pushf
+    mov     ax, 0x0040
+    mov     ds, ax
+    inc     byte [0x0075]
+    mov     di, 0x0104
+    mov     dl, 0x80
+    popf
+    je      short bios_setup_temp_int13_slot_ready
+    mov     di, 0x0118
+    inc     byte [0x0075]
+    inc     dl
+bios_setup_temp_int13_slot_ready:
+    mov     ax, 0xE411
+    stosw
+    mov     ax, 0x0100
+    stosw
+    sti
+    mov     ah, 0x14
+    int     0x13
+    jae     short bios_setup_temp_int13_aaa3
+    mov     al, 0x02
+    jmp     short bios_setup_temp_int13_restore
+bios_setup_temp_int13_aaa3:
+    call    near 0xAAA3
+    jae     short bios_setup_temp_int13_success
+    mov     al, 0x03
+    jmp     short bios_setup_temp_int13_restore
+bios_setup_temp_int13_success:
+    pop     ds
+    call    near 0x691C
+    push    ds
+bios_setup_temp_int13_restore:
+    push    ax
+    db      0x33, 0xC0                 ; xor ax, ax
+    mov     es, ax
+    call    near bios_clear_disk_bda_fields
+    cli
+    mov     si, 0xE429
+    mov     di, 0x0100
+    movsw
+    movsw
+    mov     di, 0x004C
+    movsw
+    movsw
+    mov     di, 0x0104
+    movsw
+    movsw
+    mov     di, 0x0118
+    movsw
+    movsw
+    sti
+    pop     ax
+    pop     ds
+    pop     di
+    pop     si
+    ret
+
+%if ($ - rom_start) != 0x3044
+    %error "Temporary INT 13h path must end at 3044h"
+%endif
+
+incbin  "ami486.bin", ($ - rom_start), (0x8280 - ($ - rom_start)) ; inherited reference bytes from 3044h to 8280h
     db      0x2F, 0x00, 0xE7, 0x03, 0x00, 0x00, 0x12, 0x00
 
 ; F000:82D0 — original POST callback vector table.
